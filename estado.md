@@ -16,15 +16,17 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Recibido de B y atendido:** diseño de la ola 3b unido; ADR-100, 101 y 103 a 107 registrados; H-3b-01 (clase 8) y H-3b-02 (entrega 2) anotados.
 
 ## Equipo B (PC B)
-- **Actualizado:** (pendiente de la primera publicación de B)
-- **Trabajando en:** revisión de QA de Backup Tool antes de unir; tarea 3: conector de e-CF con IQ (`GPOS-NG-AddOn-IQS`, instrucciones en `docs/traspaso/2026-10-07-tarea3-conector-iq.md`).
+- **Actualizado:** 2026-10-07
+- **Trabajando en:** Backup Tool, rama `n01-bloqueo-subida-sin-llave`: el desarrollador corrige S-01 a S-10 de la revisión de seguridad (Aprobado con observaciones, `7ba8633`); después QA (Q-1 a Q-14 y S-11); luego el propietario decide la unión.
+- **Siguiente:** traer `origin/master` a `n01-bloqueo-subida-sin-llave` tras QA; tarea 3 (conector de e-CF con IQ, `GPOS-NG-AddOn-IQS`) cuando el propietario lo indique.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
-  | BackupService | `fp01-clave-7zip` | Verificación de FP-01 y diseños; en revisión de QA |
-  | BackupService | `n01-bloqueo-subida-sin-llave` | N-01 construido; en revisión de QA |
-  | GPOS-NG-AddOn-IQS | — | Tarea 3 por empezar |
+  | GPOS-NG | `b/ola3b-diseno` | Cerrada: hoja de la 3b firmada completa (`0fefbab`); unida por A a `feature/modelo-ng` |
+  | BackupService | `fp01-clave-7zip` | FP-01 cerrado en código (AP-07), diseños y hoja firmada en parte; trae `master` (`de5eed8`); espera la indicación de unión |
+  | BackupService | `n01-bloqueo-subida-sin-llave` | N-01 construido (ADR-0002); correcciones de seguridad en curso, luego QA |
+  | GPOS-NG-AddOn-IQS | — | Tarea 3 por empezar (espera indicación del propietario) |
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
