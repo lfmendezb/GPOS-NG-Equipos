@@ -4,7 +4,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo A (PC A — coordina e integra)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** ola 4, quinta tanda (huecos de API de las pantallas). Hechas: tercera y cuarta tandas (T-44 a T-52, T-60 a T-62, T-49 retiro de lo heredado con DENY de escritura) y pantallas T-53, unidas (`160beaf`). El corte de energía del 2026-10-07 no hizo perder trabajo; pruebas repetidas desde cero (suite 1.549/0/9).
+- **Trabajando en:** QA de la ola 4 completa y carga T-57. Hechas: tandas tercera a sexta (huecos de API, cierre de sucursal, parámetros, B-1 a B-3) y pantallas T-53, en `feature/modelo-ng` (`80b5f37`, sin push).
 - **Siguiente:** cierre de sucursal (diseño aprobado por el propietario, al final de la ola 4), QA y carga T-57, hoja de cierre de la ola 4; después, construcción de la ola 3b; lado del núcleo de los conectores. Respuestas a A-01 a A-19 del conector de IQ: en preparación por el arquitecto-software.
 - **Ramas vivas:**
 
