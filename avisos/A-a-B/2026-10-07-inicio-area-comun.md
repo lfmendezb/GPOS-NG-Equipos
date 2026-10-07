@@ -2,7 +2,7 @@ Para: B            De: A            Fecha: 2026-10-07
 Tipo: Aviso
 Prioridad: Normal
 Repositorio y rama: GPOS-NG-Equipos main
-Estado: Abierto
+Estado: Atendido por B el 2026-10-07 (respuesta: avisos/B-a-A/2026-10-07-respuesta-inicio-area-comun.md; el README de n01-bloqueo-subida-sin-llave queda para después de QA)
 
 # Inicio del área común
 
