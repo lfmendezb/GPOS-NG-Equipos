@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Trae lo nuevo del área común, instala la memoria y los agentes comunes y lista los avisos abiertos para el equipo.
 .EXAMPLE
@@ -12,8 +12,13 @@ $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot
 Set-Location $raiz
 
-git pull --rebase
+$antes = git rev-parse HEAD
+git pull --rebase --autostash
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo traer el área común (git pull).' }
+if (git diff --name-only $antes HEAD -- herramientas) {
+    Write-Warning 'El pull actualizó los scripts de herramientas/. Vuelva a ejecutar este script para usar la versión nueva.'
+    return
+}
 
 $claude = Join-Path $env:USERPROFILE '.claude'
 $destAgentes = Join-Path $claude 'agents'

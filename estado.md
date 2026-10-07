@@ -4,13 +4,13 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo A (PC A — coordina e integra)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** ola 4, tercera tanda (T-44 CxP, T-45 compras, T-60 devolución y notas del suplidor, T-46 bancos, T-61/T-62, T-47 caja chica).
-- **Siguiente:** pantallas de la ola 4 (T-53), QA y carga, cierre de la ola 4; después, construcción de la ola 3b en el orden de la sección 6 de su hoja; precisión de ADR-58; lado del núcleo de los conectores (después de la ola 4).
+- **Trabajando en:** ola 4, quinta tanda (huecos de API de las pantallas). Hechas: tercera y cuarta tandas (T-44 a T-52, T-60 a T-62, T-49 retiro de lo heredado con DENY de escritura) y pantallas T-53, unidas (`160beaf`). El corte de energía del 2026-10-07 no hizo perder trabajo; pruebas repetidas desde cero (suite 1.549/0/9).
+- **Siguiente:** cierre de sucursal (diseño aprobado por el propietario, al final de la ola 4), QA y carga T-57, hoja de cierre de la ola 4; después, construcción de la ola 3b; lado del núcleo de los conectores. Respuestas a A-01 a A-19 del conector de IQ: en preparación por el arquitecto-software.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
-  | GPOS-NG | `feature/modelo-ng` | Ola 4 en construcción (único editor: A); trae la ola 3b de B (`7c7f5ad`) y los ADR de `master` (`e032e8b`) |
+  | GPOS-NG | `feature/modelo-ng` | Ola 4 en construcción (único editor: A); T-53 unida (`160beaf`); trae la ola 3b de B (`7c7f5ad`) y los ADR de `master` |
   | GPOS-NG | `master` | ADR al día (`3fc56cc`), un archivo por ADR en `docs/adr/` |
   | GPOS-NG | `demo/2026-10-08` | Base de la actualización del DEMO |
 - **Recibido de B y atendido:** diseño de la ola 3b unido; ADR-100, 101 y 103 a 107 registrados; H-3b-01 (clase 8) y H-3b-02 (entrega 2) anotados.

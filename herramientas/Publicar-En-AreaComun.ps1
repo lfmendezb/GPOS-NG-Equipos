@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Publica en el área común lo que corresponde al equipo. Con -Equipo A copia además la memoria y los agentes locales.
 .EXAMPLE
@@ -13,7 +13,7 @@ $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot
 Set-Location $raiz
 
-git pull --rebase
+git pull --rebase --autostash
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo traer el área común antes de publicar (git pull).' }
 
 $rutas = @("avisos/$Equipo-a-*", "traspasos/$Equipo", 'estado.md')
@@ -26,6 +26,7 @@ if ($Equipo -eq 'A') {
 
 # Comprobación básica de secretos en lo que se va a publicar
 $sospechosos = Get-ChildItem $rutas -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -ne $PSCommandPath } |
     Select-String -Pattern 'Password=|Pwd=|User ID=.*;|Bearer [A-Za-z0-9\-_\.]{20,}' -List
 if ($sospechosos) {
     $sospechosos | ForEach-Object { Write-Warning "Posible secreto en $($_.Path)" }
