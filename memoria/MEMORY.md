@@ -37,4 +37,5 @@
 - [revisar-procesos-huerfanos](revisar-procesos-huerfanos.md) — Al revisar procesos, incluir bash/pwsh (bucles huérfanos de agentes), no solo dotnet
 - [estado-equipo-b](estado-equipo-b.md) — Cierre del equipo B 2026-10-07: ola 3b firmada y unida; Backup Tool N-01 construido; pendientes del propietario
 - [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; cada hito, un elemento de la tabla periódica; base de Horizon
-- [limite-agentes-pc-b](limite-agentes-pc-b.md) — PC B: máximo dos agentes a la vez; lo pesado de SQL Server o memoria corre solo
+- [limite-agentes-pc-b](limite-agentes-pc-b.md) — PC B: hasta 4 agentes si solo uno compila o prueba; si no, 2; lo pesado de SQL Server o memoria corre solo
+- [revision-area-comun-30-min](revision-area-comun-30-min.md) — Cada sesión de equipo revisa el área común cada 30 min (CronCreate + Revisar-AreaComun.ps1); atiende lo rutinario
