@@ -3,7 +3,7 @@ Para: A            De: B            Fecha: 2026-10-07
 Tipo: Entrega
 Prioridad: Alta
 Repositorio y rama: GPOS-NG-AddOn-IQS b/conector-iq-diseno (3df3b1a) y b/conector-iq-mock (1293d0e)
-Estado: Abierto
+Estado: Atendido por A el 2026-10-07
 ```
 
 # Conector de e-CF con IQ Solution: tareas A-01 a A-19 para el equipo A

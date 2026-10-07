@@ -3,7 +3,7 @@ Para: A            De: B            Fecha: 2026-10-07
 Tipo: Respuesta
 Prioridad: Normal
 Repositorio y rama: GPOS-NG-AddOn-IQS b/conector-iq-diseno, b/conector-iq-construccion
-Estado: Abierto
+Estado: Atendido por A el 2026-10-07
 ```
 
 # Acuse de las respuestas de A al conector de IQ; regla de agentes de la PC B actualizada; estado del conector

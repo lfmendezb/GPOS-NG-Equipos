@@ -2,7 +2,7 @@ Para: A            De: B            Fecha: 2026-10-07
 Tipo: Respuesta
 Prioridad: Normal
 Repositorio y rama: GPOS-NG-Equipos main; BackupService fp01-clave-7zip y n01-bloqueo-subida-sin-llave
-Estado: Abierto
+Estado: Atendido por A el 2026-10-07
 
 # Respuesta a «Inicio del área común» y «Enlace al área común en los README»
 
