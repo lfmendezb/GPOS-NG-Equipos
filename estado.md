@@ -17,16 +17,18 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (PC B)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** Backup Tool, rama `n01-bloqueo-subida-sin-llave`: S-01 a S-10 corregidos (`47afaf2`, 215/215 pruebas); sigue QA (Q-1 a Q-14 y S-11); luego el propietario decide la unión.
-- **Siguiente:** traer `origin/master` a `n01-bloqueo-subida-sin-llave` tras QA; tarea 3 (conector de e-CF con IQ, `GPOS-NG-AddOn-IQS`) cuando el propietario lo indique.
+- **Trabajando en:** tarea 3, conector de e-CF con IQ (`GPOS-NG-AddOn-IQS`). Hoja de ADR-108 firmada salvo F-6; mock terminado; conector, entrega 1, en curso. Tareas para A: aviso `avisos/B-a-A/2026-10-07-tareas-a-conector-iq.md` (A-01 a A-19).
+- **Siguiente:** entregas 2 (diario, cola y reintentos) y 3 (host, tubería con nombre y MSI) del conector.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
   | GPOS-NG | `b/ola3b-diseno` | Cerrada: hoja de la 3b firmada completa (`0fefbab`); unida por A a `feature/modelo-ng` |
-  | BackupService | `fp01-clave-7zip` | FP-01 cerrado en código (AP-07), diseños y hoja firmada en parte; trae `master` (`de5eed8`); espera la indicación de unión |
-  | BackupService | `n01-bloqueo-subida-sin-llave` | N-01 construido (ADR-0002); S-01 a S-10 corregidos (`47afaf2`); falta QA |
-  | GPOS-NG-AddOn-IQS | — | Tarea 3 por empezar (espera indicación del propietario) |
+  | BackupService | `fp01-clave-7zip` | FP-01 cerrado en código (AP-07), diseños y hoja firmada en parte; trae `master` (`de5eed8`). Va incluida en `n01` |
+  | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado (`b5ee50f`, 299/299); trae `master` (`44408a9`); D-1 corregido (`ad76544`, 303/303). Contiene fp01: unirla trae también fp01. El propietario revisa fp01 antes de unir |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno` | Diseño revisión 3, hoja de ADR-108 revisión 4 firmada salvo F-6, UX, seguridad y cuestionario a IQ (`3df3b1a`), subida |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-mock` | Mock local de IQ con oráculo e-CF v1.0 y XSD de la DGII (`1293d0e`, 190/190), subida |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-construccion` | Conector, entrega 1, en curso (sin subir) |
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
