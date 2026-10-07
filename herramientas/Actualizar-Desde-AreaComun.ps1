@@ -43,7 +43,20 @@ foreach ($clave in $claves) {
     $destMemoria = Join-Path $proyectos "$clave\memory"
     if (Test-Path $destMemoria) { Copy-Item $destMemoria (Join-Path $claude "memory-respaldo-$sello-$clave") -Recurse }
     New-Item -ItemType Directory -Force $destMemoria | Out-Null
+    # Las líneas del índice local que apuntan a memorias propias del equipo (no vienen del área común) se conservan
+    $indiceLocal = Join-Path $destMemoria 'MEMORY.md'
+    $comunes = (Get-ChildItem (Join-Path $raiz 'memoria\*.md')).Name
+    $propias = @()
+    if (Test-Path $indiceLocal) {
+        $propias = @(Get-Content $indiceLocal | Where-Object {
+            $_ -match '\(([^()]+\.md)\)' -and ($comunes -notcontains $Matches[1]) -and (Test-Path (Join-Path $destMemoria $Matches[1]))
+        })
+    }
     Copy-Item (Join-Path $raiz 'memoria\*.md') $destMemoria -Force
+    if ($propias.Count -gt 0) {
+        Add-Content $indiceLocal $propias
+        Write-Host "  Conservadas $($propias.Count) líneas propias del índice en $clave"
+    }
     Write-Host "Memoria instalada en: $clave"
 }
 Write-Host "Agentes instalados. Copias anteriores en $claude\*-respaldo-$sello*."

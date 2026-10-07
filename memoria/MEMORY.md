@@ -39,3 +39,4 @@
 - [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; cada hito, un elemento de la tabla periódica; base de Horizon
 - [limite-agentes-pc-b](limite-agentes-pc-b.md) — PC B: hasta 4 agentes si solo uno compila o prueba; si no, 2; lo pesado de SQL Server o memoria corre solo
 - [revision-area-comun-30-min](revision-area-comun-30-min.md) — Cada sesión de equipo revisa el área común cada 30 min (CronCreate + Revisar-AreaComun.ps1); atiende lo rutinario
+- [xml-firmado-responsabilidad-proveedor](xml-firmado-responsabilidad-proveedor.md) — El XML firmado del e-CF lo custodia IQ (DF-06 v4); GPOS guarda el JSON enviado con huella y sello
