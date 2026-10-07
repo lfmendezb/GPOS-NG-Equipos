@@ -17,8 +17,8 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (PC B)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** tarea 3, conector de e-CF con IQ (`GPOS-NG-AddOn-IQS`): entregas 1 a 3 hechas (`205b344`, 410/410); atendiendo la respuesta de A (hoja revisión 5 para F-6, ajuste del conector y del mock); devops del instalador. Acuse: `avisos/B-a-A/2026-10-07-acuse-respuestas-conector-iq.md`.
-- **Siguiente:** firma de F-6; re-revisión de seguridad; entrega 4 del conector (parámetros, contraste, XML, anulaciones, conciliación).
+- **Trabajando en:** tarea 3, conector de e-CF con IQ (`GPOS-NG-AddOn-IQS`): **ADR-108 Aceptado** (F-6 firmado el 2026-10-07); conector ajustado a la respuesta de A y carrera de recepción corregida (`c3db950`); instalador MSI 0.3.0 sin firma (`36b4c96`); re-revisión de seguridad final en curso. Aviso: `avisos/B-a-A/2026-10-07-adr108-aceptado-registrar.md`.
+- **Siguiente:** prueba elevada del instalador (propietario); resultado de seguridad; entrega 4 del conector (parámetros, contraste, XML, anulaciones, conciliación).
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
@@ -26,10 +26,10 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `b/ola3b-diseno` | Cerrada: hoja de la 3b firmada completa (`0fefbab`); unida por A a `feature/modelo-ng` |
   | BackupService | `fp01-clave-7zip` | FP-01 cerrado en código (AP-07), diseños y hoja firmada en parte; trae `master` (`de5eed8`). Va incluida en `n01` |
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado (`b5ee50f`, 299/299); trae `master` (`44408a9`); D-1 corregido (`ad76544`, 303/303). Contiene fp01: unirla trae también fp01. El propietario revisa fp01 antes de unir |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno` | Diseño revisión 3, hoja de ADR-108 revisión 4 firmada salvo F-6, UX, seguridad y cuestionario a IQ (`3df3b1a`), subida |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno` | Hoja de ADR-108 firmada completa (F-6), ADR-108 Aceptado (`b40939f`), subida |
   | GPOS-NG-AddOn-IQS | `b/conector-iq-mock` | Mock local de IQ con oráculo e-CF v1.0 y XSD de la DGII (`1293d0e`, 190/190), subida |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-construccion` | Entregas 1 a 3 (`205b344`, 410/410), subida; ajuste a la respuesta de A en curso |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | DevOps del instalador en curso (sin subir) |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-construccion` | Entregas 1 a 3, ajuste a A y corrección de carrera (`c3db950`), subida |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | Instalador WiX, identidades de la tubería, desinstalación protegida (`36b4c96`), subida |
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
