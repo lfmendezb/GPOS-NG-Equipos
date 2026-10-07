@@ -17,7 +17,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (PC B)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** Backup Tool, rama `n01-bloqueo-subida-sin-llave`: el desarrollador corrige S-01 a S-10 de la revisión de seguridad (Aprobado con observaciones, `7ba8633`); después QA (Q-1 a Q-14 y S-11); luego el propietario decide la unión.
+- **Trabajando en:** Backup Tool, rama `n01-bloqueo-subida-sin-llave`: S-01 a S-10 corregidos (`47afaf2`, 215/215 pruebas); sigue QA (Q-1 a Q-14 y S-11); luego el propietario decide la unión.
 - **Siguiente:** traer `origin/master` a `n01-bloqueo-subida-sin-llave` tras QA; tarea 3 (conector de e-CF con IQ, `GPOS-NG-AddOn-IQS`) cuando el propietario lo indique.
 - **Ramas vivas:**
 
@@ -25,7 +25,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   |---|---|---|
   | GPOS-NG | `b/ola3b-diseno` | Cerrada: hoja de la 3b firmada completa (`0fefbab`); unida por A a `feature/modelo-ng` |
   | BackupService | `fp01-clave-7zip` | FP-01 cerrado en código (AP-07), diseños y hoja firmada en parte; trae `master` (`de5eed8`); espera la indicación de unión |
-  | BackupService | `n01-bloqueo-subida-sin-llave` | N-01 construido (ADR-0002); correcciones de seguridad en curso, luego QA |
+  | BackupService | `n01-bloqueo-subida-sin-llave` | N-01 construido (ADR-0002); S-01 a S-10 corregidos (`47afaf2`); falta QA |
   | GPOS-NG-AddOn-IQS | — | Tarea 3 por empezar (espera indicación del propietario) |
 
 ## Pendientes del propietario
