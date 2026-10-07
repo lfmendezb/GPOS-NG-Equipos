@@ -1,0 +1,38 @@
+- [litedb-configuracion-embebida](litedb-configuracion-embebida.md) — Cuando haga falta una base de datos embebida para configuraciones, el usuario…
+- [sin-access-ni-texto-plano](sin-access-ni-texto-plano.md) — El usuario prohíbe usar MS Access y guardar contraseñas o datos sensibles en texto…
+- [firma-humana-arquitecto-maestro](firma-humana-arquitecto-maestro.md) — El agente Arquitecto Maestro solo prepara decisiones; el usuario es quien…
+- [devoluciones-son-notas-de-credito](devoluciones-son-notas-de-credito.md) — Devolución = nota de crédito; GPOS NG actúa como auxiliar contable
+- [clasificacion-empresas-pendiente](clasificacion-empresas-pendiente.md) — Después de master: empresas Desarrollo/Beta/Producción/Demostración y N-1 a N-4
+- [cierre-numeracion-nuevo-equipo](cierre-numeracion-nuevo-equipo.md) — Revisión con Fable 5.1 se hace en el nuevo equipo; aquí solo correcciones PC-4
+- [politica-actualizacion-paquetes](politica-actualizacion-paquetes.md) — Actualizar paquetes solo por vulnerabilidad conocida o versión estable; MAUI/toolkit en su fase
+- [estrategia-acceso-datos-preferida](estrategia-acceso-datos-preferida.md) — EF Core para DbContext/migraciones, Dapper para consultas, ADO.NET puro para lo crítico
+- [no-generar-comprobante-permiso-bitacora](no-generar-comprobante-permiso-bitacora.md) — RG-04/05: «No generar comprobante» con privilegio Especiales (junto a Ver costos) y línea en _LOG
+- [motor-reportes-blazor-pendiente](motor-reportes-blazor-pendiente.md) — Blueprint v2 (JSON + componentes Blazor) para sustituir Crystal: al arquitecto-maestro tras la presentación
+- [pendientes-prueba-demo](pendientes-prueba-demo.md) — mejoras de las pruebas DEMO: lote 1 hecho (sin commit); 2.ª tanda con Empleados/vendedores, aviso al cerrar sesión, etc.
+- [titulos-menu-mayusculas](titulos-menu-mayusculas.md) — RG-30: «Gestión de Secuencias» se mantiene; todo el menú con mayúsculas de título (siguiente fase)
+- [decision-modelo-datos-propio-pendiente](decision-modelo-datos-propio-pendiente.md) — 2026-10-03: propuesta de modelo propio (ADR-52) con hoja de firma MD-01 a MD-32 pendiente; no construir sobre el esquema BP2 hasta la firma
+- [respuestas-propietario-modelo-datos](respuestas-propietario-modelo-datos.md) — 2026-10-03: P-1 a P-11 respondidas: ITBIS 16 %, códigos inmutables, listas de precios, sin conexión por sucursal con sincronización central, recetas/mermas, ARS
+- [motor-sql-server-decidido](motor-sql-server-decidido.md) — 2026-10-04: se mantiene SQL Server tras evaluar PostgreSQL 18; reabrir solo con 3+ clientes grandes
+- [agentes-con-opus](agentes-con-opus.md) — Lanzar todos los subagentes del proyecto con model: opus (Opus 5.5) de forma explícita
+- [un-solo-editor-por-repositorio](un-solo-editor-por-repositorio.md) — Incidente 2026-10-04: un solo agente por árbol; confirmar o apartar cambios del propietario antes de editar; rotar la clave heredada de Backup Tool
+- [nombres-bases-gpos](nombres-bases-gpos.md) — GPOS_SYSDATA y prefijo GPOS_ para empresas/sucursales/pruebas; nunca GPOST_ salvo variables de entorno; BP2 solo al citarlo
+- [eliminar-solo-sin-referencias](eliminar-solo-sin-referencias.md) — Eliminar solo sin referencias; si se transaccionó, inhabilitar; aplica también al SUPER (precisión ADR-08)
+- [mcp-modelos-ia-pendiente](mcp-modelos-ia-pendiente.md) — Pendiente: MCP para trabajar con modelos de IA; ubicarlo en la etapa prudente (tras la entrega 1)
+- [modulo-analisis-estrella](modulo-analisis-estrella.md) — Módulo de análisis en estrella opcional, con privilegios propios; rpt sigue por defecto (propuesta encargada 2026-10-04)
+- [todo-es-desarrollo](todo-es-desarrollo.md) — Hoy todo es desarrollo, sin producción; se pueden detener procesos de desarrollo; sus bases reales siguen intocables
+- [actualizacion-automatica](actualizacion-automatica.md) — Rolling release sin versiones visibles: agente automático, Drive con manifiesto firmado, certificado e-CF no se usa
+- [licencia-por-vigencia](licencia-por-vigencia.md) — Suscripción mensual: vigencia de licencia por empresa, validación en la API, renovación por el agente; propuesta en curso
+- [fips-y-perfiles-seguridad](fips-y-perfiles-seguridad.md) — Criptografía endurecida para FIPS e interruptor Seguridad Básica / Avanzada (FIPS) excluyentes; hoja de seguridad firmada 2026-10-05
+- [avisar-cambio-de-sesion](avisar-cambio-de-sesion.md) — Avisar al propietario cuándo abrir sesión nueva, en un punto sin agentes activos y con nota de traspaso
+- [adjuntos-en-documentos](adjuntos-en-documentos.md) — Adjuntar archivos en mermas y en todos los documentos (salvo POS); nube del cliente en fase tardía
+- [responder-en-espanol](responder-en-espanol.md) — Responder siempre en español, también los avisos de avance
+- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — PC A coordina e integra; PC B en ramas b/; ADR en master, un archivo por ADR, rangos A 68-99 y B 100-129
+- [sucursal-en-linea-sqlite-y-licencia](sucursal-en-linea-sqlite-y-licencia.md) — ADR-53: nodo elegible; SQLite local en sucursal en línea tras las olas; licencia por empresa por usuarios; SUPER siempre de la plataforma
+- [fable-revision-general-tras-olas](fable-revision-general-tras-olas.md) — Fable 5.1 solo para la revisión general al completar las olas; agentes con Opus
+- [ecf-conectores-enchufables](ecf-conectores-enchufables.md) — e-CF y ERP (AdmCloud, Alegra, IQ) como complementos que NUNCA tocan el núcleo de GPOS NG
+- [contabilidad-ligera-erp-externo](contabilidad-ligera-erp-externo.md) — GPOS NG: contabilidad ligera de auxiliar y fiscal; mayor y asientos al ERP (AdmCloud, Alegra u otro)
+- [referencias-api-erp](referencias-api-erp.md) — Documentación de las API de AdmCloud, Alegra e IQ Solution
+- [bp2-nunca-en-produccion](bp2-nunca-en-produccion.md) — BP2 nunca salió a producción; sin costumbres que proteger: aplicar recomendaciones de los especialistas
+- [pruebas-proveedores-con-mock](pruebas-proveedores-con-mock.md) — IQ: mock local; AdmCloud: empresa de pruebas del propietario, credenciales fuera del repo
+- [revisar-procesos-huerfanos](revisar-procesos-huerfanos.md) — Al revisar procesos, incluir bash/pwsh (bucles huérfanos de agentes), no solo dotnet
+- [estado-equipo-b](estado-equipo-b.md) — Cierre del equipo B 2026-10-07: ola 3b firmada y unida; Backup Tool N-01 construido; pendientes del propietario
