@@ -17,8 +17,8 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (PC B)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** tarea 3, conector de e-CF con IQ (`GPOS-NG-AddOn-IQS`). Hoja de ADR-108 firmada salvo F-6; mock terminado; conector, entrega 1, en curso. Tareas para A: aviso `avisos/B-a-A/2026-10-07-tareas-a-conector-iq.md` (A-01 a A-19).
-- **Siguiente:** entregas 2 (diario, cola y reintentos) y 3 (host, tubería con nombre y MSI) del conector.
+- **Trabajando en:** tarea 3, conector de e-CF con IQ (`GPOS-NG-AddOn-IQS`): entregas 1 a 3 hechas (`205b344`, 410/410); atendiendo la respuesta de A (hoja revisión 5 para F-6, ajuste del conector y del mock); devops del instalador. Acuse: `avisos/B-a-A/2026-10-07-acuse-respuestas-conector-iq.md`.
+- **Siguiente:** firma de F-6; re-revisión de seguridad; entrega 4 del conector (parámetros, contraste, XML, anulaciones, conciliación).
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
@@ -28,7 +28,8 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado (`b5ee50f`, 299/299); trae `master` (`44408a9`); D-1 corregido (`ad76544`, 303/303). Contiene fp01: unirla trae también fp01. El propietario revisa fp01 antes de unir |
   | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno` | Diseño revisión 3, hoja de ADR-108 revisión 4 firmada salvo F-6, UX, seguridad y cuestionario a IQ (`3df3b1a`), subida |
   | GPOS-NG-AddOn-IQS | `b/conector-iq-mock` | Mock local de IQ con oráculo e-CF v1.0 y XSD de la DGII (`1293d0e`, 190/190), subida |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-construccion` | Conector, entrega 1, en curso (sin subir) |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-construccion` | Entregas 1 a 3 (`205b344`, 410/410), subida; ajuste a la respuesta de A en curso |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | DevOps del instalador en curso (sin subir) |
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
