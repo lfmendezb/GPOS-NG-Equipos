@@ -44,3 +44,9 @@ El propietario la comunicó al equipo B el 2026-10-07, mientras A estaba fuera d
 4. **Impresión de un documento recién emitido:** los datos se leen **por vistas desde la API de reportes**, igual que los reportes. Hay que revisar `ModeloImpresion`, el agente de impresión y las rutas `/api/impresion/*`.
 
 **Queda abierto:** cómo respeta la API de reportes la licencia (ADR-58) sin ser un validador aparte. Se resuelve en el diseño.
+
+## Regla adicional del propietario (2026-10-07): solo vistas, nunca tablas
+- **La API de lectura solo puede ver vistas; nunca el modelo de tablas del sistema.**
+- Su login SQL tiene `SELECT` únicamente sobre los esquemas de vistas: `rpt` y, para el módulo de análisis, el que se defina. No tiene ningún permiso sobre `dbo` ni sobre los esquemas de tablas, y queda `DENY` explícito sobre ellos. Las vistas leen las tablas por encadenamiento de propiedad (mismo dueño), sin dar acceso directo.
+- **También en `GPOS_SYSDATA`:** los permisos del usuario y las plantillas de formatos que la API de reportes necesita leer se exponen por vistas propias. Lectura: B lo infiere por coherencia con la regla.
+- **Prueba estática recomendada:** ninguna consulta de la API de reportes nombra una tabla. Amplía el criterio (2) de la ola 5 del blueprint.
