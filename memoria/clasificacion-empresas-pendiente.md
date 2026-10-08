@@ -32,3 +32,5 @@ Pendientes del mismo lote, después de master:
 - N-4: devoluciones y notas por detalle de productos.
 
 Relacionado: [[devoluciones-son-notas-de-credito]].
+
+**Apartado de pruebas del SUPER (pedido del 2026-10-08, vía equipo B):** una empresa **Desarrollo** tendrá un apartado solo para el SUPER que permita pruebas como apuntar el conector de e-CF al **mock**. Condiciones: imposible de activar en Beta, Producción o Demostración; queda en la bitácora; no debilita SD-15 (el servicio instalado rechaza el simulador). Ninguna herramienta de demostración se construye hoy.
