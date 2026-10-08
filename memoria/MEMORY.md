@@ -41,3 +41,4 @@
 - [revision-area-comun-30-min](revision-area-comun-30-min.md) — Cada sesión de equipo revisa el área común cada 30 min (CronCreate + Revisar-AreaComun.ps1); atiende lo rutinario
 - [xml-firmado-responsabilidad-proveedor](xml-firmado-responsabilidad-proveedor.md) — El XML firmado del e-CF lo custodia IQ (DF-06 v4); GPOS guarda el JSON enviado con huella y sello
 - [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
+- [ecf-no-se-anula](ecf-no-se-anula.md) — Documento con e-NCF no se anula (se reversa); solo el rechazo de la DGII anula; 607/608 sin e-NCF, solo 606
