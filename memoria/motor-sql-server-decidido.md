@@ -19,3 +19,5 @@ El 2026-10-04 el propietario pidió evaluar el cambio de motor a PostgreSQL 18+ 
 - Evaluaciones: Parte E de `docs/propuestas/2026-10-03-modelo-datos-ng-propuesta.md`, sección 11 de `...-impacto-aplicacion.md`, y `docs/operaciones/2026-10-03-evaluacion-motor-postgresql.md` (DevOps).
 
 Relacionado: [[decision-modelo-datos-propio-pendiente]], [[respuestas-propietario-modelo-datos]].
+
+**Edición y archivado (propietario, 2026-10-08, vía B):** la edición de la central (Standard o Express) la elige el cliente. Con Express, GPOS NG tendrá **archivado por períodos que elige el cliente** para no llegar a 10 GB. **Después del corte de la entrega 1**. Archivar no borra (retención de 10 años, MD-61): los períodos cerrados van a otra base que se sigue consultando. Candidata a ADR o precisión de ADR-54, a cargo de A. Hasta entonces, no cerrarle el paso: vistas y reportes con el período como filtro.
