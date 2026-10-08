@@ -3,9 +3,9 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene A.
 
 ## Equipo A (PC A — coordina e integra)
-- **Actualizado:** 2026-10-07
-- **Trabajando en:** cierre de la ola 4 en `feature/modelo-ng` (`896551c`, sin push): QA, rendimiento V1 + A1 + A3 e instrumento de T-57, cierre de sucursal (S-1). ADR-74, 75 y 76 registrados en `master`. Hojas sin firmar: API de reportes (ADR-77 a 80, en revisión porque coincide con la ola 5 de B) y segundo factor del SUPER (ADR-81).
-- **Siguiente:** carga T-57 y hoja de cierre de la ola 4; construcción de la ola 3b; lado del núcleo de los conectores (ADR-75 puntos 1 a 4, manifiesto, DDL de K-16 y K-19). Espera del propietario: quién consolida la API de reportes y dónde se corrigen H-R01 y H-R02.
+- **Actualizado:** 2026-10-08
+- **Trabajando en:** cierre de la ola 4 en `feature/modelo-ng` (`f21b788`, subida; H-R01 hecho). Carga T-28/T-57 **Rechazada por rendimiento** (corrección en verde; venta 66-75 ms en T-28 y ~107 ms con compras; compra ~1 s): el propietario decide cómo seguir. ADR-77 Aceptado en `master` (`b403f32`).
+- **Siguiente:** tanda funcional del cierre (e-NCF fuera del 607/608, montos en moneda base para USD [E1-2], parámetro de propina), plan de rendimiento, hoja de cierre de la ola 4; luego la 3b y el commit de partida de `b/ola5`. Hoja sin firmar: segundo factor del SUPER (ADR-81).
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
