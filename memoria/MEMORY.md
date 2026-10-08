@@ -43,3 +43,5 @@
 - [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
 - [ecf-no-se-anula](ecf-no-se-anula.md) — Documento con e-NCF no se anula (se reversa); solo el rechazo de la DGII anula; 607/608 sin e-NCF, solo 606
 - [ventana-facturacion-por-vertical](ventana-facturacion-por-vertical.md) — Cada vertical con su propia ventana de facturación, independiente de la Facturación Ágil
+- [prioridad-ventas-inventario](prioridad-ventas-inventario.md) — 2026-10-08: núcleo = POS operativo con sus verticales, ventas e inventario; lo demás se agrega por etapas
+- [reportes-fiscales-aplazados](reportes-fiscales-aplazados.md) — 2026-10-08: 606, 607, 608 y apoyos IT-1/IR-17 aplazados (los tiene el ERP); la emisión NCF/e-CF y el Z no se aplazan

@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-Con el módulo de facturación electrónica activo, **Anular queda inhabilitado**: ningún documento con e-NCF/e-CF se anula; se emite el documento fiscal que reversa la operación (p. ej. E34). **Única excepción:** respuesta «Rechazado por la DGII» al firmar → anulación automática. **607 y 608 no informan e-NCF**; de momento solo se usa el 606 para ellos.
+Con el módulo de facturación electrónica activo, **Anular queda inhabilitado**: ningún documento con e-NCF/e-CF se anula; se emite el documento fiscal que reversa la operación (p. ej. E34). **Única excepción:** respuesta «Rechazado por la DGII» al firmar → anulación automática. **607 y 608 no informan e-NCF**; de momento solo se usa el 606 para ellos; el 606 también está aplazado como archivo (ver [[reportes-fiscales-aplazados]]).
 
 **Why:** regla fiscal del propietario (2026-10-08) para el e-CF dominicano.
 
