@@ -28,3 +28,11 @@ Los otros enchufes propuestos para la entrega 1 son solo de reserva, de unos 0,2
 - los códigos de módulo de la licencia como lista abierta.
 
 Irán a la hoja de firma de las verticales. A decide cómo entran en su plan.
+
+## Complemento (2026-10-08, arquitecto-maestro de B, hoja `2026-10-08-hoja-firma-verticales`, bloque V-9)
+- **E1-2 tiene evidencia en el código; falta la prueba con una venta en USD.** En una venta en dólares, los montos del comprobante salen de las líneas sin aplicar la tasa (`src/GPOS.Core/Servicios/Nucleo/VentasNg.cs:87-89`, `PosService.cs:265`), y `rpt.Formato607` no convierte (`Ola4Compras.sql:5345`).
+- **E1-3, E1-4 y E1-5 ya no hacen falta.**
+  - Los tipos 16 y 46 ya están en el catálogo.
+  - La merma y el autoconsumo van por la clase 5 con motivos.
+  - La línea de venta ya guarda el costo.
+- **Lo que queda para A en la entrega 1:** E1-1 (propina) y E1-2 (montos en pesos), unas 0,2 sp de código.
