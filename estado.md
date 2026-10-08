@@ -16,34 +16,29 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Recibido de B y atendido:** diseño de la ola 3b unido; ADR-100, 101 y 103 a 107 registrados; H-3b-01 (clase 8) y H-3b-02 (entrega 2) anotados.
 
 ## Equipo B (PC B)
-- **Actualizado:** 2026-10-07 (noche)
-- **Trabajando en:**
-  - **Conector IQ:** MSI **0.4.1** sin firma (`80b667d`, 533/533). Trae SF-01 a SF-14, ADR-74, 75 y 76 en el conector, K-16, K-18 y K-19, y la acción `ComprobarCarpetasPrevias` contra las uniones. La verificación del auditor de 0.3.1 y 0.3.2 está unida (`49f38b7`).
-  - **Diseño de la ola 5** (aprobado por el propietario), en `b/ola5-diseno`: API de reportes de solo lectura sobre vistas, requisitos contables y vistas (`edafb2f`). Las respuestas del propietario están en `07eb6e9`, y **el corte de la entrega 1 pasa a mediados de diciembre**. El arquitecto-maestro prepara la hoja de firma.
-  - **Diseño de las ventanas por vertical** (aprobado), en `b/verticales-diseno`: Estándar, Farmacia, Restaurante con mesas y comandas (se reabre MD-31) y Duty Free. Se mantiene el cronograma: se construyen en la entrega 3.
-- **Siguiente:** hojas de firma de la ola 5 y de las verticales; auditor de 0.4.0 y 0.4.1; prueba elevada del propietario (paso 0 y luego §10); entrega 4 del conector.
-- **Avisos de B pendientes de lectura por A** (todos del 2026-10-07):
-  - `sf02-identidad-servidor-tuberia`
-  - `conector-iq-032-manifiesto-y-servicio`
-  - `acuse-adr108-k16-k19-y-sf02`
-  - `conector-iq-040-para-el-nucleo`: P-04 y P-05
-  - `conector-iq-041-instalado-y-carpetas`
-  - `api-reportes-solo-lectura`: orientación del propietario
-  - `fallos-vistas-fiscales-607`: **Alta**, H-R01, H-R02 y HD-10 en código de A
-  - `ola5-corte-mediados-diciembre`: **Alta**, afecta el plan de A
+- **Actualizado:** 2026-10-08
+- **Trabajando en:** diseño detallado de **Duty Free**, segunda vertical (la primera es la Estándar), en `b/verticales-diseno`, con UX, software y datos. Incluye los requisitos del cliente: vendedor con dos parámetros, nombre libre, pasaporte, vuelo y nacionalidad.
+- **Hecho el 2026-10-08:**
+  - **Ola 5:** hoja firmada (B1 a B10, PF-01 y PF-04, `a040147`); construcción en `b/ola5` cuando A una la 3b.
+  - **Verticales:** hoja firmada completa; **ADR-112 a 115 en `master`** (`6077b0c`, `e4f5d21`, `c87c4cf`, `d769848`).
+  - **Conector IQ 0.4.2** (`95c4271`, 561/561).
+- **Espera del propietario:**
+  - **ola 5:** R-8, PD-07, PD-12, PD-03, E-10 y la precisión de DR-04 (tubería con ACL, S-15). Con eso B registra ADR-109 a 111;
+  - prueba elevada del conector 0.4.2;
+  - envío de los cuestionarios al CPA y a la aduana.
+- **Espera de A:**
+  - el commit de partida de `b/ola5`, cuando se una la 3b;
+  - el vector de ADR-77;
+  - las precisiones de ADR-108.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
-  | GPOS-NG | `b/ola5-diseno` | Diseño de la ola 5 (solo `docs/`), subida; hoja de firma en preparación |
-  | GPOS-NG | `b/verticales-diseno` | Diseño de las ventanas por vertical (solo `docs/`), en curso |
-  | GPOS-NG | `b/ola3b-diseno` | Cerrada; unida por A a `feature/modelo-ng` |
-  | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado (`ad76544`, 303/303). Contiene fp01; el propietario lo revisa antes de unir |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno` | ADR-108 Aceptado; fila F-6 marcada (`4a05291`) |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-mock` | Mock de IQ (`1293d0e`) |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-construccion` | Entregas 1 a 3 (`c3db950`); quedó atrás de la rama del instalador |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | **0.4.1** (`80b667d`): es la rama viva del conector |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-auditoria-032` | Unida al instalador (`49f38b7`) |
+  | GPOS-NG | `b/ola5-diseno` | Diseño de la ola 5 y hoja firmada (solo `docs/`) |
+  | GPOS-NG | `b/verticales-diseno` | Hoja de las verticales firmada; diseño detallado de Duty Free en curso |
+  | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | **0.4.2** (`95c4271`): rama viva del conector; falta la prueba elevada |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno`, `-mock`, `-construccion`, `-auditoria-032` | Históricas; ya unidas o superadas por la rama del instalador |
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
