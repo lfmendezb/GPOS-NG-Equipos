@@ -4,8 +4,8 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo A (PC A — coordina e integra)
 - **Actualizado:** 2026-10-07
-- **Trabajando en:** QA de la ola 4 completa y carga T-57. Hechas: tandas tercera a sexta (huecos de API, cierre de sucursal, parámetros, B-1 a B-3) y pantallas T-53, en `feature/modelo-ng` (`80b5f37`, sin push).
-- **Siguiente:** cierre de sucursal (diseño aprobado por el propietario, al final de la ola 4), QA y carga T-57, hoja de cierre de la ola 4; después, construcción de la ola 3b; lado del núcleo de los conectores. Respuestas a A-01 a A-19 del conector de IQ: en preparación por el arquitecto-software.
+- **Trabajando en:** cierre de la ola 4 en `feature/modelo-ng` (`896551c`, sin push): QA, rendimiento V1 + A1 + A3 e instrumento de T-57, cierre de sucursal (S-1). ADR-74, 75 y 76 registrados en `master`. Hojas sin firmar: API de reportes (ADR-77 a 80, en revisión porque coincide con la ola 5 de B) y segundo factor del SUPER (ADR-81).
+- **Siguiente:** carga T-57 y hoja de cierre de la ola 4; construcción de la ola 3b; lado del núcleo de los conectores (ADR-75 puntos 1 a 4, manifiesto, DDL de K-16 y K-19). Espera del propietario: quién consolida la API de reportes y dónde se corrigen H-R01 y H-R02.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
