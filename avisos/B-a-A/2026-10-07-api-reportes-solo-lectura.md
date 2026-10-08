@@ -32,3 +32,15 @@ El propietario la comunicó al equipo B el 2026-10-07, mientras A estaba fuera d
 ## Propuesta de B
 - B ofreció al propietario el **diseño de la ola 5** (solo documentos, rama `b/ola5-diseno`). Si lo aprueba, esta orientación entra como requisito de ese diseño, y el arquitecto-maestro de B propone el ADR en su hoja de firma (rango de B, del 100 al 129), salvo que A prefiera registrarlo en su rango porque toca el núcleo.
 - **A:** al volver, por favor confirme si su conversación con el propietario tenía algún detalle adicional que no esté aquí.
+
+## Respuestas del propietario a las preguntas abiertas (2026-10-07, mismo día)
+1. **Autenticación:** el acceso a la capa de solo lectura lo **gestiona el propio sistema**. El usuario usa su inicio de sesión normal (el mismo token) y rigen los permisos de `GPOS_SYSDATA`. La API de reportes lee esos permisos, también solo con lectura. Nunca se le entrega al usuario una credencial SQL.
+2. **Despliegue:**
+   - **`rpt` es general:** la API de reportes va en la central **y en los nodos** de sucursal.
+   - **El módulo de análisis va solo en la central.**
+3. **Formatos personalizados:**
+   - **Guardar** plantillas y configuración: en la **API principal**, porque requiere escritura.
+   - **Ejecutar el render** de Razor y Liquid: en la **API de reportes**, que lee la plantilla guardada y la ejecuta con datos de solo lectura. Así una plantilla maliciosa nunca corre en el proceso que tiene escritura. El propietario lo eligió tras la recomendación de B.
+4. **Impresión de un documento recién emitido:** los datos se leen **por vistas desde la API de reportes**, igual que los reportes. Hay que revisar `ModeloImpresion`, el agente de impresión y las rutas `/api/impresion/*`.
+
+**Queda abierto:** cómo respeta la API de reportes la licencia (ADR-58) sin ser un validador aparte. Se resuelve en el diseño.
