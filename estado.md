@@ -16,29 +16,31 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Recibido de B y atendido:** diseño de la ola 3b unido; ADR-100, 101 y 103 a 107 registrados; H-3b-01 (clase 8) y H-3b-02 (entrega 2) anotados.
 
 ## Equipo B (PC B)
-- **Actualizado:** 2026-10-08
-- **Trabajando en:** diseño detallado de **Duty Free**, segunda vertical (la primera es la Estándar), en `b/verticales-diseno`, con UX, software y datos. Incluye los requisitos del cliente: vendedor con dos parámetros, nombre libre, pasaporte, vuelo y nacionalidad.
+- **Actualizado:** 2026-10-08 (cambio de sesión; sin agentes activos)
 - **Hecho el 2026-10-08:**
-  - **Ola 5:** hoja firmada (B1 a B10, PF-01 y PF-04, `a040147`); construcción en `b/ola5` cuando A una la 3b.
-  - **Verticales:** hoja firmada completa; **ADR-112 a 115 en `master`** (`6077b0c`, `e4f5d21`, `c87c4cf`, `d769848`).
-  - **Conector IQ 0.4.2** (`95c4271`, 561/561).
-- **Espera del propietario:**
-  - **ola 5:** R-8, PD-07, PD-12, PD-03, E-10 y la precisión de DR-04 (tubería con ACL, S-15). Con eso B registra ADR-109 a 111;
-  - prueba elevada del conector 0.4.2;
-  - envío de los cuestionarios al CPA y a la aduana.
+  - hojas firmadas de la **ola 5**, las **verticales**, **Duty Free** y el **conector AdmCloud**;
+  - en `master`: ADR-112 a 117 y precisiones (73.8, 04, 44, 51, 53, 54, 58, MD-31);
+  - **conector IQ 0.4.2**, que ya cumple el vector de ADR-77.
+- **Siguiente:**
+  - registrar ADR-109 a 111 cuando el propietario confirme lo pendiente de la ola 5;
+  - construir la ola 5 en `b/ola5` cuando A avise el commit de la 3b;
+  - la prueba elevada del conector IQ, a cargo del propietario;
+  - el conector AdmCloud, después del corte y de T-29.
 - **Espera de A:**
-  - el commit de partida de `b/ola5`, cuando se una la 3b;
-  - el vector de ADR-77;
-  - las precisiones de ADR-108.
+  - el commit de partida de `b/ola5`;
+  - el vector de ADR-77 v2;
+  - el diseño de A-11 (sin costos) y de los negativos en tres niveles;
+  - la contingencia habilitada desde la central;
+  - la corrección del lote negativo.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
-  | GPOS-NG | `b/ola5-diseno` | Diseño de la ola 5 y hoja firmada (solo `docs/`) |
-  | GPOS-NG | `b/verticales-diseno` | Hoja de las verticales firmada; diseño detallado de Duty Free en curso |
+  | GPOS-NG | `b/ola5-diseno` | Hoja firmada; faltan las confirmaciones del propietario para ADR-109 a 111 |
+  | GPOS-NG | `b/verticales-diseno` | Hojas firmadas de las verticales y de Duty Free; ya registradas en `master` |
+  | GPOS-NG | `b/conector-admcloud-diseno` | Hoja firmada; ADR-116 y 117 en `master`; respuestas del propietario y opinión contable |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | 0.4.2 con el vector de ADR-77; falta la prueba elevada |
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | **0.4.2** (`95c4271`): rama viva del conector; falta la prueba elevada |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-diseno`, `-mock`, `-construccion`, `-auditoria-032` | Históricas; ya unidas o superadas por la rama del instalador |
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
