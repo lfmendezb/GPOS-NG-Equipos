@@ -18,3 +18,9 @@ El 2026-10-08 el propietario precisó la opción sin costos:
 **Otras respuestas del mismo día, para el plan de A:**
 - **Compras:** quedan fuera del conector de AdmCloud en la primera entrega (segunda o tercera).
 - **Anulación:** AdmCloud solo anula documentos rechazados por la DGII. Si un documento se anula en AdmCloud, **se anula también en GPOS NG** y se emite uno nuevo con un e-NCF distinto. Es coherente con la regla e-NCF y con P-04-a.
+
+## Corrección del propietario (2026-10-08, mismo día)
+- **«Inventario en cero» significa que no haya cantidades negativas**, es decir, ningún artículo con existencia negativa. **No** significa existencias en cero.
+- **La fecha de corte** garantiza que el **recálculo de costos** sea efectivo: el costo se recalcula desde esa fecha.
+
+Lectura de B: estas condiciones se exigen al **encender o reencender** el cálculo. Al apagarlo no hace falta recalcular.
