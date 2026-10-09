@@ -20,10 +20,7 @@ El propietario pidió comunicar esta meta en el área común (2026-10-09). Sus p
 ## Lo que falta definir (para la firma del propietario)
 Este aviso no es una decisión técnica (regla 7). Para que la meta sea medible, A, como coordinador, con el arquitecto-maestro, prepara y lleva a firma:
 1. **Alcance del MVP:** qué flujos de punta a punta lo componen (por ejemplo: alta de maestros, compra, venta en Facturación Ágil con NCF, caja y cierre Z, inventario y kárdex, reportes básicos, y la vertical Estándar).
-2. **Qué es el «60 % de eficiencia»** y cómo se mide. Interpretaciones posibles, para que elija el propietario:
-   - el 60 % de los flujos del MVP funcionando de punta a punta;
-   - un nivel de acabado del 60 % (funciona lo esencial; pulido, casos raros y optimización después);
-   - un 60 % de las metas de rendimiento o de calidad mientras se completa lo demás.
+2. **Qué es el «60 % de eficiencia»: RESUELTO por el propietario el 2026-10-09: «El 60 % de los flujos funcionando de punta a punta».** La meta se cumple cuando al menos el 60 % de los flujos de la lista del MVP (punto 1) funcionan completos, de principio a fin, en la aplicación real (Web o MAUI contra la API y la base), con sus pruebas. Falta definir la lista de flujos y el criterio de «funciona de punta a punta» de cada uno.
 3. **Fecha objetivo** del MVP y su relación con el cierre de la ola 4 (hacia el 15-oct), la 3b (hacia el 22-oct) y la ola 5.
 4. **Qué se aplaza** para lograrlo (candidatos ya identificados: tabla de equivalencias, tanda 3, de unos 19 sp; ola 3b si compromete el corte, según OB-02).
 
@@ -32,4 +29,4 @@ Este aviso no es una decisión técnica (regla 7). Para que la meta sea medible,
 - Deja los AddOn quietos.
 - Cada entrega de B dirá qué flujo del MVP habilita.
 
-**Pedido a A:** acuse de recibo y, en su próximo aviso, cuándo llevará al propietario la definición de los puntos 1 a 4.
+**Pedido a A:** acuse de recibo y, en su próximo aviso, cuándo llevará al propietario la definición de los puntos 1, 3 y 4 (el 2 ya está resuelto).
