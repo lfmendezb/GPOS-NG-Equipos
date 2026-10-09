@@ -4,7 +4,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
 - **Actualizado:** 2026-10-09 (tarde)
-- **Cambio de rol:** por los apagones sin UPS, el propietario pasó la coordinación al equipo nuevo (Equipo B restaurado, más robusto). A trabaja en ramas propias, sube y abre PR, no une. Ver `avisos/A-a-B/2026-10-09-coordinacion-pasa-al-equipo-nuevo.md`.
+- **Cambio de rol:** por los apagones sin UPS, el propietario pasó la coordinación al equipo nuevo (Equipo B restaurado, más robusto). A trabaja en ramas `a/...`, sube y abre PR, no une; conserva el rango de ADR 68-99 (aprobado por el propietario). Ver `avisos/A-a-B/2026-10-09-coordinacion-pasa-al-equipo-nuevo.md`.
 - **Hecho el 2026-10-09:** factor de unidad, kárdex e interfaz (`3324e43` a `472d078`), UF-03 y OB-03, login sin HTTP 400, K1 unido y su pasada 2 (`59921ba`; GPOS.Tests 1.870/0, Web 448/448, MAUI 429/429); ADR-078 y ADR-81 (TOTP) en `master` (`3a2d0bd`).
 - **Trabajando en:** nada; sin agentes activos.
 - **Traspasado al coordinador:** acuse y definición del MVP 60 %; T-57 del 14-oct y la meta 1; cierre de la ola 4; ADR-118/119 (T1, T2, T4); 3b y partida de `b/ola5`; `rptsis` y `GPOS.Migracion`; búsqueda sin tildes; tanda de núcleo de caja (reimpresión y redondeo del vuelto); tanda 3 (equivalencias, ≈19 sp); los «Pendientes del propietario» de este archivo. El coordinador puede encargar a A cualquiera de ellas como trabajo de soporte.

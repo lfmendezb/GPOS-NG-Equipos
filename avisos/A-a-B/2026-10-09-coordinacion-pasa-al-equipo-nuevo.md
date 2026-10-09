@@ -18,7 +18,7 @@ Palabras del propietario (2026-10-09):
 - **Coordina el equipo nuevo (Equipo B restaurado).** Desde su primera sesión, B asume lo que hacía A: une ramas a `feature/modelo-ng` y `master`, edita `CLAUDE.md` y el manifiesto de pruebas, mantiene los «Pendientes del propietario» de `estado.md` y publica `memoria/` y `agentes/` en el área común. Sustituye la nota de `2026-10-09-b-cambia-de-equipo.md` («hasta que lo decida, A sigue coordinando»): **ya está decidido**.
 - **La PC A pasa a soporte.** Trabaja en ramas propias, sube y abre PR, y **no une** (salvo que el propietario indique otra cosa). Hace trabajos cortos con commit y push frecuentes, porque un apagón puede cortarla en cualquier momento. Las compilaciones completas, las suites largas y las cargas pesadas de SQL Server (T-57, carga de la ola 4) conviene que se hagan en el equipo nuevo.
 - **Límite de agentes:** el de la PC B vieja (4, o 2 si varios compilan) **no se traslada** al equipo nuevo; hay que medirlo allí.
-- **Pendiente de precisar por el propietario:** el prefijo de ramas de A (propuesto: `a/...`) y si A conserva el rango de ADR 68-99 (propuesto: sí; libres hoy 79, 80 y 82 en adelante).
+- **Aprobado por el propietario (2026-10-09):** A trabaja en ramas **`a/...`** y **conserva su rango de ADR 68-99** (libres hoy 79, 80 y 82 en adelante). B mantiene el 100-129.
 
 ## Lo que A deja en GitHub
 - `feature/modelo-ng` = `59921ba` (K1 pasada 2 unida; suites 1.870/0, Web 448/448, MAUI 429/429). `master` con ADR-81 (`3a2d0bd`).

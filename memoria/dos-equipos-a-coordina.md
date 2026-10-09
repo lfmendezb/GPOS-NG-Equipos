@@ -5,14 +5,14 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f2c0a692-b405-4953-8a6f-70fec2b01360
-  modified: 2026-10-09T22:27:06.448Z
+  modified: 2026-10-09T22:32:46.844Z
 ---
 
-**Cambio del 2026-10-09:** como la luz se va de repente y la PC A no tiene UPS, el propietario decidió que **la actividad principal y la coordinación pasan al equipo nuevo, donde restaura al Equipo B**. **La PC A pasa a ser el equipo de soporte.** Desde entonces, el coordinador (B en el equipo nuevo) es quien une ramas a `feature/modelo-ng` y `master`, edita `CLAUDE.md` y el manifiesto de pruebas y publica `memoria/` y `agentes/` en el área común. A, como soporte, trabaja en ramas propias, sube y abre PR, nunca une (salvo que el propietario indique otra cosa). Los detalles finos del rol de soporte (prefijo de ramas, si conserva el rango de ADR 68-99) quedaron sin precisar: preguntar al propietario o seguir el `estado.md` del área común.
+**Cambio del 2026-10-09:** como la luz se va de repente y la PC A no tiene UPS, el propietario decidió que **la actividad principal y la coordinación pasan al equipo nuevo, donde restaura al Equipo B**. **La PC A pasa a ser el equipo de soporte.** Desde entonces, el coordinador (B en el equipo nuevo) es quien une ramas a `feature/modelo-ng` y `master`, edita `CLAUDE.md` y el manifiesto de pruebas y publica `memoria/` y `agentes/` en el área común. A, como soporte, trabaja en ramas propias, sube y abre PR, nunca une (salvo que el propietario indique otra cosa). **Aprobado por el propietario el 2026-10-09:** A trabaja en ramas `a/...` y conserva su rango de ADR 68-99 (libres entonces 79, 80 y 82 en adelante).
 
 **Why:** un apagón en la PC A a mitad de una unión o de un trabajo de agentes puede dejar el repositorio o las bases a medias; el coordinador debe estar en el equipo protegido.
 
-**How to apply:** antes de que A deje de coordinar, todo lo que solo exista en A se sube a GitHub (el 2026-10-09 había 3 commits de «mejoras del demo, ronda 2» solo en local: ramas `feature/mejoras-demo-ronda2`, `demo/2026-10-07`, `demo/2026-10-08`). En A, no empezar trabajos largos sin commit y push frecuentes.
+**How to apply:** antes de que A deje de coordinar, todo lo que solo exista en A se sube a GitHub (el 2026-10-09 había 3 commits de «mejoras del demo, ronda 2» solo en local: ramas `feature/mejoras-demo-ronda2`, `demo/2026-10-07`, `demo/2026-10-08`; subidas a origin ese día). Aviso del traspaso en el área común: `avisos/A-a-B/2026-10-09-coordinacion-pasa-al-equipo-nuevo.md` (`b6ae08c`). En A, no empezar trabajos largos sin commit y push frecuentes.
 
 **Historia (2026-10-06):** la PC A coordinaba; la PC B (equipo anterior al 2026-10-02) trabajaba en ramas `b/...`. **ADR:** se registran solo en `master`, un archivo por ADR (`docs/adr/ADR-NNN.md`) más índice; rangos A 68-99 y B 100-129. Plan en `C:\Users\lfmen\source\repos\Solucion GPOS NG\plan-dos-equipos.md`; paquete para B en `paquete-pc-b\`. Relacionado: [[un-solo-editor-por-repositorio]], [[agentes-con-opus]], [[cierre-numeracion-nuevo-equipo]], [[estado-equipo-b]].
 
