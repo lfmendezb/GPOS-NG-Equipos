@@ -26,3 +26,11 @@ Estado: Abierto
   - si el login debería tolerar ese caso. Por ejemplo, con `[RequireAntiforgeryToken(required: false)]` solo en el login, si su análisis de seguridad lo permite, o volviendo a dibujar el formulario con un token nuevo y un mensaje («La página caducó; vuelva a intentarlo») en lugar del 400 crudo.
 
 B no tocó `GPOS.Web` del núcleo. Lo atiende A.
+
+## Registros del DEMO (agregados el 2026-10-09 a pedido del propietario)
+
+Copias de `C:\GSF\PROYECTO ARGON\GPOS-Demo-Socio-2026-10-07\registros\`: `adjuntos/2026-10-09-login-http400-web.log` y `adjuntos/2026-10-09-login-http400-api.log`. Lectura de B:
+- **No hay ninguna línea de antifalsificación ni del 400.** El fallo de validación del formulario se registra por debajo del nivel que escribe el DEMO (Production). Para confirmar la causa, suban `Microsoft.AspNetCore.Antiforgery` y `Microsoft.AspNetCore.Components.Endpoints` a `Debug` en el DEMO y repitan.
+- **`web.log`, líneas 11 a 22:** `RemoteNavigationManager` falla al navegar a `cuenta/login?expirada=true` con `TaskCanceledException`, y deja un «Unhandled exception in circuit». Es la redirección por **sesión expirada** (`Program.cs:158`). El circuito se cortó durante la navegación. Encaja con la causa 1: la página de login se dibujó en el contexto de una sesión que ya no vale. Además, la excepción sin manejar en el circuito es un defecto aparte.
+- **`api.log`, línea 4:** `RelojInconsistente` («el reloj del sistema salt… más de 2 días hacia adelante sin una hora confiable… la hora más alta del sitio sigue en 2026-10-06»). El reloj protegido (H-16 v2.1) no se fía de la hora del equipo del DEMO. Revisen si eso afecta la vigencia de la sesión o del token, por ejemplo con expiraciones calculadas con horas distintas en la Web y en la API, y si contribuye a la expiración que termina en `expirada=true`.
+- `web.log`, línea 9: «Failed to determine the https port» (el DEMO corre por http). Probablemente no tiene relación.
