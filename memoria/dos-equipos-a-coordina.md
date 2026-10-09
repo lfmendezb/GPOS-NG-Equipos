@@ -1,19 +1,19 @@
 ---
 name: dos-equipos-a-coordina
-description: "2026-10-06: trabajo en dos PC; la PC A (equipo actual) coordina todo e integra; la PC B es el equipo anterior al 2026-10-02; la PC B toma ola 3b/ola 4 en diseño, Backup Tool y Fable; ADR en master, un archivo por ADR, rangos A 68-99 y B 100-129"
+description: "2026-10-09: la coordinación pasa al equipo nuevo (con el Equipo B restaurado); la PC A pasa a ser el equipo de soporte por los apagones sin UPS. Antes (2026-10-06) A coordinaba. ADR en master, un archivo por ADR, rangos A 68-99 y B 100-129"
 metadata:
   node_type: memory
   type: project
   originSessionId: f2c0a692-b405-4953-8a6f-70fec2b01360
-  modified: 2026-10-06T06:54:35.876Z
+  modified: 2026-10-09T22:27:06.448Z
 ---
 
-El 2026-10-06 el propietario aprobó trabajar con dos equipos. **La PC A (este equipo) es la que coordina todo**: cierra la ola 3, une ramas a `feature/modelo-ng` y `master`, edita `CLAUDE.md` y el manifiesto de pruebas. La PC B es el equipo anterior al cambio del 2026-10-02 (ya tiene SQL Server, Visual Studio, agentes y una copia vieja que no se usa); trabaja en ramas `b/...`, sube y abre PR, nunca une.
+**Cambio del 2026-10-09:** como la luz se va de repente y la PC A no tiene UPS, el propietario decidió que **la actividad principal y la coordinación pasan al equipo nuevo, donde restaura al Equipo B**. **La PC A pasa a ser el equipo de soporte.** Desde entonces, el coordinador (B en el equipo nuevo) es quien une ramas a `feature/modelo-ng` y `master`, edita `CLAUDE.md` y el manifiesto de pruebas y publica `memoria/` y `agentes/` en el área común. A, como soporte, trabaja en ramas propias, sube y abre PR, nunca une (salvo que el propietario indique otra cosa). Los detalles finos del rol de soporte (prefijo de ramas, si conserva el rango de ADR 68-99) quedaron sin precisar: preguntar al propietario o seguir el `estado.md` del área común.
 
-**ADR (aprobado 2026-10-06):** se registran solo en `master`, un archivo por ADR (`docs/adr/ADR-NNN.md`) más índice; cada PC trae `master` a su rama. Rangos: A del 68 al 99, B del 100 al 129. Partir `docs/ADR-GPOS.md` lo hace el documentador en A cuando no haya agentes editando.
+**Why:** un apagón en la PC A a mitad de una unión o de un trabajo de agentes puede dejar el repositorio o las bases a medias; el coordinador debe estar en el equipo protegido.
 
-**Why:** avanzar más rápido sin que dos editores pisen los mismos archivos ni repitan números de ADR; `feature/modelo-ng` ya se había desfasado de `master` (ADR-54 frente a ADR-67).
+**How to apply:** antes de que A deje de coordinar, todo lo que solo exista en A se sube a GitHub (el 2026-10-09 había 3 commits de «mejoras del demo, ronda 2» solo en local: ramas `feature/mejoras-demo-ronda2`, `demo/2026-10-07`, `demo/2026-10-08`). En A, no empezar trabajos largos sin commit y push frecuentes.
 
-**How to apply:** plan en `C:\Users\lfmen\source\repos\Solucion GPOS NG\plan-dos-equipos.md`; paquete y nota para B en `paquete-pc-b\`. Lo que B aprenda llega por `traspaso-B-*.md` y A lo pasa a la memoria. Relacionado: [[un-solo-editor-por-repositorio]], [[agentes-con-opus]], [[cierre-numeracion-nuevo-equipo]].
+**Historia (2026-10-06):** la PC A coordinaba; la PC B (equipo anterior al 2026-10-02) trabajaba en ramas `b/...`. **ADR:** se registran solo en `master`, un archivo por ADR (`docs/adr/ADR-NNN.md`) más índice; rangos A 68-99 y B 100-129. Plan en `C:\Users\lfmen\source\repos\Solucion GPOS NG\plan-dos-equipos.md`; paquete para B en `paquete-pc-b\`. Relacionado: [[un-solo-editor-por-repositorio]], [[agentes-con-opus]], [[cierre-numeracion-nuevo-equipo]], [[estado-equipo-b]].
 
-**Área común (2026-10-07):** la coordinación entre equipos va por el repositorio privado **`lfmendezb/GPOS-NG-Equipos`** (clon local `C:\Users\lfmen\source\repos\GPOS-NG-Equipos`): `estado.md` (cada equipo su sección), `avisos/A-a-B` y `avisos/B-a-A` (cada equipo solo la suya), `traspasos/A|B`, `memoria/` y `agentes/` (solo A publica), scripts `herramientas\Actualizar-Desde-AreaComun.ps1` y `Publicar-En-AreaComun.ps1`. **El propietario decide cuándo** cada equipo actualiza o publica, salvo la revisión obligatoria cada 30 minutos y lo rutinario ([[revision-area-comun-30-min]]). Commits con prefijo `[A]`/`[B]`; nunca secretos; un aviso no es una decisión. Al publicar como A, actualizar antes la sección de A en `estado.md`.
+**Área común (2026-10-07):** repositorio privado **`lfmendezb/GPOS-NG-Equipos`** (clon local `C:\Users\lfmen\source\repos\GPOS-NG-Equipos`): `estado.md` (cada equipo su sección), `avisos/A-a-B` y `avisos/B-a-A`, `traspasos/A|B`, `memoria/` y `agentes/` (los publica el coordinador), scripts `herramientas\Actualizar-Desde-AreaComun.ps1` y `Publicar-En-AreaComun.ps1`. **El propietario decide cuándo** cada equipo actualiza o publica, salvo la revisión cada 30 minutos y lo rutinario ([[revision-area-comun-30-min]]). Commits con prefijo `[A]`/`[B]`; nunca secretos; un aviso no es una decisión.

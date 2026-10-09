@@ -1,23 +1,21 @@
 # Estado de los equipos
 
-Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene A.
+Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
-## Equipo A (PC A — coordina e integra)
-- **Actualizado:** 2026-10-09 (madrugada)
-- **Hecho el 2026-10-08:** tanda del cierre de la ola 4 (607/608 sin e-NCF, moneda base, propina, Z, vendedor); rendimiento I-2 (`c92d858`; T-28 cumple, meta 1 de T-57 pendiente del 14-oct); vendedor obligatorio solo por la Política de campos (`c19f7ed`, `2078a08`); `FactorUnidad` en la venta (`d431973`). `feature/modelo-ng` en `origin` = `2078a08` (suite 1.662/0). En `master`: precisiones de ADR-51 (contingencia), 68 (reimpresión), 11, 04, 77 (P-77-2, P-77-4, vector v2) y `CLAUDE.md` al día.
-- **Trabajando en:**
-  - backend: corrección completa de `FactorUnidad` y del kárdex (migración `Ola4FactorUnidad`, reglas 51380-51386 y 51394, D-K1), antes del 14-oct;
-  - documentador: ADR-078 (factor de unidad y auditoría del kárdex), F-3 de ADR-68, redondeo del vuelto (VF-06/VF-19), nota de la búsqueda sin tildes;
-  - diseño: búsqueda sin tildes (arquitecto-datos), UX de equivalencias, reimpresión, kárdex en unidad base y conteo con unidad; auditor: `rpt` o `rptc` para identificaciones y diferencias de caja.
-- **Siguiente:** 14-oct corridas oficiales de QA y decisión de la meta 1; commit de partida definitivo de `b/ola5`; 15-oct ADR-118/119 (T1, T2, T4); búsqueda sin tildes; tanda de núcleo de caja (reimpresión y redondeo); tanda 3: tabla de equivalencias (≈19 sp; sale de la entrega 1 si no cabe); ~22-23 oct integrar `rptsis`.
+## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **Actualizado:** 2026-10-09 (tarde)
+- **Cambio de rol:** por los apagones sin UPS, el propietario pasó la coordinación al equipo nuevo (Equipo B restaurado, más robusto). A trabaja en ramas propias, sube y abre PR, no une. Ver `avisos/A-a-B/2026-10-09-coordinacion-pasa-al-equipo-nuevo.md`.
+- **Hecho el 2026-10-09:** factor de unidad, kárdex e interfaz (`3324e43` a `472d078`), UF-03 y OB-03, login sin HTTP 400, K1 unido y su pasada 2 (`59921ba`; GPOS.Tests 1.870/0, Web 448/448, MAUI 429/429); ADR-078 y ADR-81 (TOTP) en `master` (`3a2d0bd`).
+- **Trabajando en:** nada; sin agentes activos.
+- **Traspasado al coordinador:** acuse y definición del MVP 60 %; T-57 del 14-oct y la meta 1; cierre de la ola 4; ADR-118/119 (T1, T2, T4); 3b y partida de `b/ola5`; `rptsis` y `GPOS.Migracion`; búsqueda sin tildes; tanda de núcleo de caja (reimpresión y redondeo del vuelto); tanda 3 (equivalencias, ≈19 sp); los «Pendientes del propietario» de este archivo. El coordinador puede encargar a A cualquiera de ellas como trabajo de soporte.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
-  | GPOS-NG | `feature/modelo-ng` | `2078a08` en origin; `Ola4FactorUnidad` en construcción (único editor: A) |
-  | GPOS-NG | `master` | ADR al día; un archivo por ADR en `docs/adr/` |
-  | GPOS-NG | `demo/2026-10-08` | Base de la actualización del DEMO |
-- **Espera de B:** SD-01 y `Propiedad` en `b/kds-k1` (revisa el auditor de A antes de unir); correcciones de las vistas de la ola 5 y `rptsis`; conector IQ (R-5 y modo de pruebas solo en Debug) antes de la primera instalación fuera de desarrollo.
+  | GPOS-NG | `feature/modelo-ng` | `59921ba` en origin; desde ahora la une el coordinador |
+  | GPOS-NG | `master` | ADR al día hasta ADR-81; libres en el rango de A: 79, 80 y 82 en adelante |
+  | GPOS-NG | `feature/mejoras-demo-ronda2` | `87b90f8`, subida hoy; mejoras del demo, ronda 2, sin unir |
+  | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (PC B)
 - **Actualizado:** 2026-10-09 (madrugada; con agentes activos)

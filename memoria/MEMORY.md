@@ -26,7 +26,7 @@
 - [avisar-cambio-de-sesion](avisar-cambio-de-sesion.md) — Avisar al propietario cuándo abrir sesión nueva, en un punto sin agentes activos y con nota de traspaso
 - [adjuntos-en-documentos](adjuntos-en-documentos.md) — Adjuntar archivos en mermas y en todos los documentos (salvo POS); nube del cliente en fase tardía
 - [responder-en-espanol](responder-en-espanol.md) — Responder siempre en español, también los avisos de avance
-- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — PC A coordina; B en ramas b/; ADR en master (A 68-99, B 100-129); área común en el repo GPOS-NG-Equipos
+- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — 2026-10-09: coordina el equipo nuevo (B restaurado); la PC A es soporte (apagones sin UPS); ADR en master; área común GPOS-NG-Equipos
 - [sucursal-en-linea-sqlite-y-licencia](sucursal-en-linea-sqlite-y-licencia.md) — ADR-53: nodo elegible; SQLite local en sucursal en línea tras las olas; licencia por empresa por usuarios; SUPER siempre de la plataforma
 - [fable-revision-general-tras-olas](fable-revision-general-tras-olas.md) — Fable 5.1 solo para la revisión general al completar las olas; agentes con Opus
 - [ecf-conectores-enchufables](ecf-conectores-enchufables.md) — e-CF y ERP (AdmCloud, Alegra, IQ) como complementos que NUNCA tocan el núcleo de GPOS NG
@@ -37,7 +37,7 @@
 - [revisar-procesos-huerfanos](revisar-procesos-huerfanos.md) — Al revisar procesos, incluir bash/pwsh (bucles huérfanos de agentes), no solo dotnet
 - [estado-equipo-b](estado-equipo-b.md) — Cierre del equipo B 2026-10-07: ola 3b firmada y unida; Backup Tool N-01 construido; pendientes del propietario
 - [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; cada hito, un elemento de la tabla periódica; base de Horizon
-- [limite-agentes-pc-b](limite-agentes-pc-b.md) — PC B: hasta 4 agentes si solo uno compila o prueba; si no, 2; lo pesado de SQL Server o memoria corre solo
+- [limite-agentes-pc-b](limite-agentes-pc-b.md) — PC B vieja: hasta 4 agentes (2 si varios compilan); no aplica al equipo nuevo, más robusto: medir allí
 - [revision-area-comun-30-min](revision-area-comun-30-min.md) — Cada sesión de equipo revisa el área común cada 30 min (CronCreate + Revisar-AreaComun.ps1); atiende lo rutinario
 - [xml-firmado-responsabilidad-proveedor](xml-firmado-responsabilidad-proveedor.md) — El XML firmado del e-CF lo custodia IQ (DF-06 v4); GPOS guarda el JSON enviado con huella y sello
 - [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
