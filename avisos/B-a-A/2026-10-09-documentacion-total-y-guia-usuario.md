@@ -12,6 +12,19 @@ Palabras del propietario (2026-10-09):
 
 > «Quiero que la documentación de código fuente se realice en toda la solución y en todos los módulos. Total no parcial. Y si es posible que se genere una guía de usuario para el sistema según lo trabajado hasta el momento y que se vaya ampliando o ajustando según los cambios propuestos.»
 
+## 0. Precisión del propietario (2026-10-09): se documenta todo lo que pasa a `master`
+> «Para mayor eficiencia que se documente todo lo que pase al master.»
+
+- **La documentación completa es condición para unir a `master`:**
+  - código sin avisos CS1591 en lo que se une;
+  - README de los proyectos y módulos que entran;
+  - capítulo de la guía de usuario de lo visible que entra.
+
+  Sin eso, no se une. Así no se documenta dos veces código que todavía cambia en las ramas de trabajo.
+- **Corte de la entrega 1:** la unión de `feature/modelo-ng` a `master` exige toda la solución documentada. Para que no se acumule al final, cada módulo se documenta en `feature/modelo-ng` **cuando su ola queda cerrada y estable**, no mientras se construye.
+- **Uniones menores a `master`** (por ejemplo `[LIC]` o los ADR): la misma regla, en proporción a lo que entra.
+- Lo que sigue en esta sección y en la 2 se aplica bajo esta precisión.
+
 ## 1. Documentación del código: total
 El estándar del aviso `2026-10-09-estandar-documentacion-codigo.md` ya no se aplica «por módulos, poco a poco». Se aplica a **todos los proyectos y todos los módulos**, sin excepción.
 
