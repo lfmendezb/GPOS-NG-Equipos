@@ -10,3 +10,5 @@ El propietario (2026-10-07): **«Argón»** (logo «GPOS Argón», carpeta `C:\G
 **Why:** marcar los hitos con una identidad reconocible y coherente.
 
 **How to apply:** en pantallas y materiales visibles, el logo de la etapa es «GPOS Argón»; no inventar el próximo nombre ni cambiarlo sin que el propietario lo elija. Tenerlo en cuenta para la actualización automática sin versiones visibles ([[actualizacion-automatica]]): el nombre del hito es marca, no número de versión. Relacionado: [[ecf-conectores-enchufables]].
+
+**Precisión (propietario, 2026-10-09):** «del lado de GPOS NG, en lo adelante **GPOS Argón**». Usar «GPOS Argón» al hablar con el propietario y en documentos nuevos dirigidos a personas; el código, los proyectos (`GPOS.*`), la solución, los ADR existentes y CLAUDE.md no se renombran sin orden expresa.

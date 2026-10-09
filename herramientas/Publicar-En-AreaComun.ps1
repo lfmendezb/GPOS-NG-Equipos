@@ -1,13 +1,13 @@
 ﻿<#
 .SYNOPSIS
-  Publica en el área común lo que corresponde al equipo. Con -Equipo A copia además la memoria y los agentes locales.
+  Publica en el área común lo que corresponde al equipo. Con -Equipo B (coordinador) copia además la memoria y los agentes locales.
 .EXAMPLE
   .\Publicar-En-AreaComun.ps1 -Equipo B -Mensaje "Aviso sobre la ola 3b"
 #>
 param(
     [Parameter(Mandatory)][ValidateSet('A', 'B')][string]$Equipo,
     [Parameter(Mandatory)][string]$Mensaje,
-    [string]$ClaveMemoria = 'C--Users-lfmen-source-repos-Solucion-GPOS-NG'
+    [string]$ClaveMemoria = 'C--Users-lfmen-source-repos-Solucion-GPOS-NG-GPOS-NG'
 )
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot
@@ -17,7 +17,7 @@ git pull --rebase --autostash
 if ($LASTEXITCODE -ne 0) { throw 'No se pudo traer el área común antes de publicar (git pull).' }
 
 $rutas = @("avisos/$Equipo-a-*", "traspasos/$Equipo", 'estado.md')
-if ($Equipo -eq 'A') {
+if ($Equipo -eq 'B') {  # B coordina desde el 2026-10-09: solo el coordinador publica memoria y agentes
     $claude = Join-Path $env:USERPROFILE '.claude'
     Copy-Item (Join-Path $claude 'agents\*.md') (Join-Path $raiz 'agentes') -Force
     Copy-Item (Join-Path $claude "projects\$ClaveMemoria\memory\*.md") (Join-Path $raiz 'memoria') -Force

@@ -1,17 +1,17 @@
 ---
 name: limite-agentes-pc-b
-description: "PC B: hasta 4 agentes si solo uno compila o corre pruebas a la vez; si no, 2. Tareas pesadas de SQL o memoria, solas"
+description: "Equipo nuevo de B (coordinador): hasta 6 agentes, máximo 2 compilando o probando a la vez (propietario, 2026-10-09)"
 metadata:
   node_type: memory
   type: feedback
-  originSessionId: 6bc31041-05a1-4f8b-aeb1-1d4a864e8888
-  modified: 2026-10-09T22:27:40.187Z
+  originSessionId: 686e2e7b-d221-4745-a8a5-eeb40a6cf428
+  modified: 2026-10-09T23:11:17.610Z
 ---
 
-En la PC B se pueden tener hasta **4 agentes a la vez**, siempre que **solo uno compile o corra pruebas**; si hay más de uno compilando o probando, el límite es **2**. Una tarea que exige mucho de SQL Server o de memoria se ejecuta **sola**: sin otros agentes, sin scripts de Bash en segundo plano y sin aplicaciones .NET abiertas. (Regla del propietario del 2026-10-07; sustituye la anterior de «máximo dos».)
+En el **equipo nuevo de B** (OSHIN-LEGION, 16 núcleos, 31 GB), el propietario aprobó el 2026-10-09 hasta **6 agentes a la vez**, con un **máximo de 2 compilando o corriendo pruebas** al mismo tiempo. Una tarea que exige mucho de SQL Server o de memoria (cargas, T-57, suite completa de GPOS.Tests) se ejecuta **sola**.
 
-**Why:** el 2026-10-07 el propietario midió una prueba con 4 agentes en la PC B: el cuello de botella fue la memoria solo al compilar (CPU 100 %, 0,3 GB libres de 7,8 GB); los agentes de documentación casi no consumen.
+Sustituye la regla de la PC B vieja (7,8 GB): 4 agentes si solo uno compilaba, si no 2.
 
-**Vigencia (2026-10-09):** el Equipo B se restaura en un equipo nuevo **mucho más robusto**, que además pasa a coordinar ([[dos-equipos-a-coordina]]). Este límite se midió en la PC B vieja (7,8 GB) y **no se traslada al equipo nuevo**; allí hay que medir de nuevo o preguntar al propietario el límite. Sigue valiendo que lo pesado de SQL Server corra solo hasta medirlo.
+**Why:** la PC B vieja se quedaba sin memoria al compilar; el equipo nuevo tiene cuatro veces más RAM y pasó a ser el coordinador ([[siguiente-paso-pc-b]], [[dos-equipos-a-coordina]]).
 
-**How to apply:** en la PC B vieja, antes de lanzar un agente, contar los que están en curso y cuántos compilan o prueban; si la RAM libre baja de 0,2 GB de forma sostenida, volver a 2. No aplica a la PC A. Relacionado: [[dos-equipos-a-coordina]], [[revisar-procesos-huerfanos]].
+**How to apply:** antes de lanzar un agente, contar los que están en curso y cuántos compilan o prueban; no pasar de 6 ni de 2 compilando. Tampoco correr dos suites completas a la vez (CLAUDE.md). Relacionado: [[revisar-procesos-huerfanos]].

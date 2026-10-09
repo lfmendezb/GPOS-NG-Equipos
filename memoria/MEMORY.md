@@ -2,7 +2,7 @@
 - [sin-access-ni-texto-plano](sin-access-ni-texto-plano.md) — El usuario prohíbe usar MS Access y guardar contraseñas o datos sensibles en texto…
 - [firma-humana-arquitecto-maestro](firma-humana-arquitecto-maestro.md) — El agente Arquitecto Maestro solo prepara decisiones; el usuario es quien…
 - [devoluciones-son-notas-de-credito](devoluciones-son-notas-de-credito.md) — Devolución = nota de crédito; GPOS NG actúa como auxiliar contable
-- [clasificacion-empresas-pendiente](clasificacion-empresas-pendiente.md) — Después de master: empresas Desarrollo/Beta/Producción/Demostración y N-1 a N-4
+- [clasificacion-empresas-pendiente](clasificacion-empresas-pendiente.md) — Empresas Desarrollo/Beta/Producción/Demostración; en Desarrollo, apartado del SUPER para pruebas (conector contra el mock); N-1 a N-4
 - [cierre-numeracion-nuevo-equipo](cierre-numeracion-nuevo-equipo.md) — Revisión con Fable 5.1 se hace en el nuevo equipo; aquí solo correcciones PC-4
 - [politica-actualizacion-paquetes](politica-actualizacion-paquetes.md) — Actualizar paquetes solo por vulnerabilidad conocida o versión estable; MAUI/toolkit en su fase
 - [estrategia-acceso-datos-preferida](estrategia-acceso-datos-preferida.md) — EF Core para DbContext/migraciones, Dapper para consultas, ADO.NET puro para lo crítico
@@ -26,22 +26,29 @@
 - [avisar-cambio-de-sesion](avisar-cambio-de-sesion.md) — Avisar al propietario cuándo abrir sesión nueva, en un punto sin agentes activos y con nota de traspaso
 - [adjuntos-en-documentos](adjuntos-en-documentos.md) — Adjuntar archivos en mermas y en todos los documentos (salvo POS); nube del cliente en fase tardía
 - [responder-en-espanol](responder-en-espanol.md) — Responder siempre en español, también los avisos de avance
-- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — 2026-10-09: coordina el equipo nuevo (B restaurado); la PC A es soporte (apagones sin UPS); ADR en master; área común GPOS-NG-Equipos
+- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — Desde 2026-10-09 B (equipo nuevo) coordina e integra ramas; la PC A queda de apoyo (ramas a/, no une); ADR en master; área común GPOS-NG-Equipos
 - [sucursal-en-linea-sqlite-y-licencia](sucursal-en-linea-sqlite-y-licencia.md) — ADR-53: nodo elegible; SQLite local en sucursal en línea tras las olas; licencia por empresa por usuarios; SUPER siempre de la plataforma
 - [fable-revision-general-tras-olas](fable-revision-general-tras-olas.md) — Fable 5.1 solo para la revisión general al completar las olas; agentes con Opus
 - [ecf-conectores-enchufables](ecf-conectores-enchufables.md) — e-CF y ERP (AdmCloud, Alegra, IQ) como complementos que NUNCA tocan el núcleo de GPOS NG
 - [contabilidad-ligera-erp-externo](contabilidad-ligera-erp-externo.md) — GPOS NG: contabilidad ligera de auxiliar y fiscal; mayor y asientos al ERP (AdmCloud, Alegra u otro)
-- [referencias-api-erp](referencias-api-erp.md) — Documentación de las API de AdmCloud, Alegra e IQ Solution
+- [referencias-api-erp](referencias-api-erp.md) — Documentación de las API de AdmCloud, Alegra, IQ Solution y Polaris EDI
 - [bp2-nunca-en-produccion](bp2-nunca-en-produccion.md) — BP2 nunca salió a producción; sin costumbres que proteger: aplicar recomendaciones de los especialistas
 - [pruebas-proveedores-con-mock](pruebas-proveedores-con-mock.md) — IQ: mock local; AdmCloud: empresa de pruebas del propietario, credenciales fuera del repo
 - [revisar-procesos-huerfanos](revisar-procesos-huerfanos.md) — Al revisar procesos, incluir bash/pwsh (bucles huérfanos de agentes), no solo dotnet
 - [estado-equipo-b](estado-equipo-b.md) — Cierre del equipo B 2026-10-07: ola 3b firmada y unida; Backup Tool N-01 construido; pendientes del propietario
-- [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; cada hito, un elemento de la tabla periódica; base de Horizon
-- [limite-agentes-pc-b](limite-agentes-pc-b.md) — PC B vieja: hasta 4 agentes (2 si varios compilan); no aplica al equipo nuevo, más robusto: medir allí
+- [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; desde 2026-10-09 se dice «GPOS Argón» (no renombrar código); cada hito, un elemento
+- [limite-agentes-pc-b](limite-agentes-pc-b.md) — Equipo nuevo de B: hasta 6 agentes, máximo 2 compilando o probando; lo pesado de SQL corre solo
 - [revision-area-comun-30-min](revision-area-comun-30-min.md) — Cada sesión de equipo revisa el área común cada 30 min (CronCreate + Revisar-AreaComun.ps1); atiende lo rutinario
 - [xml-firmado-responsabilidad-proveedor](xml-firmado-responsabilidad-proveedor.md) — El XML firmado del e-CF lo custodia IQ (DF-06 v4); GPOS guarda el JSON enviado con huella y sello
-- [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
+- [Siguiente paso en la PC B](siguiente-paso-pc-b.md) — traspaso 2026-10-09: mudanza de B a un equipo de más capacidad (posible principal); ramas, firmas pendientes PR/RPV, P9 Polaris, esperas de A
+- [api-reportes-solo-lectura](api-reportes-solo-lectura.md) — API de reportes aparte, solo lectura sobre vistas rpt; persistencia en la API principal; igual para análisis (orientación 2026-10-07)
 - [ecf-no-se-anula](ecf-no-se-anula.md) — Documento con e-NCF no se anula (se reversa); solo el rechazo de la DGII anula; 607/608 sin e-NCF, solo 606
 - [ventana-facturacion-por-vertical](ventana-facturacion-por-vertical.md) — Cada vertical con su propia ventana de facturación, independiente de la Facturación Ágil
+- [archivado-por-periodos-express](archivado-por-periodos-express.md) — Edición SQL la elige el cliente; con Express, archivado por períodos elegidos por el cliente (capacidad general)
 - [prioridad-ventas-inventario](prioridad-ventas-inventario.md) — 2026-10-08: núcleo = POS operativo con sus verticales, ventas e inventario; lo demás se agrega por etapas
 - [reportes-fiscales-aplazados](reportes-fiscales-aplazados.md) — 2026-10-08: 606, 607, 608 y apoyos IT-1/IR-17 aplazados (los tiene el ERP); la emisión NCF/e-CF y el Z no se aplazan
+- [conector-polaris-preferido](conector-polaris-preferido.md) — Polaris EDI (e-CF firmado directo) posible preferido antes que IQ; diseño al haber lugar; ambientes 0-3
+- [agentes-sin-ventanas-ni-instalaciones](agentes-sin-ventanas-ni-instalaciones.md) — Incidente 2026-10-08: agentes no ejecutan MSI, servicios ni programas con ventanas en la PC del propietario
+- [filtro-suite-oficial](filtro-suite-oficial.md) — GPOS.Tests: --filter "Transicion!=Ola5&Transicion!=Defecto"
+- [kits-admcloud-prueba-alta-pendiente](kits-admcloud-prueba-alta-pendiente.md) — Kits AdmCloud: KD-01 a KD-08 aprobados (ImpactStock=false + ajuste diario; GPOS manda en receta; no crear kits en v1)
+- [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
