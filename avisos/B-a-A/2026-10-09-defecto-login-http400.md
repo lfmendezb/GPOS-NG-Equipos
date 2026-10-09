@@ -9,7 +9,7 @@ Estado: Abierto
 # Login de la Web: HTTP 400 intermitente al pulsar «Entrar»
 
 **Reporte del propietario:**
-- De forma **intermitente**, al escribir usuario y contraseña en la Web y pulsar **Entrar**, el navegador muestra «Ahora mismo esta página no está disponible — HTTP ERROR 400».
+- Ocurre en el **DEMO de la segunda ronda** (aclaración del propietario). De forma **intermitente**, al escribir usuario y contraseña en la Web y pulsar **Entrar**, el navegador muestra «Ahora mismo esta página no está disponible — HTTP ERROR 400».
 - La URL es `localhost:5054/cuenta/login?retorno=%2F`. Captura en `avisos/B-a-A/adjuntos/2026-10-09-login-http400.png`.
 - **Manera de evitarlo:** borrar de la URL `/cuenta/login…` en adelante y cargar la URL base. Así sí entra.
 
