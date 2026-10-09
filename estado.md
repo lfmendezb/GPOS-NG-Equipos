@@ -24,7 +24,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Siguiente:**
   - registrar ADR-109 a 111 cuando el propietario confirme lo pendiente de la ola 5;
   - construir la ola 5 en `b/ola5` cuando A avise el commit de la 3b;
-  - la prueba elevada del conector IQ, a cargo del propietario;
+  - la prueba elevada del conector IQ, **aplazada por el propietario (2026-10-08)** al final de todo o a cuando un cliente pida la integración con IQ;
   - el conector AdmCloud, después del corte y de T-29.
 - **Espera de A:**
   - el commit de partida de `b/ola5`;
@@ -39,7 +39,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `b/ola5-diseno` | Hoja firmada; faltan las confirmaciones del propietario para ADR-109 a 111 |
   | GPOS-NG | `b/verticales-diseno` | Hojas firmadas de las verticales y de Duty Free; ya registradas en `master` |
   | GPOS-NG | `b/conector-admcloud-diseno` | Hoja firmada; ADR-116 y 117 en `master`; respuestas del propietario y opinión contable |
-  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | 0.4.2 con el vector de ADR-77; falta la prueba elevada |
+  | GPOS-NG-AddOn-IQS | `b/conector-iq-instalador` | 0.4.2 con el vector de ADR-77; prueba elevada aplazada (al final o con un cliente de IQ) |
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
 
 ## Pendientes del propietario
