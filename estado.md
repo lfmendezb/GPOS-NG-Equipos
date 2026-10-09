@@ -3,17 +3,21 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene A.
 
 ## Equipo A (PC A — coordina e integra)
-- **Actualizado:** 2026-10-08
-- **Trabajando en:** cierre de la ola 4 en `feature/modelo-ng` (`f21b788`, subida; H-R01 hecho). Carga T-28/T-57 **Rechazada por rendimiento** (corrección en verde; venta 66-75 ms en T-28 y ~107 ms con compras; compra ~1 s): el propietario decide cómo seguir. ADR-77 Aceptado en `master` (`b403f32`).
-- **Siguiente:** tanda funcional del cierre (e-NCF fuera del 607/608, montos en moneda base para USD [E1-2], parámetro de propina), plan de rendimiento, hoja de cierre de la ola 4; luego la 3b y el commit de partida de `b/ola5`. Hoja sin firmar: segundo factor del SUPER (ADR-81).
+- **Actualizado:** 2026-10-09 (madrugada)
+- **Hecho el 2026-10-08:** tanda del cierre de la ola 4 (607/608 sin e-NCF, moneda base, propina, Z, vendedor); rendimiento I-2 (`c92d858`; T-28 cumple, meta 1 de T-57 pendiente del 14-oct); vendedor obligatorio solo por la Política de campos (`c19f7ed`, `2078a08`); `FactorUnidad` en la venta (`d431973`). `feature/modelo-ng` en `origin` = `2078a08` (suite 1.662/0). En `master`: precisiones de ADR-51 (contingencia), 68 (reimpresión), 11, 04, 77 (P-77-2, P-77-4, vector v2) y `CLAUDE.md` al día.
+- **Trabajando en:**
+  - backend: corrección completa de `FactorUnidad` y del kárdex (migración `Ola4FactorUnidad`, reglas 51380-51386 y 51394, D-K1), antes del 14-oct;
+  - documentador: ADR-078 (factor de unidad y auditoría del kárdex), F-3 de ADR-68, redondeo del vuelto (VF-06/VF-19), nota de la búsqueda sin tildes;
+  - diseño: búsqueda sin tildes (arquitecto-datos), UX de equivalencias, reimpresión, kárdex en unidad base y conteo con unidad; auditor: `rpt` o `rptc` para identificaciones y diferencias de caja.
+- **Siguiente:** 14-oct corridas oficiales de QA y decisión de la meta 1; commit de partida definitivo de `b/ola5`; 15-oct ADR-118/119 (T1, T2, T4); búsqueda sin tildes; tanda de núcleo de caja (reimpresión y redondeo); tanda 3: tabla de equivalencias (≈19 sp; sale de la entrega 1 si no cabe); ~22-23 oct integrar `rptsis`.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
   |---|---|---|
-  | GPOS-NG | `feature/modelo-ng` | Ola 4 en construcción (único editor: A); T-53 unida (`160beaf`); trae la ola 3b de B (`7c7f5ad`) y los ADR de `master` |
-  | GPOS-NG | `master` | ADR al día (`3fc56cc`), un archivo por ADR en `docs/adr/` |
+  | GPOS-NG | `feature/modelo-ng` | `2078a08` en origin; `Ola4FactorUnidad` en construcción (único editor: A) |
+  | GPOS-NG | `master` | ADR al día; un archivo por ADR en `docs/adr/` |
   | GPOS-NG | `demo/2026-10-08` | Base de la actualización del DEMO |
-- **Recibido de B y atendido:** diseño de la ola 3b unido; ADR-100, 101 y 103 a 107 registrados; H-3b-01 (clase 8) y H-3b-02 (entrega 2) anotados.
+- **Espera de B:** SD-01 y `Propiedad` en `b/kds-k1` (revisa el auditor de A antes de unir); correcciones de las vistas de la ola 5 y `rptsis`; conector IQ (R-5 y modo de pruebas solo en Debug) antes de la primera instalación fuera de desarrollo.
 
 ## Equipo B (PC B)
 - **Actualizado:** 2026-10-09 (madrugada; con agentes activos)
