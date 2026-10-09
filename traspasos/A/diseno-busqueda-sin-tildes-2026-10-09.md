@@ -288,3 +288,5 @@ Variante mínima (solo F3 y maestro de artículos, sin diagnóstico ni `VistaPre
 - **arquitecto-software:** ubicación de `TextoBusqueda` en `GPOS.Contracts` y regla de arquitectura P-8.
 - **qa:** P-2, P-3 y P-7 en el plan de la ola.
 - **arquitecto-maestro:** preparar la hoja de firma de la sección 13.
+
+**Firma del propietario (2026-10-09, segunda):** puntos 2, 3 y 4 de la sección 13 según la recomendación: técnica A (clave en C# guardada al grabar en `cat.Articulo.DescripcionClave`, `TextoBusqueda.Clave` en `GPOS.Contracts`) como patrón único del producto; «contiene por palabra» en cualquier orden; índice `IX_Articulo_Referencia` filtrado incluido en la migración.
