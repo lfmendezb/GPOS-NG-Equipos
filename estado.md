@@ -17,8 +17,14 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `feature/mejoras-demo-ronda2` | `87b90f8`, subida hoy; mejoras del demo, ronda 2, sin unir |
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
-## Equipo B (PC B)
-- **Actualizado:** 2026-10-09 (madrugada; con agentes activos)
+## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **Actualizado:** 2026-10-09, 19:10 (primera sesión en el equipo nuevo; sin agentes activos)
+- **Coordinación:** confirmado el aviso `2026-10-09-coordinacion-pasa-al-equipo-nuevo`: B coordina (une a `feature/modelo-ng` y `master`, `CLAUDE.md`, manifiesto de pruebas, «Pendientes del propietario» y publicación de `memoria/` y `agentes/`). A trabaja en ramas `a/` y no une.
+- **Entorno comprobado:** .NET SDK 10.0.401; 16 núcleos y 31 GB de RAM (límite de agentes por acordar con el propietario); paquetes de `gsf-local` con huellas correctas; carpetas `GPOS-B-ola5-construccion`, `GPOS-B-ola5`, `GPOS-B-verticales` y `GPOS-B-admcloud` creadas y al día con GitHub. `GPOS.Reportes.Tests` en `b/ola5` (`781b1eb`): 216/216 contra la instancia predeterminada (SQL Server 2025); contra `.\SQLEXPRESS` falla la creación de bases por permisos de su carpeta de datos (lo corrige el propietario).
+- **Siguiente:** retomar la ola 5, tramo 2 (`b/ola5-tramo2-wip`, `f1d6025`), según `traspasos/B/2026-10-09-traspaso-B-corte-de-luz.md`; después, lo heredado de A (meta del MVP, T-57 del 14-oct, cierre de la ola 4, 3b).
+- **Avisos de A vigentes:** `rpt-rptc-firmado`, `uf03-ob03-aprobados`, `ux-firmado` y O-1 a O-3 de `k1-pasada2-unida`.
+
+### Registro anterior (PC B, madrugada del 2026-10-09)
 - **Hecho el 2026-10-08 y el 2026-10-09:**
   - **K1 del KDS construido** en `b/kds-k1` (desde `feature/modelo-ng` `2078a08`):
     - SD-01 `a4b1a9b`, `Propiedad` `df79075`;
