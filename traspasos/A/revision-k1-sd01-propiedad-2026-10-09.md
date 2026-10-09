@@ -141,3 +141,34 @@ SD-01 y `Propiedad` cumplen 9.1.1, PF-1 a y c y SD-03. No hay hallazgos Crítico
 - Decisiones candidatas a ADR: Ninguna (A-K1-01 aplica S15-08 y PF-1 a, ya firmados)
 - Entregas a otros agentes: desarrolladores de B → K1-01 y K1-03 antes de unir, y A-K1-03 a A-K1-05 con K2; quien enganche la ola 5 en A → A-K1-01 y A-K1-02; qa-automatizado → teoría de `typ` de A-K1-05 y prueba de frenos de `token`
 - Próximo paso recomendado: que B corrija K1-01 y K1-03, y que el propietario decida la unión de SD-01 con este informe y el de B
+
+---
+
+## Anexo 2026-10-09: verificación del cierre de A-K1-02 a A-K1-05 (`59921ba`, `origin/b/kds-k1-pasada2` sobre `6aacb2e`)
+
+Revisión de solo lectura con `git show`. No compilé ni ejecuté pruebas: las cifras (160/160; 1.867 correctas, 3 fallidas de carga) son las que informa B.
+
+| ID | Estado | Evidencia |
+|---|---|---|
+| A-K1-02 | Cerrada | `ValidAlgorithms = [AlgoritmoFirma]` (HS256) en usuario (`Program.cs:80`) y dispositivo (`Seguridad.cs:298`); constante en `Seguridad.cs:253`. Al firmar ya se usa HS256 (`Seguridad.cs:85`, `AutenticacionDispositivo.cs:75`). |
+| A-K1-03 | Cerrada | `EsquemaUsuario => pruebas?.Value.Esquema ?? EsquemasAutenticacion.Usuario` (`Seguridad.cs:152`). Ya no se deduce de `AuthenticationOptions`. `EsquemaUsuarioPruebas` no se enlaza a ninguna sección de configuración (en `Program.cs` solo se enlazan `Jwt`, `ForwardedHeaders` y `Json`), así que no se activa desde `appsettings` ni desde variables. Además, la API no arranca con esa opción fuera de `Pruebas` (`Program.cs:206-208`). |
+| A-K1-04 | Cerrada | `IncludeErrorDetails = false` en los dos `AddJwtBearer` (`Program.cs:65`, `:73`). El selector es un `PolicyScheme`, que reenvía y no tiene desafío propio. |
+| A-K1-05 | Cerrada | 10 casos en `SeparacionTokensTests.cs:343-460`: `typ` en 4 variantes, HS384/HS512 en usuario (2) y en dispositivo (2), 401 sin `error`, y la opción en `Production`. Cada teoría lleva un control positivo refirmado con HS256. |
+
+**Regresiones buscadas (ninguna encontrada):**
+- Rutas anónimas: el commit no las toca.
+- Anfitriones de prueba: los dos que sustituyen el esquema (`BusquedaNumeroHttpTests.cs:71`, `NumeracionDiagnosticoTests.cs:541`) declaran la opción. Los demás usan el JWT real.
+- La API de reportes y la introspección no están en este árbol. En `origin/b/ola5`, `ParametrosTokenSesion` ya fija HS256 y `JWT`, así que converge.
+- No hay segundo factor en el código.
+
+**Observaciones (Baja, no bloquean):**
+- O-1: al firmar se usa el literal `SecurityAlgorithms.HmacSha256` y no `EsquemasAutenticacion.AlgoritmoFirma`. Hoy no hay riesgo, porque las pruebas de control detectarían una divergencia. Conviene una sola fuente, que en la ola 5 será `ParametrosTokenSesion.Algoritmo`.
+- O-2: al unir la ola 5, la validación de usuario en línea de `Program.cs:74-81` debe sustituirse por `ParametrosTokenSesion.Crear` sin perder `ValidTypes`/`ValidAlgorithms`, y conservando `IncludeErrorDetails = false`. Así lo cubre A-K1-01, que sigue abierta para quien enganche la ola 5.
+- O-3: el futuro token intermedio del segundo factor, y cualquier otro token, debe tener su propio `typ` y su propia audiencia, nunca `JWT`. Si no, el selector lo enviaría al esquema de usuario.
+
+**Veredicto: Cerradas con observaciones.**
+1. A-K1-02: HS256 es el único algoritmo en los dos esquemas, y también al firmar.
+2. A-K1-03: las políticas quedan ligadas a `Usuario`. La opción de pruebas no se puede activar por configuración y la API no arranca con ella fuera de `Pruebas`.
+3. A-K1-04: sin detalles en el 401 de los dos esquemas.
+4. A-K1-05: las 10 pruebas están presentes y llevan control positivo.
+5. Sin regresiones. Quedan O-1 a O-3 (Baja) y A-K1-01 para la ola 5. Desde seguridad no hay objeción a unir `b/kds-k1-pasada2` a `feature/modelo-ng`; la unión la decide el propietario.
