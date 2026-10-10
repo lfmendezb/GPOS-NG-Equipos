@@ -5,7 +5,7 @@
   .\Actualizar-Desde-AreaComun.ps1 -Equipo B
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
     [string]$ClaveMemoria = 'C--Users-lfmen-source-repos-Solucion-GPOS-NG'
 )
 $ErrorActionPreference = 'Stop'
@@ -62,13 +62,13 @@ foreach ($clave in $claves) {
 Write-Host "Agentes instalados. Copias anteriores en $claude\*-respaldo-$sello*."
 
 # Avisos abiertos para este equipo
-$otro = if ($Equipo -eq 'A') { 'B' } else { 'A' }
-$carpeta = Join-Path $raiz "avisos\$otro-a-$Equipo"
-$abiertos = Get-ChildItem $carpeta -Filter *.md -ErrorAction SilentlyContinue |
+# Avisos de cualquier equipo a este (A, B o C)
+$carpetas = Get-ChildItem (Join-Path $raiz "avisos") -Directory -Filter "*-a-$Equipo" -ErrorAction SilentlyContinue
+$abiertos = $carpetas | ForEach-Object { Get-ChildItem $_.FullName -Filter *.md } |
     Where-Object { (Get-Content $_.FullName -Raw) -match '(?m)^Estado:\s*Abierto' }
 if ($abiertos) {
     Write-Host "`nAvisos abiertos para el equipo ${Equipo}:"
-    $abiertos | ForEach-Object { Write-Host "  - $($_.Name)" }
+    $abiertos | ForEach-Object { Write-Host "  - $($_.Directory.Name)/$($_.Name)" }
 } else {
     Write-Host "`nNo hay avisos abiertos para el equipo $Equipo."
 }

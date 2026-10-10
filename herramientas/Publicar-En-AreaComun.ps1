@@ -5,7 +5,7 @@
   .\Publicar-En-AreaComun.ps1 -Equipo B -Mensaje "Aviso sobre la ola 3b"
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
     [Parameter(Mandatory)][string]$Mensaje,
     [string]$ClaveMemoria = 'C--Users-lfmen-source-repos-Solucion-GPOS-NG-GPOS-NG'
 )
