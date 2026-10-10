@@ -1,0 +1,623 @@
+Que|Nombre|TipoA|TipoB|Cambio
+---|------|-----|-----|------
+objeto|banco.Chequera|NULL|U |nuevo
+objeto|banco.CK_Chequera_Siguiente|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Beneficiario|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Caja|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Cheque|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Clase|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Directo|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Monto|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Signo|NULL|C |nuevo
+objeto|banco.CK_DocBanco_Tasa|NULL|C |nuevo
+objeto|banco.CK_SolicitudPago_Directo|NULL|C |nuevo
+objeto|banco.CK_SolicitudPago_Monto|NULL|C |nuevo
+objeto|banco.CK_SolicitudPago_Tasa|NULL|C |nuevo
+objeto|banco.CK_SolicitudPagoDoc_Monto|NULL|C |nuevo
+objeto|banco.CuentaBancaria|NULL|U |nuevo
+objeto|banco.DF__Chequera__Actual__72D0F942|NULL|D |nuevo
+objeto|banco.DF__CuentaBan__Inhab__1EE485AA|NULL|D |nuevo
+objeto|banco.DF__DocBanco__MontoD__7795AE5F|NULL|D |nuevo
+objeto|banco.DF__Solicitud__Monto__1FA39FB9|NULL|D |nuevo
+objeto|banco.DocBanco|NULL|U |nuevo
+objeto|banco.FK_Chequera_Cuenta|NULL|F |nuevo
+objeto|banco.FK_CuentaBancaria_Banco|NULL|F |nuevo
+objeto|banco.FK_CuentaBancaria_Moneda|NULL|F |nuevo
+objeto|banco.FK_CuentaBancaria_Sucursal|NULL|F |nuevo
+objeto|banco.FK_DocBanco_Cuenta|NULL|F |nuevo
+objeto|banco.FK_DocBanco_Documento|NULL|F |nuevo
+objeto|banco.FK_DocBanco_Jornada|NULL|F |nuevo
+objeto|banco.FK_DocBanco_Moneda|NULL|F |nuevo
+objeto|banco.FK_DocBanco_Origen|NULL|F |nuevo
+objeto|banco.FK_DocBanco_Suplidor|NULL|F |nuevo
+objeto|banco.FK_DocBanco_TipoGasto|NULL|F |nuevo
+objeto|banco.FK_SolicitudPago_Cuenta|NULL|F |nuevo
+objeto|banco.FK_SolicitudPago_Documento|NULL|F |nuevo
+objeto|banco.FK_SolicitudPago_Moneda|NULL|F |nuevo
+objeto|banco.FK_SolicitudPago_Pago|NULL|F |nuevo
+objeto|banco.FK_SolicitudPago_Suplidor|NULL|F |nuevo
+objeto|banco.FK_SolicitudPagoDoc_Cuenta|NULL|F |nuevo
+objeto|banco.FK_SolicitudPagoDoc_Solicitud|NULL|F |nuevo
+objeto|banco.PK_Chequera|NULL|PK|nuevo
+objeto|banco.PK_CuentaBancaria|NULL|PK|nuevo
+objeto|banco.PK_DocBanco|NULL|PK|nuevo
+objeto|banco.PK_SolicitudPago|NULL|PK|nuevo
+objeto|banco.PK_SolicitudPagoDocumento|NULL|PK|nuevo
+objeto|banco.SolicitudPago|NULL|U |nuevo
+objeto|banco.SolicitudPagoDocumento|NULL|U |nuevo
+objeto|banco.TR_DocBanco_Inmutable|NULL|TR|nuevo
+objeto|banco.TR_SolicitudPago_Inmutable|NULL|TR|nuevo
+objeto|banco.TR_SolicitudPagoDocumento_Inmutable|NULL|TR|nuevo
+objeto|caja.CajaChica|NULL|U |nuevo
+objeto|caja.CK_CajaChica_Itbis|NULL|C |nuevo
+objeto|caja.CK_CajaChica_Monto|NULL|C |nuevo
+objeto|caja.CK_CajaChica_PorcRetIsr|NULL|C |nuevo
+objeto|caja.CK_CajaChica_PorcRetItbis|NULL|C |nuevo
+objeto|caja.CK_CajaChica_Rnc|NULL|C |nuevo
+objeto|caja.CK_CajaChica_Tasa|NULL|C |nuevo
+objeto|caja.DF__CajaChica__Itbis__2962141D|NULL|D |nuevo
+objeto|caja.DF__CajaChica__PorcR__2A563856|NULL|D |nuevo
+objeto|caja.DF__CajaChica__PorcR__2B4A5C8F|NULL|D |nuevo
+objeto|caja.FK_CajaChica_Documento|NULL|F |nuevo
+objeto|caja.FK_CajaChica_Jornada|NULL|F |nuevo
+objeto|caja.FK_CajaChica_Moneda|NULL|F |nuevo
+objeto|caja.FK_CajaChica_TipoGasto|NULL|F |nuevo
+objeto|caja.PK_CajaChica|NULL|PK|nuevo
+objeto|caja.TR_CajaChica_Inmutable|NULL|TR|nuevo
+objeto|cat.Banco|NULL|U |nuevo
+objeto|cat.CK_Banco_Rnc|NULL|C |nuevo
+objeto|cat.CK_ConceptoNota_AplicaA|NULL|C |nuevo
+objeto|cat.CK_ConceptoNota_CodMod|NULL|C |nuevo
+objeto|cat.CK_FormaPago_Clase606|NULL|C |nuevo
+objeto|cat.CK_Suplidor_PorcRetIsr|NULL|C |nuevo
+objeto|cat.CK_Suplidor_PorcRetItbis|NULL|C |nuevo
+objeto|cat.CK_TipoGasto_606|NULL|C |nuevo
+objeto|cat.ConceptoNota|NULL|U |nuevo
+objeto|cat.DF__Banco__Inhabilit__7E77B618|NULL|D |nuevo
+objeto|cat.DF__ConceptoN__Aplic__024846FC|NULL|D |nuevo
+objeto|cat.DF__ConceptoN__Codig__0524B3A7|NULL|D |nuevo
+objeto|cat.DF__ConceptoN__ConMe__033C6B35|NULL|D |nuevo
+objeto|cat.DF__ConceptoN__Exige__04308F6E|NULL|D |nuevo
+objeto|cat.DF__FormaPago__Clase__7B9B496D|NULL|D |nuevo
+objeto|cat.DF__TipoGasto__Inhab__1837881B|NULL|D |nuevo
+objeto|cat.FK_Suplidor_TipoRetencionIsr|NULL|F |nuevo
+objeto|cat.PK_Banco|NULL|PK|nuevo
+objeto|cat.PK_ConceptoNota|NULL|PK|nuevo
+objeto|cat.PK_TipoGasto|NULL|PK|nuevo
+objeto|cat.TipoGasto|NULL|U |nuevo
+objeto|compras.CK_Compra_ConceptoTexto|NULL|C |nuevo
+objeto|compras.CK_Compra_PorcDesc|NULL|C |nuevo
+objeto|compras.CK_Compra_PorcRetIsr|NULL|C |nuevo
+objeto|compras.CK_Compra_PorcRetItbis|NULL|C |nuevo
+objeto|compras.CK_Compra_RetIsr|NULL|C |nuevo
+objeto|compras.CK_Compra_Situacion|NULL|C |nuevo
+objeto|compras.CK_Compra_Tasa|NULL|C |nuevo
+objeto|compras.CK_Compra_Total|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_Articulo|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_Cantidad|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_Costo|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_IscAlCosto|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_Kardex|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_Montos|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_Origen|NULL|C |nuevo
+objeto|compras.CK_CompraLinea_PorcDesc|NULL|C |nuevo
+objeto|compras.Compra|NULL|U |nuevo
+objeto|compras.CompraLinea|NULL|U |nuevo
+objeto|compras.DF__Compra__Descuent__46F27704|NULL|D |nuevo
+objeto|compras.DF__Compra__Impuesto__47E69B3D|NULL|D |nuevo
+objeto|compras.DF__Compra__PorcDesc__45FE52CB|NULL|D |nuevo
+objeto|compras.DF__Compra__PorcRete__48DABF76|NULL|D |nuevo
+objeto|compras.DF__Compra__PorcRete__49CEE3AF|NULL|D |nuevo
+objeto|compras.DF__Compra__SinCompr__4AC307E8|NULL|D |nuevo
+objeto|compras.DF__CompraLin__Descu__0F6D37F0|NULL|D |nuevo
+objeto|compras.DF__CompraLin__EsSer__0D84EF7E|NULL|D |nuevo
+objeto|compras.DF__CompraLin__Impue__10615C29|NULL|D |nuevo
+objeto|compras.DF__CompraLin__IscAl__522F1F86|NULL|D |nuevo
+objeto|compras.DF__CompraLin__Itbis__11558062|NULL|D |nuevo
+objeto|compras.DF__CompraLin__PorcD__0E7913B7|NULL|D |nuevo
+objeto|compras.FK_Compra_Almacen|NULL|F |nuevo
+objeto|compras.FK_Compra_ConceptoNota|NULL|F |nuevo
+objeto|compras.FK_Compra_Documento|NULL|F |nuevo
+objeto|compras.FK_Compra_Moneda|NULL|F |nuevo
+objeto|compras.FK_Compra_Origen|NULL|F |nuevo
+objeto|compras.FK_Compra_Suplidor|NULL|F |nuevo
+objeto|compras.FK_Compra_Termino|NULL|F |nuevo
+objeto|compras.FK_Compra_TipoGasto|NULL|F |nuevo
+objeto|compras.FK_Compra_TipoRetIsr|NULL|F |nuevo
+objeto|compras.FK_CompraLinea_ArticuloUnidad|NULL|F |nuevo
+objeto|compras.FK_CompraLinea_Compra|NULL|F |nuevo
+objeto|compras.FK_CompraLinea_Impuesto|NULL|F |nuevo
+objeto|compras.FK_CompraLinea_Lote|NULL|F |nuevo
+objeto|compras.FK_CompraLinea_Origen|NULL|F |nuevo
+objeto|compras.PK_Compra|NULL|PK|nuevo
+objeto|compras.PK_CompraLinea|NULL|PK|nuevo
+objeto|compras.TR_Compra_Inmutable|NULL|TR|nuevo
+objeto|compras.TR_CompraLinea_Inmutable|NULL|TR|nuevo
+objeto|conf.CK_Parametros_CantidadPos|NULL|C |nuevo
+objeto|conf.CK_Parametros_ClaseAgente|NULL|C |nuevo
+objeto|conf.CK_Parametros_DescuentoMaximoPos|NULL|C |nuevo
+objeto|conf.CK_Parametros_DiasAvisoDvs|NULL|C |nuevo
+objeto|conf.CK_Parametros_FiscalDeclarado|NULL|C |nuevo
+objeto|conf.CK_Parametros_TopeDiasAnteriores|NULL|C |nuevo
+objeto|conf.DF__Parametro__Canti__76D69450|NULL|D |nuevo
+objeto|conf.DF__Parametro__Clase__4C764630|NULL|D |nuevo
+objeto|conf.DF__Parametro__Descu__4D6A6A69|NULL|D |nuevo
+objeto|conf.DF__Parametro__Descu__4E5E8EA2|NULL|D |nuevo
+objeto|conf.DF__Parametro__DiasA__4F52B2DB|NULL|D |nuevo
+objeto|conf.DF__Parametro__DiasA__5046D714|NULL|D |nuevo
+objeto|conf.DF__Parametro__TopeD__7AA72534|NULL|D |nuevo
+objeto|conf.FK_Parametros_ImpuestoPos|NULL|F |nuevo
+objeto|conf.FK_Parametros_UnidadPos|NULL|F |nuevo
+objeto|cxc.CK_Aplicacion_Base|NULL|C |nuevo
+objeto|cxc.DF__Aplicacio__Monto__550B8C31|NULL|D |nuevo
+objeto|cxc.DF__Aplicacio__Monto__55FFB06A|NULL|D |nuevo
+objeto|cxc.TR_Aplicacion_Inmutable|TR|TR|definicion
+objeto|cxp.Aplicacion|NULL|U |nuevo
+objeto|cxp.CK_CxpAplicacion_Base|NULL|C |nuevo
+objeto|cxp.CK_CxpAplicacion_Monto|NULL|C |nuevo
+objeto|cxp.CK_CxpAplicacion_MontoAplica|NULL|C |nuevo
+objeto|cxp.CK_CxpAplicacion_Retencion|NULL|C |nuevo
+objeto|cxp.CK_CxpAplicacion_Tasa|NULL|C |nuevo
+objeto|cxp.CK_CxpAplicacion_Total|NULL|C |nuevo
+objeto|cxp.CK_CxpCompensacion_Monto|NULL|C |nuevo
+objeto|cxp.CK_CxpCredito_Monto|NULL|C |nuevo
+objeto|cxp.CK_CxpCredito_Saldo|NULL|C |nuevo
+objeto|cxp.CK_CxpCuenta_Monto|NULL|C |nuevo
+objeto|cxp.CK_CxpCuenta_Saldo|NULL|C |nuevo
+objeto|cxp.CK_CxpCuenta_Tasa|NULL|C |nuevo
+objeto|cxp.CK_Regularizacion_Distinto|NULL|C |nuevo
+objeto|cxp.CK_Regularizacion_Monto|NULL|C |nuevo
+objeto|cxp.Compensacion|NULL|U |nuevo
+objeto|cxp.Credito|NULL|U |nuevo
+objeto|cxp.Cuenta|NULL|U |nuevo
+objeto|cxp.DF__Aplicacio__Anula__3B80C458|NULL|D |nuevo
+objeto|cxp.DF__Aplicacio__Monto__532343BF|NULL|D |nuevo
+objeto|cxp.DF__Aplicacio__Monto__541767F8|NULL|D |nuevo
+objeto|cxp.DF__Aplicacio__Reten__39987BE6|NULL|D |nuevo
+objeto|cxp.DF__Aplicacio__Reten__3A8CA01F|NULL|D |nuevo
+objeto|cxp.DF__Aplicacion__Id__37B03374|NULL|D |nuevo
+objeto|cxp.DF__Aplicacion__Tasa__38A457AD|NULL|D |nuevo
+objeto|cxp.FK_CxpAplicacion_Afectado|NULL|F |nuevo
+objeto|cxp.FK_CxpAplicacion_Aplica|NULL|F |nuevo
+objeto|cxp.FK_CxpAplicacion_TipoRetIsr|NULL|F |nuevo
+objeto|cxp.FK_CxpCompensacion_Credito|NULL|F |nuevo
+objeto|cxp.FK_CxpCompensacion_Documento|NULL|F |nuevo
+objeto|cxp.FK_CxpCredito_Documento|NULL|F |nuevo
+objeto|cxp.FK_CxpCredito_Moneda|NULL|F |nuevo
+objeto|cxp.FK_CxpCredito_Suplidor|NULL|F |nuevo
+objeto|cxp.FK_CxpCuenta_Documento|NULL|F |nuevo
+objeto|cxp.FK_CxpCuenta_Moneda|NULL|F |nuevo
+objeto|cxp.FK_CxpCuenta_Suplidor|NULL|F |nuevo
+objeto|cxp.FK_Regularizacion_Devolucion|NULL|F |nuevo
+objeto|cxp.FK_Regularizacion_Documento|NULL|F |nuevo
+objeto|cxp.PK_CxpAplicacion|NULL|PK|nuevo
+objeto|cxp.PK_CxpCompensacion|NULL|PK|nuevo
+objeto|cxp.PK_CxpCredito|NULL|PK|nuevo
+objeto|cxp.PK_CxpCuenta|NULL|PK|nuevo
+objeto|cxp.PK_Regularizacion|NULL|PK|nuevo
+objeto|cxp.Regularizacion|NULL|U |nuevo
+objeto|cxp.TR_Aplicacion_Inmutable|NULL|TR|nuevo
+objeto|cxp.TR_Aplicacion_RangoNodo|NULL|TR|nuevo
+objeto|cxp.TR_Compensacion_Inmutable|NULL|TR|nuevo
+objeto|cxp.TR_Regularizacion_Inmutable|NULL|TR|nuevo
+objeto|doc.CK_Autorizacion_Motivo|NULL|C |nuevo
+objeto|doc.CK_TipoDocumento_ControlFecha|NULL|C |nuevo
+objeto|doc.DF__TipoDocum__Contr__4A8DFDBE|NULL|D |nuevo
+objeto|doc.DF__TipoDocum__NcfOp__74EE4BDE|NULL|D |nuevo
+objeto|doc.TR_Documento_Emision|TR|TR|definicion
+objeto|doc.TR_Documento_Ola4|NULL|TR|nuevo
+objeto|doc.TR_Documento_Ola4b|NULL|TR|nuevo
+objeto|fiscal.CK_PeriodoDeclarado_FinMes|NULL|C |nuevo
+objeto|fiscal.CK_PeriodoDeclarado_Operacion|NULL|C |nuevo
+objeto|fiscal.CK_PeriodoDeclarado_Sentido|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_Montos|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_Ncf|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_NcfMod|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_RetIsr|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_Rnc|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_Tipo|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_TipoId|NULL|C |nuevo
+objeto|fiscal.CK_Registro606_TipoIdLargo|NULL|C |nuevo
+objeto|fiscal.CK_TipoRetencionIsr_Codigo|NULL|C |nuevo
+objeto|fiscal.DF__PeriodoDe__Regis__5DA0D232|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Anula__666B225D|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Itbis__5ECA0095|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Itbis__5FBE24CE|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Itbis__60B24907|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Itbis__61A66D40|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Monto__5CE1B823|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Monto__5DD5DC5C|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Otros__6482D9EB|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Propi__6576FE24|NULL|D |nuevo
+objeto|fiscal.DF__Registro6__Reten__629A9179|NULL|D |nuevo
+objeto|fiscal.DF__Registro606__Isc__638EB5B2|NULL|D |nuevo
+objeto|fiscal.FK_Registro606_Documento|NULL|F |nuevo
+objeto|fiscal.FK_Registro606_TipoRetIsr|NULL|F |nuevo
+objeto|fiscal.PeriodoDeclarado|NULL|U |nuevo
+objeto|fiscal.PK_PeriodoDeclarado|NULL|PK|nuevo
+objeto|fiscal.PK_Registro606|NULL|PK|nuevo
+objeto|fiscal.PK_TipoRetencionIsr|NULL|PK|nuevo
+objeto|fiscal.Registro606|NULL|U |nuevo
+objeto|fiscal.TipoRetencionIsr|NULL|U |nuevo
+objeto|fiscal.TR_PeriodoDeclarado_Registro|NULL|TR|nuevo
+objeto|fiscal.TR_Registro606_Inmutable|NULL|TR|nuevo
+objeto|fiscal.UQ_PuntoEmision_Sucursal|NULL|UQ|nuevo
+objeto|inv.CierrePeriodoReemplazado|NULL|U |nuevo
+objeto|inv.CK_ArticuloCosto_UltimoCosto|NULL|C |nuevo
+objeto|inv.CK_CierreReemplazado_Dia|NULL|C |nuevo
+objeto|inv.CK_MotivoAjuste_Clase|NULL|C |nuevo
+objeto|inv.DF__MotivoAju__EsCon__513AFB4D|NULL|D |nuevo
+objeto|inv.FK_ArticuloCosto_UltimaCompra|NULL|F |nuevo
+objeto|inv.FK_CierreReemplazado_Articulo|NULL|F |nuevo
+objeto|inv.PK_CierrePeriodoReemplazado|NULL|PK|nuevo
+objeto|inv.TR_CierrePeriodo_Reemplazo|NULL|TR|nuevo
+objeto|inv.TR_MotivoAjuste_ClaseInmutable|NULL|TR|nuevo
+objeto|org.FK_Caja_PuntoEmisionSucursal|NULL|F |nuevo
+objeto|org.FK_Caja_Vendedor|NULL|F |nuevo
+objeto|org.TR_Caja_AlmacenConJornada|NULL|TR|nuevo
+objeto|rpt.ConciliacionAplicacionesCxp|NULL|V |nuevo
+objeto|rpt.ConciliacionBancos|NULL|V |nuevo
+objeto|rpt.ConciliacionCreditoCxp|NULL|V |nuevo
+objeto|rpt.ConciliacionCxp|NULL|V |nuevo
+objeto|rpt.ConciliacionOrdenes|NULL|V |nuevo
+objeto|rpt.ConciliacionPagos|NULL|V |nuevo
+objeto|rpt.ConciliacionPeriodoFiscal|NULL|V |nuevo
+objeto|rpt.ConciliacionRegularizacion|NULL|V |nuevo
+objeto|rpt.DevolucionPendienteNota|NULL|V |nuevo
+objeto|rpt.DocumentosFechaAnterior|NULL|V |nuevo
+objeto|rpt.DocumentosPeriodoReabierto|NULL|V |nuevo
+objeto|rpt.Formato606|NULL|V |nuevo
+objeto|rpt.Formato607|V |V |definicion
+objeto|rpt.SaldoBancario|NULL|V |nuevo
+objeto|sync.CK_ReconciliacionChequera_Sig|NULL|C |nuevo
+objeto|sync.FK_ReconciliacionChequera_Cuenta|NULL|F |nuevo
+objeto|sync.FK_ReconciliacionChequera_Rec|NULL|F |nuevo
+objeto|sync.PK_ReconciliacionChequera|NULL|PK|nuevo
+objeto|sync.ReconciliacionChequera|NULL|U |nuevo
+objeto|ventas.CK_Venta_ConceptoTexto|NULL|C |nuevo
+objeto|ventas.FK_Venta_ConceptoNota|NULL|F |nuevo
+Que|Nombre|Cambio|A|B
+---|------|------|-|-
+columna|banco.Chequera.ActualizadaEn|nueva|NULL|datetime2(6)
+columna|banco.Chequera.CuentaBancariaId|nueva|NULL|smallint(2)
+columna|banco.Chequera.Siguiente|nueva|NULL|int(4)
+columna|banco.CuentaBancaria.BancoId|nueva|NULL|smallint(2)
+columna|banco.CuentaBancaria.Codigo|nueva|NULL|varchar(20)
+columna|banco.CuentaBancaria.CuentaContable|nueva|NULL|varchar(20) null
+columna|banco.CuentaBancaria.Descripcion|nueva|NULL|varchar(80)
+columna|banco.CuentaBancaria.Encargado|nueva|NULL|varchar(60) null
+columna|banco.CuentaBancaria.FormatoCheque|nueva|NULL|varchar(40) null
+columna|banco.CuentaBancaria.Id|nueva|NULL|smallint(2)
+columna|banco.CuentaBancaria.Inhabilitado|nueva|NULL|bit(1)
+columna|banco.CuentaBancaria.MonedaId|nueva|NULL|smallint(2)
+columna|banco.CuentaBancaria.Notas|nueva|NULL|varchar(200) null
+columna|banco.CuentaBancaria.Numero|nueva|NULL|varchar(30) null
+columna|banco.CuentaBancaria.SucursalId|nueva|NULL|smallint(2) null
+columna|banco.CuentaBancaria.Version|nueva|NULL|timestamp(8)
+columna|banco.DocBanco.Beneficiario|nueva|NULL|varchar(150) null
+columna|banco.DocBanco.CajaId|nueva|NULL|smallint(2) null
+columna|banco.DocBanco.Clase|nueva|NULL|char(3)
+columna|banco.DocBanco.Concepto|nueva|NULL|varchar(250) null
+columna|banco.DocBanco.CuentaBancariaId|nueva|NULL|smallint(2)
+columna|banco.DocBanco.DocumentoId|nueva|NULL|bigint(8)
+columna|banco.DocBanco.DocumentoOrigenId|nueva|NULL|bigint(8) null
+columna|banco.DocBanco.JornadaId|nueva|NULL|bigint(8) null
+columna|banco.DocBanco.MonedaId|nueva|NULL|smallint(2)
+columna|banco.DocBanco.Monto|nueva|NULL|decimal(9)
+columna|banco.DocBanco.MontoDirecto|nueva|NULL|decimal(9)
+columna|banco.DocBanco.NumeroCheque|nueva|NULL|int(4) null
+columna|banco.DocBanco.Referencia|nueva|NULL|varchar(50) null
+columna|banco.DocBanco.Signo|nueva|NULL|smallint(2)
+columna|banco.DocBanco.SuplidorId|nueva|NULL|int(4) null
+columna|banco.DocBanco.Tasa|nueva|NULL|decimal(9)
+columna|banco.DocBanco.TipoGastoId|nueva|NULL|smallint(2) null
+columna|banco.SolicitudPago.Beneficiario|nueva|NULL|varchar(150)
+columna|banco.SolicitudPago.Concepto|nueva|NULL|varchar(250) null
+columna|banco.SolicitudPago.CuentaBancariaId|nueva|NULL|smallint(2) null
+columna|banco.SolicitudPago.DocumentoId|nueva|NULL|bigint(8)
+columna|banco.SolicitudPago.MonedaId|nueva|NULL|smallint(2)
+columna|banco.SolicitudPago.Monto|nueva|NULL|decimal(9)
+columna|banco.SolicitudPago.MontoDirecto|nueva|NULL|decimal(9)
+columna|banco.SolicitudPago.PagoDocumentoId|nueva|NULL|bigint(8) null
+columna|banco.SolicitudPago.SuplidorId|nueva|NULL|int(4) null
+columna|banco.SolicitudPago.Tasa|nueva|NULL|decimal(9)
+columna|banco.SolicitudPagoDocumento.CuentaCxpId|nueva|NULL|bigint(8)
+columna|banco.SolicitudPagoDocumento.DocumentoId|nueva|NULL|bigint(8)
+columna|banco.SolicitudPagoDocumento.Monto|nueva|NULL|decimal(9)
+columna|caja.CajaChica.Beneficiario|nueva|NULL|varchar(100)
+columna|caja.CajaChica.CajaId|nueva|NULL|smallint(2)
+columna|caja.CajaChica.Concepto|nueva|NULL|varchar(200)
+columna|caja.CajaChica.DocumentoId|nueva|NULL|bigint(8)
+columna|caja.CajaChica.Itbis|nueva|NULL|decimal(9)
+columna|caja.CajaChica.JornadaId|nueva|NULL|bigint(8)
+columna|caja.CajaChica.MonedaId|nueva|NULL|smallint(2)
+columna|caja.CajaChica.Monto|nueva|NULL|decimal(9)
+columna|caja.CajaChica.PorcRetencionIsr|nueva|NULL|decimal(5)
+columna|caja.CajaChica.PorcRetencionItbis|nueva|NULL|decimal(5)
+columna|caja.CajaChica.RncCedula|nueva|NULL|varchar(11) null
+columna|caja.CajaChica.Tasa|nueva|NULL|decimal(9)
+columna|caja.CajaChica.TipoGastoId|nueva|NULL|smallint(2) null
+columna|cat.Banco.Codigo|nueva|NULL|varchar(20)
+columna|cat.Banco.Id|nueva|NULL|smallint(2)
+columna|cat.Banco.Inhabilitado|nueva|NULL|bit(1)
+columna|cat.Banco.Nombre|nueva|NULL|varchar(80)
+columna|cat.Banco.Notas|nueva|NULL|varchar(200) null
+columna|cat.Banco.Rnc|nueva|NULL|varchar(11) null
+columna|cat.Banco.Version|nueva|NULL|timestamp(8)
+columna|cat.ConceptoNota.AplicaA|nueva|NULL|char(1)
+columna|cat.ConceptoNota.Codigo|nueva|NULL|char(3)
+columna|cat.ConceptoNota.CodigoModificacion|nueva|NULL|tinyint(1)
+columna|cat.ConceptoNota.ConMercancia|nueva|NULL|bit(1)
+columna|cat.ConceptoNota.Descripcion|nueva|NULL|varchar(80)
+columna|cat.ConceptoNota.ExigeTexto|nueva|NULL|bit(1)
+columna|cat.FormaPago.ClaseFiscal606|nueva|NULL|tinyint(1)
+columna|cat.Suplidor.PorcRetencionIsr|nueva|NULL|decimal(5) null
+columna|cat.Suplidor.PorcRetencionItbis|nueva|NULL|decimal(5) null
+columna|cat.Suplidor.TipoRetencionIsr|nueva|NULL|tinyint(1) null
+columna|cat.SuplidorHistorial.PorcRetencionIsr|nueva|NULL|decimal(5) null
+columna|cat.SuplidorHistorial.PorcRetencionItbis|nueva|NULL|decimal(5) null
+columna|cat.SuplidorHistorial.TipoRetencionIsr|nueva|NULL|tinyint(1) null
+columna|cat.TipoGasto.Codigo|nueva|NULL|varchar(20)
+columna|cat.TipoGasto.Descripcion|nueva|NULL|varchar(80)
+columna|cat.TipoGasto.Id|nueva|NULL|smallint(2)
+columna|cat.TipoGasto.Inhabilitado|nueva|NULL|bit(1)
+columna|cat.TipoGasto.Notas|nueva|NULL|varchar(200) null
+columna|cat.TipoGasto.TipoBienServicio606|nueva|NULL|char(2)
+columna|cat.TipoGasto.Version|nueva|NULL|timestamp(8)
+columna|compras.Compra.AlmacenId|nueva|NULL|smallint(2) null
+columna|compras.Compra.ConceptoNotaCodigo|nueva|NULL|char(3) null
+columna|compras.Compra.ConceptoNotaTexto|nueva|NULL|varchar(200) null
+columna|compras.Compra.Descuento|nueva|NULL|decimal(9)
+columna|compras.Compra.DocumentoId|nueva|NULL|bigint(8)
+columna|compras.Compra.DocumentoOrigenId|nueva|NULL|bigint(8) null
+columna|compras.Compra.FechaVencimiento|nueva|NULL|date(3) null
+columna|compras.Compra.Impuesto|nueva|NULL|decimal(9)
+columna|compras.Compra.MonedaId|nueva|NULL|smallint(2)
+columna|compras.Compra.NumeroSuplidor|nueva|NULL|varchar(30) null
+columna|compras.Compra.PorcDescuento|nueva|NULL|decimal(5)
+columna|compras.Compra.PorcRetencionIsr|nueva|NULL|decimal(5)
+columna|compras.Compra.PorcRetencionItbis|nueva|NULL|decimal(5)
+columna|compras.Compra.SinComprobante|nueva|NULL|bit(1)
+columna|compras.Compra.Situacion|nueva|NULL|varchar(10) null
+columna|compras.Compra.SubTotal|nueva|NULL|decimal(9)
+columna|compras.Compra.SuplidorId|nueva|NULL|int(4)
+columna|compras.Compra.Tasa|nueva|NULL|decimal(9)
+columna|compras.Compra.TerminoId|nueva|NULL|smallint(2) null
+columna|compras.Compra.TipoGastoId|nueva|NULL|smallint(2) null
+columna|compras.Compra.TipoRetencionIsr|nueva|NULL|tinyint(1) null
+columna|compras.Compra.Total|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.ArticuloId|nueva|NULL|int(4) null
+columna|compras.CompraLinea.Cantidad|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.CostoKardex|nueva|NULL|decimal(9) null
+columna|compras.CompraLinea.CostoUnitario|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.Descripcion|nueva|NULL|varchar(150)
+columna|compras.CompraLinea.Descuento|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.DocumentoId|nueva|NULL|bigint(8)
+columna|compras.CompraLinea.EsServicio|nueva|NULL|bit(1)
+columna|compras.CompraLinea.FactorUnidad|nueva|NULL|decimal(9) null
+columna|compras.CompraLinea.Importe|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.Impuesto|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.ImpuestoId|nueva|NULL|tinyint(1)
+columna|compras.CompraLinea.IscAlCosto|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.ItbisAlCosto|nueva|NULL|decimal(9)
+columna|compras.CompraLinea.Linea|nueva|NULL|smallint(2)
+columna|compras.CompraLinea.LoteId|nueva|NULL|bigint(8) null
+columna|compras.CompraLinea.OrigenDocumentoId|nueva|NULL|bigint(8) null
+columna|compras.CompraLinea.OrigenLinea|nueva|NULL|smallint(2) null
+columna|compras.CompraLinea.PorcDescuento|nueva|NULL|decimal(5)
+columna|compras.CompraLinea.Serie|nueva|NULL|varchar(50) null
+columna|compras.CompraLinea.UnidadId|nueva|NULL|smallint(2) null
+columna|conf.Parametros.CantidadPos|nueva|NULL|decimal(9)
+columna|conf.Parametros.ClaseAgenteRetencion|nueva|NULL|char(1)
+columna|conf.Parametros.DescuentoMaximoPos|nueva|NULL|decimal(5)
+columna|conf.Parametros.DiasAvisoDevolucionSinNota|nueva|NULL|smallint(2)
+columna|conf.Parametros.FiscalDeclaradoHasta|nueva|NULL|date(3) null
+columna|conf.Parametros.ImpuestoPosId|nueva|NULL|tinyint(1) null
+columna|conf.Parametros.TopeDiasAnteriores|nueva|NULL|tinyint(1)
+columna|conf.Parametros.UnidadPosId|nueva|NULL|smallint(2) null
+columna|conf.ParametrosHistorial.CantidadPos|nueva|NULL|decimal(9)
+columna|conf.ParametrosHistorial.ClaseAgenteRetencion|nueva|NULL|char(1)
+columna|conf.ParametrosHistorial.DescuentoMaximoPos|nueva|NULL|decimal(5)
+columna|conf.ParametrosHistorial.DiasAvisoDevolucionSinNota|nueva|NULL|smallint(2)
+columna|conf.ParametrosHistorial.FiscalDeclaradoHasta|nueva|NULL|date(3) null
+columna|conf.ParametrosHistorial.ImpuestoPosId|nueva|NULL|tinyint(1) null
+columna|conf.ParametrosHistorial.TopeDiasAnteriores|nueva|NULL|tinyint(1)
+columna|conf.ParametrosHistorial.UnidadPosId|nueva|NULL|smallint(2) null
+columna|cxc.Aplicacion.DiferenciaCambiaria|nueva|NULL|decimal(13) null
+columna|cxc.Aplicacion.MontoBaseFactura|nueva|NULL|decimal(9)
+columna|cxc.Aplicacion.MontoBasePago|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.Anulada|nueva|NULL|bit(1)
+columna|cxp.Aplicacion.DiferenciaCambiaria|nueva|NULL|decimal(13) null
+columna|cxp.Aplicacion.DocumentoAfectadoId|nueva|NULL|bigint(8)
+columna|cxp.Aplicacion.DocumentoAplicaId|nueva|NULL|bigint(8)
+columna|cxp.Aplicacion.FechaPago|nueva|NULL|date(3)
+columna|cxp.Aplicacion.Id|nueva|NULL|bigint(8)
+columna|cxp.Aplicacion.Monto|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.MontoAplica|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.MontoBaseFactura|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.MontoBasePago|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.RetencionIsr|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.RetencionItbis|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.Tasa|nueva|NULL|decimal(9)
+columna|cxp.Aplicacion.TipoRetencionIsr|nueva|NULL|tinyint(1) null
+columna|cxp.Compensacion.CreditoDocumentoId|nueva|NULL|bigint(8)
+columna|cxp.Compensacion.DocumentoId|nueva|NULL|bigint(8)
+columna|cxp.Compensacion.Monto|nueva|NULL|decimal(9)
+columna|cxp.Credito.DocumentoId|nueva|NULL|bigint(8)
+columna|cxp.Credito.MonedaId|nueva|NULL|smallint(2)
+columna|cxp.Credito.Monto|nueva|NULL|decimal(9)
+columna|cxp.Credito.SaldoDisponible|nueva|NULL|decimal(9)
+columna|cxp.Credito.SuplidorId|nueva|NULL|int(4)
+columna|cxp.Cuenta.DocumentoId|nueva|NULL|bigint(8)
+columna|cxp.Cuenta.FechaVencimiento|nueva|NULL|date(3)
+columna|cxp.Cuenta.MonedaId|nueva|NULL|smallint(2)
+columna|cxp.Cuenta.Monto|nueva|NULL|decimal(9)
+columna|cxp.Cuenta.SaldoPendiente|nueva|NULL|decimal(9)
+columna|cxp.Cuenta.SuplidorId|nueva|NULL|int(4)
+columna|cxp.Cuenta.Tasa|nueva|NULL|decimal(9)
+columna|cxp.Regularizacion.DevolucionDocumentoId|nueva|NULL|bigint(8)
+columna|cxp.Regularizacion.DocumentoId|nueva|NULL|bigint(8)
+columna|cxp.Regularizacion.Monto|nueva|NULL|decimal(9)
+columna|doc.TipoDocumento.ControlFecha|nueva|NULL|tinyint(1)
+columna|doc.TipoDocumento.NcfOpcional|nueva|NULL|bit(1)
+columna|fiscal.PeriodoDeclarado.DocumentosMes|nueva|NULL|int(4) null
+columna|fiscal.PeriodoDeclarado.HastaAnterior|nueva|NULL|date(3) null
+columna|fiscal.PeriodoDeclarado.HastaNuevo|nueva|NULL|date(3) null
+columna|fiscal.PeriodoDeclarado.Id|nueva|NULL|int(4)
+columna|fiscal.PeriodoDeclarado.Motivo|nueva|NULL|varchar(200) null
+columna|fiscal.PeriodoDeclarado.Operacion|nueva|NULL|char(1)
+columna|fiscal.PeriodoDeclarado.RegistradoEn|nueva|NULL|datetime2(7)
+columna|fiscal.PeriodoDeclarado.Usuario|nueva|NULL|varchar(60)
+columna|fiscal.Registro606.Anulado|nueva|NULL|bit(1)
+columna|fiscal.Registro606.DocumentoId|nueva|NULL|bigint(8)
+columna|fiscal.Registro606.FechaComprobante|nueva|NULL|date(3)
+columna|fiscal.Registro606.Isc|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.ItbisAlCosto|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.ItbisFacturado|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.ItbisPorAdelantar|nueva|NULL|decimal(13) null
+columna|fiscal.Registro606.ItbisProporcionalidad|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.ItbisRetenido|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.MontoBienes|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.MontoServicios|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.Ncf|nueva|NULL|varchar(13) null
+columna|fiscal.Registro606.NcfModificado|nueva|NULL|varchar(13) null
+columna|fiscal.Registro606.OtrosImpuestos|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.PropinaLegal|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.RetencionIsr|nueva|NULL|decimal(9)
+columna|fiscal.Registro606.RncCedula|nueva|NULL|varchar(11)
+columna|fiscal.Registro606.TipoBienServicio606|nueva|NULL|char(2)
+columna|fiscal.Registro606.TipoIdentificacion|nueva|NULL|char(1)
+columna|fiscal.Registro606.TipoRetencionIsr|nueva|NULL|tinyint(1) null
+columna|fiscal.TipoRetencionIsr.Codigo|nueva|NULL|tinyint(1)
+columna|fiscal.TipoRetencionIsr.Descripcion|nueva|NULL|varchar(80)
+columna|inv.ArticuloCosto.FechaUltimoCostoCompra|nueva|NULL|date(3) null
+columna|inv.ArticuloCosto.UltimaCompraDocumentoId|nueva|NULL|bigint(8) null
+columna|inv.ArticuloCosto.UltimoCostoCompra|nueva|NULL|decimal(9) null
+columna|inv.CierrePeriodoReemplazado.ArticuloId|nueva|NULL|int(4)
+columna|inv.CierrePeriodoReemplazado.CostoPromedio|nueva|NULL|decimal(9) null
+columna|inv.CierrePeriodoReemplazado.ExistenciaGlobal|nueva|NULL|decimal(9)
+columna|inv.CierrePeriodoReemplazado.Periodo|nueva|NULL|date(3)
+columna|inv.CierrePeriodoReemplazado.ReemplazadaEn|nueva|NULL|datetime2(7)
+columna|inv.CierrePeriodoReemplazado.Version|nueva|NULL|smallint(2)
+columna|inv.MotivoAjuste.EsConsumoInterno|nueva|NULL|bit(1)
+columna|org.Caja.VendedorId|nueva|NULL|int(4) null
+columna|sync.ReconciliacionChequera.CuentaBancariaId|nueva|NULL|smallint(2)
+columna|sync.ReconciliacionChequera.ReconciliacionId|nueva|NULL|int(4)
+columna|sync.ReconciliacionChequera.SiguienteConfirmado|nueva|NULL|int(4)
+columna|sync.ReconciliacionChequera.SiguienteLocal|nueva|NULL|int(4)
+columna|sync.ReconciliacionChequera.UltimoEmitido|nueva|NULL|int(4) null
+columna|ventas.Venta.ConceptoNotaCodigo|nueva|NULL|char(3) null
+columna|ventas.Venta.ConceptoNotaTexto|nueva|NULL|varchar(200) null
+Que|Nombre|Cambio
+---|------|------
+indice|banco.Chequera.PK_Chequera|nuevo
+indice|banco.CuentaBancaria.IX_CuentaBancaria_BancoId|nuevo
+indice|banco.CuentaBancaria.IX_CuentaBancaria_MonedaId|nuevo
+indice|banco.CuentaBancaria.IX_CuentaBancaria_SucursalId|nuevo
+indice|banco.CuentaBancaria.PK_CuentaBancaria|nuevo
+indice|banco.CuentaBancaria.UQ_CuentaBancaria_Codigo|nuevo
+indice|banco.DocBanco.IX_DocBanco_Cuenta|nuevo
+indice|banco.DocBanco.IX_DocBanco_JornadaId_CajaId|nuevo
+indice|banco.DocBanco.IX_DocBanco_MonedaId|nuevo
+indice|banco.DocBanco.IX_DocBanco_Origen|nuevo
+indice|banco.DocBanco.IX_DocBanco_Suplidor|nuevo
+indice|banco.DocBanco.IX_DocBanco_TipoGastoId|nuevo
+indice|banco.DocBanco.PK_DocBanco|nuevo
+indice|banco.DocBanco.UX_DocBanco_Cheque|nuevo
+indice|banco.DocBanco.UX_DocBanco_SaldoInicial|nuevo
+indice|banco.SolicitudPago.IX_SolicitudPago_CuentaBancariaId|nuevo
+indice|banco.SolicitudPago.IX_SolicitudPago_MonedaId|nuevo
+indice|banco.SolicitudPago.IX_SolicitudPago_SuplidorId|nuevo
+indice|banco.SolicitudPago.PK_SolicitudPago|nuevo
+indice|banco.SolicitudPago.UX_SolicitudPago_Pago|nuevo
+indice|banco.SolicitudPagoDocumento.IX_SolicitudPagoDocumento_CuentaCxpId|nuevo
+indice|banco.SolicitudPagoDocumento.PK_SolicitudPagoDocumento|nuevo
+indice|caja.CajaChica.IX_CajaChica_Jornada|nuevo
+indice|caja.CajaChica.IX_CajaChica_JornadaId_CajaId|nuevo
+indice|caja.CajaChica.IX_CajaChica_MonedaId|nuevo
+indice|caja.CajaChica.IX_CajaChica_TipoGastoId|nuevo
+indice|caja.CajaChica.PK_CajaChica|nuevo
+indice|cat.Banco.PK_Banco|nuevo
+indice|cat.Banco.UQ_Banco_Codigo|nuevo
+indice|cat.ConceptoNota.PK_ConceptoNota|nuevo
+indice|cat.Suplidor.IX_Suplidor_TipoRetencionIsr|nuevo
+indice|cat.TipoGasto.PK_TipoGasto|nuevo
+indice|cat.TipoGasto.UQ_TipoGasto_Codigo|nuevo
+indice|compras.Compra.IX_Compra_AlmacenId|nuevo
+indice|compras.Compra.IX_Compra_ConceptoNotaCodigo|nuevo
+indice|compras.Compra.IX_Compra_MonedaId|nuevo
+indice|compras.Compra.IX_Compra_Origen|nuevo
+indice|compras.Compra.IX_Compra_Suplidor|nuevo
+indice|compras.Compra.IX_Compra_TerminoId|nuevo
+indice|compras.Compra.IX_Compra_TipoGastoId|nuevo
+indice|compras.Compra.IX_Compra_TipoRetencionIsr|nuevo
+indice|compras.Compra.PK_Compra|nuevo
+indice|compras.CompraLinea.IX_CompraLinea_Articulo|nuevo
+indice|compras.CompraLinea.IX_CompraLinea_ArticuloId_UnidadId|nuevo
+indice|compras.CompraLinea.IX_CompraLinea_ImpuestoId|nuevo
+indice|compras.CompraLinea.IX_CompraLinea_LoteId|nuevo
+indice|compras.CompraLinea.IX_CompraLinea_Origen|nuevo
+indice|compras.CompraLinea.PK_CompraLinea|nuevo
+indice|conf.Parametros.IX_Parametros_ImpuestoPosId|nuevo
+indice|conf.Parametros.IX_Parametros_UnidadPosId|nuevo
+indice|cxp.Aplicacion.IX_Aplicacion_TipoRetencionIsr|nuevo
+indice|cxp.Aplicacion.IX_CxpAplicacion_Afectado|nuevo
+indice|cxp.Aplicacion.PK_CxpAplicacion|nuevo
+indice|cxp.Aplicacion.UQ_CxpAplicacion|nuevo
+indice|cxp.Compensacion.IX_CxpCompensacion_Credito|nuevo
+indice|cxp.Compensacion.PK_CxpCompensacion|nuevo
+indice|cxp.Credito.IX_Credito_MonedaId|nuevo
+indice|cxp.Credito.IX_CxpCredito_Suplidor|nuevo
+indice|cxp.Credito.PK_CxpCredito|nuevo
+indice|cxp.Cuenta.IX_Cuenta_MonedaId|nuevo
+indice|cxp.Cuenta.IX_CxpCuenta_SuplidorVencimiento|nuevo
+indice|cxp.Cuenta.PK_CxpCuenta|nuevo
+indice|cxp.Regularizacion.IX_Regularizacion_Devolucion|nuevo
+indice|cxp.Regularizacion.PK_Regularizacion|nuevo
+indice|fiscal.PeriodoDeclarado.PK_PeriodoDeclarado|nuevo
+indice|fiscal.PuntoEmision.UQ_PuntoEmision_Sucursal|nuevo
+indice|fiscal.Registro606.IX_Registro606_Fecha|nuevo
+indice|fiscal.Registro606.IX_Registro606_TipoRetencionIsr|nuevo
+indice|fiscal.Registro606.PK_Registro606|nuevo
+indice|fiscal.Registro606.UX_Registro606_Ncf|nuevo
+indice|fiscal.TipoRetencionIsr.PK_TipoRetencionIsr|nuevo
+indice|inv.ArticuloCosto.IX_ArticuloCosto_UltimaCompraDocumentoId|nuevo
+indice|inv.CierrePeriodoReemplazado.IX_CierrePeriodoReemplazado_ArticuloId|nuevo
+indice|inv.CierrePeriodoReemplazado.PK_CierrePeriodoReemplazado|nuevo
+indice|org.Caja.IX_Caja_PuntoEmisionId|quitado
+indice|org.Caja.IX_Caja_PuntoEmisionId_SucursalId|nuevo
+indice|org.Caja.IX_Caja_Vendedor|nuevo
+indice|sync.ReconciliacionChequera.IX_ReconciliacionChequera_CuentaBancariaId|nuevo
+indice|sync.ReconciliacionChequera.PK_ReconciliacionChequera|nuevo
+indice|ventas.Venta.IX_Venta_ConceptoNotaCodigo|nuevo
+Que|Nombre|A|B
+---|------|-|-
+Que|Tabla|FilasA|FilasB|Cambio
+---|-----|------|------|------
+datos|banco.Chequera|NULL|0|tabla nueva
+datos|banco.CuentaBancaria|NULL|0|tabla nueva
+datos|banco.DocBanco|NULL|0|tabla nueva
+datos|banco.SolicitudPago|NULL|0|tabla nueva
+datos|banco.SolicitudPagoDocumento|NULL|0|tabla nueva
+datos|caja.CajaChica|NULL|0|tabla nueva
+datos|cat.Banco|NULL|0|tabla nueva
+datos|cat.ConceptoNota|NULL|7|tabla nueva
+datos|cat.FormaPago|4|4|contenido
+datos|cat.TipoGasto|NULL|0|tabla nueva
+datos|compras.Compra|NULL|0|tabla nueva
+datos|compras.CompraLinea|NULL|0|tabla nueva
+datos|conf.__EFMigrationsHistory|8|11|filas
+datos|conf.Parametros|1|1|contenido
+datos|conf.ParametrosHistorial|0|1|filas
+datos|cxp.Aplicacion|NULL|0|tabla nueva
+datos|cxp.Compensacion|NULL|0|tabla nueva
+datos|cxp.Credito|NULL|0|tabla nueva
+datos|cxp.Cuenta|NULL|0|tabla nueva
+datos|cxp.Regularizacion|NULL|0|tabla nueva
+datos|doc.TipoDocumento|16|30|filas
+datos|fiscal.PeriodoDeclarado|NULL|0|tabla nueva
+datos|fiscal.Registro606|NULL|0|tabla nueva
+datos|fiscal.TipoRetencionIsr|NULL|9|tabla nueva
+datos|inv.CierrePeriodoReemplazado|NULL|0|tabla nueva
+datos|org.Caja|2|2|contenido
+datos|sync.ReconciliacionChequera|NULL|0|tabla nueva

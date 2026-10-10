@@ -1,0 +1,10 @@
+Que|Nombre|TipoA|TipoB|Cambio
+---|------|-----|-----|------
+Que|Nombre|Cambio|A|B
+---|------|------|-|-
+Que|Nombre|Cambio
+---|------|------
+Que|Nombre|A|B
+---|------|-|-
+Que|Tabla|FilasA|FilasB|Cambio
+---|-----|------|------|------

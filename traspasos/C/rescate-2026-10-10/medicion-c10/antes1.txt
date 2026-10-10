@@ -1,0 +1,257 @@
+Serie de pruebas para C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\bin\Debug\net10.0\GPOS.Tests.dll (.NETCoreApp,Version=v10.0)
+1 archivos de prueba en total coincidieron con el patrón especificado.
+C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\bin\Debug\net10.0\GPOS.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.12)
+[xUnit.net 00:00:01.14]   Discovering: GPOS.Tests
+[xUnit.net 00:00:01.56]   Discovered:  GPOS.Tests
+[xUnit.net 00:00:01.59]   Starting:    GPOS.Tests
+  Correctas GPOS.Tests.ModeloNg.PerfilDisparadoresOla4Tests.I2_costo_de_los_disparadores_por_clase_de_documento_un_hilo [36 s]
+  Mensajes de salida estándar:
+ == FCP, factura de compra de 20 líneas con NCF recibido: 50 documentos; cliente p50 54.9 ms, p95 210.9, media 68.7
+   lote: 37.086 ms de duración y 36.652 ms de CPU por documento; 10,618 lecturas; 117.0 sentencias
+   doc.TR_Documento_Ola4: 0.542 ms de duración y 0.539 ms de CPU por documento; 109 lecturas; 18.5 sentencias
+   doc.TR_Documento_Ola4b: 0.348 ms de duración y 0.346 ms de CPU por documento; 74 lecturas; 15.5 sentencias
+   doc.TR_Documento_Emision: 0.197 ms de duración y 0.196 ms de CPU por documento; 19 lecturas; 9.3 sentencias
+   inv.TR_Movimiento_RangoNodo: 0.075 ms de duración y 0.074 ms de CPU por documento; 42 lecturas; 2.0 sentencias
+   audit.TR_Bitacora_RangoNodo: 0.054 ms de duración y 0.054 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Credito: 0.040 ms de duración y 0.040 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   inv.TR_Movimiento_PeriodoCerrado: 0.037 ms de duración y 0.037 ms de CPU por documento; 2 lecturas; 3.0 sentencias
+   fiscal.TR_Registro606_Inmutable: 0.037 ms de duración y 0.037 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   compras.TR_Compra_Inmutable: 0.023 ms de duración y 0.023 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_RangoNodo: 0.023 ms de duración y 0.023 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Inmutable: 0.019 ms de duración y 0.019 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Nace: 0.014 ms de duración y 0.014 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Motivo608: 0.012 ms de duración y 0.012 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Anulacion: 0.008 ms de duración y 0.008 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   compras.TR_CompraLinea_Inmutable: -0.145 ms de duración y -0.145 ms de CPU por documento; -477 lecturas; 1.0 sentencias
+   planes nuevos o recompilados en la medición: 1 × doc.TR_Documento_Emision | IF EXISTS (SELECT 1 FROM inv.Movimiento m WHERE m.DocumentoId = @id AND m.SucursalId <> @s; 1 × doc.TR_Documento_Emision | IF @hayVenta = 1 AND @codigo IN ('FAC', 'FPOS') AND EXISTS (SELECT 1 FROM ventas.Venta v J; 1 × lote | SELECT CONVERT(varchar(130), qs.plan_handle, 1) + ':' + CAST(qs.statement_start_offset AS 
+   sentencias más caras (duración por documento | CPU | lecturas | ejecuciones por documento | objeto | texto):
+      19.428 |  19.230 |     550 |   1.0 | lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @l20_id AND Estado = 0 AND Numero NOT LIKE '~%'
+       4.229 |   4.229 |   8,709 |   1.0 | lote | MERGE [compras].[CompraLinea] USING ( VALUES (@p18, @p19, @p20, @p21, @p22, @p23, @p24, @p25, @p26, @p27, @p28, @p29, @p30, @p31, @p32, @p33, 0), (@p34, @p35, @p36, @p37,
+       2.463 |   2.463 |       4 |   1.0 | lote | SELECT e.ArticuloId, e.Cantidad FROM (SELECT DISTINCT j.[value] AS ArticuloId FROM OPENJSON(@l20_ids) WITH ([value] int '$') j) a CROSS APPLY (SELECT g.ArticuloId, g.Cant
+       2.246 |   2.245 |       4 |   1.0 | lote | SELECT au.ArticuloId, au.UnidadId, u.Codigo, au.Factor FROM cat.ArticuloUnidad au JOIN cat.Unidad u ON u.Id = au.UnidadId WHERE au.ArticuloId IN (SELECT j.[value] FROM OP
+       1.856 |   1.698 |     493 |   1.0 | lote | MERGE [inv].[Movimiento] USING ( VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16, 0), (@p17, @p18, @p19, @p20, @p21, @p
+       0.868 |   0.868 |     168 |   1.0 | lote | SELECT [a].[Id], [a].[Codigo], [a].[Descripcion], [a].[Tipo], [a].[Inventariable], [a].[ImpuestoId], [i].[Codigo], [i].[Porcentaje], [i].[Exento], [a].[UnidadVentaId], [u
+       0.784 |   0.779 |      38 |   1.0 | lote | INSERT INTO [compras].[Compra] ([DocumentoId], [AlmacenId], [ConceptoNotaCodigo], [ConceptoNotaTexto], [DocumentoOrigenId], [FechaVencimiento], [Impuesto], [MonedaId], [N
+       0.743 |   0.699 |      17 |   0.0 | lote | SELECT CONVERT(varchar(130), qs.plan_handle, 1) + ':' + CAST(qs.statement_start_offset AS varchar(10)), ISNULL(OBJECT_SCHEMA_NAME(st.objectid, st.dbid) + '.' + OBJECT_NAM
+       0.399 |   0.392 |      25 |   1.0 | lote | INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoId], [Entidad], [EntidadId], [Motivo], [Origen], [Pantalla], [RecibidoEn], [Usuario], [UsuarioId]) OUTPUT I
+       0.201 |   0.201 |      29 |   1.0 | lote | INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, Numero, Fecha, SucursalId, Estado, Uid, HuellaSolicitud, CreadoPor, Notas) VALUES (@id, @tipo, 'N', @seri
+       0.196 |   0.196 |      14 |   1.0 | lote | INSERT INTO fiscal.Registro606 (DocumentoId, TipoIdentificacion, RncCedula, TipoBienServicio606, Ncf, NcfModificado, FechaComprobante, MontoServicios, MontoBienes, ItbisF
+       0.178 |   0.178 |      43 |   1.0 | lote | SELECT [t].[CantidadRecibida], [t].[Descuento], [t].[EsServicio], [t].[IscAlCosto], [t].[ItbisAlCosto], [t].[PorcDescuento] FROM [compras].[CompraLinea] t INNER JOIN @ins
+       0.158 |   0.157 |      43 |   1.0 | lote | SELECT [t].[Id], [t].[RegistradoEn] FROM [inv].[Movimiento] t INNER JOIN @inserted0 i ON ([t].[Id] = [i].[Id]) ORDER BY [i].[_Position]
+       0.126 |   0.126 |       4 |   1.0 | lote | SELECT a.Id, a.SucursalId, a.Codigo, s.Codigo AS Sucursal, s.Inhabilitado AS SucursalCerrada, ISNULL(CONVERT(bit, CASE WHEN a.SucursalId = @sucursal OR EXISTS (SELECT 1 F
+   cliente: 28.0 viajes por documento; 55.1 ms por documento dentro de los viajes de 68.7 medidos; el resto (13.5 ms) es de la aplicación. Top 12 por tiempo:
+      21.18 ms/doc.,   1.0 veces/doc.: DECLARE @lote_falta bit = 0; DECLARE @l0_ok bit = 0, @l0_ex decimal(18, 6); UPDATE inv.Existencia WITH (ROWLOCK) SET @l0
+        8.90 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; INSERT INTO [compras].[Compra] ([DocumentoId], [AlmacenId], [ConceptoNotaCodigo], [ConceptoNotaTexto], [
+        6.10 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; DECLARE @inserted0 TABLE ([Id] bigint, [_Position] [int]); MERGE [inv].[Movimiento] USING ( VALUES (@p0,
+        3.31 ms/doc.,   1.0 veces/doc.: SELECT c.ArticuloId, c.CostoPromedio, c.CostoExistencia, c.UltimoMovimientoId, c.FechaUltimo FROM inv.ArticuloCosto c WI
+        2.49 ms/doc.,   1.0 veces/doc.: SELECT au.ArticuloId, au.UnidadId, u.Codigo, au.Factor FROM cat.ArticuloUnidad au JOIN cat.Unidad u ON u.Id = au.UnidadI
+        2.23 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; DECLARE @inserted0 TABLE ([Id] bigint); INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoI
+        1.85 ms/doc.,   1.0 veces/doc.: UPDATE inv.ArticuloCosto SET CostoPromedio = ISNULL(@l0_promedio, CostoPromedio), CostoExistencia = @l0_existencia, Ulti
+        1.57 ms/doc.,   1.0 veces/doc.: UPDATE inv.ArticuloCosto SET UltimoCostoCompra = @l0_costo, FechaUltimoCostoCompra = @l0_fecha, UltimaCompraDocumentoId 
+        1.21 ms/doc.,   1.0 veces/doc.: SELECT [a].[Id], [a].[Codigo], [a].[Descripcion], [a].[Tipo], [a].[Inventariable], [a].[ImpuestoId], [i].[Codigo], [i].[
+        0.76 ms/doc.,   1.0 veces/doc.: COMMIT
+        0.54 ms/doc.,   1.0 veces/doc.: SELECT TOP(1) [m].[Id], [m].[Codigo] FROM [cat].[Moneda] AS [m] WHERE [m].[Codigo] = @c
+        0.45 ms/doc.,   1.0 veces/doc.: SELECT a.Id, a.SucursalId, a.Codigo, s.Codigo AS Sucursal, s.Inhabilitado AS SucursalCerrada, ISNULL(CONVERT(bit, CASE W
+   motor: 1.0 compilaciones y 0.24 recompilaciones por documento (incluye las 2 consultas del instrumento); planes en caché de la base: 334 → 340
+   TR_Documento_Ola4 (C-10): 1.00 ejecuciones por documento; 5.402 ms y CPU 5.401 ms por ejecución (sin la compilación); generación de sus planes 4 → 9
+ == CHK, cheque con 3 aplicaciones y retención: 16 documentos; cliente p50 15.9 ms, p95 23.4, media 17.4
+   lote: 5.982 ms de duración y 5.951 ms de CPU por documento; 659 lecturas; 43.1 sentencias
+   doc.TR_Documento_Ola4: 0.591 ms de duración y 0.589 ms de CPU por documento; 144 lecturas; 19.0 sentencias
+   doc.TR_Documento_Ola4b: 0.378 ms de duración y 0.377 ms de CPU por documento; 108 lecturas; 16.0 sentencias
+   doc.TR_Documento_Emision: 0.198 ms de duración y 0.196 ms de CPU por documento; 21 lecturas; 11.0 sentencias
+   cxp.TR_Aplicacion_Inmutable: 0.076 ms de duración y 0.075 ms de CPU por documento; 12 lecturas; 3.0 sentencias
+   cxp.TR_Aplicacion_RangoNodo: 0.064 ms de duración y 0.064 ms de CPU por documento; 12 lecturas; 6.0 sentencias
+   audit.TR_Bitacora_RangoNodo: 0.048 ms de duración y 0.048 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Credito: 0.037 ms de duración y 0.037 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   banco.TR_DocBanco_Inmutable: 0.021 ms de duración y 0.021 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   doc.TR_Documento_RangoNodo: 0.021 ms de duración y 0.021 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Inmutable: 0.017 ms de duración y 0.016 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Nace: 0.013 ms de duración y 0.013 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Motivo608: 0.008 ms de duración y 0.008 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Anulacion: 0.007 ms de duración y 0.007 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   planes nuevos o recompilados en la medición: 1 × lote | SELECT CONVERT(varchar(130), qs.plan_handle, 1) + ':' + CAST(qs.statement_start_offset AS 
+   sentencias más caras (duración por documento | CPU | lecturas | ejecuciones por documento | objeto | texto):
+       1.579 |   1.579 |     291 |   1.0 | lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @id AND Estado = 0 AND Numero NOT LIKE '~%'
+       1.451 |   1.450 |      50 |   0.1 | lote | SELECT CONVERT(varchar(130), qs.plan_handle, 1) + ':' + CAST(qs.statement_start_offset AS varchar(10)), ISNULL(OBJECT_SCHEMA_NAME(st.objectid, st.dbid) + '.' + OBJECT_NAM
+       0.473 |   0.461 |      60 |   3.0 | lote | INSERT INTO cxp.Aplicacion (Id, DocumentoAplicaId, DocumentoAfectadoId, Monto, Tasa, MontoAplica, RetencionItbis, RetencionIsr, TipoRetencionIsr, FechaPago, MontoBaseFact
+       0.445 |   0.445 |      26 |   1.0 | lote | INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoId], [Entidad], [EntidadId], [Motivo], [Origen], [Pantalla], [RecibidoEn], [Usuario], [UsuarioId]) OUTPUT I
+       0.359 |   0.358 |      49 |   3.0 | lote | SELECT d.Id, d.Numero, t.Codigo AS Tipo, d.Fecha, c.FechaVencimiento, mo.Codigo AS Moneda, c.MonedaId, c.Tasa, c.Monto, c.SaldoPendiente, COALESCE(r.Ncf, f.Ncf) AS Ncf, c
+       0.215 |   0.203 |      24 |   3.0 | lote | UPDATE cxp.Cuenta SET SaldoPendiente = SaldoPendiente - @monto WHERE DocumentoId = @documento AND SaldoPendiente >= @monto
+       0.189 |   0.189 |      30 |   1.0 | lote | INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, Numero, Fecha, SucursalId, Estado, Uid, HuellaSolicitud, CreadoPor, Notas) VALUES (@id, @tipo, 'N', @seri
+       0.160 |   0.160 |      26 |   1.0 | lote | INSERT INTO [banco].[DocBanco] ([DocumentoId], [Beneficiario], [CajaId], [Clase], [Concepto], [CuentaBancariaId], [DocumentoOrigenId], [JornadaId], [MonedaId], [Monto], [
+       0.138 |   0.138 |      18 |   3.0 | lote | SELECT d.Id, d.TipoDocumentoId, t.Codigo AS TipoCodigo, d.Numero, d.Fecha, d.SucursalId, d.Estado, d.CreadoPor, d.CreadoEn, d.EmitidoEn, d.AnuladoEn, d.AnuladoPor, d.Moti
+       0.103 |   0.103 |      12 |   3.0 | lote | SELECT c.DocumentoId, c.SuplidorId, c.FechaVencimiento, c.MonedaId, c.Tasa, c.Monto, c.SaldoPendiente, d.Numero, d.Fecha, d.Estado FROM cxp.Cuenta c WITH (UPDLOCK, ROWLOC
+       0.095 |   0.095 |      26 |   1.0 | doc.TR_Documento_Ola4 | IF EXISTS (SELECT 1 FROM cxp.Cuenta p WHERE p.DocumentoId IN (SELECT a.DocumentoAfectadoId FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE 
+       0.088 |   0.088 |       7 |   1.0 | lote | SELECT e.EmisionBloqueada, e.MotivoBloqueo, ISNULL(e.Restaurada, CONVERT(bit, 1)) AS Restaurada FROM sync.EstadoEmision e WITH (HOLDLOCK)
+       0.080 |   0.080 |      18 |   1.0 | doc.TR_Documento_Ola4 | IF EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHE
+       0.078 |   0.077 |      30 |   1.0 | doc.TR_Documento_Ola4b | IF EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.ControlFecha, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado
+   cliente: 30.0 viajes por documento; 13.2 ms por documento dentro de los viajes de 17.4 medidos; el resto (4.2 ms) es de la aplicación. Top 12 por tiempo:
+       2.28 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; DECLARE @inserted0 TABLE ([Id] bigint); INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoI
+        1.81 ms/doc.,   1.0 veces/doc.: UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @id AND Estado = 0 AND Numero NOT LIKE '~%'
+        1.38 ms/doc.,   3.0 veces/doc.: DECLARE @tasaFactura decimal(19,6), @monedaFactura smallint, @tasaPago decimal(19,6); SELECT @tasaFactura = c.Tasa, @mon
+        1.05 ms/doc.,   3.0 veces/doc.: SELECT d.Id, d.Numero, t.Codigo AS Tipo, d.Fecha, c.FechaVencimiento, mo.Codigo AS Moneda, c.MonedaId, c.Tasa, c.Monto, 
+        0.77 ms/doc.,   3.0 veces/doc.: SELECT d.Id, d.TipoDocumentoId, t.Codigo AS TipoCodigo, d.Numero, d.Fecha, d.SucursalId, d.Estado, d.CreadoPor, d.Creado
+        0.75 ms/doc.,   3.0 veces/doc.: UPDATE cxp.Cuenta SET SaldoPendiente = SaldoPendiente - @monto WHERE DocumentoId = @documento AND SaldoPendiente >= @mon
+        0.72 ms/doc.,   1.0 veces/doc.: DECLARE @id bigint = NEXT VALUE FOR doc.SecDocumento; INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, N
+        0.69 ms/doc.,   3.0 veces/doc.: SELECT c.DocumentoId, c.SuplidorId, c.FechaVencimiento, c.MonedaId, c.Tasa, c.Monto, c.SaldoPendiente, d.Numero, d.Fecha
+        0.63 ms/doc.,   1.0 veces/doc.: COMMIT
+        0.39 ms/doc.,   1.0 veces/doc.: SELECT c.Id, c.Codigo, c.Descripcion, c.MonedaId, m.Codigo AS Moneda, c.Inhabilitado, b.Nombre AS Banco, b.Rnc AS RncBan
+        0.39 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; INSERT INTO [banco].[DocBanco] ([DocumentoId], [Beneficiario], [CajaId], [Clase], [Concepto], [CuentaBan
+        0.33 ms/doc.,   1.0 veces/doc.: DECLARE @s bigint, @p varchar(10), @d tinyint, @sub varchar(1), @id int, @n varchar(30), @tomado bit = 0; SELECT @s = Si
+   motor: 0.1 compilaciones y 0.00 recompilaciones por documento (incluye las 2 consultas del instrumento); planes en caché de la base: 168 → 169
+   TR_Documento_Ola4 (C-10): 1.00 ejecuciones por documento; 0.651 ms y CPU 0.650 ms por ejecución (sin la compilación); generación de sus planes 1 → 1
+ == CC, caja chica (la mitad con B13): 50 documentos; cliente p50 12.3 ms, p95 17.1, media 12.3
+   lote: 3.076 ms de duración y 3.058 ms de CPU por documento; 359 lecturas; 23.0 sentencias
+   doc.TR_Documento_Ola4: 0.464 ms de duración y 0.462 ms de CPU por documento; 116 lecturas; 19.0 sentencias
+   doc.TR_Documento_Emision: 0.204 ms de duración y 0.203 ms de CPU por documento; 23 lecturas; 11.0 sentencias
+   caja.TR_Movimiento_Nodo: 0.059 ms de duración y 0.058 ms de CPU por documento; 9 lecturas; 1.0 sentencias
+   audit.TR_Bitacora_RangoNodo: 0.039 ms de duración y 0.039 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Credito: 0.030 ms de duración y 0.030 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   doc.TR_Documento_RangoNodo: 0.024 ms de duración y 0.024 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   caja.TR_CajaChica_Inmutable: 0.024 ms de duración y 0.023 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   caja.TR_Movimiento_RangoNodo: 0.022 ms de duración y 0.022 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   fiscal.TR_Comprobante_Inmutable: 0.019 ms de duración y 0.019 ms de CPU por documento; 4 lecturas; 1.5 sentencias
+   doc.TR_Documento_Ola4b: 0.017 ms de duración y 0.017 ms de CPU por documento; 6 lecturas; 1.0 sentencias
+   doc.TR_Documento_Inmutable: 0.016 ms de duración y 0.015 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Nace: 0.014 ms de duración y 0.014 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Anulacion: 0.007 ms de duración y 0.007 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Motivo608: 0.007 ms de duración y 0.007 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   planes nuevos o recompilados en la medición: ninguno
+   sentencias más caras (duración por documento | CPU | lecturas | ejecuciones por documento | objeto | texto):
+       1.021 |   1.021 |     163 |   1.0 | lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @id AND Estado = 0 AND Numero NOT LIKE '~%'
+       0.394 |   0.389 |      26 |   1.0 | lote | INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoId], [Entidad], [EntidadId], [Motivo], [Origen], [Pantalla], [RecibidoEn], [Usuario], [UsuarioId]) OUTPUT I
+       0.238 |   0.238 |      16 |   0.0 | lote | SELECT CONVERT(varchar(130), qs.plan_handle, 1) + ':' + CAST(qs.statement_start_offset AS varchar(10)), ISNULL(OBJECT_SCHEMA_NAME(st.objectid, st.dbid) + '.' + OBJECT_NAM
+       0.222 |   0.216 |      29 |   1.0 | lote | INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa, Monto, Motivo, Usuario, RegistradoEn, MovimientoRevertidoId) VALUES (NEXT VALUE
+       0.212 |   0.212 |      29 |   1.0 | lote | INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, Numero, Fecha, SucursalId, Estado, Uid, HuellaSolicitud, CreadoPor, Notas) VALUES (@id, @tipo, 'N', @seri
+       0.143 |   0.142 |      21 |   1.0 | lote | INSERT INTO [caja].[CajaChica] ([DocumentoId], [Beneficiario], [CajaId], [Concepto], [JornadaId], [MonedaId], [Monto], [RncCedula], [Tasa], [TipoGastoId]) VALUES (@p0, @p
+       0.086 |   0.086 |      12 |   1.0 | lote | SELECT c.Id, c.Codigo, c.SucursalId, c.AlmacenId, a.Codigo AS Almacen, c.PuntoEmisionId, p.Codigo AS PuntoEmision, c.MonedaId, m.Codigo AS Moneda, c.ClienteContadoId, cl.
+       0.078 |   0.078 |      18 |   1.0 | doc.TR_Documento_Ola4 | IF EXISTS (SELECT 1 FROM (SELECT e.Id, c.JornadaId, c.Monto, c.MonedaId FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 A
+       0.077 |   0.077 |      12 |   0.5 | lote | INSERT INTO fiscal.Comprobante (DocumentoId, Rol, SecuenciaId, Ncf, TipoComprobanteCodigo, FechaEmision, FechaVencimientoSecuencia, TipoIngreso, RncReceptor, NombreRecept
+       0.075 |   0.074 |       7 |   1.0 | lote | SELECT e.EmisionBloqueada, e.MotivoBloqueo, ISNULL(e.Restaurada, CONVERT(bit, 1)) AS Restaurada FROM sync.EstadoEmision e WITH (HOLDLOCK)
+       0.068 |   0.068 |       2 |   1.0 | lote | UPDATE num.Serie SET Siguiente = @s + 1 WHERE TipoCodigo = @tipo AND SucursalId IS NULL
+       0.063 |   0.063 |       6 |   1.0 | doc.TR_Documento_Ola4 | IF EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHE
+       0.060 |   0.060 |       4 |   1.0 | lote | SELECT s.Prefijo, s.Digitos, s.Siguiente, s.Subserie, s.Id, CONVERT(bit, CASE WHEN s.SucursalId IS NULL THEN 0 ELSE 1 END) AS DeSucursal, ISNULL((SELECT c.PorSucursal FRO
+       0.059 |   0.058 |       9 |   1.0 | caja.TR_Movimiento_Nodo | IF EXISTS (SELECT 1 FROM inserted i JOIN sync.EstadoNodo s ON CONVERT(smallint, i.Id / 1000000000000) = s.NodoLocalId LEFT JOIN sys.database_recovery_status r ON r.databa
+   cliente: 22.0 viajes por documento; 8.9 ms por documento dentro de los viajes de 12.3 medidos; el resto (3.4 ms) es de la aplicación. Top 12 por tiempo:
+       1.97 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; DECLARE @inserted0 TABLE ([Id] bigint); INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoI
+        1.20 ms/doc.,   1.0 veces/doc.: UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @id AND Estado = 0 AND Numero NOT LIKE '~%'
+        0.53 ms/doc.,   3.0 veces/doc.: SAVE TRANSACTION [__EFSavePoint];
+        0.51 ms/doc.,   2.0 veces/doc.: SELECT j.Id, j.CajaId, c.Codigo AS Caja, j.SucursalId, j.Cajero, j.FechaOperacion, j.AbiertaEn, j.MontoApertura, j.Estad
+        0.48 ms/doc.,   1.0 veces/doc.: COMMIT
+        0.44 ms/doc.,   1.0 veces/doc.: DECLARE @id bigint = NEXT VALUE FOR doc.SecDocumento; INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, N
+        0.44 ms/doc.,   1.0 veces/doc.: SELECT c.Id, c.Codigo, c.SucursalId, c.AlmacenId, a.Codigo AS Almacen, c.PuntoEmisionId, p.Codigo AS PuntoEmision, c.Mon
+        0.43 ms/doc.,   1.0 veces/doc.: INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa, Monto, Motivo, Usuario, Regis
+        0.37 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; INSERT INTO [caja].[CajaChica] ([DocumentoId], [Beneficiario], [CajaId], [Concepto], [JornadaId], [Moned
+        0.33 ms/doc.,   1.0 veces/doc.: DECLARE @s bigint, @p varchar(10), @d tinyint, @sub varchar(1), @id int, @n varchar(30), @tomado bit = 0; SELECT @s = Si
+        0.30 ms/doc.,   1.0 veces/doc.: DECLARE @r int; EXEC @r = sp_getapplock @Resource = @recurso, @LockMode = @modo, @LockOwner = 'Transaction', @LockTimeou
+        0.24 ms/doc.,   1.0 veces/doc.: SELECT TOP(1) [e].[MonedaBaseId] FROM [conf].[Empresa] AS [e]
+   motor: 0.0 compilaciones y 0.00 recompilaciones por documento (incluye las 2 consultas del instrumento); planes en caché de la base: 223 → 223
+   TR_Documento_Ola4 (C-10): 1.00 ejecuciones por documento; 0.519 ms y CPU 0.518 ms por ejecución (sin la compilación); generación de sus planes 3 → 3
+ == DBA, depósito desde caja: 50 documentos; cliente p50 12.3 ms, p95 19.7, media 13.6
+   lote: 4.018 ms de duración y 4.001 ms de CPU por documento; 434 lecturas; 20.0 sentencias
+   doc.TR_Documento_Ola4: 0.667 ms de duración y 0.664 ms de CPU por documento; 125 lecturas; 19.0 sentencias
+   doc.TR_Documento_Ola4b: 0.363 ms de duración y 0.361 ms de CPU por documento; 78 lecturas; 16.0 sentencias
+   doc.TR_Documento_Emision: 0.234 ms de duración y 0.233 ms de CPU por documento; 23 lecturas; 11.0 sentencias
+   caja.TR_Movimiento_Nodo: 0.072 ms de duración y 0.072 ms de CPU por documento; 9 lecturas; 1.0 sentencias
+   audit.TR_Bitacora_RangoNodo: 0.047 ms de duración y 0.047 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Credito: 0.040 ms de duración y 0.039 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   doc.TR_Documento_RangoNodo: 0.027 ms de duración y 0.027 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   banco.TR_DocBanco_Inmutable: 0.026 ms de duración y 0.026 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   caja.TR_Movimiento_RangoNodo: 0.026 ms de duración y 0.025 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Inmutable: 0.017 ms de duración y 0.016 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Nace: 0.015 ms de duración y 0.015 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Motivo608: 0.010 ms de duración y 0.010 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Anulacion: 0.009 ms de duración y 0.008 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   planes nuevos o recompilados en la medición: ninguno
+   sentencias más caras (duración por documento | CPU | lecturas | ejecuciones por documento | objeto | texto):
+       1.745 |   1.745 |     244 |   1.0 | lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @id AND Estado = 0 AND Numero NOT LIKE '~%'
+       0.412 |   0.408 |      26 |   1.0 | lote | INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoId], [Entidad], [EntidadId], [Motivo], [Origen], [Pantalla], [RecibidoEn], [Usuario], [UsuarioId]) OUTPUT I
+       0.370 |   0.370 |      16 |   0.0 | lote | SELECT CONVERT(varchar(130), qs.plan_handle, 1) + ':' + CAST(qs.statement_start_offset AS varchar(10)), ISNULL(OBJECT_SCHEMA_NAME(st.objectid, st.dbid) + '.' + OBJECT_NAM
+       0.279 |   0.275 |      29 |   1.0 | lote | INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa, Monto, Motivo, Usuario, RegistradoEn, MovimientoRevertidoId) VALUES (NEXT VALUE
+       0.239 |   0.239 |      31 |   1.0 | lote | INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, Numero, Fecha, SucursalId, Estado, Uid, HuellaSolicitud, CreadoPor, Notas) VALUES (@id, @tipo, 'N', @seri
+       0.180 |   0.180 |      22 |   1.0 | lote | INSERT INTO [banco].[DocBanco] ([DocumentoId], [Beneficiario], [CajaId], [Clase], [Concepto], [CuentaBancariaId], [DocumentoOrigenId], [JornadaId], [MonedaId], [Monto], [
+       0.160 |   0.160 |      23 |   1.0 | doc.TR_Documento_Ola4 | IF EXISTS (SELECT 1 FROM (SELECT e.Id, c.JornadaId, c.Monto, c.MonedaId FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 A
+       0.085 |   0.084 |      12 |   1.0 | lote | SELECT c.Id, c.Codigo, c.SucursalId, c.AlmacenId, a.Codigo AS Almacen, c.PuntoEmisionId, p.Codigo AS PuntoEmision, c.MonedaId, m.Codigo AS Moneda, c.ClienteContadoId, cl.
+       0.083 |   0.083 |       7 |   1.0 | lote | SELECT e.EmisionBloqueada, e.MotivoBloqueo, ISNULL(e.Restaurada, CONVERT(bit, 1)) AS Restaurada FROM sync.EstadoEmision e WITH (HOLDLOCK)
+       0.082 |   0.082 |      10 |   1.0 | lote | SELECT m.Id, m.Codigo, m.Inhabilitado, ISNULL(CONVERT(bit, CASE WHEN m.Id = e.MonedaBaseId THEN 1 ELSE 0 END), CONVERT(bit, 0)) AS EsBase, CASE WHEN m.Id = e.MonedaBaseId
+       0.081 |   0.081 |       6 |   1.0 | doc.TR_Documento_Ola4 | IF EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHE
+       0.078 |   0.078 |       2 |   1.0 | lote | UPDATE num.Serie SET Siguiente = @s + 1 WHERE TipoCodigo = @tipo AND SucursalId IS NULL
+       0.072 |   0.072 |       9 |   1.0 | caja.TR_Movimiento_Nodo | IF EXISTS (SELECT 1 FROM inserted i JOIN sync.EstadoNodo s ON CONVERT(smallint, i.Id / 1000000000000) = s.NodoLocalId LEFT JOIN sys.database_recovery_status r ON r.databa
+       0.071 |   0.070 |       8 |   1.0 | lote | SELECT c.Id, c.Codigo, c.Descripcion, c.MonedaId, m.Codigo AS Moneda, c.Inhabilitado, b.Nombre AS Banco, b.Rnc AS RncBanco FROM banco.CuentaBancaria c JOIN cat.Moneda m O
+   cliente: 20.0 viajes por documento; 10.2 ms por documento dentro de los viajes de 13.6 medidos; el resto (3.3 ms) es de la aplicación. Top 12 por tiempo:
+       2.24 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; DECLARE @inserted0 TABLE ([Id] bigint); INSERT INTO [audit].[Bitacora] ([Accion], [Detalle], [DocumentoI
+        1.97 ms/doc.,   1.0 veces/doc.: UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME() WHERE Id = @id AND Estado = 0 AND Numero NOT LIKE '~%'
+        0.61 ms/doc.,   3.0 veces/doc.: SAVE TRANSACTION [__EFSavePoint];
+        0.57 ms/doc.,   1.0 veces/doc.: DECLARE @id bigint = NEXT VALUE FOR doc.SecDocumento; INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, N
+        0.56 ms/doc.,   1.0 veces/doc.: COMMIT
+        0.53 ms/doc.,   2.0 veces/doc.: SELECT j.Id, j.CajaId, c.Codigo AS Caja, j.SucursalId, j.Cajero, j.FechaOperacion, j.AbiertaEn, j.MontoApertura, j.Estad
+        0.51 ms/doc.,   1.0 veces/doc.: INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa, Monto, Motivo, Usuario, Regis
+        0.45 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; INSERT INTO [banco].[DocBanco] ([DocumentoId], [Beneficiario], [CajaId], [Clase], [Concepto], [CuentaBan
+        0.40 ms/doc.,   1.0 veces/doc.: SELECT c.Id, c.Codigo, c.Descripcion, c.MonedaId, m.Codigo AS Moneda, c.Inhabilitado, b.Nombre AS Banco, b.Rnc AS RncBan
+        0.38 ms/doc.,   1.0 veces/doc.: DECLARE @s bigint, @p varchar(10), @d tinyint, @sub varchar(1), @id int, @n varchar(30), @tomado bit = 0; SELECT @s = Si
+        0.34 ms/doc.,   1.0 veces/doc.: DECLARE @r int; EXEC @r = sp_getapplock @Resource = @recurso, @LockMode = @modo, @LockOwner = 'Transaction', @LockTimeou
+        0.33 ms/doc.,   1.0 veces/doc.: SELECT c.Id, c.Codigo, c.SucursalId, c.AlmacenId, a.Codigo AS Almacen, c.PuntoEmisionId, p.Codigo AS PuntoEmision, c.Mon
+   motor: 0.0 compilaciones y 0.00 recompilaciones por documento (incluye las 2 consultas del instrumento); planes en caché de la base: 223 → 223
+   TR_Documento_Ola4 (C-10): 1.00 ejecuciones por documento; 0.740 ms y CPU 0.739 ms por ejecución (sin la compilación); generación de sus planes 3 → 3
+ == FPOS, venta del POS de una línea (una de cada cuatro con NCF): 200 documentos; cliente p50 20.4 ms, p95 31.3, media 21.5
+   lote: 4.957 ms de duración y 4.917 ms de CPU por documento; 466 lecturas; 46.8 sentencias
+   doc.TR_Documento_Emision: 0.423 ms de duración y 0.421 ms de CPU por documento; 53 lecturas; 14.0 sentencias
+   caja.TR_Movimiento_Nodo: 0.064 ms de duración y 0.064 ms de CPU por documento; 9 lecturas; 1.0 sentencias
+   doc.TR_Documento_Credito: 0.056 ms de duración y 0.056 ms de CPU por documento; 8 lecturas; 1.0 sentencias
+   inv.TR_Movimiento_RangoNodo: 0.042 ms de duración y 0.042 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   inv.TR_Movimiento_PeriodoCerrado: 0.037 ms de duración y 0.036 ms de CPU por documento; 2 lecturas; 3.0 sentencias
+   audit.TR_Bitacora_RangoNodo: 0.025 ms de duración y 0.025 ms de CPU por documento; 6 lecturas; 2.0 sentencias
+   doc.TR_Documento_RangoNodo: 0.024 ms de duración y 0.023 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   ventas.TR_Venta_Inmutable: 0.023 ms de duración y 0.023 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   doc.TR_Documento_Inmutable: 0.022 ms de duración y 0.022 ms de CPU por documento; 4 lecturas; 1.8 sentencias
+   caja.TR_Movimiento_RangoNodo: 0.022 ms de duración y 0.021 ms de CPU por documento; 4 lecturas; 2.0 sentencias
+   doc.TR_Documento_Ola4b: 0.020 ms de duración y 0.020 ms de CPU por documento; 6 lecturas; 1.0 sentencias
+   doc.TR_Autorizacion_RangoNodo: 0.019 ms de duración y 0.019 ms de CPU por documento; 3 lecturas; 1.5 sentencias
+   ventas.TR_VentaLinea_Inmutable: 0.017 ms de duración y 0.017 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   ventas.TR_VentaImpuesto_Inmutable: 0.017 ms de duración y 0.016 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   doc.TR_Documento_Ola4: 0.016 ms de duración y 0.016 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   ventas.TR_VentaPago_Inmutable: 0.016 ms de duración y 0.016 ms de CPU por documento; 4 lecturas; 1.0 sentencias
+   doc.TR_Documento_Nace: 0.015 ms de duración y 0.015 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   fiscal.TR_Comprobante_Inmutable: 0.013 ms de duración y 0.012 ms de CPU por documento; 2 lecturas; 0.8 sentencias
+   doc.TR_Documento_Anulacion: 0.008 ms de duración y 0.008 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   doc.TR_Documento_Motivo608: 0.008 ms de duración y 0.008 ms de CPU por documento; 2 lecturas; 1.0 sentencias
+   planes nuevos o recompilados en la medición: 1 × lote | INSERT INTO fiscal.Comprobante (DocumentoId, Rol, SecuenciaId, Ncf, TipoComprobanteCodigo,; 1 × lote | INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa,; 1 × lote | INSERT INTO audit.Bitacora (Id, Usuario, Pantalla, Entidad, DocumentoId, Accion, Detalle) ; 1 × lote | UPDATE inv.Existencia WITH (ROWLOCK) SET @l3_ex = Cantidad = Cantidad + @l3_delta, Permite; 1 × lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME(), Origen = 'N', SerieId =; 1 × lote | INSERT INTO dbo._LOG (Usuario, Ventana, IdDocum, Fecha, Hora, Accion) VALUES (@l5_usuario,
+   sentencias más caras (duración por documento | CPU | lecturas | ejecuciones por documento | objeto | texto):
+       0.653 |   0.653 |      77 |   0.8 | lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME(), Origen = 'N', SerieId = @l3_serie, Numero = @l3_numero WHERE Id = @l3_id AND Estado = 0 AND Origen = 'P
+       0.506 |   0.506 |       4 |   1.0 | lote | SELECT au.ArticuloId, au.UnidadId, u.Codigo, au.Factor FROM cat.ArticuloUnidad au JOIN cat.Unidad u ON u.Id = au.UnidadId WHERE au.ArticuloId IN (SELECT j.[value] FROM OP
+       0.436 |   0.431 |      38 |   1.0 | lote | INSERT INTO [inv].[Movimiento] ([AlmacenId], [ArticuloId], [Cantidad], [CantidadOrigen], [Clase], [CostoUnitario], [DocumentoId], [FactorUnidad], [Fecha], [Linea], [LoteI
+       0.229 |   0.229 |      25 |   0.2 | lote | UPDATE doc.Documento SET Estado = 1, EmitidoEn = SYSUTCDATETIME(), Origen = 'N', SerieId = @l4_serie, Numero = @l4_numero WHERE Id = @l4_id AND Estado = 0 AND Origen = 'P
+       0.219 |   0.219 |      26 |   1.0 | lote | INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, Numero, Fecha, SucursalId, Estado, Uid, HuellaSolicitud, CreadoPor, Notas) VALUES (@id, @tipo, 'P', NULL,
+       0.198 |   0.198 |      34 |   1.0 | lote | INSERT INTO [ventas].[Venta] ([DocumentoId], [AlmacenId], [CajaId], [ClienteId], [ConceptoNotaCodigo], [ConceptoNotaTexto], [CorreoCliente], [CuentaBancaria], [DocumentoO
+       0.184 |   0.179 |      22 |   0.8 | lote | INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa, Monto, Motivo, Usuario, RegistradoEn, MovimientoRevertidoId) VALUES (NEXT VALUE
+       0.139 |   0.139 |      24 |   1.0 | lote | INSERT INTO [ventas].[VentaLinea] ([DocumentoId], [Linea], [AlmacenId], [ArticuloId], [Cantidad], [CostoUnitario], [Descripcion], [FactorUnidad], [Importe], [Impuesto], [
+       0.137 |   0.128 |      17 |   0.8 | lote | INSERT INTO audit.Bitacora (Id, Usuario, Pantalla, Entidad, DocumentoId, Accion, Detalle) SELECT NEXT VALUE FOR audit.SecBitacora OVER (ORDER BY v.o), @l1_usuario, @l1_pa
+       0.133 |   0.133 |       3 |   1.0 | lote | SELECT [p].[ArticuloId], [p].[ListaPrecioId], [p].[MonedaId], [p].[UnidadId], [p].[IncluyeImpuesto], [p].[ModificadoPor], [p].[ValidoDesde], [p].[ValidoHasta], [p].[Preci
+       0.122 |   0.122 |       6 |   0.8 | lote | UPDATE doc.Documento SET MotivoSinNcf = 'N' WHERE Id = @id AND Estado = 0
+       0.111 |   0.111 |       4 |   1.0 | lote | SELECT a.Id, a.SucursalId, a.Codigo, s.Codigo AS Sucursal, s.Inhabilitado AS SucursalCerrada, ISNULL(CONVERT(bit, CASE WHEN a.SucursalId = @sucursal OR EXISTS (SELECT 1 F
+       0.096 |   0.096 |      10 |   1.0 | doc.TR_Documento_Emision | SELECT @hayVenta = 1, @subTotal = v.SubTotal, @descuento = v.Descuento, @impuesto = v.Impuesto, @total = v.Total, @jornadaId = v.JornadaId, @jornadaEstado = j.Estado, @br
+       0.094 |   0.094 |      16 |   1.0 | lote | INSERT INTO [ventas].[VentaPago] ([DocumentoId], [Linea], [Autorizacion], [CreditoDocumentoId], [FormaPagoId], [Marca], [MonedaId], [Monto], [MontoMoneda], [Referencia], 
+   cliente: 31.5 viajes por documento; 13.7 ms por documento dentro de los viajes de 21.5 medidos; el resto (7.8 ms) es de la aplicación. Top 12 por tiempo:
+       2.98 ms/doc.,   1.0 veces/doc.: SET NOCOUNT ON; INSERT INTO [doc].[LineaSaldo] ([Clase], [DocumentoId], [Linea], [CantidadOrigen]) OUTPUT INSERTED.[Cant
+        1.31 ms/doc.,   0.8 veces/doc.: DECLARE @lote_falta bit = 0; INSERT INTO caja.Movimiento (Id, JornadaId, SucursalId, Tipo, DocumentoId, MonedaId, Tasa, 
+        0.71 ms/doc.,   1.0 veces/doc.: SELECT au.ArticuloId, au.UnidadId, u.Codigo, au.Factor FROM cat.ArticuloUnidad au JOIN cat.Unidad u ON u.Id = au.UnidadI
+        0.58 ms/doc.,   0.2 veces/doc.: DECLARE @lote_falta bit = 0; INSERT INTO fiscal.Comprobante (DocumentoId, Rol, SecuenciaId, Ncf, TipoComprobanteCodigo, 
+        0.52 ms/doc.,   1.0 veces/doc.: COMMIT
+        0.46 ms/doc.,   1.0 veces/doc.: DECLARE @id bigint = NEXT VALUE FOR doc.SecDocumento; INSERT INTO doc.Documento (Id, TipoDocumentoId, Origen, SerieId, N
+        0.43 ms/doc.,   1.0 veces/doc.: SELECT TOP(1) [p].[Usuario], [p].[BuscarManualDevolucion], [p].[BuscarManualEntradas], [p].[BuscarManualPos], [p].[CajaI
+        0.35 ms/doc.,   1.0 veces/doc.: SELECT c.Id, c.Codigo, c.SucursalId, c.AlmacenId, a.Codigo AS Almacen, c.PuntoEmisionId, p.Codigo AS PuntoEmision, c.Mon
+        0.35 ms/doc.,   0.8 veces/doc.: UPDATE doc.Documento SET MotivoSinNcf = 'N' WHERE Id = @id AND Estado = 0; INSERT INTO doc.Autorizacion (Id, DocumentoId
+        0.34 ms/doc.,   1.0 veces/doc.: SELECT [p].[ArticuloId], [p].[ListaPrecioId], [p].[MonedaId], [p].[UnidadId], [p].[IncluyeImpuesto], [p].[ModificadoPor]
+        0.33 ms/doc.,   1.0 veces/doc.: SELECT [l].[Id], [l].[Codigo], [l].[Descripcion], [l].[Inhabilitado], [l].[MargenSobreCosto], [l].[Predeterminada], [l].
+        0.31 ms/doc.,   1.0 veces/doc.: SELECT [a].[Id], [a].[Codigo], [a].[Descripcion], [a].[Tipo], [a].[Inventariable], [a].[ImpuestoId], [i].[Codigo], [i].[
+   motor: 0.0 compilaciones y 0.00 recompilaciones por documento (incluye las 2 consultas del instrumento); planes en caché de la base: 348 → 349
+   TR_Documento_Ola4 (C-10): 1.75 ejecuciones por documento; 0.015 ms y CPU 0.014 ms por ejecución (sin la compilación); generación de sus planes 3 → 3
+
+
+[xUnit.net 00:00:49.71]   Finished:    GPOS.Tests
+
+La serie de pruebas se ejecutó correctamente.
+Pruebas totales: 1
+     Correcto: 1
+ Tiempo total: 50.7388 Segundos

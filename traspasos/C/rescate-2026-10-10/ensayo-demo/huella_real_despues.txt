@@ -1,0 +1,42 @@
+b|MigrationId|ProductVersion
+-|-----------|--------------
+EMP|20261005033559_Fundamentos|10.0.12
+EMP|20261005041704_Cfg|10.0.12
+EMP|20261005095013_Mae|10.0.12
+EMP|20261005095102_Num|10.0.12
+EMP|20261005213319_Ola3|10.0.12
+EMP|20261006073755_Ola3RangoNodo|10.0.12
+EMP|20261006100548_Ola3Firmas|10.0.12
+EMP|20261006170943_Ola3EmisionLigera|10.0.12
+b|maxmod|objs
+-|------|----
+EMP maxmod|2026-10-06 22:42:27.500|1110
+b|maxmod|objs
+-|------|----
+SYS maxmod|2026-10-06 22:41:57.113|26
+b|name|tablas
+-|----|------
+EMP schemas|audit|1
+EMP schemas|caja|5
+EMP schemas|cat|32
+EMP schemas|conf|7
+EMP schemas|cxc|8
+EMP schemas|dbo|124
+EMP schemas|doc|5
+EMP schemas|fiscal|9
+EMP schemas|inv|14
+EMP schemas|num|3
+EMP schemas|org|4
+EMP schemas|rrhh|1
+EMP schemas|seg|1
+EMP schemas|sync|8
+EMP schemas|ventas|6
+b|db|name|physical_name|MB
+-|--|----|-------------|--
+files|GPOS_SYSDATA|GPOS_SYSDATA|C:\Databases\GPOS_SYSDATA.mdf|200
+files|GPOS_SYSDATA|GPOS_SYSDATA_log|C:\Databases\GPOS_SYSDATA_log.ldf|328
+files|GPOS_DEMO|GPOS_DEMO|C:\Databases\GPOS_DEMO.mdf|72
+files|GPOS_DEMO|GPOS_DEMO_log|C:\Databases\GPOS_DEMO_log.ldf|8
+b|c1|c2
+-|--|--
+collation|Latin1_General_100_CI_AS_SC_UTF8|SQL_Latin1_General_CP1_CI_AS

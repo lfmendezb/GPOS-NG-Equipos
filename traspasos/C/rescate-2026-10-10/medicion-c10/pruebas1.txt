@@ -1,0 +1,48 @@
+Serie de pruebas para C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\bin\Debug\net10.0\GPOS.Tests.dll (.NETCoreApp,Version=v10.0)
+1 archivos de prueba en total coincidieron con el patrón especificado.
+[xUnit.net 00:00:37.76]     GPOS.Tests.ModeloNg.RendimientoOla4Tests.A1_mientras_la_compra_registra_su_costo_y_su_cuenta_la_venta_del_mismo_articulo_no_la_espera [FAIL]
+  Con error GPOS.Tests.ModeloNg.RendimientoOla4Tests.A1_mientras_la_compra_registra_su_costo_y_su_cuenta_la_venta_del_mismo_articulo_no_la_espera [28 s]
+  Mensaje de error:
+   La venta esperó a la compra detenida
+  Seguimiento de la pila:
+     at GPOS.Tests.ModeloNg.RendimientoOla4Tests.A1_mientras_la_compra_registra_su_costo_y_su_cuenta_la_venta_del_mismo_articulo_no_la_espera() in C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\ModeloNg\RendimientoOla4Tests.cs:line 109
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:31.06]     GPOS.Tests.ModeloNg.AplicacionEmisionPlanTests.La_lectura_unificada_de_la_emision_busca_en_UQ_Aplicacion_sin_recorrer_la_tabla_vacia [FAIL]
+[xUnit.net 00:01:31.07]     GPOS.Tests.ModeloNg.AplicacionEmisionPlanTests.Costo_de_TR_Documento_Emision_un_hilo [SKIP]
+  Con error GPOS.Tests.ModeloNg.AplicacionEmisionPlanTests.La_lectura_unificada_de_la_emision_busca_en_UQ_Aplicacion_sin_recorrer_la_tabla_vacia [19 s]
+  Mensaje de error:
+   Assert.NotEmpty() Failure: Collection was empty
+  Seguimiento de la pila:
+     at GPOS.Tests.ModeloNg.AplicacionEmisionPlanTests.La_lectura_unificada_de_la_emision_busca_en_UQ_Aplicacion_sin_recorrer_la_tabla_vacia() in C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\ModeloNg\AplicacionEmisionPlanTests.cs:line 82
+--- End of stack trace from previous location ---
+  Mensajes de salida estándar:
+ cxc.Aplicacion en la lectura unificada:  | 
+
+
+  Omitidas GPOS.Tests.ModeloNg.AplicacionEmisionPlanTests.Costo_de_TR_Documento_Emision_un_hilo [1 ms]
+[xUnit.net 00:05:50.18]     GPOS.Tests.ModeloNg.CompraVariableTablaTests.C10_Las_reglas_de_CXP_leen_cxp_Aplicacion_sin_buscar_la_llave [FAIL]
+  Con error GPOS.Tests.ModeloNg.CompraVariableTablaTests.C10_Las_reglas_de_CXP_leen_cxp_Aplicacion_sin_buscar_la_llave [4 s]
+  Mensaje de error:
+   Microsoft.Data.SqlClient.SqlException : Database 'GPOS_TEST_b7df30c1' is in transition. Try the statement later.
+  Seguimiento de la pila:
+     at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderBaseAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at GPOS.Tests.ModeloNg.CompraVariableTablaTests.C10_Las_reglas_de_CXP_leen_cxp_Aplicacion_sin_buscar_la_llave() in C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\ModeloNg\CompraVariableTablaTests.cs:line 245
+   at GPOS.Tests.ModeloNg.CompraVariableTablaTests.C10_Las_reglas_de_CXP_leen_cxp_Aplicacion_sin_buscar_la_llave() in C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\ModeloNg\CompraVariableTablaTests.cs:line 245
+   at GPOS.Tests.ModeloNg.CompraVariableTablaTests.C10_Las_reglas_de_CXP_leen_cxp_Aplicacion_sin_buscar_la_llave() in C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\ModeloNg\CompraVariableTablaTests.cs:line 259
+   at GPOS.Tests.ModeloNg.CompraVariableTablaTests.C10_Las_reglas_de_CXP_leen_cxp_Aplicacion_sin_buscar_la_llave() in C:\Users\lfmen\source\repos\GPOS-C-compra\tests\GPOS.Tests\ModeloNg\CompraVariableTablaTests.cs:line 259
+--- End of stack trace from previous location ---
+[xUnit.net 00:06:21.86]     GPOS.Tests.ModeloNg.FactorUnidadAjustesTests.Una_entrada_de_5000_lineas_se_emite_en_menos_de_un_segundo [SKIP]
+  Omitidas GPOS.Tests.ModeloNg.FactorUnidadAjustesTests.Una_entrada_de_5000_lineas_se_emite_en_menos_de_un_segundo [1 ms]
+[xUnit.net 00:06:57.94]     GPOS.Tests.ModeloNg.PerfilDisparadoresOla4Tests.I2_costo_de_los_disparadores_por_clase_de_documento_un_hilo [SKIP]
+  Omitidas GPOS.Tests.ModeloNg.PerfilDisparadoresOla4Tests.I2_costo_de_los_disparadores_por_clase_de_documento_un_hilo [1 ms]
+[xUnit.net 00:07:03.54]     GPOS.Tests.ModeloNg.CargaOla4Tests.T57_carga_de_la_ola_4_venta_compras_pagos_y_caja_chica [SKIP]
+  Omitidas GPOS.Tests.ModeloNg.CargaOla4Tests.T57_carga_de_la_ola_4_venta_compras_pagos_y_caja_chica [1 ms]
+
+Con error! - Con error:     3, Superado:   452, Omitido:     4, Total:   459, Duración: 7 m 10 s - GPOS.Tests.dll (net10.0)
