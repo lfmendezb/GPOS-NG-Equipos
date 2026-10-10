@@ -40,7 +40,7 @@ Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: co
 8. **Vigilancia del área común** (decisión del propietario, 2026-10-07; desde el 2026-10-10 sin el modelo). Una tarea programada de Windows, registrada por el propietario en cada equipo con `herramientas\Registrar-VigilanciaAreaComun.ps1 -Equipo <A|B|C> [-Minuto n]`, corre `herramientas\Vigilar-AreaComun.ps1` **cada 10 minutos** (desfase: B 2, A 5, C 8) y escribe las novedades en `%LOCALAPPDATA%\GPOS-NG-Equipos\novedades-<Equipo>.md` con una notificación de Windows. La sesión **no** programa un reloj propio: lee ese archivo al abrir y cuando el propietario lo pida (o usa `Revisar-AreaComun.ps1` a mano). **Vigilante en la sesión (decisión del propietario, 2026-10-10):** al abrir, cada sesión de equipo arma la herramienta `Monitor` sobre su archivo de novedades, con `timeout_ms` 1800000 y este comando (Git Bash), y la vuelve a armar cada vez que vence:
 
    ```bash
-   f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-<Equipo>.md"; touch "$f"; tail -n0 -F "$f" 2>/dev/null | grep --line-buffered -E "^## |^- "
+   f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-<Equipo>.md"; touch "$f"; n=$(wc -l < "$f"); while true; do m=$(wc -l < "$f" 2>/dev/null || echo "$n"); if [ "$m" -gt "$n" ]; then sed -n "$((n+1)),${m}p" "$f" | grep -E "^## |^- "; n=$m; fi; sleep 20; done
    ```
 
    Mientras no hay novedades no gasta vueltas del modelo; cuando la tarea de Windows escribe una, la sesión se despierta, lee el aviso y actúa. Al terminar una tarea, antes de quedar inactiva, la sesión lee también su archivo de novedades. Con lo que encuentre:

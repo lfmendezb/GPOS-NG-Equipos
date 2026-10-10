@@ -15,7 +15,7 @@ Estado: Abierto
 2. Arma el vigilante con la herramienta `Monitor`, `timeout_ms` = 1800000 y este comando (Git Bash):
 
    ```bash
-   f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-A.md"; touch "$f"; tail -n0 -F "$f" 2>/dev/null | grep --line-buffered -E "^## |^- "
+   f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-A.md"; touch "$f"; n=$(wc -l < "$f"); while true; do m=$(wc -l < "$f" 2>/dev/null || echo "$n"); if [ "$m" -gt "$n" ]; then sed -n "$((n+1)),${m}p" "$f" | grep -E "^## |^- "; n=$m; fi; sleep 20; done
    ```
 
 3. **Vuelve a armarlo cada vez que vence** (cada 30 minutos) y cada vez que abras una sesión nueva. Al terminar una tarea, antes de quedar inactiva, lee también tu archivo de novedades.

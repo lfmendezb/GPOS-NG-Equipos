@@ -78,7 +78,11 @@ try {
         if ($acuses.Count) { [void]$b.AppendLine("- Acuses ($($acuses.Count)): " + (($acuses | ForEach-Object { Split-Path $_.Ruta -Leaf }) -join ', ')) }
         foreach ($x in $prs) { [void]$b.AppendLine("- PR #$($x.P.number) $($x.Que)$(if ($x.P.isDraft) { ' (borrador)' }): $($x.P.title) — ``$($x.P.headRefName)``") }
         [void]$b.AppendLine()
-        Add-Content $archivoNovedades $b.ToString() -Encoding UTF8
+        # El vigilante de la sesión lee el archivo cada 20 s: si coincide con la escritura, se reintenta (hasta ~10 s)
+        for ($i = 1; ; $i++) {
+            try { Add-Content $archivoNovedades $b.ToString() -Encoding UTF8 -ErrorAction Stop; break }
+            catch [System.IO.IOException] { if ($i -ge 10) { throw }; Start-Sleep -Seconds 1 }
+        }
         Registrar "novedades: $($accion.Count) avisos con acción, $($acuses.Count) acuses, $($prs.Count) PR"
 
         if (-not $SinNotificacion) {
