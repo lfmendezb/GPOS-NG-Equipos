@@ -15,6 +15,8 @@ param(
     [switch]$SinNotificacion
 )
 $ErrorActionPreference = 'Stop'
+# PowerShell 5.1 decodifica la salida de git y gh con la página de códigos de la consola: sin esto, las tildes salen como «├®»
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
 $raiz = Split-Path -Parent $PSScriptRoot
 $dirEstado = Join-Path $env:LOCALAPPDATA 'GPOS-NG-Equipos'
 New-Item -ItemType Directory -Force $dirEstado | Out-Null
@@ -23,7 +25,7 @@ $archivoPr = Join-Path $dirEstado "vigilancia-pr-$Equipo.json"
 $archivoNovedades = Join-Path $dirEstado "novedades-$Equipo.md"
 $archivoRegistro = Join-Path $dirEstado "vigilancia-$Equipo.log"
 
-function Registrar([string]$texto) { Add-Content $archivoRegistro "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $texto" }
+function Registrar([string]$texto) { Add-Content $archivoRegistro "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $texto" -Encoding UTF8 }
 
 try {
     # ---------------------------------------------------------------- área común (sin tocar la copia de trabajo)
@@ -39,7 +41,7 @@ try {
             if (-not $l) { continue }
             $estado, $ruta = $l -split "`t", 2
             $texto = (git -C $raiz show "${actual}:$ruta") -join "`n"
-            $tipo = if ($texto -match '(?m)^Tipo:\s*([^\r\n]+)') { $Matches[1].Trim() } else { '?' }
+            $tipo = if ($texto -match '(?m)^Tipo:\s*([^\r\n]+)') { $Matches[1].Trim() } elseif ($ruta -like 'traspasos/*') { 'Traspaso' } else { '?' }
             $prioridad = if ($texto -match 'Prioridad:\s*(\w+)') { $Matches[1] } else { '?' }
             $titulo = if ($texto -match '(?m)^#\s+(.+)$') { $Matches[1].Trim() } else { Split-Path $ruta -Leaf }
             $avisos += [pscustomobject]@{
