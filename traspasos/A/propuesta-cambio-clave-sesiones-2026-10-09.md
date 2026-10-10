@@ -226,3 +226,6 @@ Marque una opción por línea. Hasta la firma, todo queda **Pendiente de firma**
 | **CS-13** | Calendario: junto con la fase A de ADR-81 (≈ 2,3 sp); si ADR-81 se retrasa, adelantar CS-1, CS-5 y CS-7 (≈ 0,9 sp) | **Aprobar** | [ ] Sí · [ ] Otro: ___ |
 
 **Candidatas a ADR (las redacta el Arquitecto Maestro):** ciclo de vida del token de usuario (CS-1, CS-2, CS-9 y CS-10) como precisión de ADR-36 y del estándar 3.6; CS-11 como precisión de la cláusula 6 de ADR-53.
+
+**Firma del propietario (2026-10-09):** CS-1 a CS-13 según la recomendación. Estado: Aceptada. Calendario según CS-13: se construye con la fase A de ADR-81; si ADR-81 se retrasa, se adelantan CS-1, CS-5 y CS-7 (≈ 0,9 sp).
+
