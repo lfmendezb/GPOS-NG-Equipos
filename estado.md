@@ -77,6 +77,11 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG-AddOn-Kit / Polaris | `main` | Nuevos (solo README); construcción después de K1 |
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
 
+## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
+- **Actualizado:** 2026-10-09, noche (primera sesión como C; sin agentes activos)
+- **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos: 8 núcleos, 7,8 GB de RAM; rige el límite de agentes de la antigua PC B.
+- **Trabajando en:** nada. Pidió su primera tarea en `avisos/C-a-B/2026-10-09-equipo-c-solicita-tarea.md`.
+
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
 - **DEMO:** probar la actualización del 2026-10-08 en LAPTOP-DUMQQ5QK (memoria de SQL Server 1.024 / 3.072 MB) y medir la importación de suplidores y clientes.
