@@ -38,7 +38,7 @@
 - [estado-equipo-b](estado-equipo-b.md) — Cierre del equipo B 2026-10-07: ola 3b firmada y unida; Backup Tool N-01 construido; pendientes del propietario
 - [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; desde 2026-10-09 se dice «GPOS Argón» (no renombrar código); cada hito, un elemento
 - [limite-agentes-pc-b](limite-agentes-pc-b.md) — Equipo nuevo de B: hasta 6 agentes, máximo 2 compilando o probando; lo pesado de SQL corre solo
-- [revision-area-comun-30-min](revision-area-comun-30-min.md) — Regla 8: revisar el área común cada 10 min desde 2026-10-09 (antes 30); CronCreate + Revisar-AreaComun.ps1; atiende lo rutinario
+- [revision-area-comun-30-min](revision-area-comun-30-min.md) — Regla 8: revisar el área común cada 30 min (se probó 10 y el propietario lo revirtió); CronCreate + Revisar-AreaComun.ps1; atiende lo rutinario
 - [xml-firmado-responsabilidad-proveedor](xml-firmado-responsabilidad-proveedor.md) — El XML firmado del e-CF lo custodia IQ (DF-06 v4); GPOS guarda el JSON enviado con huella y sello
 - [Siguiente paso en la PC B](siguiente-paso-pc-b.md) — traspaso 2026-10-09: mudanza de B a un equipo de más capacidad (posible principal); ramas, firmas pendientes PR/RPV, P9 Polaris, esperas de A
 - [api-reportes-solo-lectura](api-reportes-solo-lectura.md) — API de reportes aparte, solo lectura sobre vistas rpt; persistencia en la API principal; igual para análisis (orientación 2026-10-07)

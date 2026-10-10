@@ -2,7 +2,7 @@
 
 Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: coordina, integra y une desde el 2026-10-09, por decisión del propietario) y los equipos de apoyo **A** (PC A; ramas `a/`) y **C** (antigua PC B, desde el 2026-10-09; ramas `c/`), que no unen. No contiene código: contiene lo que los dos equipos necesitan saber para trabajar como un solo equipo sobre todos los proyectos (`GPOS-NG`, `BackupService`, `GPOS-NG-AddOn-IQS` y los que vengan).
 
-**Quién decide cuándo se actualiza:** el propietario, con una excepción: la **revisión obligatoria cada 10 minutos** (regla 8). Fuera de ella, el propietario le dice a cada equipo «actualiza desde el área común» (instalar memoria y agentes) o «publica en el área común»; ningún equipo instala ni publica por su cuenta salvo un aviso urgente (regla 6) o lo rutinario de la regla 8.
+**Quién decide cuándo se actualiza:** el propietario, con una excepción: la **revisión obligatoria cada 30 minutos** (regla 8). Fuera de ella, el propietario le dice a cada equipo «actualiza desde el área común» (instalar memoria y agentes) o «publica en el área común»; ningún equipo instala ni publica por su cuenta salvo un aviso urgente (regla 6) o lo rutinario de la regla 8.
 
 ## Estructura
 
@@ -37,7 +37,7 @@ Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: co
 5. **No reemplaza a los repositorios de código:** las ramas de trabajo siguen en cada proyecto; aquí solo se avisa que existen y en qué estado están. Los ADR se registran en `GPOS-NG` (`master`, `docs/adr/`), no aquí.
 6. **Aviso urgente:** si un equipo encuentra algo que afecta al trabajo del otro, deja el aviso con `Prioridad: Alta`, lo publica y se lo dice al propietario en su sesión.
 7. **El propietario firma:** un aviso nunca es una decisión. Las decisiones viven en las hojas de firma de cada proyecto.
-8. **Revisión obligatoria cada 10 minutos** (decisión del propietario del 2026-10-07; el 2026-10-09 pasó de 30 a 10 minutos para que la comunicación sea más fluida). Mientras una sesión de equipo esté abierta, revisa el área común cada 10 minutos con `herramientas\Revisar-AreaComun.ps1 -Equipo <A|B|C>` (trae lo nuevo y lista los avisos abiertos, marcando los nuevos), aunque el propietario no lo pida. Al abrir la sesión, la programa con una tarea recurrente de la sesión. Con lo que encuentre:
+8. **Revisión obligatoria cada 30 minutos** (decisión del propietario, 2026-10-07). Mientras una sesión de equipo esté abierta, revisa el área común cada 30 minutos con `herramientas\Revisar-AreaComun.ps1 -Equipo <A|B|C>` (trae lo nuevo y lista los avisos abiertos, marcando los nuevos), aunque el propietario no lo pida. Al abrir la sesión, la programa con una tarea recurrente de la sesión. Con lo que encuentre:
    - **Atiende sin preguntar lo rutinario** y se lo informa al propietario: acuses de recibo, respuestas informativas, actualizar `estado.md`, aplicar a la memoria común un cambio que el propietario ya decidió (solo B, el coordinador), registrar algo ya firmado (por ejemplo un ADR Aceptado) y publicarlo con el script.
    - **Le presenta al propietario, sin actuar**, todo lo que exija una decisión o firma, unir ramas, lanzar construcción en un árbol de código o tocar bases de datos.
    - Si no hay nada nuevo, no interrumpe al propietario.
