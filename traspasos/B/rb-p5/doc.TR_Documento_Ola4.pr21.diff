@@ -1,0 +1,46 @@
+37a38,44
+>             BEGIN
+>                 -- C-10 (Ola4CompraVariableTabla): los documentos de la ola que cambian de estado se leen UNA vez y 51344 los lee de @e, en lugar de repetir
+>                 -- nueve veces la tabla derivada en la sentencia (su compilación, con cada cambio de las estadísticas, era el costo de la FCP)
+>                 DECLARE @e TABLE (Id bigint NOT NULL PRIMARY KEY, Codigo varchar(10) COLLATE DATABASE_DEFAULT NOT NULL, Familia char(3) COLLATE DATABASE_DEFAULT NOT NULL,
+>                                   SoloCentral bit NOT NULL, Origen char(1) COLLATE DATABASE_DEFAULT NOT NULL, Fecha date NOT NULL, Emite int NOT NULL, Anula int NOT NULL);
+>                 INSERT @e (Id, Codigo, Familia, SoloCentral, Origen, Fecha, Emite, Anula)
+>                 SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC');
+43c50
+<                                  FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.CompraLinea l ON l.DocumentoId = e.Id
+---
+>                                  FROM @e e JOIN compras.CompraLinea l ON l.DocumentoId = e.Id
+47c54
+<                                       FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN inv.Movimiento m ON m.DocumentoId = e.Id
+---
+>                                       FROM @e e JOIN inv.Movimiento m ON m.DocumentoId = e.Id
+55c62
+<                OR EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.CompraLinea l ON l.DocumentoId = e.Id
+---
+>                OR EXISTS (SELECT 1 FROM @e e JOIN compras.CompraLinea l ON l.DocumentoId = e.Id
+57c64
+<                OR EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN inv.Movimiento m ON m.DocumentoId = e.Id
+---
+>                OR EXISTS (SELECT 1 FROM @e e JOIN inv.Movimiento m ON m.DocumentoId = e.Id
+64c71
+<                                     FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.CompraLinea l ON l.DocumentoId = e.Id
+---
+>                                     FROM @e e JOIN compras.CompraLinea l ON l.DocumentoId = e.Id
+68c75
+<                                          FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.FacturaRecepcion r ON r.DocumentoId = e.Id
+---
+>                                          FROM @e e JOIN compras.FacturaRecepcion r ON r.DocumentoId = e.Id
+77c84
+<                OR EXISTS (SELECT 1 FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.Compra c ON c.DocumentoId = e.Id JOIN compras.Compra o ON o.DocumentoId = c.DocumentoOrigenId
+---
+>                OR EXISTS (SELECT 1 FROM @e e JOIN compras.Compra c ON c.DocumentoId = e.Id JOIN compras.Compra o ON o.DocumentoId = c.DocumentoOrigenId
+82c89
+<                                     FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.Compra c ON c.DocumentoId = e.Id AND c.DocumentoOrigenId IS NOT NULL
+---
+>                                     FROM @e e JOIN compras.Compra c ON c.DocumentoId = e.Id AND c.DocumentoOrigenId IS NOT NULL
+87c94
+<                                          FROM (SELECT i.Id, t.Codigo, t.Familia, t.SoloCentral, i.Origen, i.Fecha, CASE WHEN d.Estado = 0 AND i.Estado = 1 THEN 1 ELSE 0 END AS Emite, CASE WHEN i.Estado = 2 AND d.Estado <> 2 THEN 1 ELSE 0 END AS Anula FROM inserted i JOIN deleted d ON d.Id = i.Id JOIN doc.TipoDocumento t ON t.Id = i.TipoDocumentoId WHERE i.Estado <> d.Estado AND (t.Familia IN ('COM', 'CXP', 'BAN') OR t.Codigo = 'CC')) e JOIN compras.Compra c ON c.DocumentoId = e.Id
+---
+>                                          FROM @e e JOIN compras.Compra c ON c.DocumentoId = e.Id
+95a103
+>             END

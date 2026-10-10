@@ -1,0 +1,4 @@
+7,9d6
+<     IF EXISTS (SELECT 1 FROM inserted a JOIN deleted d ON d.Id = a.Id AND d.Estado = 1 AND a.Estado = 2
+<                 JOIN fiscal.Comprobante c ON c.DocumentoId = a.Id WHERE a.CodigoAnulacion608 IS NULL)
+<         THROW 51312, N'Anular un documento con NCF exige el código del 608 (CA-02).', 1;
