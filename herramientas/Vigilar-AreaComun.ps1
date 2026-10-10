@@ -84,12 +84,17 @@ try {
         if (-not $SinNotificacion) {
             $resumen = "$($accion.Count) avisos con acción, $($acuses.Count) acuses, $($prs.Count) PR"
             try {
-                [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
-                [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
-                $xml = [Windows.Data.Xml.Dom.XmlDocument]::new()
-                $xml.LoadXml("<toast><visual><binding template='ToastGeneric'><text>GPOS NG — área común ($Equipo)</text><text>$([Security.SecurityElement]::Escape($resumen))</text></binding></visual></toast>")
-                $app = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
-                [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($app).Show([Windows.UI.Notifications.ToastNotification]::new($xml))
+                # Las clases WinRT de notificaciones solo existen en Windows PowerShell 5.1: desde PowerShell 7 la notificación se delega en powershell.exe
+                $toast = @"
+[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+[Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
+`$xml = [Windows.Data.Xml.Dom.XmlDocument]::new()
+`$xml.LoadXml("<toast><visual><binding template='ToastGeneric'><text>GPOS NG — área común ($Equipo)</text><text>$([Security.SecurityElement]::Escape($resumen))</text></binding></visual></toast>")
+`$app = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
+[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier(`$app).Show([Windows.UI.Notifications.ToastNotification]::new(`$xml))
+"@
+                & powershell.exe -NoProfile -NonInteractive -EncodedCommand ([Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($toast)))
+                if ($LASTEXITCODE -ne 0) { Registrar "sin notificación: powershell.exe salió con $LASTEXITCODE" }
             } catch { Registrar "sin notificación: $($_.Exception.Message)" }
         }
     } elseif ($primeraVez) {
