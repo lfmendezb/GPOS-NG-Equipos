@@ -14,7 +14,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   Ninguno está unido. Orden sugerido: #8 antes que #10 (A rebasa el #10); #8 y #9 se reordenan por migraciones.
 - **Cambio de rol:** por los apagones sin UPS, el propietario pasó la coordinación al equipo nuevo (Equipo B restaurado, más robusto). A trabaja en ramas `a/...`, sube y abre PR, no une; conserva el rango de ADR 68-99 (aprobado por el propietario). Ver `avisos/A-a-B/2026-10-09-coordinacion-pasa-al-equipo-nuevo.md`.
 - **Hecho el 2026-10-09:** factor de unidad, kárdex e interfaz (`3324e43` a `472d078`), UF-03 y OB-03, login sin HTTP 400, K1 unido y su pasada 2 (`59921ba`; GPOS.Tests 1.870/0, Web 448/448, MAUI 429/429); ADR-078 y ADR-81 (TOTP) en `master` (`3a2d0bd`).
-- **Trabajando en:** revisión de los PR de A: #9 entregado (Aprobado con observaciones); **#7 en revisión**, luego el #6 y después el ensayo del DEMO (`B-a-C/2026-10-09-ensayo-demo`). ADR de C: 130 a 159. Regla 8 cada 30 min (minutos 22 y 52).
+- **Trabajando en:** revisión de los PR de A: #9 y #7 entregados (Aprobado con observaciones); **#6 en revisión**; después, el ensayo del DEMO. ADR de C: 130 a 159. Regla 8 cada 30 min (minutos 22 y 52).
 - **Acuse (2026-10-09, 19:20):** recibido el encargo `2026-10-09-tareas-de-apoyo-para-a` (en orden: demo ronda 2 en `a/mejoras-demo-ronda2`, búsqueda sin tildes, núcleo de caja, H-RV-01/02) y sus reglas de apoyo. Recibidos también: la meta del MVP del 60 % (su definición queda en B, según el encargo), la suspensión de la documentación hasta el MVP, los hallazgos de reportes del tramo 2 (`rptsis` y `GPOS.Migracion` quedan en B), ADR-125, `COMANDERA` y los privilegios de cocina y Farmacia (sin acción ahora). A empieza cuando el propietario lo indique.
 - **Traspasado al coordinador:** acuse y definición del MVP 60 %; T-57 del 14-oct y la meta 1; cierre de la ola 4; ADR-118/119 (T1, T2, T4); 3b y partida de `b/ola5`; `rptsis` y `GPOS.Migracion`; búsqueda sin tildes; tanda de núcleo de caja (reimpresión y redondeo del vuelto); tanda 3 (equivalencias, ≈19 sp); los «Pendientes del propietario» de este archivo. El coordinador puede encargar a A cualquiera de ellas como trabajo de soporte.
 - **Ramas vivas:**
@@ -80,7 +80,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 ## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
 - **Actualizado:** 2026-10-09, noche (primera sesión como C; sin agentes activos)
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos: 8 núcleos, 7,8 GB de RAM; rige el límite de agentes de la antigua PC B.
-- **Trabajando en:** revisión de los PR de A: #9 entregado (Aprobado con observaciones); **#7 en revisión**, luego el #6 y después el ensayo del DEMO (`B-a-C/2026-10-09-ensayo-demo`). ADR de C: 130 a 159. Regla 8 cada 30 min (minutos 22 y 52).
+- **Trabajando en:** revisión de los PR de A: #9 y #7 entregados (Aprobado con observaciones); **#6 en revisión**; después, el ensayo del DEMO. ADR de C: 130 a 159. Regla 8 cada 30 min (minutos 22 y 52).
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
