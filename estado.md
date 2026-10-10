@@ -80,7 +80,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 ## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
 - **Actualizado:** 2026-10-09, noche (primera sesión como C; sin agentes activos)
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos: 8 núcleos, 7,8 GB de RAM; rige el límite de agentes de la antigua PC B.
-- **Trabajando en:** nada. Pidió su primera tarea en `avisos/C-a-B/2026-10-09-equipo-c-solicita-tarea.md`.
+- **Trabajando en:** nada todavía. Encargo recibido: revisión de los PR #9, #7 y #6 de A (`B-a-C/2026-10-09-bienvenida-y-primera-tarea`); empieza cuando lo indique el propietario. Regla 8 programada (minutos 22 y 52).
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
