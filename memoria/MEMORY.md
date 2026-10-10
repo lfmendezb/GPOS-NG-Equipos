@@ -55,3 +55,4 @@
 - [mvp-fecha-medicion](mvp-fecha-medicion.md) — MVP: 70 % (7 de 10 flujos) medido el 2026-11-01; lista F1-F10 aprobada; responde PF-Q2
 - [librerias-publicas-antes-que-propias](librerias-publicas-antes-que-propias.md) — Librería libre muy usada antes que solución propia (XLSX: OpenXml en flujo; ClosedXML para importar)
 - [restaurante-catering-ejecutivos](restaurante-catering-ejecutivos.md) — Restaurante sin mesas: catering + ejecutivos (menú diario y corporativos a crédito por empleado); hoja firmada 2026-10-09 (tramo 3d)
+- [numero-al-final-del-guardado](numero-al-final-del-guardado.md) — Principio: el documento toma su número/secuencia como último paso del guardado; estudio de riesgo en curso
