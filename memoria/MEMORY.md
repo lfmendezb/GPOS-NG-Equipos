@@ -52,7 +52,7 @@
 - [filtro-suite-oficial](filtro-suite-oficial.md) — GPOS.Tests: --filter "Transicion!=Ola5&Transicion!=Defecto"
 - [kits-admcloud-prueba-alta-pendiente](kits-admcloud-prueba-alta-pendiente.md) — Kits AdmCloud: KD-01 a KD-08 aprobados (ImpactStock=false + ajuste diario; GPOS manda en receta; no crear kits en v1)
 - [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
-- [mvp-fecha-medicion](mvp-fecha-medicion.md) — MVP: 70 %% (7 de 10) medido el 2026-11-01; desde 2026-10-10 cuentan 8 de 10 (F1-F8); faltan F9 y F10
+- [mvp-fecha-medicion](mvp-fecha-medicion.md) — MVP: 70 % (7 de 10) medido el 2026-11-01; desde 2026-10-10 cuentan 8 de 10 (F1-F8); faltan F9 y F10
 - [librerias-publicas-antes-que-propias](librerias-publicas-antes-que-propias.md) — Librería libre muy usada antes que solución propia (XLSX: OpenXml en flujo; ClosedXML para importar)
 - [restaurante-catering-ejecutivos](restaurante-catering-ejecutivos.md) — Restaurante sin mesas: catering + ejecutivos (menú diario y corporativos a crédito por empleado); hoja firmada 2026-10-09 (tramo 3d)
 - [numero-al-final-del-guardado](numero-al-final-del-guardado.md) — Principio firmado: número/NCF como último paso del guardado + M-C (foto mensual de costo) + D-8; construcción en noviembre
