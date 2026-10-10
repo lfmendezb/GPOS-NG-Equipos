@@ -1,0 +1,7009 @@
+{
+  "contrato": "vistas-reportes",
+  "version": "1.3",
+  "versionMinima": "1.0",
+  "base": "empresa y nodo (mismo esquema, ADR-53)",
+  "origenEsquema": "origin/feature/modelo-ng 109aae0 (database/empresa/gpos-empresa-20261010035415_Ola4BusquedaSinTildes.sql); revisiones 1 a 3 sobre e300320 y 4 a 5 sobre 472d078",
+  "alcance": "Ventas e inventario (ola 5, segundo encargo de B), con kárdex y ajustes (VW-02, revisión 3), FactorUnidad y datos sensibles (revisión 4: RS-01 a RS-03) y respuestas de A del 2026-10-09 (revisión 5: tipo de identificación de la venta, costo de la factura de un conduce, claves de privilegio, RncReceptorEnmascarado). Versión 1.1 (2026-10-09): rpt.Empresa con el RNC del encabezado de evidencia (ADR-111 cl. 7). Versión 1.2 (2026-10-10, tramo 3): rptc.CostoVentaOrigen (RPV-02 con el promedio ponderado del conduce) y rpt.CatArticulo.DescripcionClave (PA-D-07); sin cambio de columnas: promedio ponderado en rptc.VentaLinea, clase 9 en el kárdex y costo de MD-42 en rptc.ExistenciaActual (P-4). Versión 1.3 (2026-10-10, tramo 4; ADR-109 Q-1 a Q-6): rpt.CxcDocumento, rpt.CxpDocumento, rpt.Compra, rpt.DocBanco, rpt.CajaChica y rptc.CajaChica, rpt.MovimientoCaja y rptc.MovimientoCaja, rpt.CatTipoGasto y rpt.CatTermino; NcfHistorico en rpt.ConsultaFactura y rptc.ConsultaFactura (Q-3, rol H de H-2); rpt.CierreCajaConteo.Esperado siempre NULL (Q-5, T3-10; la cifra queda en rptc). Sin vistas fiscales, imp ni rptsis.",
+  "notas": [
+    "largo en bytes (bases UTF-8, MD-10); -1 = max.",
+    "nulable: la de la columna de origen; en las expresiones (CONVERT, CASE, COALESCE, aritmética) es inferida y la fija la prueba V-D7 con GetColumnSchema.",
+    "desde: versión del contrato en que entró la columna. Agregar columnas o vistas sube la versión menor; quitar o renombrar exige expandir y contraer (ADR-109 cl. 11).",
+    "Huella en rpt.VersionContrato: SHA-256 de los bytes UTF-8 sin BOM de este archivo, con finales de línea LF y el salto de línea final tal como está (VW-06; .gitattributes fija eol=lf).",
+    "Versión 1.0 sin publicar: hasta que A una la migración Ola5VistasVentasInventario, los cambios se hacen sobre la 1.0 recalculando la huella; después de unir, todo cambio va en una migración nueva (VW-05).",
+    "privilegio (RS-03, firmado por el propietario el 2026-10-09; precisiones de ADR-109 cl. 4 y de ADR-11): CLAVE del catálogo de privilegios (no el nombre visible; respuesta 5 de A, 2026-10-09) que la API de reportes exige para leer la vista. null en rpt (sin privilegio de columna; el SQL del diseñador solo ve rpt). En rptc: vercostos («Ver costos»: costos y valor), verdatospersonales («Ver datos personales»: identificación completa; el pasaporte nunca va completo) o vercuadrecaja («Ver cuadre de caja»: esperado, declarado, contado y diferencia). Una consulta registrada que lea varias vistas rptc exige todos sus privilegios; si falta uno, usa la variante rpt de la vista.",
+    "Columnas enmascaradas (RS-01; ADR-109): sufijo Enmascarada o Enmascarado según el género del sustantivo (IdentificacionEnmascarada, IdentificacionClienteEnmascarada, RncReceptorEnmascarado). El enmascarado lo decide el tipo de identificación (R íntegro en rpt; R y C íntegros en rptc; P y desconocido, '*******' + últimos 4), nunca el formato: en la venta, ventas.Venta.TipoIdentificacionCliente (revisión 5)."
+  ],
+  "vistas": [
+    {
+      "esquema": "rpt",
+      "vista": "VentaDocumento",
+      "grano": "Documento FAC, FPOS, DEV, NC o ND (Estado 1 o 2); sin CHD (H-03)",
+      "periodo": "Fecha",
+      "diseno": "L-01",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoComprobanteCodigo",
+          "tipo": "char",
+          "largo": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NcfModificado",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoSinNcf",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RncReceptorEnmascarado",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NombreReceptor",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionClienteEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Signo",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SubTotal",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descuento",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Impuesto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CargoServicio",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FueraPlazoFiscal",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ConceptoNotaCodigo",
+          "tipo": "char",
+          "largo": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "DocumentoOrigenId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NumeroOrigen",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Situacion",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "VentaDocumento",
+      "grano": "Como rpt.VentaDocumento, más la identificación completa del receptor y del cliente (pasaporte: últimos 4)",
+      "periodo": "Fecha",
+      "diseno": "L-01",
+      "desde": "1.0",
+      "privilegio": "verdatospersonales",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoComprobanteCodigo",
+          "tipo": "char",
+          "largo": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NcfModificado",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoSinNcf",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RncReceptorEnmascarado",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NombreReceptor",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionClienteEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Signo",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SubTotal",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descuento",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Impuesto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CargoServicio",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FueraPlazoFiscal",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ConceptoNotaCodigo",
+          "tipo": "char",
+          "largo": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "DocumentoOrigenId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NumeroOrigen",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Situacion",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RncReceptor",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionCliente",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "VentaLinea",
+      "grano": "Línea de FAC, FPOS o DEV (Estado 1 o 2); cantidad y montos con signo",
+      "periodo": "Fecha",
+      "diseno": "L-02",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Signo",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MarcaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FactorUnidad",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "PrecioUnitario",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descuento",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Impuesto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Importe",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ImporteBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Serie",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "VentaLinea",
+      "grano": "Como rpt.VentaLinea, más el costo aplicado",
+      "periodo": "Fecha",
+      "diseno": "L-02",
+      "desde": "1.0",
+      "privilegio": "vercostos",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Signo",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MarcaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FactorUnidad",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "PrecioUnitario",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descuento",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Impuesto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Importe",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ImporteBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Serie",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoUnitario",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UtilidadBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "CostoVentaOrigen",
+      "grano": "Línea de FAC, FPOS o DEV (Estado 1 o 2) con el costo del documento que movió el inventario",
+      "periodo": null,
+      "diseno": "RPV-02 = A (ADR-109); precisión del promedio ponderado del conduce firmada el 2026-10-10. Ramas C (conduce), F (kárdex propio) y L (línea); O y D en su tramo",
+      "desde": "1.2",
+      "privilegio": "vercostos",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.2"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.2"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.2"
+        },
+        {
+          "nombre": "OrigenCosto",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": true,
+          "desde": "1.2"
+        },
+        {
+          "nombre": "DocumentoCostoId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.2"
+        },
+        {
+          "nombre": "CostoUnitario",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.2"
+        },
+        {
+          "nombre": "CostoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.2"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "Cotizacion",
+      "grano": "Documento COT o PED (Estado 0, 1 o 2)",
+      "periodo": "Fecha",
+      "diseno": "L-03",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionClienteEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Situacion",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "Cotizacion",
+      "grano": "Como rpt.Cotizacion, más la identificación completa del cliente (pasaporte: últimos 4)",
+      "periodo": "Fecha",
+      "diseno": "L-03",
+      "desde": "1.0",
+      "privilegio": "verdatospersonales",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionClienteEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Situacion",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionCliente",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CierreCaja",
+      "grano": "Cierre X o Z (Estado 1 o 2), sin el cuadre del efectivo (RS-02)",
+      "periodo": "FechaOperacion o Fecha",
+      "diseno": "L-04",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Anulado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaOperacion",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Supervisor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NumeroEnCaja",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadFacturas",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadDevoluciones",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalVentas",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalDevoluciones",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalImpuestos",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CerradoEnZId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "CierreCaja",
+      "grano": "Como rpt.CierreCaja, más el cuadre del efectivo (esperado, declarado y diferencia)",
+      "periodo": "FechaOperacion o Fecha",
+      "diseno": "L-04",
+      "desde": "1.0",
+      "privilegio": "vercuadrecaja",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Anulado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaOperacion",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Supervisor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NumeroEnCaja",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadFacturas",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadDevoluciones",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalVentas",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalDevoluciones",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalImpuestos",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CerradoEnZId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EfectivoEsperado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EfectivoDeclarado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Diferencia",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CierreCajaConteo",
+      "grano": "Cierre × forma de pago × moneda; Esperado siempre NULL desde la 1.3 (Q-5, T3-10: el cuadre solo en rptc.CierreCajaConteo)",
+      "periodo": "FechaOperacion o Fecha",
+      "diseno": "L-05",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Anulado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaOperacion",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FormaPagoId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FormaPagoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClaseFormaPago",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Esperado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "CierreCajaConteo",
+      "grano": "Como rpt.CierreCajaConteo, con Esperado en todos los cierres, más contado y diferencia",
+      "periodo": "FechaOperacion o Fecha",
+      "diseno": "L-05",
+      "desde": "1.0",
+      "privilegio": "vercuadrecaja",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Anulado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaOperacion",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FormaPagoId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FormaPagoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClaseFormaPago",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Esperado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Contado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Diferencia",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "Recibo",
+      "grano": "Recibo de cobro REC (Estado 1 o 2)",
+      "periodo": "Fecha",
+      "diseno": "L-10",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CobradorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CobradorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CuentaBancariaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Banco",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Concepto",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Anticipo",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RetencionItbis",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RetencionIsr",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaRetencion",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsCompensacion",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "ReciboPago",
+      "grano": "Recibo × forma de pago (Estado 1 o 2)",
+      "periodo": "Fecha",
+      "diseno": "L-11",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FormaPagoId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FormaPagoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClaseFormaPago",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClaseFiscal607",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MontoMoneda",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ReciboMonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ReciboTasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Referencia",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "ConsultaFactura",
+      "grano": "Documento FAC, FPOS o DEV (Estado 1 o 2)",
+      "periodo": "Fecha",
+      "diseno": "L-23",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionClienteEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NumeroInv",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Balance",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVence",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorNombre",
+          "tipo": "varchar",
+          "largo": 161,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NcfHistorico",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "ConsultaFactura",
+      "grano": "Como rpt.ConsultaFactura, más la identificación completa del cliente (pasaporte: últimos 4)",
+      "periodo": "Fecha",
+      "diseno": "L-23",
+      "desde": "1.0",
+      "privilegio": "verdatospersonales",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionClienteEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NumeroInv",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Balance",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVence",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VendedorNombre",
+          "tipo": "varchar",
+          "largo": 161,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "NcfHistorico",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "IdentificacionCliente",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "ExistenciaActual",
+      "grano": "Artículo × almacén, a hoy",
+      "periodo": null,
+      "diseno": "L-19",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MarcaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Minimo",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 4,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Maximo",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 4,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Reorden",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 4,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ActualizadaEn",
+          "tipo": "datetime2",
+          "escala": 0,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ControlLote",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloInhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "ExistenciaActual",
+      "grano": "Como rpt.ExistenciaActual, más costo y valor",
+      "periodo": null,
+      "diseno": "L-19",
+      "desde": "1.0",
+      "privilegio": "vercostos",
+      "columnas": [
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MarcaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Minimo",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 4,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Maximo",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 4,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Reorden",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 4,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ActualizadaEn",
+          "tipo": "datetime2",
+          "escala": 0,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ControlLote",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloInhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoPromedio",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Valor",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "ExistenciaCierre",
+      "grano": "Período cerrado × artículo × versión (0 = vigente); Periodo = primer día del mes siguiente al cerrado (existencia y costo con que abre ese mes)",
+      "periodo": "Periodo",
+      "diseno": "L-20",
+      "desde": "1.0",
+      "privilegio": "vercostos",
+      "columnas": [
+        {
+          "nombre": "Periodo",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Version",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ExistenciaGlobal",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoPromedio",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Valor",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ReemplazadaEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "NegativoPorRegularizar",
+      "grano": "Existencia negativa (artículo × almacén) que la política efectiva ya no admite",
+      "periodo": null,
+      "diseno": "ADR-118",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "PoliticaOrigen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ControlLote",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ControlSerie",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ActualizadaEn",
+          "tipo": "datetime2",
+          "escala": 0,
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "LoteNegativo",
+      "grano": "Existencia de lote negativa (artículo × almacén × lote)",
+      "periodo": null,
+      "diseno": "ADR-118/119",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "ConciliacionLoteAlmacen",
+      "grano": "Artículo con lote × almacén cuya existencia no cuadra con sus lotes (0 filas esperadas)",
+      "periodo": null,
+      "diseno": "ADR-119",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadAlmacen",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadLotes",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Diferencia",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Lotes",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "Kardex",
+      "grano": "Movimiento de inventario (inv.Movimiento); cantidad con signo en la unidad base; unidad de origen opcional (NULL en la historia anterior a Ola4FactorUnidad; en la clase 7 del conteo, UnidadId y FactorUnidad con CantidadOrigen NULL); los reversos de anulación son filas propias",
+      "periodo": "Fecha",
+      "diseno": "L-18",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RegistradoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaRegistroLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Clase",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAjusteId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAjusteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FactorUnidad",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadOrigen",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Serie",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MovimientoRevertidoId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "Kardex",
+      "grano": "Movimiento de inventario (inv.Movimiento); cantidad con signo en la unidad base; unidad de origen opcional (NULL en la historia anterior a Ola4FactorUnidad; en la clase 7 del conteo, UnidadId y FactorUnidad con CantidadOrigen NULL); los reversos de anulación son filas propias",
+      "periodo": "Fecha",
+      "diseno": "L-18",
+      "desde": "1.0",
+      "privilegio": "vercostos",
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "RegistradoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaRegistroLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Clase",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAjusteId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAjusteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FactorUnidad",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadOrigen",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Serie",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MovimientoRevertidoId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoUnitario",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Valor",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "AjusteInventario",
+      "grano": "Línea de ajuste AJU (cantidad en la unidad de la línea y CantidadBase en unidad base) o diferencia de conteo CNT aplicado (en unidad base) (Estado 1 o 2); cantidad con signo",
+      "periodo": "Fecha",
+      "diseno": "A-06",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAjusteId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsMerma",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsConsumoInterno",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FactorUnidad",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadBase",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Concepto",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "AjusteInventario",
+      "grano": "Como rpt.AjusteInventario, más el costo (por unidad de la fila y por unidad base) y el valor en moneda base",
+      "periodo": "Fecha",
+      "diseno": "A-06",
+      "desde": "1.0",
+      "privilegio": "vercostos",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EmitidoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaEmisionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoEn",
+          "tipo": "datetime2",
+          "escala": 3,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FechaAnulacionLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CreadoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AnuladoPor",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacion",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAnulacionCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Linea",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ArticuloCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoAjusteId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MotivoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsMerma",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsConsumoInterno",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Cantidad",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "UnidadCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "FactorUnidad",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CantidadBase",
+          "tipo": "decimal",
+          "precision": 18,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "LoteCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Concepto",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoUnitario",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CostoUnitarioBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Valor",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatSucursal",
+      "grano": "Sucursal",
+      "periodo": null,
+      "diseno": "L-27",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatAlmacen",
+      "grano": "Almacén",
+      "periodo": null,
+      "diseno": "L-28",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatCaja",
+      "grano": "Caja",
+      "periodo": null,
+      "diseno": "L-29",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatVendedor",
+      "grano": "Empleado vendedor",
+      "periodo": null,
+      "diseno": "L-30",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 161,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatFormaPago",
+      "grano": "Forma de pago",
+      "periodo": null,
+      "diseno": "L-31",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Clase",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatCategoria",
+      "grano": "Categoría",
+      "periodo": null,
+      "diseno": "L-32",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatMarca",
+      "grano": "Marca",
+      "periodo": null,
+      "diseno": "L-33",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatMoneda",
+      "grano": "Moneda",
+      "periodo": null,
+      "diseno": "L-34",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatTipoDocumento",
+      "grano": "Tipo de documento",
+      "periodo": null,
+      "diseno": "L-35",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Familia",
+          "tipo": "char",
+          "largo": 3,
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatCuentaBancaria",
+      "grano": "Cuenta bancaria",
+      "periodo": null,
+      "diseno": "L-36",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatArticulo",
+      "grano": "Artículo",
+      "periodo": null,
+      "diseno": "L-37",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "CategoriaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "MarcaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "ControlLote",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "DescripcionClave",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.2"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatCliente",
+      "grano": "Cliente",
+      "periodo": null,
+      "diseno": "L-37",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "CatCliente",
+      "grano": "Como rpt.CatCliente, más la identificación completa (pasaporte: últimos 4)",
+      "periodo": null,
+      "diseno": "L-37",
+      "desde": "1.0",
+      "privilegio": "verdatospersonales",
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Identificacion",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatSuplidor",
+      "grano": "Suplidor",
+      "periodo": null,
+      "diseno": "L-37",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "CatSuplidor",
+      "grano": "Como rpt.CatSuplidor, más la identificación completa (pasaporte: últimos 4)",
+      "periodo": null,
+      "diseno": "L-37",
+      "desde": "1.0",
+      "privilegio": "verdatospersonales",
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "IdentificacionEnmascarada",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Identificacion",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatMotivoAjuste",
+      "grano": "Motivo de ajuste",
+      "periodo": null,
+      "diseno": "A-06",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsMerma",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "EsConsumoInterno",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.0"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "Empresa",
+      "grano": "Una fila (conf.Empresa, Id = 1)",
+      "periodo": null,
+      "diseno": "ADR-111 cl. 7: RNC del encabezado de evidencia, leído de la base de la empresa (opción (a), aprobada por el propietario el 2026-10-09)",
+      "desde": "1.1",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Rnc",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.1"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CxcDocumento",
+      "grano": "Cuenta por cobrar (cxc.Cuenta: FAC a crédito, ND, CHD, factura importada) de un documento emitido o anulado; BalanceBase = ROUND(SaldoPendiente × Tasa, 2); NCF de rol O o H (Q-3)",
+      "periodo": "Fecha o FechaVencimiento; saldos: Estado = 1 AND Balance > 0 (IX_Cuenta_ClienteVencimiento)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), reportes 8, 9, 10 y 27 y tarjeta de CxC",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ClienteId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ClienteCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ClienteNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "VendedorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "VendedorCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ZonaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ZonaCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Aplicado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Balance",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "BalanceBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "NcfHistorico",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CxpDocumento",
+      "grano": "Cuenta por pagar (cxp.Cuenta: FCP, NDP, CxP importada) de un documento emitido o anulado; BalanceBase en moneda base; NCF recibido (606) o emitido (B11, rol O)",
+      "periodo": "Fecha o FechaVencimiento; saldos: Estado = 1 AND Balance > 0 (IX_CxpCuenta_SuplidorVencimiento)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), reporte 15",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FacturaSuplidor",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Aplicado",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Balance",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "BalanceBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "Compra",
+      "grano": "Documento de compras.Compra de tipo FCP, NDP, NCP o DVS emitido o anulado, con Signo (NCP y DVS restan) y montos *Base",
+      "periodo": "Fecha (IX_Documento_TipoFecha)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), reportes 13 y 14",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorId",
+          "tipo": "int",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorNombre",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FacturaSuplidor",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "NcfModificado",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "AlmacenId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "AlmacenCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TerminoId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TerminoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FechaVencimiento",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Signo",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SubTotal",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Descuento",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Impuesto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Total",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SubTotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DescuentoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ImpuestoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TotalBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DocumentoOrigenId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "NumeroOrigen",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "DocBanco",
+      "grano": "Documento bancario (banco.DocBanco) emitido o anulado; Monto positivo con Signo; MontoBase = ROUND(Monto × Tasa, 2)",
+      "periodo": "Fecha (IX_Documento_TipoFecha)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), reportes 16 y 21",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Clase",
+          "tipo": "char",
+          "largo": 3,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Signo",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Origen",
+          "tipo": "char",
+          "largo": 1,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CuentaBancariaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CuentaCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "NumeroCheque",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Referencia",
+          "tipo": "varchar",
+          "largo": 50,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorId",
+          "tipo": "int",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SuplidorCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Beneficiario",
+          "tipo": "varchar",
+          "largo": 150,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Concepto",
+          "tipo": "varchar",
+          "largo": 250,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoDirecto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DocumentoOrigenId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "NumeroOrigen",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CajaChica",
+      "grano": "Gasto de caja chica emitido o anulado; identificación abreviada (RNC de 9 dígitos íntegro; cédula: ******* + últimos 4; RS-01, Q-2)",
+      "periodo": "Fecha (IX_Documento_TipoFecha, tipo CC)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), reporte 22",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Beneficiario",
+          "tipo": "varchar",
+          "largo": 100,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "IdentificacionEnmascarada",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Concepto",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Itbis",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ItbisBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "PorcRetencionItbis",
+          "tipo": "decimal",
+          "precision": 7,
+          "escala": 4,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "PorcRetencionIsr",
+          "tipo": "decimal",
+          "precision": 7,
+          "escala": 4,
+          "nulable": false,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "CajaChica",
+      "grano": "Como rpt.CajaChica, más la identificación completa (RNC y cédula íntegros)",
+      "periodo": "Fecha (IX_Documento_TipoFecha, tipo CC)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), RS-01; sin consumidor en la entrega 1 (Q-2)",
+      "desde": "1.3",
+      "privilegio": "verdatospersonales",
+      "columnas": [
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Numero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Estado",
+          "tipo": "tinyint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Beneficiario",
+          "tipo": "varchar",
+          "largo": 100,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "IdentificacionEnmascarada",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Concepto",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Ncf",
+          "tipo": "varchar",
+          "largo": 13,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoId",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoGastoCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Itbis",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "ItbisBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "PorcRetencionItbis",
+          "tipo": "decimal",
+          "precision": 7,
+          "escala": 4,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "PorcRetencionIsr",
+          "tipo": "decimal",
+          "precision": 7,
+          "escala": 4,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Identificacion",
+          "tipo": "varchar",
+          "largo": 11,
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "MovimientoCaja",
+      "grano": "Movimiento de efectivo (caja.Movimiento); Fecha = FechaOperacion de la jornada; Monto y MontoBase en NULL en las filas de cierre (CIERRE y su reverso; EsCierre = 1; Q-4)",
+      "periodo": "Fecha (caja.Jornada → IX_CajaMovimiento_Jornada)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), reporte 23",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "MovimientoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FechaRegistroLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Hora",
+          "tipo": "time",
+          "escala": 0,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "RegistradoEn",
+          "tipo": "datetime2",
+          "escala": 0,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Usuario",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoRevertido",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "EsCierre",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DocumentoNumero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoDocumentoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Motivo",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rptc",
+      "vista": "MovimientoCaja",
+      "grano": "Como rpt.MovimientoCaja, más MontoCompleto y MontoCompletoBase con todas las cifras (también las de cierre)",
+      "periodo": "Fecha (caja.Jornada → IX_CajaMovimiento_Jornada)",
+      "diseno": "Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6), RS-02 y Q-4",
+      "desde": "1.3",
+      "privilegio": "vercuadrecaja",
+      "columnas": [
+        {
+          "nombre": "MovimientoId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Fecha",
+          "tipo": "date",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "FechaRegistroLocal",
+          "tipo": "date",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Hora",
+          "tipo": "time",
+          "escala": 0,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "RegistradoEn",
+          "tipo": "datetime2",
+          "escala": 0,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "SucursalCodigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "CajaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "JornadaId",
+          "tipo": "bigint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Cajero",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Usuario",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tipo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoRevertido",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "EsCierre",
+          "tipo": "bit",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DocumentoId",
+          "tipo": "bigint",
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "DocumentoNumero",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoDocumentoCodigo",
+          "tipo": "varchar",
+          "largo": 10,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Motivo",
+          "tipo": "varchar",
+          "largo": 200,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaId",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MonedaCodigo",
+          "tipo": "varchar",
+          "largo": 30,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Tasa",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 6,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Monto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoCompleto",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "MontoCompletoBase",
+          "tipo": "decimal",
+          "precision": 19,
+          "escala": 2,
+          "nulable": true,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatTipoGasto",
+      "grano": "Fila del maestro cat.TipoGasto",
+      "periodo": null,
+      "diseno": "L-27 a L-37; Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6)",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 80,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "TipoBienServicio606",
+          "tipo": "char",
+          "largo": 2,
+          "nulable": false,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "CatTermino",
+      "grano": "Fila del maestro cat.Termino",
+      "periodo": null,
+      "diseno": "L-27 a L-37; Tramo 4 de la ola 5 (ADR-109 P-2, Q-1 a Q-6)",
+      "desde": "1.3",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Id",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Codigo",
+          "tipo": "varchar",
+          "largo": 20,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Descripcion",
+          "tipo": "varchar",
+          "largo": 60,
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Inhabilitado",
+          "tipo": "bit",
+          "nulable": false,
+          "desde": "1.3"
+        },
+        {
+          "nombre": "Dias",
+          "tipo": "smallint",
+          "nulable": false,
+          "desde": "1.3"
+        }
+      ]
+    },
+    {
+      "esquema": "rpt",
+      "vista": "VersionContrato",
+      "grano": "Una fila",
+      "periodo": null,
+      "diseno": "L-26",
+      "desde": "1.0",
+      "privilegio": null,
+      "columnas": [
+        {
+          "nombre": "Version",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "VersionMinima",
+          "tipo": "smallint",
+          "nulable": true,
+          "desde": "1.0"
+        },
+        {
+          "nombre": "Huella",
+          "tipo": "binary",
+          "largo": 32,
+          "nulable": true,
+          "desde": "1.0"
+        }
+      ]
+    }
+  ]
+}
