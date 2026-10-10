@@ -17,3 +17,5 @@ f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-C.md"; touch "$f"; n=$(wc -l < "$f");
 ```
 
 Además, `Vigilar-AreaComun.ps1` ahora reintenta la escritura si coincide con la lectura (trae el área común; no hace falta volver a registrar la tarea). README y el aviso anterior ya están corregidos.
+
+**Agregado (11:46):** detener el vigilante viejo con `TaskStop` **no mata** el proceso `tail.exe`: queda huérfano y sigue bloqueando el archivo (en B lo hizo hasta las 11:42). Después de detenerlo, comprueba con PowerShell `Get-CimInstance Win32_Process -Filter "Name='tail.exe'" | Select ProcessId, CommandLine` y detén con `Stop-Process -Id <id>` solo el que lea tu `novedades-<Equipo>.md` (es un proceso de tu sesión). Verifica luego en `%LOCALAPPDATA%\GPOS-NG-Equipos\vigilancia-<Equipo>.log` que no aparezcan más errores «está siendo utilizado en otro proceso».
