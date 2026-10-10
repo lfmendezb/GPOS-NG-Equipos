@@ -19,3 +19,5 @@ Contexto: el MVP se mide como «% de flujos de la lista funcionando de punta a p
 **Confirmado por el propietario (2026-10-09):** meta **70 % (7 de 10)** y lista F1-F10 aprobadas; verificación de QA de F1 a F8 lanzada ese día. Falta la hoja de firma formal (B coordina).
 
 **Línea base del 2026-10-09 (QA, `feature/modelo-ng` `e3a1d2b`, pruebas `tests/GPOS.Tests/Mvp/`, `Categoria=Mvp`):** cuentan 6 de 10 (F1, F2, F4, F5, F6, F8). F3 espera D-MVP-02 (orden recibida y facturada duplica existencia; dirección aprobada: la factura de orden recibida no mueve existencia, solo CxP y ajuste de costo; criterio del especialista contable en curso). **F7 espera la reimpresión de facturas** (propietario: la del Z no basta; la construye A en la tanda de núcleo de caja). D-MVP-01 (cambio de clave solo exigido en la interfaz) encargado a A. RNC del encabezado de evidencia: opción (a), vista `rpt` en la base de la empresa (aprobada).
+
+**Avance del 2026-10-10:** PR #8 unido (F7) y D-MVP-02 unido (F3) en `feature/modelo-ng` `97fde26`: **cuentan 8 de 10** (F1-F8). Faltan F9 (reportes, ola 5) y F10 (transferencias, 3b), que no hacen falta para el 70 %.
