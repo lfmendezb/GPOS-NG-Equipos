@@ -1,4 +1,4 @@
-# [Blueprint Técnico] H-11, segunda parte: marca P-7, respaldo posterior, candado de restauración CR-01 y chequeras P-3
+# [Blueprint Técnico] H-11, segunda parte: marca P-7, respaldo posterior, candado de restauración CR-01 y chequeras P-3 (versión 2)
 
 - **Autor:** arquitecto-software, equipo A · **Fecha:** 2026-10-10
 - **Árbol leído:** `GPOS-NG-h11b`, rama `a/h11-p7-candado`, desde `feature/modelo-ng` `e7f1f96` (ya trae H-11, `Ola4AplicacionEmision`, A-3 y A-4). No cambié el árbol. Ramas leídas con `git show`: `origin/c/adr81-fase-a-diseno` (`929f44e` y `bd65f73`) y `origin/master`.
@@ -6,7 +6,184 @@
 - **Firmas que se aplican:** ADR-53, cláusula 9: primera precisión (P-1 a P-6 y H-13), segunda (P-7 y CR-01) y tercera (P-81A-11 y P-81A-12), en `origin/master:docs/adr/ADR-053.md:151-170`. También ADR-81 (`:82-86`) y P-81A-13 (ADR-121).
 - **Documentos base:** `blueprint-h11-desbloqueo-restauracion-2026-10-10.md` (en adelante **[H11]**), `datos-h11-desbloqueo-restauracion-2026-10-10.md` (**[D11]**) y el blueprint v2 de la fase A de ADR-81 de C (**[C81]**: §6.6, §7.2 bloque B, §8.8 y P-81A-11 a 13).
 - **Marcas:** **[V]** verificado hoy en el código o en un documento firmado, con su cita · **[I]** inferido, sin verificar.
-- **Estado:** listo para el arquitecto-datos, con 6 preguntas (§12). Ninguna bloquea el inicio: cada una trae una opción por omisión.
+- **Estado:** **versión 2** (dictamen C-2, sección V2). Lista para el arquitecto-datos, con 10 preguntas: PC-1 a PC-6 (§12; PC-2 cambia de recomendación) y PC-7 a PC-10 (V2.6). PC-7 a PC-10 requieren la firma del propietario. Ninguna bloquea el inicio del diseño de datos; **C2-01 sí impide publicar**.
+
+---
+
+
+## V2. Cambios de la versión 2 (dictamen C-2 de C, 2026-10-10)
+
+**Fuente:** `GPOS-NG-Equipos/avisos/C-a-B/2026-10-10-c2-dictamen-h11.md`. C declaró H-11 «Rechazado como publicable» por C2-01 (Alta). Esta versión cubre C2-01 a C2-07, R-12 y el número de error que corrigió el arquitecto-datos: **51391 está reservado por ADR-78 (51387-51393); se usa 51403**. En el resto del documento, los cambios se marcan con **[v2]**.
+
+| Hallazgo | Qué cambia | Sección |
+|---|---|---|
+| **C2-01 (Alta)** | Declaración del último NCF **por prefijo**, que puede pasar del `Hasta`; **piso por prefijo** en la base de empresa, aplicado en el servicio **y** en un disparador de `fiscal.SecuenciaNcf` (51404); los bloques `C` con capacidad entran en R1 y R3; zona incierta sin bloque | V2.1 |
+| C2-02 | Sin cambios: P-3 con C9 ya estaba (D-12) | §6.1, §10.1 |
+| **C2-03** | Se **congela** el último momento conocido en la primera detección | V2.2 |
+| **C2-04** | R-10 pasa a **verificado**; detección por **regresión** al arrancar, contra el piso y la marca (y, si se firma, contra un latido de numeración); guía de devops | V2.3 |
+| **R-12** | Las escrituras leen el candado de empresa **sin caché**; la vigilancia y el manejador de 51330 y 51403 invalidan la caché | V2.4 |
+| C2-05, C2-06, C2-07 | El 429 solo en las rutas con `EnableRateLimiting`; PD11 con rasgo de carga; `@hasta` como `DbType.Date` | V2.5 |
+
+### V2.1 C2-01: NCF repetido al reabrir o ampliar un rango después del respaldo
+
+**Causa (verificada en el código y en la sonda de C):**
+- R1 y R3 solo leen los bloques `A` y `R` (`ConsultasRestauracion.cs:52,66`) [V].
+- R2 rechaza un último probado por encima del `Hasta` (`PlanDesbloqueo.cs:144-145`) [V].
+- `GuardarSecuenciaAsync` deja reabrir un bloque `C` y ampliar el `Hasta` sin conocer la restauración. Solo compara contra lo emitido **en la base** y contra los rangos cerrados por un desbloqueo (`AdministracionService.cs:310-334,350`) [V].
+- El disparador `TR_SecuenciaNcf_Bloque` impide los solapes y la reapertura de un `X`, pero no conoce ningún piso (`SqlMigracionesOla3.cs:385-400`) [V].
+
+**Diseño:**
+
+1. **La declaración pasa a ser por prefijo.**
+   - `DesbloqueoRestauracionRequest` cambia `Secuencias: UltimoProbadoDto[]` por **`Prefijos: UltimoProbadoPrefijoDto(string Prefijo, string? UltimoNcfProbado, string Fuente, string Referencia)[]`**.
+   - La lista cubre exactamente los prefijos que tienen algún bloque `A`, `R` o `C` con capacidad en la base, **o** una marca o un piso.
+   - Las reglas de fuente y referencia no cambian. En los prefijos `E…`, solo `PROVEEDOR` (P-5).
+   - **El último probado puede pasar del `Hasta`** de todos los bloques de la base (el caso del rango ampliado). Hay un solo tope: que quepa en los dígitos.
+   - El contrato de R2 y R3 cambia. La tarjeta pide una fila por prefijo en vez de una por secuencia, así que hay menos campos.
+2. **Plan por prefijo** (`PlanDesbloqueo`, sigue siendo una función pura). Con `corte = último probado` del prefijo, para cada bloque `A`, `R` o `C` con `Siguiente ≤ Hasta`:
+
+   | Caso | Acción |
+   |---|---|
+   | `Siguiente − 1 ≥ corte` | `SIN_CAMBIO` |
+   | `Desde ≤ corte < Hasta` | `CERRAR_Y_CONTINUAR`: `X` hasta el corte; el resto pasa a un bloque nuevo **con el mismo estado** (`A`, `R` o **`C`**: un bloque cerrado a mano sigue cerrado) |
+   | `corte ≥ Hasta` | `CERRAR_AGOTADA`: todo en `X` |
+
+   - **Zona incierta:** se registra **por bloque**, desde `Siguiente` hasta `MIN(corte, Hasta)`.
+   - **La porción que pasa del mayor `Hasta` del prefijo** (`MAX(Hasta) + 1 … corte`) se registra como **zona incierta sin bloque**: son los números que se emitieron de una ampliación que el respaldo no tiene.
+3. **Piso por prefijo en la base de empresa** (nuevo; lo diseña el arquitecto-datos):
+   - **Tabla `fiscal.PisoNcf`** (`Prefijo` como llave, `Piso bigint`, `Origen`, `ReconciliacionId`, `ActualizadoEn`).
+     - `Piso = MAX(cortes confirmados del prefijo, marca P-7 vigente)`.
+     - **Solo sube.** La aplicación no la escribe: `DENY INSERT, UPDATE, DELETE` y un disparador que rechaza las bajadas.
+   - **Cómo llega la marca:** el servicio inserta en R3, dentro de su transacción, las filas `sync.ReconciliacionPiso(ReconciliacionId, Prefijo, Piso, Origen)`: el corte de cada prefijo y la marca de `GPOS_SYSDATA` cuando es mayor. Estas filas siguen la regla «solo con la reconciliación abierta» (51389).
+   - **`usp_ConfirmarReconciliacionLocal` aplica el `MAX` a `fiscal.PisoNcf`** y comprueba la regla **C10**:
+     - cada prefijo de la reconciliación tiene su fila de piso;
+     - ningún bloque `A`, `R` o `C` del prefijo tiene `Siguiente ≤ piso` con `Siguiente ≤ Hasta`.
+   - Así, **la marca de `GPOS_SYSDATA` queda copiada dentro de la base de empresa**, donde un disparador la puede leer (un disparador no lee otra base).
+4. **Disparador nuevo `fiscal.TR_SecuenciaNcf_Piso`** (`AFTER INSERT, UPDATE`; **51404**, libre según la búsqueda en `Migraciones/*.cs`):
+   - **Rechaza** toda fila con `Estado IN ('A','R')`, `Siguiente ≤ Hasta` y `Siguiente ≤ Piso` de su prefijo, cuando:
+     - es un **alta**;
+     - es una **reapertura** (`Estado` pasa de `C` a `A` o `R`);
+     - es una **ampliación** (`Hasta` sube);
+     - o el `Siguiente` **baja**.
+   - Texto: «Los números hasta {piso} de {prefijo} ya se usaron antes de una restauración: el siguiente debe ser mayor (CR-01).»
+   - **Coste:** la emisión hace `UPDATE Siguiente` (sube), así que el disparador sale en la primera comparación con `deleted`. Se mide con 8.2 (5).
+   - El arquitecto-datos decide si lo funde con `TR_SecuenciaNcf_Bloque`.
+5. **Servicio** (`GuardarSecuenciaAsync`):
+   - la misma regla, con el mensaje para el usuario: «El siguiente número de {prefijo} debe ser mayor que {piso}…»;
+   - además lee la **marca de `GPOS_SYSDATA`**, porque cubre el caso en que la propia base perdió su piso al restaurarse.
+   - **Si la marca no se puede leer, no rechaza:** el disparador sigue protegiendo con el piso local. Así no se bloquea la operación diaria por una caída de `GPOS_SYSDATA`.
+   - Con el candado de empresa activo, sigue la regla de PC-2.
+6. **Lectura de R1:**
+   - `SecuenciasVigentes` pasa a `Estado IN ('A','R') OR (Estado = 'C' AND Siguiente <= Hasta)`;
+   - se agregan el piso local y la marca por prefijo (`MarcaP7Dto` gana `PisoLocal`);
+   - la tarjeta agrupa por prefijo y muestra los bloques de cada uno.
+7. **Reglas de la confirmación que cambian:**
+   - C3 (completitud) incluye los bloques `C` con capacidad;
+   - C4 admite la continuación en `C`;
+   - C5 no cambia;
+   - **C10** es nueva (punto 3).
+   - **La zona incierta sin bloque** necesita que `fiscal.NcfZonaIncierta.SecuenciaId` admita nulos, más una columna `Prefijo varchar(3)` (o una tabla hermana). Lo decide el arquitecto-datos. **Una zona sin bloque no se vuelve a registrar nunca:** la cubre el piso.
+8. **Lo que reemplaza:**
+   - I-10 e I-11 de §4.2 quedan **absorbidas**: el último probado por prefijo debe ser `≥ MAX(piso local, marca, último emitido en la base)`;
+   - I-11 deja de pedir que se registre la secuencia antes de desbloquear (PC-2 pierde su motivo principal; ver V2.6).
+
+**Pruebas nuevas:**
+
+| Id | Caso | Esperado |
+|---|---|---|
+| **CA-H11-19** | B02 `C` al respaldar → reabierto → emite 02 y 03 → restaurar | R1 lista el bloque `C`. Con el corte 03 y la evidencia, R3 lo deja en `X` hasta 03 (o continúa en `C`). Reabrir después con `Siguiente ≤ 3` → **51404** desde el servicio y desde un `UPDATE` directo. La venta siguiente nunca toma 02 ni 03 |
+| **CA-H11-20** | B02 con `Hasta = 1` → ampliado → emite 02 y 03 → restaurar | R2 **acepta** el corte 03 (por encima del `Hasta`); zona sin bloque 02-03; piso 3. Ampliar o dar de alta B02 desde 2 → 422 desde el servicio y 51404 directo. Desde 4 → pasa |
+| CA-H11-21 | Piso que llega de la marca | `GPOS_SYSDATA` con la marca 150 y la empresa restaurada a un punto anterior al desbloqueo (sin piso) → R3 copia el piso 150 → el alta de B02 desde 120 → 51404 |
+| CA-H11-22 | El piso no baja | `UPDATE` o `DELETE` directo de `fiscal.PisoNcf` → rechazado; como `gpos_app` → 229 |
+
+### V2.2 C2-03: congelar el último momento conocido
+
+- **Problema (verificado):** `ConsultasRestauracion.Reloj` calcula el último momento con el `MAX` de `audit.Bitacora.FechaHora` y de los momentos de `doc.Documento` (`ConsultasRestauracion.cs:25-32`) [V]. Con el candado sigue habiendo escrituras en la bitácora: la reimpresión (PC-4), el respaldo, el alta de secuencias de PC-2 y las líneas de R2. Entonces el último momento avanza y el margen de RN-12 se queda corto.
+- **Decisión D-13 (técnica, dentro de RN-12 firmada):** se congela en la **primera detección** de cada fork.
+  - **Tabla `sync.DeteccionRestauracion`:** `ForkActual` como llave, `DetectadaEn` y `UltimoMomento`, que se calcula con la consulta actual **en el momento de detectar**.
+  - **Procedimiento `sync.usp_RegistrarDeteccion`** (`EXECUTE AS OWNER`; es idempotente: si el fork ya tiene fila, no hace nada).
+  - **Quién lo llama:**
+    - `ComprobarAlArrancarAsync`, antes de atender peticiones;
+    - el comprobador, al ver por primera vez `Restaurada = 1` (V2.4);
+    - y R1.
+  - **El servicio de R1 a R3 lee el valor congelado.** La consulta en vivo queda solo como respaldo si no hay fila, y en ese caso se informa como aviso.
+  - **Cubre también la regresión de V2.3**, con el fork actual como clave y la causa `REGRESION`.
+- *Alternativa descartada:* calcularlo sin contar las acciones permitidas con el candado. Exige filtrar la bitácora por acción, y cada ruta nueva en la lista blanca abriría el mismo agujero.
+- **Prueba (amplía CA-CR-01):** restaurar → reimprimir, entrar y respaldar → R1 → `UltimoMomentoConocidoUtc` y `DiasInciertos` iguales a los de la detección.
+
+### V2.3 C2-04: copia anterior adjuntada (fork conservado) y detección por regresión
+
+- **R-10 pasa a [V]:** C verificó que adjuntar una copia anterior de los `.mdf` y `.ldf` conserva el fork, así que la base no se detecta y emite. También verificó que revertir una instantánea **de la base** cambia el fork. Una máquina virtual revertida entera no la cubre ningún mecanismo de este diseño.
+- **Detección por regresión** (al arrancar, en `ComprobarAlArrancarAsync`, y cada 5 min en la vigilancia):
+  - para cada empresa y prefijo, se calcula `actual = MAX(Siguiente − 1)` sobre **todos** los bloques del prefijo, incluidos `C` y `X`;
+  - **hay regresión** si `actual < MAX(piso local, marca P-7)`;
+  - un NCF nunca retrocede de forma legítima: 51326 y el servicio lo impiden.
+- **Efecto de la regresión:** `EXEC sync.usp_BloquearPorRegresion` (`EXECUTE AS OWNER`) pone `EmisionBloqueada = 1` y `MotivoBloqueo = 'RESTAURACION'`, y registra la detección.
+  - Con eso, `Clasificar` da `RESTAURADA`, rige el candado y se libera con **el mismo R3**: `usp_AbrirReconciliacionLocal` ya acepta `@bloq = 1` con ese motivo (`SqlMigracionesH11.cs:55-58`) [V].
+  - En `GPOS_SYSDATA` queda el evento `REGRESION_NUMERACION` (A).
+- **Límite:** solo detecta una copia anterior al **último desbloqueo**. **PC-10** propone ampliarla con un **latido de numeración**: cada 5 min, la vigilancia guarda en `GPOS_SYSDATA` el `MAX(Siguiente − 1)` por empresa, nodo y prefijo (solo sube). Así se detecta cualquier copia más vieja que unos 5 minutos de emisión. **No sirve** si `GPOS_SYSDATA` también se revirtió (máquina virtual entera).
+- **Guía de devops** (entrega): solo `RESTORE` desde respaldos. Prohibido:
+  - adjuntar copias de `.mdf` o `.ldf`;
+  - revertir instantáneas de la máquina virtual con las bases en uso.
+
+  Si es inevitable, ejecutar después `GPOS.Migracion verificar` y revisar la tarjeta.
+
+### V2.4 R-12: cerrar la ventana de 15 s de la caché
+
+- **En las escrituras** (`POST`, `PUT`, `PATCH` y `DELETE` de una sesión con empresa), el middleware lee el candado de empresa **sin caché**: una consulta de una fila a `sync.EstadoEmision`, ≈ 0,2 ms por escritura [I]. Los `GET` siguen con la caché de 15 s.
+- **La vigilancia** recorre las empresas cada 15 s e **invalida** la caché de la que cambió. Además llama a `usp_RegistrarDeteccion` (V2.2).
+- **El manejador de errores** invalida la caché de la empresa cuando el motor responde 51330 o 51403.
+- **Efecto:** ninguna escritura HTTP pasa con la base ya restaurada. Las lecturas pueden tardar hasta 15 s en ver la franja.
+- **Prueba (amplía CA-CR-04):** restaurar sin detener la API → la primera escritura de un maestro → 503 `BASE_RESTAURADA`.
+
+### V2.5 C2-05, C2-06 y C2-07
+
+- **C2-05:** se confirma el dictamen de §13.4. Sin el ajuste, `SeparacionTokensTests` da 32/32 sin ningún 429 (C), y el 429 viene de `DispositivosK1Tests`, que tiene los límites habilitados (`:85`, `:1116-1119`) [V].
+  - **Corrección:** aceptar el 429 solo en las rutas con `EnableRateLimitingAttribute`, más una prueba con una partición limpia que exija 401 o 403.
+- **C2-06:** `PD11_las_consultas_de_RN12…` (`DesbloqueoRestauracionMigracionTests.cs:183`) lleva `[Trait("Categoria", "Carga")]` y sale del filtro oficial (`&Categoria!=Carga`). Se ejecuta sola en la tanda de carga y conserva el tope de 2 s. Cambiar el filtro oficial es decisión de B (entrega).
+- **C2-07:** `@hasta` se pasa como `DbType.Date` (`RestauracionSitioService.cs:206`), igual que la consulta registrada.
+
+### V2.6 Preguntas nuevas y cambios en las anteriores
+
+| # | Pregunta | Por qué exige firma | Opciones | Recomendación y costo [I] |
+|---|---|---|---|---|
+| **PC-7** (propietario; precisión de la cláusula 9 de ADR-53 y extensión de P-7) | **Piso de NCF por prefijo.** ¿El último NCF probado se declara por prefijo (puede pasar del `Hasta`) y, desde el desbloqueo, ningún bloque de ese prefijo puede emitir números iguales o menores que el piso (`MAX` de los cortes confirmados y la marca P-7), tampoco en un alta, una ampliación o una reapertura hechas por el ADMIN? | Restringe para siempre lo que el ADMIN puede hacer con los rangos que autoriza la DGII. La primera precisión decía «cada secuencia vigente se cierra en el último NCF probado», por secuencia y sin pasar del `Hasta` | (a) **Sí, en el servicio y en el disparador** (51404). (b) Solo en el servicio (el motor no lo garantiza). (c) No (C2-01 sigue abierto: NCF repetido) | **(a).** Es lo único que cierra C2-01 en la base. +0,35 sp |
+| **PC-8** (propietario; R-D4 de [D11], construida con el «no» por omisión, fuera de la hoja) | **Bloques cerrados a mano (`C`) con números sin usar.** ¿Entran en el desbloqueo? | Hoy un bloque `C` reabierto después del respaldo repite NCF (C2-01 a) | (a) **Entran en R1 y R3** con el corte del prefijo: lo que llega al corte pasa a `X` y el resto sigue en `C`. (b) Al desbloquear, todo bloque `C` con capacidad se cierra completo en `X` (se pierde el resto del rango). (c) No entran | **(a).** No pierde rango y, con el piso de PC-7, no se repiten. +0,05 sp (sobre PC-7). (b): +0,03 sp |
+| **PC-9** (propietario) | **Zona incierta sin bloque** (números de una ampliación que el respaldo no tiene). ¿Se registra como zona incierta para el contador, igual que la de un bloque? | Cambia el registro fiscal de P-6 (la zona se registra y se entrega una guía al contador) | (a) **Sí**, con `Prefijo` y sin `SecuenciaId`. (b) Solo en el piso, sin zona | **(a).** El contador necesita saber que esos números existen. +0,05 sp |
+| **PC-10** (propietario; extensión de P-7) | **Latido de numeración** para detectar una copia anterior adjuntada (C2-04) | Es otra marca externa en `GPOS_SYSDATA` y bloquea una base sin que cambie su fork | (a) **Sí**, cada 5 min por empresa, nodo y prefijo. (b) Solo la regresión contra el piso y la marca (lo pedido por C) | **(a).** Cubre cualquier copia, no solo las anteriores a un desbloqueo. +0,1 sp |
+
+**Sin firma** (son técnicas, dentro de lo firmado):
+- **D-13**, congelar el último momento conocido: aplica RN-12 tal como está firmado;
+- **V2.4**, la lectura sin caché;
+- **C2-05 a C2-07**, las correcciones de pruebas y de tipos;
+- la regresión contra el piso y la marca (V2.3): solo usa datos que P-7 ya firmó.
+
+**Cambio en PC-2:** con PC-7 (a), I-11 desaparece. Ya no hace falta registrar la secuencia antes de desbloquear, porque el corte puede pasar del `Hasta`. PC-2 queda solo para el caso en que el SUPER quiera registrar con el candado un rango **nuevo** autorizado después del respaldo. **Recomendación nueva: (c) No**: se registra después de desbloquear y el piso lo protege. Ahorra 0,05 sp y quita una ruta de la lista blanca.
+
+**Cambio en PC-5:** C2-01 es Alta y C recomienda no publicar sin ella, así que **va en PR-2a**.
+
+### V2.7 Esfuerzo y fecha [I], ±40 %
+
+| Parte | sp |
+|---|---|
+| Versión 1 (con D-11) | 2,40 |
+| − PC-2 (c) | −0,05 |
+| C2-01: declaración por prefijo y plan con bloques `C` (PC-8 a) | +0,20 |
+| C2-01: piso (tabla, `ReconciliacionPiso`, C10), disparador 51404, servicio y marca en `GuardarSecuenciaAsync` (PC-7 a) | +0,20 |
+| C2-01: zona sin bloque (PC-9 a) | +0,05 |
+| C2-01: pruebas CA-H11-19 a 22 | +0,10 |
+| C2-03: detección congelada | +0,10 |
+| C2-04: regresión contra el piso y la marca, y la guía | +0,10 |
+| PC-10 (a): latido de numeración | +0,10 |
+| R-12: lectura sin caché en las escrituras e invalidación | +0,05 |
+| C2-05 a C2-07 | +0,05 |
+| **Total de la versión 2** | **3,30 (de 2,0 a 4,6)**; sin D-11, 2,75 |
+
+- **Fecha:**
+  - a unos 0,9 sp por día, son **unos 3,5 a 4 días hábiles** de un desarrollador: **+1 día** respecto de la versión 1 y **≈ +3 días** respecto de un PR solo con P-7;
+  - con PC-5 (a): **PR-2a ≈ 2,75 sp** (con C2-01, unos 3 días) y **PR-2b ≈ 0,55 sp** (alrededor de 1 día después).
+- **Costo:** unos USD 5.000 a 6.600; infraestructura USD 0.
+- **Lo que no se puede recortar sin firma:** C2-01, porque deja abierto un NCF repetido.
 
 ---
 
@@ -22,7 +199,7 @@
 | D-11 | **Recomendación: A construye en este PR el núcleo del candado de `GPOS_SYSDATA` sin el factor.** Incluye la detección, la reconciliación sin los pasos del factor, la liberación, la regla de P-81A-11 en el inicio de sesión y `BitacoraSeguridad`. C agrega después lo que depende del factor | Cierra R-16 de [C81] (`GPOS_SYSDATA` sin candado entre las dos uniones). P-81A-12 lo necesita para recomponer la marca. Es la pregunta **PC-1** |
 | D-12 | **P-3:** R3 confirma el siguiente cheque de cada cuenta con chequera. Se agrega la regla C9 al procedimiento de confirmación | Firmado (+0,1 sp); el punto de extensión ya existe [V] |
 
-**Esfuerzo [I], ±40 %:** **2,4 sp** con D-11, o 1,85 sp sin ella. El primer PR de H-11 era de 0,9 sp. **La fecha del PR se mueve unos 2 días hábiles** respecto de un PR que solo tuviera P-7. Se puede partir en dos (PC-5). Detalle en §14.
+**[v2] Esfuerzo: 3,3 sp (V2.7).** Versión 1: **Esfuerzo [I], ±40 %:** **2,4 sp** con D-11, o 1,85 sp sin ella. El primer PR de H-11 era de 0,9 sp. **La fecha del PR se mueve unos 2 días hábiles** respecto de un PR que solo tuviera P-7. Se puede partir en dos (PC-5). Detalle en §14.
 
 ---
 
@@ -45,7 +222,7 @@
 | Nivel del SUPER | `NivelesUsuario.Super = "SUPER"` (`src/GPOS.Contracts/Seguridad/Cuentas.cs:32`) | **Cierra el supuesto** de [C81] §7.2 («se supone `'SUPER'`») |
 | Escrituras en un `GET` | `GET /api/impresion/documento|ticket|nota/...` registra la impresión y su línea de bitácora (`ImpresionEndpoints.cs:26-38`; `ReimpresionService.cs:80-108`) | El candado por método no las ve: §5.4 |
 | Migraciones | Última: `20261010130522_BitacoraLogSoloInsercion` (`src/GPOS.Core/Datos/Empresa/Migraciones/`). La versión esperada es la última (`VersionEsquemaNg.cs:27`) | La nueva va después |
-| Errores libres en la base de empresa | Usados: 51300-51349, 51351-51386, 51389, 51390, 51394, 51397-51400 y 51405-51407. Libres: **51350, 51387, 51388, 51391-51393, 51395, 51396, 51401-51404** (búsqueda en `Migraciones/*.cs`) | Se proponen 51391 y 51392 |
+| Errores libres en la base de empresa | Usados: 51300-51349, 51351-51386, 51389, 51390, 51394, 51397-51400 y 51405-51407. Libres: **51350, 51395, 51396 y 51401-51404**. **[v2]** 51387-51393 están reservados por ADR-78 (dato del arquitecto-datos) (búsqueda en `Migraciones/*.cs`) | **[v2]** Se usan 51403 (`doc.Documento`) y 51404 (piso de NCF, V2.1) |
 | Errores de `GPOS_SYSDATA` | Reserva 52001-52019 (`ADR-081.md:76`); C usa 52001-52007 en [C81]. En `src` no se usa ninguno | A propone 52008 y 52009 |
 
 ### 1.2 Alcance
@@ -101,7 +278,7 @@
           ICandadoRestauracionSistema ─┘   └─ ComprobadorEsquemaEmpresas (caché 15 s por empresa)
                     ▲                                          │ lee sync.EstadoEmision
    TrabajoVigilanciaRestauracion (arranque + 15 s)             v
-     │ EXEC dbo.ReconciliarRestauracionSistema          Base de empresa: 51330 (emisión, caja) + 51391 (doc.Documento)
+     │ EXEC dbo.ReconciliarRestauracionSistema          Base de empresa: 51330 (emisión, caja) + 51403 (doc.Documento)
      │ SELECT dbo.EstadoRestauracionSistema
      │ recomposición de marcas P-7 (lee sync.Reconciliacion de cada empresa)
      │ cola del respaldo posterior → BACKUP … COPY_ONLY (empresa y GPOS_SYSDATA)
@@ -212,7 +389,7 @@ public sealed record RespaldoPosteriorDto(long Id, string BaseDatos, string Esta
 
 | HTTP | `codigo` | Causa |
 |---|---|---|
-| 503 | `BASE_RESTAURADA` | Middleware: escritura no permitida con el candado de empresa. También es la traducción del 51391 |
+| 503 | `BASE_RESTAURADA` | Middleware: escritura no permitida con el candado de empresa. También es la traducción del 51403 |
 | 503 | `SISTEMA_RESTAURADO` | Middleware (escritura con el candado del sistema, o cualquier petición de un usuario no SUPER) y `/login` de un no SUPER con la contraseña correcta (P-81A-11). Código definido en [C81] 5.13 |
 | 409 | `LIBERAR_SISTEMA_PRIMERO` | R3 con el sistema con candado (defensa en el servicio; el middleware ya da 503) |
 | 503 | `MARCA_NO_DISPONIBLE` | R3 sin poder leer la marca en `GPOS_SYSDATA`: falla cerrado y no se escribe nada |
@@ -477,7 +654,7 @@ No aplica en la entrega 1.
 ### 10.1 Base de empresa: migración `H11CandadoChequeras` (después de `20261010130522_BitacoraLogSoloInsercion`)
 
 1. **Disparador del candado sobre `doc.Documento`** (`AFTER INSERT, UPDATE`):
-   - si `sync.EstadoNodo` está restaurado (misma condición que 51330: fork nulo o distinto, o `EmisionBloqueada = 1`), **THROW 51391** «La base fue restaurada: no se registran documentos hasta desbloquearla (CR-01).»;
+   - si `sync.EstadoNodo` está restaurado (misma condición que 51330: fork nulo o distinto, o `EmisionBloqueada = 1`), **THROW 51403** «La base fue restaurada: no se registran documentos hasta desbloquearla (CR-01).»;
    - conserva la excepción de `gpos.reaplicacion` (entrega 2);
    - cubre borradores, emisión, anulación y cualquier cambio de un documento, que es todo el negocio documental (ventas, compras, inventario, cobros, pagos y bancos).
    - **El arquitecto-datos decide si lo funde** con `TR_Documento_Nace` y `TR_Documento_Inmutable` (`DisparadoresNg.cs:31-32`) para compartir la lectura.
@@ -490,9 +667,9 @@ No aplica en la entrega 1.
    - `SiguienteConfirmado ≥ SiguienteLocal` y `> MAX(número de cheque)` de `banco.DocBanco` en la cuenta.
    - Si falla: 51329 con la regla «C9».
 4. **`sync.ReconciliacionChequera`:** columna `Referencia varchar(100) NULL`, como en `ReconciliacionNcf`.
-5. **Traducción:** 51391 → 503 `BASE_RESTAURADA` en `ErroresNumeracion` (como 51330 en `:341-344`).
+5. **Traducción:** 51403 → 503 `BASE_RESTAURADA` en `ErroresNumeracion` (como 51330 en `:341-344`).
 6. **`Down`** con la convención 51399 y la prueba PD-01 con el nombre fijo de la migración (§13.4).
-7. Error reservado: **51392** (libre; por si C9 necesita uno propio). El número final lo asigna el arquitecto-datos.
+7. **[v2]** Error del piso de NCF: **51404** (V2.1). 51392 está reservado por ADR-78: no se usa. El número final lo asigna el arquitecto-datos.
 
 ### 10.2 `GPOS_SYSDATA`: SQL idempotente en `EsquemaSistema.ActualizarAsync`
 
@@ -521,9 +698,9 @@ Errores **52008** (marca inmutable) y **52009** (reserva). Quedan apartados para
 | Id | Riesgo | Prob. / impacto | Mitigación |
 |---|---|---|---|
 | R-9 | Una ruta de escritura mal marcada | Media / alto | Rechazo por omisión; PF-36 con la lista aprobada; revisión del auditor (R-13 de [C81]) |
-| R-10 | **Restauración sin fork nuevo:** copiar los archivos `.mdf` y `.ldf`, separar y adjuntar la base, o revertir una instantánea de la máquina virtual. El fork se conserva y **no se detecta** [I] | Baja / alto | Guía de devops: solo `RESTORE`, y prohibir instantáneas de la máquina virtual con la base en uso. Es una entrega a devops. Detectarlo por regresión de secuencias es de la entrega 2 (RN-03) |
+| R-10 | **Restauración sin fork nuevo.** **[v2] Verificado por C (C2-04):** adjuntar una copia anterior de los `.mdf` y `.ldf` conserva el fork y la base no se detecta. Revertir una instantánea de la base sí lo cambia. Una máquina virtual revertida entera no se cubre | Baja / alto | **[v2]** Detección por regresión al arrancar y cada 5 min (V2.3), más el latido si se firma PC-10. Guía de devops: solo `RESTORE`; ni copias adjuntadas ni instantáneas de la máquina virtual con las bases en uso |
 | R-11 | **Restaurar la empresa y `GPOS_SYSDATA` desde respaldos anteriores al último desbloqueo, a la vez:** la marca no se puede recomponer | Baja / alto | El respaldo posterior de las dos bases (D-9); riesgo Medio aceptado hasta H-14 (ADR-53, precisión 1, punto 9) |
-| R-12 | Restaurar sin detener la API (contra R-6): hasta 15 s sin candado en la capa HTTP | Baja / bajo | Los disparadores 51330 y 51391 actúan de inmediato; R-6 en la guía |
+| R-12 | Restaurar sin detener la API (contra R-6): hasta 15 s sin candado en la capa HTTP | Baja / bajo | Los disparadores 51330 y 51403 actúan de inmediato; R-6 en la guía |
 | R-13 | El respaldo posterior falla (disco lleno o sin permiso) | Media / medio | Estado `F`, alerta a devops y R4. La marca ya quedó registrada |
 | R-14 | Choque de archivos con C (fase A: `AuthEndpoints.cs`, `AdminEndpoints.cs`, `Program.cs`, `EsquemaSistema.cs`, `Cuentas.cs`, `ApiClient.cs`) y con H-2 de A (`fiscal.Comprobante`, migración siguiente) | Media / calendario | §13.3: este PR entra primero; C y H-2 se rebasan |
 | R-15 | El disparador de `doc.Documento` pasa el presupuesto de rendimiento | Baja / medio | Medir en 8.2 (5); fundirlo con los existentes |
@@ -550,7 +727,7 @@ Errores **52008** (marca inmutable) y **52009** (reserva). Quedan apartados para
 
 | Id | Caso | Esperado |
 |---|---|---|
-| CA-CR-01 | **Empresa restaurada** | R1 `RESTAURADA`. `POST` de una venta, un artículo y un precio → 503 `BASE_RESTAURADA`, sin cambios en filas ni contadores. `GET` → 200 con `X-GPOS-Candado: empresa`. `INSERT` directo de un borrador y anulación en el motor → 51391; caja → 51330. R2 200. R3 200 → las escrituras pasan en menos de 1 s y el encabezado desaparece |
+| CA-CR-01 | **Empresa restaurada** | R1 `RESTAURADA`. `POST` de una venta, un artículo y un precio → 503 `BASE_RESTAURADA`, sin cambios en filas ni contadores. `GET` → 200 con `X-GPOS-Candado: empresa`. `INSERT` directo de un borrador y anulación en el motor → 51403; caja → 51330. R2 200. R3 200 → las escrituras pasan en menos de 1 s y el encabezado desaparece |
 | CA-CR-02 | **`GPOS_SYSDATA` restaurada** (base temporal `GPOS_TEST_SYS_*`): respaldo → alta de un usuario y de un dispositivo → `RESTORE` → arranque | Sesiones cerradas. **Un solo** `SISTEMA_RESTAURADO` aunque se reinicie dos veces. USER y ADMIN con la contraseña correcta → 503 y `ACCESO_RECHAZADO_CANDADO`; con la incorrecta → 401. El SUPER entra y consulta. `POST /api/admin/usuarios` → 503. **R3 de una empresa restaurada → 503 `SISTEMA_RESTAURADO`**. La lista muestra el dispositivo. Liberar → 200 con `Recompuestas` → R3 pasa |
 | CA-CR-03 | **Base de «sucursal»** (empresa con otro nodo activo en `sync.Nodo`) restaurada | Candado; R1 `REQUIERE_CENTRAL`; R3 409; las escrituras siguen en 503 |
 | CA-CR-04 | Restauración **sin detener** la API | Disparadores de inmediato; 503 HTTP en 15 s o menos |
@@ -614,7 +791,7 @@ Errores **52008** (marca inmutable) y **52009** (reserva). Quedan apartados para
 |---|---|
 | Middleware, marcas en unas 125 rutas, encabezado y PF-36 | 0,35 |
 | Fuente de empresa (comprobador, caché e invalidación) y capa 2 (trabajos) | 0,15 |
-| Migración de empresa: disparador 51391, C9, columna y medición | 0,15 |
+| Migración de empresa: disparador 51403, C9, columna y medición | 0,15 |
 | P-7: tabla, procedimiento, servicio, validaciones I-10 a I-12, registro y recomposición | 0,25 |
 | Respaldo posterior: cola, ejecución, R4 y estados | 0,15 |
 | P-3: chequeras en R1, R2 y R3, con el bloqueo ordinal | 0,10 |
@@ -634,39 +811,44 @@ Errores **52008** (marca inmutable) y **52009** (reserva). Quedan apartados para
 ---
 
 ### Cierre
-- Estado: Completado (diseño). Las preguntas PC-1 a PC-6 quedan **Pendientes de firma** (o de decisión de la coordinación, en PC-1 y PC-5); cada una tiene su opción por omisión.
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-h11-p7-candado-2026-10-10.md`
+- Estado: Completado (diseño, **versión 2**). Preguntas **Pendientes de firma**:
+  - PC-1 a PC-6, con PC-2 recomendada ahora en (c);
+  - **PC-7 a PC-10**, que requieren la firma del propietario (precisión de la cláusula 9 de ADR-53 y extensión de P-7).
+
+  Todas tienen opción por omisión. **C2-01 impide publicar mientras no se construya.**
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-h11-p7-candado-2026-10-10.md` (versión 2, con los cambios marcados [v2] y la sección V2).
 - Supuestos:
-  - (1) `recovery_fork_guid` cambia con todo `RESTORE … WITH RECOVERY` y no cambia al separar y adjuntar la base ni al revertir una instantánea de la máquina virtual (R-10) [I];
-  - (2) el bloque B de [C81] funciona con una restauración real de `GPOS_SYSDATA`, sin probar;
-  - (3) la velocidad es de unos 0,9 sp por día;
-  - (4) las 125 rutas de escritura salen de un conteo por texto y PF-36 dará la cifra exacta;
-  - (5) el disparador de `doc.Documento` cabe en +0,03 ms;
-  - (6) el procedimiento `EXECUTE AS OWNER` lee el fork, como ya mide PD-05 de [D11].
+  - (1) el fork cambia con todo `RESTORE … WITH RECOVERY` y con la reversión de una instantánea de la base; no cambia al adjuntar una copia, como verificó C (C2-04);
+  - (2) el bloque B de [C81] funciona con una restauración real, sin probar;
+  - (3) unos 0,9 sp por día;
+  - (4) unas 125 rutas de escritura, por conteo de texto;
+  - (5) los disparadores 51403 y 51404 caben en el presupuesto de 8.2 (5);
+  - (6) `EXECUTE AS OWNER` lee el fork (PD-05);
+  - (7) **[v2]** la lectura sin caché del candado en las escrituras cuesta unos 0,2 ms;
+  - (8) **[v2]** 51401-51404 están libres (búsqueda en `Migraciones/*.cs`); 51387-51393 son de ADR-78 (arquitecto-datos).
 - Decisiones candidatas a ADR (como precisiones de ADR-53, cláusula 9, y de ADR-81):
-  - D-6 (tres capas, un middleware, disparador 51391);
-  - D-7 (el candado de empresa es `RESTAURADA` y lo libera R3);
-  - D-8 (marca P-7 de solo inserción, con `NodoId`, escrita después del commit y con recomposición);
-  - D-9 (respaldo posterior por la API, `COPY_ONLY`, de las dos bases);
-  - D-10 (orden de liberación en el middleware y en el servicio);
-  - D-11 (núcleo del candado del sistema en A);
-  - la reserva de los errores 51391, 51392, 52008 y 52009;
+  - D-6 a D-12;
+  - **[v2]** D-13 (último momento congelado en la primera detección);
+  - **[v2]** el piso de NCF por prefijo (PC-7), los bloques `C` en el desbloqueo (PC-8), la zona sin bloque (PC-9) y el latido de numeración (PC-10), una vez firmados;
+  - la detección por regresión;
+  - la reserva de 51403, 51404, 52008 y 52009;
   - el cambio de 5.14.2 a 200.
 - Entregas a otros agentes:
-  - **arquitecto-datos (A)** → §10.1 y §10.2, con la validación del bloque B de [C81] mediante una restauración real y la medición del disparador;
-  - **desarrollador-backend** → §5, §6 y §13.4;
-  - **desarrollador-frontend** → §7.1;
-  - **disenador-ux-ui** → los textos de la franja, de la tarjeta ampliada y de la pantalla del sistema;
-  - **especialista-pos** → la regla de P-3 con el contador (evidencia del talonario) y PC-4;
-  - **devops** → PC-3:
-    - permiso `BACKUP` (o `db_backupoperator`) para la API en las dos bases;
-    - Backup Tool toma los `.bak` de `RespaldoPosterior` para la copia fuera del equipo;
-    - retención de esas copias hasta el siguiente completo verificado de la cadena;
-    - alerta ante un `F`;
-    - guía: R-6 también para `GPOS_SYSDATA`, solo `RESTORE` y sin instantáneas de la máquina virtual (R-10);
-  - **qa** → §13.1;
-  - **auditor-seguridad** → §5.4 (listas blancas y «GET con efecto»), §8 (oráculo de P-81A-11 y liberación sin factor transitoria) y los disparadores 52008;
-  - **equipo C (vía B)** → la división de §13.2, el cambio de 5.14.2 a 200 y la reserva 52008-52009;
-  - **arquitecto-maestro / B** → PC-1 a PC-6 y el aviso de la fecha (§14);
-  - **documentador-tecnico** → registrar las reservas de errores cuando se firmen.
-- Próximo paso recomendado: que B decida PC-1 y PC-5 (definen el tamaño del PR) y que el arquitecto-datos diseñe la migración `H11CandadoChequeras` y el SQL de `GPOS_SYSDATA` de §10.
+  - **arquitecto-datos (A)** → §10, más **[v2]**:
+    - `fiscal.PisoNcf`, `sync.ReconciliacionPiso`, la regla C10 y `TR_SecuenciaNcf_Piso` (51404);
+    - C3 y C4 con los bloques `C`;
+    - la zona sin bloque;
+    - `sync.DeteccionRestauracion` y `usp_RegistrarDeteccion`;
+    - `usp_BloquearPorRegresion`;
+    - si se firma PC-10, el latido en `GPOS_SYSDATA`;
+  - **desarrollador-backend** → §5, §6, §13.4 y V2.1 a V2.5;
+  - **desarrollador-frontend** → §7.1 con la declaración por prefijo (V2.1);
+  - **disenador-ux-ui** → los textos, con la tarjeta agrupada por prefijo;
+  - **especialista-pos** → P-3 y PC-4, más **[v2]** PC-7 a PC-9 con el contador (piso y zona sin bloque);
+  - **devops** → PC-3 y la guía de R-10 **[v2]** (sin copias adjuntadas ni instantáneas de la máquina virtual);
+  - **qa** → §13.1 y CA-H11-19 a 22; **[v2]** decisión de B sobre el filtro de carga (C2-06);
+  - **auditor-seguridad** → §5.4, §8 y **[v2]** el piso;
+  - **equipo C (vía B)** → §13.2, sin cambios en la división;
+  - **arquitecto-maestro / B** → PC-1 a PC-10 y el aviso de la fecha (V2.7);
+  - **documentador-tecnico** → las reservas de errores.
+- Próximo paso recomendado: que el propietario firme PC-7 a PC-10, sobre todo PC-7, que cierra C2-01; que B decida PC-1 y PC-5; y que el arquitecto-datos diseñe la migración con el piso y la detección congelada.
