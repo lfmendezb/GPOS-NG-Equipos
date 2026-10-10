@@ -54,3 +54,4 @@
 - [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
 - [mvp-fecha-medicion](mvp-fecha-medicion.md) — MVP: 70 % (7 de 10 flujos) medido el 2026-11-01; lista F1-F10 aprobada; responde PF-Q2
 - [librerias-publicas-antes-que-propias](librerias-publicas-antes-que-propias.md) — Librería libre muy usada antes que solución propia (XLSX: OpenXml en flujo; ClosedXML para importar)
+- [restaurante-catering-ejecutivos](restaurante-catering-ejecutivos.md) — Restaurante sin mesas: catering + ejecutivos (menú diario y corporativos a crédito por empleado); hoja firmada 2026-10-09 (tramo 3d)
