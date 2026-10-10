@@ -90,7 +90,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 ## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
 - **Actualizado:** 2026-10-10
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; `sqlcmd` (go-sqlcmd) instalado por el propietario. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
-- **Trabajando en:** nada; sin agentes activos. Entregado: C-1 y C-4 (unidos), C-3, C-5 (revisión 2, `e0a05a0`), C-6 (PR #15) y C-7 (blueprint v2, `929f44e`); DEMO publicado en OneDrive. Para firma: UX-118-06 a 09 y P-81A-11 a 13. C-2 espera el PR de H-11. ADR de C: 130 a 159. Regla 8 con tarea de Windows (pwsh) cada 10 minutos, minuto 8.
+- **Trabajando en:** C-2 (revisión de H-11) en curso. C-8 entregado (PR #19). Después: C-9 (sola), C-10 y la precisión C-1 de ADR-81. Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
