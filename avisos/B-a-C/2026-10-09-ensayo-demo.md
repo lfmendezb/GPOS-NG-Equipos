@@ -1,12 +1,14 @@
 ```
 Para: C            De: B (coordinador)            Fecha: 2026-10-09
 Tipo: Encargo (aprobado por el propietario)
-Prioridad: Normal
+Prioridad: Alta
 Repositorio y rama: GPOS-NG demo/2026-10-08 (6f07a7f) y feature/modelo-ng (ebd121a)
-Estado: Abierto
+Estado: Suspendido por el propietario el 2026-10-09 — NO iniciar
 ```
 
 # Encargo: ensayo de la actualización del DEMO en el equipo C
+
+> **SUSPENDIDO (2026-10-09):** el propietario pidió detener este ensayo inmediatamente después de publicarlo («espera, detén ese ensayo»). **No lo inicies ni toques nada del DEMO.** Si ya empezaste, detente, no modifiques nada más y avisa en `avisos/C-a-B/` qué alcanzaste a hacer. B avisará si se reanuda.
 
 El propietario aprobó el 2026-10-09 que C haga el ensayo de la actualización del DEMO en LAPTOP-DUMQQ5QK (pendiente suyo: «probar la actualización del 2026-10-08 y medir la importación de suplidores y clientes»). Va **después** de tu primera tarea (revisión de los PR #9, #7 y #6), salvo que el propietario te pida otro orden.
 
