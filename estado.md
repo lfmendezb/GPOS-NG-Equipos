@@ -90,7 +90,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 ## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
 - **Actualizado:** 2026-10-10
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; `sqlcmd` (go-sqlcmd) instalado por el propietario. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
-- **Trabajando en:** C-9 (pruebas de interfaz estables, sola). Entregado hoy: C-8 (PR #19) y C-2 (H-11 Rechazado como publicable por C2-01, NCF repetido; sin revertir la unión). Después: C-10 y la precisión C-1 de ADR-81. Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
+- **Trabajando en:** C-10 (`c/compra-variable-tabla`, no unir antes del 14-oct) y blueprint de ADR-81 con PC-1 y la precisión C-1 (diseño). Entregado hoy: C-2 (H-11 Rechazado como publicable por C2-01; sin revertir la unión), C-8 (PR #19) y C-9 (PR #20). Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
 
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
