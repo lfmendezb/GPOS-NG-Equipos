@@ -19,3 +19,5 @@ El 2026-10-07 el propietario formalizó una **revisión obligatoria del área co
 - Sin novedades, no interrumpir al propietario.
 
 Precisa [[dos-equipos-a-coordina]] («el propietario decide cuándo cada equipo actualiza o publica»): la revisión de 30 minutos y lo rutinario quedan autorizados de forma permanente.
+
+**Cambio del 2026-10-09:** el propietario acortó la revisión a **cada 10 minutos** para que la comunicación entre equipos sea más fluida. B la programa en los minutos 3, 13, 23, 33, 43 y 53; README y aviso a A y C actualizados. Tras un reinicio de sesión, comprobar con `CronList` que no queden tareas duplicadas.
