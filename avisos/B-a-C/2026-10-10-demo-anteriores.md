@@ -8,10 +8,10 @@ Estado: Abierto
 
 # Carpeta de paquetes del DEMO: solo el más reciente a la vista; los anteriores en «Anteriores»
 
-Precisa `2026-10-10-publicar-demo-onedrive`. **Decisión del propietario (2026-10-10):** en la carpeta compartida de los paquetes del DEMO (https://1drv.ms/f/c/bff1673e46b5ff20/IgB-F_eHmtQoT7TeFbaXnqF8AZ8kRiPyD5gz5SV3EC7TgoM) **lo primero que se ve es siempre el DEMO más actualizado**. Las versiones anteriores se mueven a la subcarpeta **`Anteriores`** dentro de esa misma carpeta (mismo permiso de edición).
+Precisa `2026-10-10-publicar-demo-onedrive`. **Decisión del propietario (2026-10-10):** en la carpeta compartida de los paquetes del DEMO (https://1drv.ms/f/c/bff1673e46b5ff20/IgB-F_eHmtQoT7TeFbaXnqF8AZ8kRiPyD5gz5SV3EC7TgoM) **lo primero que se ve es siempre el DEMO más actualizado**. La carpeta principal se llama **Actualizaciones**. Las versiones anteriores se mueven a su subcarpeta **`Anteriores`** (mismo permiso de edición), con enlace directo: https://1drv.ms/f/c/bff1673e46b5ff20/IgBErMba3KcjS5AL8hWxYttxAeWkJkwTjHd12Enx446lcKA?e=8oZf2d
 
 ## Regla para toda publicación
-1. Antes de subir un paquete nuevo, **mover** a `Anteriores` todo lo de la versión anterior que esté en la raíz (el `.7z`, su `.sha256`, su `LEEME-*.txt`). Si `Anteriores` no existe, créala. Mover, nunca borrar.
+1. Antes de subir un paquete nuevo, **mover** a `Anteriores` todo lo de la versión anterior que esté en la raíz (el `.7z`, su `.sha256`, su `LEEME-*.txt`). `Anteriores` ya existe (enlace arriba). Mover, nunca borrar.
 2. Subir el paquete nuevo a la raíz y comprobar su SHA-256.
 3. La subcarpeta `datos-demo` (plantillas) se queda en la raíz mientras siga sirviendo al paquete vigente; si cambian las plantillas, la versión vieja va a `Anteriores` con el nombre de su fecha.
 
