@@ -79,7 +79,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
 - **Actualizado:** 2026-10-10
-- **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; sin `sqlcmd`. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
+- **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; `sqlcmd` (go-sqlcmd) instalado por el propietario. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
 - **Trabajando en:** encargo C-1 a C-4 (`B-a-C/2026-10-10-encargo-c1-a-c4`): C-1 paquete del DEMO, C-3 diseño de la fase A de ADR-81 y C-4 AUTO_CLOSE y memoria, en curso; C-2 espera el PR de H-11 de A. ADR de C: 130 a 159. Regla 8 cada 30 min (minutos 22 y 52).
 
 ## Pendientes del propietario
