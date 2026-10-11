@@ -99,7 +99,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Recursos (medidos el 2026-10-11):** **DEVLAB00** — Windows 10 Pro (build 26300); Intel Core i5-7500T, **4 procesadores lógicos**; **≈7,9 GB de RAM**; `C:` 464,1 GB con 301,5 GB libres; **SQL Server 2025** (17.0.1135.8) y Express 2019 (`.\SQLEXPRESS`); .NET SDK 10.0.401; Visual Studio 18; Android SDK en `C:\Program Files (x86)\Android\android-sdk`; git 2.56.0; gh 2.102.0; PowerShell 7.6.6. **Límite de agentes: el mismo del Equipo A** (decisión del propietario, 2026-10-11): hasta **4** si solo uno compila o prueba, **2** si hay más de uno, y las tareas pesadas de SQL Server o de memoria **corren solas**. **El límite es conjunto con A** (misma máquina), no por equipo. **Sin UPS:** tareas cortas y push frecuente. **Prefijo propio de bases de prueba** (lección del 2026-10-10). Detalle en su definición, secciones 6.1 a 6.3.
 - **Vigilancia:** tarea `GPOS-NG Vigilar área común (D)` **registrada pero APAGADA** (`Disabled`) por orden del propietario del 2026-10-11, hasta que él confirme. Mientras esté apagada, D **revisa el área común a mano al abrir sesión**. Definición, sección 4.
 - **Mandato adicional (aprobado por el propietario el 2026-10-11):** verificación y reconciliación documental, y seguimiento de las precisiones firmadas. D **propone**; no edita `CLAUDE.md` (es de B). Definición, sección 1.
-- **Trabajando en:** nada todavía; sin agentes activos.
+- **Trabajando en:** nada todavía; sin agentes activos. **Punto de entrada de la primera sesión de trabajo:** `traspasos/D/2026-10-11-traspaso-D.md`.
 - **Ramas vivas:**
 
   | Repositorio | Rama | Estado |
