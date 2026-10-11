@@ -96,6 +96,28 @@ Publicar:
 & "...\GPOS-NG-Equipos\herramientas\Publicar-En-AreaComun.ps1" -Equipo D -Mensaje "tema"
 ```
 
+### 5.1 Cómo trabaja D: contexto, sesiones y traspasos
+
+Regla propia de D, además de las nueve anteriores.
+
+> **Lo que deba sobrevivir a la sesión vive en un archivo del área común. Ninguna sesión es la memoria del equipo.**
+
+**Los tres mecanismos**
+
+| Situación | Mecanismo | Por qué |
+|---|---|---|
+| Trabajo **paralelo e independiente** | **Subagentes** | Cada uno trae su propia ventana y devuelve solo el resultado; la ventana de la sesión principal queda limpia. |
+| Trabajo **secuencial por paquetes** | **Una sesión nueva por paquete** | Atención limpia, sin resumen de por medio. El traspaso va por archivo. |
+| Una **línea larga de razonamiento** sobre lo mismo | **Una sola sesión**, aceptando la compactación | Partirla obliga a reconstruir el hilo cada vez: sale más caro que el resumen. |
+
+**Por qué una sesión nueva es barata.** La ventana de contexto es de **1.000.000 de tokens por sesión** (medido el 2026-10-11: `contextPressure.contextWindow`). Releer la base en frío —`CLAUDE.md` (27 KB), `estado.md` (~10 KB) y las 14 definiciones de agente (~160 KB)— cuesta del orden de **50.000 tokens, un ~5 % de la ventana**. Arrancar en frío sale más barato que arrastrar contexto que ya no sirve.
+
+**La regla del traspaso (obligatoria al cerrar).** Al terminar, interrumpirse o quedarse sin trabajo, D deja en `traspasos/D/` una nota con: qué se hizo, dónde (rama, commit, PR o ruta), **qué quedó a medias y en qué punto exacto**, y el siguiente paso. La sesión siguiente empieza leyendo ese traspaso, su sección de `estado.md` y los avisos abiertos de `avisos/B-a-D/`. **No reconstruye desde cero.**
+
+**Detalle fino: se lee, no se recuerda.** Cuando el trabajo dependa de precisión —el número de un ADR, el texto de una cláusula firmada, si una rama está unida o no—, la sesión **lee el archivo autoritativo** (`docs/adr/`, `estado.md`) en lugar de fiarse de su propio resumen. La compactación pierde detalle fino, y ese detalle es el que decide.
+
+**No partir por trivialidad.** Cada arranque en frío cuesta esos ~50.000 tokens. Conviene agrupar varios trabajos cortos en un mismo paquete y usar subagentes para lo paralelo.
+
 ---
 
 ## 6. Recursos (medidos en el equipo el 2026-10-11)
@@ -114,12 +136,26 @@ Publicar:
 | git / gh | 2.56.0 / 2.102.0 |
 | PowerShell | 7.6.6 (Core) |
 
-**Límite de agentes: `POR FIRMAR`.** Con 4 procesadores lógicos y ~8 GB, la recomendación es **2**, y **1 mientras se compile o se corran suites** — el mismo criterio que se aplicó a la PC B vieja. No lo fijo yo.
+### 6.1 Límite de agentes (decisión del propietario, 2026-10-11)
 
-**Dos advertencias sobre la medición:**
+**Rige el mismo límite que el Equipo A**, porque D corre en su mismo hardware.
 
-1. **La RAM puede ser un límite de sesión, no del equipo.** El dato sale de `[System.GC]::GetGCMemoryInfo().TotalAvailableMemoryBytes`, que respeta el confinamiento del proceso. El **modelo de CPU no se puede limitar así**: el registro dice `i5-7500T`, que es de 4 núcleos y 4 hilos.
-2. **El nombre del equipo no cuadra con los documentos.** `memoria/cierre-numeracion-nuevo-equipo.md` y la sección de B de `estado.md` describen «el equipo nuevo (DevLab00)» con **16 núcleos y 31 GB** y SQL Server 2025. Aquí se miden **4 núcleos y ~8 GB**. Coincide el SQL Server 2025, no el tamaño. Lo reconcilia el propietario; no bloquea la definición de D, pero conviene saber qué equipo es cuál antes de repartir cargas largas (compilaciones completas, suites y cargas de SQL Server).
+> **Hasta 4 agentes a la vez si solo uno compila o corre pruebas; si hay más de uno compilando o probando, 2.** Una tarea que exige mucho de SQL Server o de memoria —cargas, T-57, la suite completa de `GPOS.Tests`— **corre sola**: sin otros agentes, sin scripts en segundo plano y sin aplicaciones .NET abiertas.
+
+**El límite es conjunto, no por equipo.** A y D comparten la máquina: 4 es el techo de **los dos juntos**, no 4 para cada uno. Antes de lanzar un agente hay que contar los que están en curso en **ambas** sesiones y cuántos compilan o prueban.
+
+### 6.2 Consecuencias de compartir hardware con A
+
+1. **Sin UPS.** La PC A se cae con los apagones, y D con ella. Trabajos **cortos**, con commit y push frecuentes, para que un corte no deje nada a medias. Las compilaciones completas, las suites largas y las cargas pesadas conviene hacerlas en el equipo de B.
+2. **`GPOS_SYSDATA` compartida.** Varios árboles del mismo equipo apuntan a `.\SQLEXPRESS;Database=GPOS_SYSDATA`. Lo que D escriba ahí lo ve A.
+3. **Prefijo propio para las bases de prueba.** El 2026-10-10 un agente borró siete bases `GPOS_TEST_*` de otra corrida en la misma instancia; desde entonces A usa un prefijo propio. **D usa el suyo** (por ejemplo `GPOS_TEST_D_*`) y no toca las de A.
+4. **Ventanas de medición.** Cuando A mide con la máquina sola —las corridas oficiales de T-28 y T-57 del 14-oct, por ejemplo—, D **no compila ni prueba**. Se acuerda por aviso.
+
+### 6.3 Sobre la medición
+
+**La RAM puede ser un techo de sesión, no del equipo.** El dato sale de `[System.GC]::GetGCMemoryInfo().TotalAvailableMemoryBytes`, que respeta el confinamiento del proceso. El **modelo de CPU no se puede limitar así**: el registro dice `i5-7500T`, de 4 núcleos y 4 hilos —coherente con la clase de máquina de A—.
+
+**Reconciliación del nombre del equipo (2026-10-11).** Retiro la advertencia que había aquí: era una confusión mía. `memoria/cierre-numeracion-nuevo-equipo.md` llama «equipo nuevo» a **DEVLAB00** en una nota del **2026-10-03** —una mudanza anterior—, mientras que el equipo nuevo de B desde el 2026-10-09 es **OSHIN-LEGION** (16 núcleos, 31 GB; `memoria/limite-agentes-pc-b.md:11`). No hay contradicción: **DEVLAB00 es la PC de A, y desde el 2026-10-11 también la de D.**
 
 **Nota de herramienta.** Los scripts del área común asumen Claude Code: `Publicar-En-AreaComun.ps1:22-23` copia `%USERPROFILE%\.claude\agents\*.md` y `projects\<clave>\memory\*.md`. En este equipo **`claude` no está en el `PATH`**, aunque `%USERPROFILE%\.claude` existe. Si el equipo D no corre con Claude Code, hay que definir cómo carga `agentes/` y `memoria/`. **El resto del esquema —avisos, ramas, rango de ADR, vigilancia— no depende de la herramienta.**
 
@@ -141,13 +177,16 @@ Publicar:
 - `README.md`: D figura en el título, en la descripción, en la tabla de estructura, en la regla 3 y en la regla 8.
 - `estado.md`: sección `## Equipo D` añadida.
 - **Recursos del equipo medidos** (sección 6): `DEVLAB00`, 4 procesadores lógicos, ~7,9 GB de RAM, `C:` con 301,5 GB libres, SQL Server 2025 + Express 2019, .NET 10.0.401, Visual Studio 18, Android SDK.
+- **Límite de agentes aplicado** (secciones 6.1 y 6.2), por orden del propietario del 2026-10-11: el mismo del Equipo A —hasta **4** agentes si solo uno compila o prueba, **2** si hay más de uno, y las tareas pesadas **solas**—, **conjunto con A** por compartir máquina, más las reglas de UPS, `GPOS_SYSDATA` compartida, prefijo propio de bases de prueba y ventanas de medición.
+- **Norma de trabajo de D** (sección 5.1), por decisión del propietario del 2026-10-11: la regla del traspaso obligatorio al cerrar cada sesión y los tres mecanismos de contexto —subagentes para lo paralelo, sesión nueva por paquete secuencial, una sola sesión para una línea larga de razonamiento—.
 
 **Cómo se verificó (2026-10-11):** los cinco scripts de `herramientas/` exponen `A, B, C, D` en su `ValidateSet` —leído del parámetro con `Get-Command`, sin ejecutar los scripts— y los cinco analizan con **0 errores de sintaxis**; las carpetas `avisos/D-a-B/`, `avisos/B-a-D/` y `traspasos/D/` existen; `estado.md` tiene la sección `## Equipo D`; y el `README.md` nombra a D en el título, la descripción, la tabla de estructura (dos filas), la regla 3 y la regla 8.
 
+**Nota de transparencia sobre el límite:** en el área común **no encontré un límite numérico propio de la PC A**. Apliqué el que está documentado para esta clase de hardware (*4 / 2 / sola*) y que sigue rigiendo en C (`estado.md:92`). Si A tiene otro, se corrige aquí.
+
 **Pendiente:**
 1. **El propietario firma el rol** (sección 1). Hasta entonces, D no une ramas.
-2. **El propietario firma el límite de agentes** (sección 6) y reconcilia el nombre del equipo con lo que dicen los documentos.
-3. **El propietario registra la tarea de vigilancia** en el equipo D (sección 4).
-4. **B** publica la entrada correspondiente en `memoria/` (solo el coordinador publica memoria) y confirma el rango 160–189 en el registro de `docs/adr/README.md` de `GPOS-NG` cuando corresponda.
+2. **El propietario registra la tarea de vigilancia** en el equipo D (sección 4).
+3. **B** publica la entrada correspondiente en `memoria/` (solo el coordinador publica memoria) y confirma el rango 160–189 en el registro de `docs/adr/README.md` de `GPOS-NG` cuando corresponda.
 
 No requiere acuse más allá de confirmarlo en la sección de B de `estado.md` en su primera sesión.
