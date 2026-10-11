@@ -27,12 +27,16 @@ Este aviso **define al equipo D dentro del área común**. No es una decisión p
 
 **Por qué soporte y no coordinación.** B coordina desde el 2026-10-09 por una razón explícita del propietario: el equipo nuevo es más robusto y la PC A se cae con los apagones. Duplicar la coordinación repartiría la responsabilidad de unir a `master` y `feature/modelo-ng` entre dos equipos, que es justo lo que esa decisión quiso concentrar. El patrón que escala es **un coordinador y N equipos de soporte**. El propietario firmó esta opción el 2026-10-11; las otras dos quedaron descartadas y se conservan en la sección 7 como registro.
 
-**Mandato adicional: `POR DECIDIR`.** Es un mandato **aparte del rol firmado**, no incluido en él. La auditoría de cumplimiento ADR → código del 2026-10-11 dejó dos brechas sin dueño:
+**Mandato adicional — aprobado por el propietario el 2026-10-11.** Además de construir, D asume la **verificación y reconciliación documental**. La auditoría de cumplimiento ADR → código del 2026-10-11 dejó dos brechas sin dueño, y pasan a ser suyas:
 
-- **Verificación y reconciliación documental.** Hay ~21 defectos donde `CLAUDE.md` y `docs/adr/README.md` afirman código inexistente o niegan código existente; y los artefactos de estado envejecen (hoy `estado.md` declara `feature/modelo-ng` en `59921ba` cuando `origin` está en `4d376a6c`).
-- **Seguimiento de las precisiones firmadas.** Los 20 ADR «PARCIAL» son mayoritariamente ADR cuyo cuerpo está construido y cuya **precisión firmada** posterior no lo está (en el rango 001–020, seis de seis). Son ~200 precisiones sin seguimiento.
+- **Reconciliación documental.** Mantener la correspondencia entre lo que declaran `CLAUDE.md` y `docs/adr/README.md` y lo que existe en el código, **en todas las ramas**. Hoy hay ~21 defectos donde afirman código inexistente o niegan código existente, y los artefactos de estado envejecen (el propio `estado.md` declaraba `feature/modelo-ng` en `59921ba` con `origin` en `4d376a6c`).
+- **Seguimiento de las precisiones firmadas.** Llevar la cuenta de qué precisión de cada ADR está construida y cuál no. Es la brecha de fondo: los 20 ADR «PARCIAL» son mayoritariamente ADR cuyo cuerpo está construido y cuya **precisión firmada** posterior no lo está —en el rango 001–020, seis de seis—. Son del orden de 200 precisiones sin seguimiento.
 
-Ningún equipo tiene hoy esa tarea asignada. Si el propietario la quiere, es el mandato natural de D — pero **no lo ha decidido**, y no se da por hecho.
+**Límites del mandato.** D **propone**; no impone ni toca lo que no es suyo:
+
+- No edita `CLAUDE.md` ni el manifiesto de pruebas —son de B—: las correcciones que caigan ahí se piden por aviso.
+- No registra ADR: se registran solo en `master`, y el rango de D es el 160–189.
+- No decide qué se corrige ni cuándo: lo propone con evidencia y deciden el propietario o B.
 
 ---
 
@@ -180,6 +184,8 @@ Regla propia de D, además de las nueve anteriores.
 - **Límite de agentes aplicado** (secciones 6.1 y 6.2), por orden del propietario del 2026-10-11: el mismo del Equipo A —hasta **4** agentes si solo uno compila o prueba, **2** si hay más de uno, y las tareas pesadas **solas**—, **conjunto con A** por compartir máquina, más las reglas de UPS, `GPOS_SYSDATA` compartida, prefijo propio de bases de prueba y ventanas de medición.
 - **Norma de trabajo de D** (sección 5.1), por decisión del propietario del 2026-10-11: la regla del traspaso obligatorio al cerrar cada sesión y los tres mecanismos de contexto —subagentes para lo paralelo, sesión nueva por paquete secuencial, una sola sesión para una línea larga de razonamiento—.
 - **Rol firmado por el propietario el 2026-10-11:** **equipo de soporte** — ramas `d/...`, sube y abre PR, **no une**, y no toca `CLAUDE.md`, el manifiesto de pruebas ni `memoria/`, `agentes/`, `herramientas/` o `README.md`.
+- **Mandato adicional aprobado por el propietario el 2026-10-11** (sección 1): verificación y reconciliación documental, y seguimiento de las precisiones firmadas.
+- **Vigilancia registrada y probada el 2026-10-11** (sección 4): tarea `GPOS-NG Vigilar área común (D)`, estado `Ready`, cada 10 minutos con arranque en el minuto 11, apuntando al **clon canónico** `C:\Users\lfmen\source\repos\GPOS-NG-Equipos` —no al clon desechable—. Prueba manual en frío: establece el punto de partida y detecta **2 PR abiertos**.
 
 **Nota de propiedad sobre dos archivos compartidos.** Para que D fuera funcional hubo que tocar dos archivos que son **de B**: `herramientas/*.ps1` (los cinco scripts tenían `[ValidateSet('A','B','C')]`, así que `-Equipo D` **fallaba al validar** y D no habría podido publicar nunca) y `README.md` (la portada decía «equipos A, B y C» y la regla 3 omitía a C). **B los revisa y los ajusta como quiera**: su contenido no depende de que D exista, salvo el `D` añadido al `ValidateSet` y al desfase.
 
@@ -188,8 +194,7 @@ Regla propia de D, además de las nueve anteriores.
 **Nota de transparencia sobre el límite:** en el área común **no encontré un límite numérico propio de la PC A**. Apliqué el que está documentado para esta clase de hardware (*4 / 2 / sola*) y que sigue rigiendo en C (`estado.md:92`). Si A tiene otro, se corrige aquí.
 
 **Pendiente:**
-1. **El propietario decide el mandato adicional** de la sección 1 (verificación y reconciliación documental, y seguimiento de las precisiones firmadas). **No forma parte del rol firmado.**
-2. **El propietario registra la tarea de vigilancia** en el equipo D (sección 4).
-3. **B** publica la entrada correspondiente en `memoria/` (solo el coordinador publica memoria) y confirma el rango 160–189 en el registro de `docs/adr/README.md` de `GPOS-NG` cuando corresponda.
+1. **B** publica la entrada correspondiente en `memoria/` (solo el coordinador publica memoria) y confirma el rango 160–189 en el registro de `docs/adr/README.md` de `GPOS-NG` cuando corresponda.
+2. **B** revisa los dos archivos compartidos que D tuvo que tocar (`herramientas/*.ps1` y `README.md`); ver la nota de propiedad más arriba.
 
 No requiere acuse más allá de confirmarlo en la sección de B de `estado.md` en su primera sesión. El aviso queda `Estado: Abierto` **solo** por las acciones de B (pendiente 3): el rol ya está firmado.
