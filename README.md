@@ -4,6 +4,8 @@ Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: co
 
 **Quién decide cuándo se actualiza:** el propietario, con una excepción: la **revisión obligatoria cada 30 minutos** (regla 8). Fuera de ella, el propietario le dice a cada equipo «actualiza desde el área común» (instalar memoria y agentes) o «publica en el área común»; ningún equipo instala ni publica por su cuenta salvo un aviso urgente (regla 6) o lo rutinario de la regla 8.
 
+**Objetivos del MVP:** [lista F1–F10, criterios, meta y avance publicado](MVP.md).
+
 ## Estructura
 
 | Carpeta / archivo | Qué contiene | Quién escribe |
