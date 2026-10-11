@@ -124,7 +124,8 @@ De los 20 «PARCIAL», **seis de seis** en el rango 001–020 son ADR cuyo **cue
 - Revisar los dos archivos compartidos que D tuvo que tocar: `herramientas/*.ps1` (sin `D` en el `ValidateSet`, D **no podía publicar**) y `README.md` (la portada omitía a D y la regla 3 omitía a C desde el 9-oct).
 
 **De D:**
-- Nada abierto. La definición quedó cerrada; `traspasos/D/` se estrena con el primer paquete de trabajo real.
+- **Cola recibida el 2026-10-11 (17:20):** las asignaciones que dejó pendientes el equipo C, por decisión del propietario. Registrada en `avisos/D-a-B/2026-10-11-traspaso-pendientes-de-c.md`. El plan está en la sección 7 de este traspaso.
+- Antes de esa decisión, la definición quedaba cerrada y `traspasos/D/` se estrenaba con el primer paquete de trabajo real.
 
 ---
 
@@ -135,3 +136,27 @@ De los 20 «PARCIAL», **seis de seis** en el rango 001–020 son ADR cuyo **cue
 3. Recibir del propietario la asignación; **si toca código, rama `d/...` y PR sin unir**.
 4. Antes de tocar `master` o cualquier rama como línea base: `git fetch` y comprobar la punta real.
 5. Al cerrar: **nota nueva en `traspasos/D/`**, aunque el trabajo quede a medias.
+
+---
+
+## 7. Plan de trabajo: la cola heredada del equipo C (2026-10-11)
+
+**Decisión del propietario del 2026-10-11:** D toma las asignaciones que C dejó pendientes y publica en **ramas `d/...` propias**. El registro público es `avisos/D-a-B/2026-10-11-traspaso-pendientes-de-c.md`; aquí queda el plan operativo.
+
+**Regla de continuidad.** D **no continúa** las ramas `c/...`. Parte de `feature/modelo-ng` en ramas `d/...` nuevas y usa el contenido de C como referencia.
+
+| Orden | Rama `d/...` propuesta | Base | Primer paso exacto | Bloqueada por |
+|---|---|---|---|---|
+| 1 | `d/demo-leeme-vencimiento` | `feature/modelo-ng` (punta real, con `git fetch`) | Llevar la nota de `instalador/Demo/datos-demo/LEEME.md` de `c/demo-plantillas-lote` (`033c4d7`) a la rama de integración. Es solo documentación: no requiere pruebas | Nada. Es el trabajo más corto y desbloquea el PR #15 |
+| 2 | `d/c13-revision-lote-correo` | `feature/modelo-ng` | **Rehacer la parte de destinatarios** del diseño (`docs/arquitectura/2026-10-10-c13-aviso-correo-revision-lote.md`) según la firma del propietario: correo general de la empresa con el origen en el asunto (ADR-11, punto 6). Confirmar con B qué preguntas C13-P01 a C13-P04 siguen vivas **antes** de construir | Respuesta de B a las preguntas; después, el diseño ajustado |
+| 3 | `d/c10-compra-variable-tabla` | `feature/modelo-ng` | Solo si el 2.º PR de H-11 de A se une antes: **regenerar la migración** `20261010155005_Ola4CompraVariableTabla` con fecha posterior, con el guion acumulado. El PR #21 **lo une B**, no D | Que B confirme el orden de unión y el reinicio del 14-oct |
+| 4 | `d/adr81-fase-a` | 2.º PR de H-11 de A, una vez unido | Construir la fase A, **T1 primero** si B lo encarga, con **T5b (≈0,35 sp)** —lo que depende del factor (§13.2)—. Tiene que rebasar sobre el PR de A | El 2.º PR de H-11 de A (`a/h11-p7-candado`; el PR #24 ya está entregado) |
+| 5 | `d/adr118-119-ux` | `feature/modelo-ng` | Mantener y rebasar el diseño de pantallas (`b7be058`) y **entregarlo a B como base de T4** | Nada para rebasar; T4 lo construye B |
+
+**Fuera de la cola, a decisión:** los cuatro repositorios WIP del rescate de C (`c/horizon-wip` `2958674`, `c/gsf-sync-transfer-wip` `c33ce3d`, `c/conector-iq-instalador-wip` `6429b2d`, `c/gsf-synctoiqs-wip` `515a80c`). D propone un triaje; **no los asume en bloque**.
+
+**No entra:** los tres casos de secretos (solo en la máquina de C, son del propietario), C2-01 a C2-07 (ya encargados a A) y la configuración local de C.
+
+**Antes de tocar cualquier rama:** `git fetch` y comprobar la punta real. La lección del 2026-10-11 fue que auditar contra el árbol de trabajo sin comprobar la línea base produjo veredictos falsos en ambos sentidos.
+
+**Nota de entorno:** el shell confinado no inicializa TLS (`schannel: AcquireCredentialsHandle failed`), así que `git fetch`, `git push` y `gh` fallan; hay que pedir el sandbox abierto para ese comando concreto. El `pull --rebase` de la publicación del 2026-10-11 se resolvió así.
