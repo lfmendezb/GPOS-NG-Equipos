@@ -9,9 +9,9 @@
   .\Registrar-VigilanciaAreaComun.ps1 -Equipo B -Quitar
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
     [ValidateRange(5, 60)][int]$Intervalo = 10,   # minutos entre corridas (sin costo de modelo; propietario, 2026-10-10)
-    [int]$Minuto = 2,          # desfase dentro del intervalo, para que A, B, C y D no coincidan (B 2, A 5, C 8, D 11)
+    [int]$Minuto = 2,          # desfase dentro del intervalo, para que A, B y C no coincidan (B 2, A 5, C 8)
     [switch]$Quitar
 )
 $ErrorActionPreference = 'Stop'

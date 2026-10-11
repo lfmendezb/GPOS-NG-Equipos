@@ -1,6 +1,6 @@
-# GPOS-NG-Equipos — área común de los equipos A, B, C y D
+# GPOS-NG-Equipos — área común de los equipos A, B y C
 
-Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: coordina, integra y une desde el 2026-10-09, por decisión del propietario) y los equipos de apoyo **A** (PC A; ramas `a/`), **C** (antigua PC B, desde el 2026-10-09; ramas `c/`) y **D** (definido el 2026-10-11; ramas `d/`), que no unen. No contiene código: contiene lo que los dos equipos necesitan saber para trabajar como un solo equipo sobre todos los proyectos (`GPOS-NG`, `BackupService`, `GPOS-NG-AddOn-IQS` y los que vengan).
+Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: coordina, integra y une desde el 2026-10-09, por decisión del propietario) y los equipos de apoyo **A** (PC A; ramas `a/`) y **C** (antigua PC B, desde el 2026-10-09; ramas `c/`), que no unen. No contiene código: contiene lo que los dos equipos necesitan saber para trabajar como un solo equipo sobre todos los proyectos (`GPOS-NG`, `BackupService`, `GPOS-NG-AddOn-IQS` y los que vengan).
 
 **Quién decide cuándo se actualiza:** el propietario, con una excepción: la **revisión obligatoria cada 30 minutos** (regla 8). Fuera de ella, el propietario le dice a cada equipo «actualiza desde el área común» (instalar memoria y agentes) o «publica en el área común»; ningún equipo instala ni publica por su cuenta salvo un aviso urgente (regla 6) o lo rutinario de la regla 8.
 
@@ -15,10 +15,8 @@ Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: co
 | `avisos/B-a-A/` | Avisos, hallazgos, entregas y respuestas del equipo B para A | Solo B |
 | `avisos/C-a-B/` | Avisos del equipo C para B | Solo C |
 | `avisos/B-a-C/` | Avisos del equipo B para C | Solo B |
-| `avisos/D-a-B/` | Avisos, preguntas, entregas y respuestas del equipo D para B | Solo D |
-| `avisos/B-a-D/` | Avisos, hallazgos, entregas y respuestas del equipo B para D | Solo B |
-| `traspasos/A/`, `traspasos/B/`, `traspasos/C/`, `traspasos/D/` | Notas de traspaso y de cierre de cada equipo | Cada equipo la suya |
-| `herramientas/` | Scripts para actualizar, revisar y publicar (parámetro `-Equipo` con A, B, C o D) | Solo B |
+| `traspasos/A/`, `traspasos/B/`, `traspasos/C/` | Notas de traspaso y de cierre de cada equipo | Cada equipo la suya |
+| `herramientas/` | Scripts para actualizar, revisar y publicar (parámetro `-Equipo` con A, B o C) | Solo B |
 
 ## Reglas
 
@@ -34,12 +32,12 @@ Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo: co
    ```
 
    Una respuesta es un aviso nuevo en la carpeta del otro sentido que cita el original. El original lo marca `Estado: Atendido por <equipo> el <fecha>` **solo quien lo escribió**.
-3. **Commits:** el mensaje empieza con `[A]`, `[B]`, `[C]` o `[D]`. Antes de publicar, `git pull --rebase`; nunca `--force`.
+3. **Commits:** el mensaje empieza con `[A]`, `[B]` o `[C]`. Antes de publicar, `git pull --rebase`; nunca `--force`.
 4. **Nunca secretos:** ninguna clave, contraseña, token, cadena de conexión ni dato de un cliente real, aunque el repositorio sea privado. El script de publicar se detiene si detecta uno.
 5. **No reemplaza a los repositorios de código:** las ramas de trabajo siguen en cada proyecto; aquí solo se avisa que existen y en qué estado están. Los ADR se registran en `GPOS-NG` (`master`, `docs/adr/`), no aquí.
 6. **Aviso urgente:** si un equipo encuentra algo que afecta al trabajo del otro, deja el aviso con `Prioridad: Alta`, lo publica y se lo dice al propietario en su sesión.
 7. **El propietario firma:** un aviso nunca es una decisión. Las decisiones viven en las hojas de firma de cada proyecto.
-8. **Vigilancia del área común** (decisión del propietario, 2026-10-07; desde el 2026-10-10 sin el modelo). Una tarea programada de Windows, registrada por el propietario en cada equipo con `herramientas\Registrar-VigilanciaAreaComun.ps1 -Equipo <A|B|C|D> [-Minuto n]`, corre `herramientas\Vigilar-AreaComun.ps1` **cada 10 minutos** (desfase: B 2, A 5, C 8, D 11) y escribe las novedades en `%LOCALAPPDATA%\GPOS-NG-Equipos\novedades-<Equipo>.md` con una notificación de Windows. La sesión **no** programa un reloj propio: lee ese archivo al abrir y cuando el propietario lo pida (o usa `Revisar-AreaComun.ps1` a mano). **Vigilante en la sesión (decisión del propietario, 2026-10-10):** al abrir, cada sesión de equipo arma la herramienta `Monitor` sobre su archivo de novedades, con `timeout_ms` 1800000 y este comando (Git Bash), y la vuelve a armar cada vez que vence:
+8. **Vigilancia del área común** (decisión del propietario, 2026-10-07; desde el 2026-10-10 sin el modelo). Una tarea programada de Windows, registrada por el propietario en cada equipo con `herramientas\Registrar-VigilanciaAreaComun.ps1 -Equipo <A|B|C> [-Minuto n]`, corre `herramientas\Vigilar-AreaComun.ps1` **cada 10 minutos** (desfase: B 2, A 5, C 8) y escribe las novedades en `%LOCALAPPDATA%\GPOS-NG-Equipos\novedades-<Equipo>.md` con una notificación de Windows. La sesión **no** programa un reloj propio: lee ese archivo al abrir y cuando el propietario lo pida (o usa `Revisar-AreaComun.ps1` a mano). **Vigilante en la sesión (decisión del propietario, 2026-10-10):** al abrir, cada sesión de equipo arma la herramienta `Monitor` sobre su archivo de novedades, con `timeout_ms` 1800000 y este comando (Git Bash), y la vuelve a armar cada vez que vence:
 
    ```bash
    f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-<Equipo>.md"; touch "$f"; n=$(wc -l < "$f"); while true; do m=$(wc -l < "$f" 2>/dev/null || echo "$n"); if [ "$m" -gt "$n" ]; then sed -n "$((n+1)),${m}p" "$f" | grep -E "^## |^- "; n=$m; fi; sleep 20; done

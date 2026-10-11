@@ -6,7 +6,7 @@
   .\Revisar-AreaComun.ps1 -Equipo A
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo
 )
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot

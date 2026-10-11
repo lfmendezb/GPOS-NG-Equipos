@@ -5,7 +5,7 @@
   .\Actualizar-Desde-AreaComun.ps1 -Equipo B
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
     [string]$ClaveMemoria = 'C--Users-lfmen-source-repos-Solucion-GPOS-NG'
 )
 $ErrorActionPreference = 'Stop'
@@ -62,7 +62,7 @@ foreach ($clave in $claves) {
 Write-Host "Agentes instalados. Copias anteriores en $claude\*-respaldo-$sello*."
 
 # Avisos abiertos para este equipo
-# Avisos de cualquier equipo a este (A, B, C o D)
+# Avisos de cualquier equipo a este (A, B o C)
 $carpetas = Get-ChildItem (Join-Path $raiz "avisos") -Directory -Filter "*-a-$Equipo" -ErrorAction SilentlyContinue
 $abiertos = $carpetas | ForEach-Object { Get-ChildItem $_.FullName -Filter *.md } |
     Where-Object { (Get-Content $_.FullName -Raw) -match '(?m)^Estado:\s*Abierto' }

@@ -10,7 +10,7 @@
   .\Vigilar-AreaComun.ps1 -Equipo B -SinNotificacion    # prueba manual, sin aviso de Windows
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
     [string]$RepoPr = 'lfmendezb/GPOS-NG',
     [switch]$SinNotificacion
 )
