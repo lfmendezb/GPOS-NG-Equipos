@@ -68,17 +68,35 @@ D **no** escribe en `memoria/`, `agentes/`, `herramientas/` ni `README.md`: son 
 
 ---
 
-## 4. Vigilancia del área común
+## 4. Vigilancia del área común — **registrada, APAGADA**
 
 Le aplica la regla 8 igual que a los demás. **Desfase dentro del intervalo: minuto 11** (B 2, A 5, C 8; pasos de 3 minutos, para que los cuatro no coincidan).
 
-El propietario registra la tarea una vez en el equipo D (es configuración permanente de Windows; los agentes no la registran):
+**Estado: la tarea está registrada pero apagada**, por orden del propietario del 2026-10-11 («el vigilante puedes mantenerlo apagado, hasta que te confirme que lo utilices»).
+
+| | |
+|---|---|
+| Tarea | `GPOS-NG Vigilar área común (D)` |
+| Estado | **`Disabled`** |
+| Repetición, al activarla | Cada 10 minutos, con arranque en el minuto 11 |
+| Apunta a | `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\herramientas\Vigilar-AreaComun.ps1 -Equipo D` |
+| Novedades | `%LOCALAPPDATA%\GPOS-NG-Equipos\novedades-D.md` |
+
+**Consecuencia mientras esté apagada — y es importante.** Nadie escribe `novedades-D.md`, así que **no habrá aviso automático** de lo que se publique en el área común. Por tanto, la sesión de D **revisa el área común a mano al abrir**: `git pull` del clon canónico, lectura de `estado.md` y de los avisos abiertos de `avisos/B-a-D/`. **No da por hecho que el vigilante la va a despertar.**
+
+**Para activarla** (lo decide el propietario, no D):
 
 ```powershell
-& "...\GPOS-NG-Equipos\herramientas\Registrar-VigilanciaAreaComun.ps1" -Equipo D -Minuto 11
+Enable-ScheduledTask -TaskName "GPOS-NG Vigilar área común (D)"
 ```
 
-Escribe las novedades en `%LOCALAPPDATA%\GPOS-NG-Equipos\novedades-D.md`. La sesión arma el `Monitor` sobre ese archivo al abrir y lo vuelve a armar al vencer.
+Y si hubiera que registrarla desde cero:
+
+```powershell
+& "C:\Users\lfmen\source\repos\GPOS-NG-Equipos\herramientas\Registrar-VigilanciaAreaComun.ps1" -Equipo D -Minuto 11
+```
+
+Al activarla, la sesión arma el `Monitor` sobre su archivo de novedades y lo vuelve a armar al vencer (regla 8).
 
 ---
 
@@ -185,7 +203,7 @@ Regla propia de D, además de las nueve anteriores.
 - **Norma de trabajo de D** (sección 5.1), por decisión del propietario del 2026-10-11: la regla del traspaso obligatorio al cerrar cada sesión y los tres mecanismos de contexto —subagentes para lo paralelo, sesión nueva por paquete secuencial, una sola sesión para una línea larga de razonamiento—.
 - **Rol firmado por el propietario el 2026-10-11:** **equipo de soporte** — ramas `d/...`, sube y abre PR, **no une**, y no toca `CLAUDE.md`, el manifiesto de pruebas ni `memoria/`, `agentes/`, `herramientas/` o `README.md`.
 - **Mandato adicional aprobado por el propietario el 2026-10-11** (sección 1): verificación y reconciliación documental, y seguimiento de las precisiones firmadas.
-- **Vigilancia registrada y probada el 2026-10-11** (sección 4): tarea `GPOS-NG Vigilar área común (D)`, estado `Ready`, cada 10 minutos con arranque en el minuto 11, apuntando al **clon canónico** `C:\Users\lfmen\source\repos\GPOS-NG-Equipos` —no al clon desechable—. Prueba manual en frío: establece el punto de partida y detecta **2 PR abiertos**.
+- **Vigilancia registrada y probada el 2026-10-11** (sección 4): tarea `GPOS-NG Vigilar área común (D)`, apuntando al **clon canónico** `C:\Users\lfmen\source\repos\GPOS-NG-Equipos` —no al clon desechable—, cada 10 minutos con arranque en el minuto 11. Prueba manual en frío: establece el punto de partida y detecta **2 PR abiertos**. **Queda `Disabled`** por orden del propietario del mismo día, hasta que él confirme que se use.
 
 **Nota de propiedad sobre dos archivos compartidos.** Para que D fuera funcional hubo que tocar dos archivos que son **de B**: `herramientas/*.ps1` (los cinco scripts tenían `[ValidateSet('A','B','C')]`, así que `-Equipo D` **fallaba al validar** y D no habría podido publicar nunca) y `README.md` (la portada decía «equipos A, B y C» y la regla 3 omitía a C). **B los revisa y los ajusta como quiera**: su contenido no depende de que D exista, salvo el `D` añadido al `ValidateSet` y al desfase.
 
