@@ -3,6 +3,7 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **Entrega 2026-10-11:** PR #24 actualizado a `3a3a6920`: impide escrituras de negocio con candado de empresa desconocido; 8/8 pruebas sin SQL y compilación con 0 errores. Ver aviso `2026-10-11-h11-candado-desconocido-corregido`. Revisión parcial, sin aprobación global ni unión; PDS-06 e integración pendientes.
 - **Retoma 2026-10-11 por encargo del propietario:** Codex continúa los pendientes de A. H-2 en 37694341: compilación comprobada; validación SQL bloqueada (16 pruebas de NCF histórico, 0 aprobadas por acceso denegado al aprovisionar). Ver aviso `2026-10-11-retoma-h2-bloqueo-corredor`. PR #24 sigue sin unir; revisión de seguridad/PDS-06, H-11 sistema, H-6 aplicación y T3-12/RG-14 pendientes.
 - **Actualizado:** 2026-10-10, 10:50
 - **Unido a `feature/modelo-ng`:**
