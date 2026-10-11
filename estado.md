@@ -89,6 +89,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
 
 ## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
+- **Retoma 2026-10-11 por encargo del propietario:** Codex continúa PR #21 en `c/compra-variable-tabla`; corrección `9f02c95b` publicada y compilada (0 errores). Integración bloqueada por acceso SQL (9 fallidas al aprovisionar, 0 aprobadas, 1 omitida). Ver aviso `2026-10-11-c10-retoma-validacion-pendiente`. PR sin unir; se conserva la condición del 14-oct.
 - **Actualizado:** 2026-10-10
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; `sqlcmd` (go-sqlcmd) instalado por el propietario. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
 - **Trabajando en:** nada; sin agentes activos, disponible. Entregado hoy: C-2 (H-11 Rechazado como publicable por C2-01; sin revertir la unión), C-8 (PR #19, unido), C-9 (PR #20, unido), C-10 (PR #21, no unir antes del 14-oct) y la fase A de ADR-81 en diseño cerrado (blueprint v3 y pantallas v2, P-81A-14 firmada). Siguiente posible: construir la fase A tras el segundo PR de H-11 (T1 antes, si B lo encarga). Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
