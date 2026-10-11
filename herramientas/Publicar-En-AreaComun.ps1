@@ -1,11 +1,11 @@
-﻿<#
+<#
 .SYNOPSIS
   Publica en el área común lo que corresponde al equipo. Con -Equipo B (coordinador) copia además la memoria y los agentes locales.
 .EXAMPLE
   .\Publicar-En-AreaComun.ps1 -Equipo B -Mensaje "Aviso sobre la ola 3b"
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo,
     [Parameter(Mandatory)][string]$Mensaje,
     [string]$ClaveMemoria = 'C--Users-lfmen-source-repos-Solucion-GPOS-NG-GPOS-NG'
 )

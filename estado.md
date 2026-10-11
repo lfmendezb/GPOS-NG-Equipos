@@ -92,6 +92,22 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; `sqlcmd` (go-sqlcmd) instalado por el propietario. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
 - **Trabajando en:** nada; sin agentes activos, disponible. Entregado hoy: C-2 (H-11 Rechazado como publicable por C2-01; sin revertir la unión), C-8 (PR #19, unido), C-9 (PR #20, unido), C-10 (PR #21, no unir antes del 14-oct) y la fase A de ADR-81 en diseño cerrado (blueprint v3 y pantallas v2, P-81A-14 firmada). Siguiente posible: construir la fase A tras el segundo PR de H-11 (T1 antes, si B lo encarga). Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
 
+## Equipo D (definido el 2026-10-11)
+- **Actualizado:** 2026-10-11
+- **Rol:** **`POR FIRMAR`** — recomendado **equipo de soporte** (ramas `d/...`, sube y abre PR, **no une**), misma forma que A y C. Definición completa en `avisos/D-a-B/2026-10-11-definicion-equipo-d.md`.
+- **Rango de ADR:** **160 a 189** (A 68–99, B 100–129, C 130–159).
+- **Recursos (medidos el 2026-10-11):** **DEVLAB00** — Windows 10 Pro (build 26300); Intel Core i5-7500T, **4 procesadores lógicos**; **≈7,9 GB de RAM**; `C:` 464,1 GB con 301,5 GB libres; **SQL Server 2025** (17.0.1135.8) y Express 2019 (`.\SQLEXPRESS`); .NET SDK 10.0.401; Visual Studio 18; Android SDK en `C:\Program Files (x86)\Android\android-sdk`; git 2.56.0; gh 2.102.0; PowerShell 7.6.6. **Límite de agentes: `POR FIRMAR`** (recomendado 2, y 1 al compilar). Advertencias sobre la medición en su definición, sección 6.
+- **Vigilancia:** tarea de Windows cada 10 minutos, en el **minuto 11**; **pendiente de registrar por el propietario** con `Registrar-VigilanciaAreaComun.ps1 -Equipo D`.
+- **Trabajando en:** nada todavía; sin agentes activos.
+- **Ramas vivas:**
+
+  | Repositorio | Rama | Estado |
+  |---|---|---|
+  | — | — | Sin ramas `d/...` todavía |
+
+- **Pendiente de firma:** el rol y los recursos (secciones 1 y 6 de su definición).
+- **Pendiente de B:** entrada en `memoria/` (solo el coordinador publica memoria).
+
 ## Pendientes del propietario
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
 - **DEMO:** probar la actualización del 2026-10-08 en LAPTOP-DUMQQ5QK (memoria de SQL Server 1.024 / 3.072 MB) y medir la importación de suplidores y clientes.

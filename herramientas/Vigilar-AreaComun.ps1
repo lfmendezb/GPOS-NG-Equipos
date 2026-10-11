@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Vigilancia del área común y de los PR sin el modelo (sustituye el reloj de la regla 8 que despertaba al modelo cada 30 minutos).
   La corre una tarea programada de Windows. No toca la copia de trabajo: solo hace fetch y lee origin/main.
@@ -10,7 +10,7 @@
   .\Vigilar-AreaComun.ps1 -Equipo B -SinNotificacion    # prueba manual, sin aviso de Windows
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo,
     [string]$RepoPr = 'lfmendezb/GPOS-NG',
     [switch]$SinNotificacion
 )

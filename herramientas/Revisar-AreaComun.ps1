@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Revisión obligatoria del área común (regla 8): trae lo nuevo y lista los avisos abiertos para el equipo,
   marcando los que llegaron desde la revisión anterior. No instala memoria ni agentes y no publica.
@@ -6,7 +6,7 @@
   .\Revisar-AreaComun.ps1 -Equipo A
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo
 )
 $ErrorActionPreference = 'Stop'
 $raiz = Split-Path -Parent $PSScriptRoot

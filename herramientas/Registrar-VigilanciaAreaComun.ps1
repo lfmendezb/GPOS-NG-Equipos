@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
   Registra (o vuelve a registrar) la tarea programada de Windows que corre Vigilar-AreaComun.ps1 cada -Intervalo minutos (10 por omisión), sin el modelo.
   La ejecuta el PROPIETARIO, una vez por equipo: es configuración permanente de Windows y los agentes no la hacen.
@@ -9,9 +9,9 @@
   .\Registrar-VigilanciaAreaComun.ps1 -Equipo B -Quitar
 #>
 param(
-    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C')][string]$Equipo,
+    [Parameter(Mandatory)][ValidateSet('A', 'B', 'C', 'D')][string]$Equipo,
     [ValidateRange(5, 60)][int]$Intervalo = 10,   # minutos entre corridas (sin costo de modelo; propietario, 2026-10-10)
-    [int]$Minuto = 2,          # desfase dentro del intervalo, para que A, B y C no coincidan (B 2, A 5, C 8)
+    [int]$Minuto = 2,          # desfase dentro del intervalo, para que A, B, C y D no coincidan (B 2, A 5, C 8, D 11)
     [switch]$Quitar
 )
 $ErrorActionPreference = 'Stop'
