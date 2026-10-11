@@ -10,13 +10,13 @@ Estado: Abierto
 
 Palabras del propietario (2026-10-11): «Vamos a hacer lo siguiente, crea la definición del Equipo D… sigue el mismo esquema que los equipos A, B y C.»
 
-Este aviso **define al equipo D dentro del área común**. No es una decisión por sí mismo (regla 7): registra la del propietario. Todo lo que aún no está firmado va marcado **`POR FIRMAR`** o **`POR DEFINIR`**.
+Este aviso **define al equipo D dentro del área común**. No es una decisión por sí mismo (regla 7): registra la del propietario. El **rol quedó firmado el 2026-10-11** (sección 1); lo que sigue abierto va marcado **`POR DECIDIR`**.
 
 ---
 
-## 1. Rol `POR FIRMAR`
+## 1. Rol: equipo de soporte · **firmado por el propietario el 2026-10-11**
 
-**Recomendación: equipo de soporte**, con la misma forma que A y C.
+**Decisión del propietario: equipo de soporte**, con la misma forma que A y C.
 
 | | |
 |---|---|
@@ -25,14 +25,14 @@ Este aviso **define al equipo D dentro del área común**. No es una decisión p
 | **Une** ramas a `feature/modelo-ng` y `master` | **No** (salvo que el propietario indique otra cosa) |
 | Edita `CLAUDE.md`, el manifiesto de pruebas y los «Pendientes del propietario» | No: son de B, el coordinador |
 
-**Por qué se recomienda soporte y no coordinación.** B coordina desde el 2026-10-09 por una razón explícita del propietario: el equipo nuevo es más robusto y la PC A se cae con los apagones. Duplicar la coordinación repartiría la responsabilidad de unir a `master` y `feature/modelo-ng` entre dos equipos, que es justo lo que esa decisión quiso concentrar. El patrón que escala es **un coordinador y N equipos de soporte**. Si el propietario quiere otra cosa, las alternativas están en la sección 7.
+**Por qué soporte y no coordinación.** B coordina desde el 2026-10-09 por una razón explícita del propietario: el equipo nuevo es más robusto y la PC A se cae con los apagones. Duplicar la coordinación repartiría la responsabilidad de unir a `master` y `feature/modelo-ng` entre dos equipos, que es justo lo que esa decisión quiso concentrar. El patrón que escala es **un coordinador y N equipos de soporte**. El propietario firmó esta opción el 2026-10-11; las otras dos quedaron descartadas y se conservan en la sección 7 como registro.
 
-**Mandato adicional propuesto (opcional).** La auditoría de cumplimiento ADR → código del 2026-10-11 dejó dos brechas sin dueño:
+**Mandato adicional: `POR DECIDIR`.** Es un mandato **aparte del rol firmado**, no incluido en él. La auditoría de cumplimiento ADR → código del 2026-10-11 dejó dos brechas sin dueño:
 
 - **Verificación y reconciliación documental.** Hay ~21 defectos donde `CLAUDE.md` y `docs/adr/README.md` afirman código inexistente o niegan código existente; y los artefactos de estado envejecen (hoy `estado.md` declara `feature/modelo-ng` en `59921ba` cuando `origin` está en `4d376a6c`).
 - **Seguimiento de las precisiones firmadas.** Los 20 ADR «PARCIAL» son mayoritariamente ADR cuyo cuerpo está construido y cuya **precisión firmada** posterior no lo está (en el rango 001–020, seis de seis). Son ~200 precisiones sin seguimiento.
 
-Ningún equipo tiene hoy esa tarea asignada. Si el propietario la quiere, es el mandato natural de D.
+Ningún equipo tiene hoy esa tarea asignada. Si el propietario la quiere, es el mandato natural de D — pero **no lo ha decidido**, y no se da por hecho.
 
 ---
 
@@ -161,11 +161,11 @@ Regla propia de D, además de las nueve anteriores.
 
 ---
 
-## 7. Alternativas consideradas (si el propietario no firma la recomendación)
+## 7. Alternativas consideradas y descartadas
 
-- **(a) Equipo de soporte** — la recomendada. Ramas `d/`, PR sin unir, no toca `CLAUDE.md` ni une.
-- **(b) Segundo equipo coordinador** — comparte con B el unir a `feature/modelo-ng` y `master`. Coste: reparte la responsabilidad que la decisión del 2026-10-09 concentró en un equipo robusto; exige reglas de desempate y una disciplina de unión que hoy no está escrita.
-- **(c) Equipo de una misión acotada** — por ejemplo, solo la verificación y reconciliación documental de la sección 1, sin construir. Coste: deja a D fuera del flujo de entrega normal.
+- **(a) Equipo de soporte** — **la firmada por el propietario el 2026-10-11.** Ramas `d/`, PR sin unir, no toca `CLAUDE.md` ni une.
+- **(b) Segundo equipo coordinador** — *descartada.* Compartiría con B el unir a `feature/modelo-ng` y `master`. Coste: reparte la responsabilidad que la decisión del 2026-10-09 concentró en un equipo robusto; exigiría reglas de desempate y una disciplina de unión que hoy no está escrita.
+- **(c) Equipo de una misión acotada** — *descartada.* Por ejemplo, solo la verificación y reconciliación documental de la sección 1, sin construir. Coste: dejaría a D fuera del flujo de entrega normal.
 
 ---
 
@@ -179,14 +179,17 @@ Regla propia de D, además de las nueve anteriores.
 - **Recursos del equipo medidos** (sección 6): `DEVLAB00`, 4 procesadores lógicos, ~7,9 GB de RAM, `C:` con 301,5 GB libres, SQL Server 2025 + Express 2019, .NET 10.0.401, Visual Studio 18, Android SDK.
 - **Límite de agentes aplicado** (secciones 6.1 y 6.2), por orden del propietario del 2026-10-11: el mismo del Equipo A —hasta **4** agentes si solo uno compila o prueba, **2** si hay más de uno, y las tareas pesadas **solas**—, **conjunto con A** por compartir máquina, más las reglas de UPS, `GPOS_SYSDATA` compartida, prefijo propio de bases de prueba y ventanas de medición.
 - **Norma de trabajo de D** (sección 5.1), por decisión del propietario del 2026-10-11: la regla del traspaso obligatorio al cerrar cada sesión y los tres mecanismos de contexto —subagentes para lo paralelo, sesión nueva por paquete secuencial, una sola sesión para una línea larga de razonamiento—.
+- **Rol firmado por el propietario el 2026-10-11:** **equipo de soporte** — ramas `d/...`, sube y abre PR, **no une**, y no toca `CLAUDE.md`, el manifiesto de pruebas ni `memoria/`, `agentes/`, `herramientas/` o `README.md`.
+
+**Nota de propiedad sobre dos archivos compartidos.** Para que D fuera funcional hubo que tocar dos archivos que son **de B**: `herramientas/*.ps1` (los cinco scripts tenían `[ValidateSet('A','B','C')]`, así que `-Equipo D` **fallaba al validar** y D no habría podido publicar nunca) y `README.md` (la portada decía «equipos A, B y C» y la regla 3 omitía a C). **B los revisa y los ajusta como quiera**: su contenido no depende de que D exista, salvo el `D` añadido al `ValidateSet` y al desfase.
 
 **Cómo se verificó (2026-10-11):** los cinco scripts de `herramientas/` exponen `A, B, C, D` en su `ValidateSet` —leído del parámetro con `Get-Command`, sin ejecutar los scripts— y los cinco analizan con **0 errores de sintaxis**; las carpetas `avisos/D-a-B/`, `avisos/B-a-D/` y `traspasos/D/` existen; `estado.md` tiene la sección `## Equipo D`; y el `README.md` nombra a D en el título, la descripción, la tabla de estructura (dos filas), la regla 3 y la regla 8.
 
 **Nota de transparencia sobre el límite:** en el área común **no encontré un límite numérico propio de la PC A**. Apliqué el que está documentado para esta clase de hardware (*4 / 2 / sola*) y que sigue rigiendo en C (`estado.md:92`). Si A tiene otro, se corrige aquí.
 
 **Pendiente:**
-1. **El propietario firma el rol** (sección 1). Hasta entonces, D no une ramas.
+1. **El propietario decide el mandato adicional** de la sección 1 (verificación y reconciliación documental, y seguimiento de las precisiones firmadas). **No forma parte del rol firmado.**
 2. **El propietario registra la tarea de vigilancia** en el equipo D (sección 4).
 3. **B** publica la entrada correspondiente en `memoria/` (solo el coordinador publica memoria) y confirma el rango 160–189 en el registro de `docs/adr/README.md` de `GPOS-NG` cuando corresponda.
 
-No requiere acuse más allá de confirmarlo en la sección de B de `estado.md` en su primera sesión.
+No requiere acuse más allá de confirmarlo en la sección de B de `estado.md` en su primera sesión. El aviso queda `Estado: Abierto` **solo** por las acciones de B (pendiente 3): el rol ya está firmado.
