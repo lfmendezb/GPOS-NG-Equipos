@@ -63,6 +63,17 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-14, cierre del día:**
+  - **#24, #26, #21 y #28 integrados en local, sin publicar:** `b/integracion-pendiente-14oct` (`455a7c4`) en GitHub.
+    - #21 (C-10) lo rebasó B con la marca `20261014205000`, entre H11 y Rg14 (`b/c10-compra-variable-tabla`).
+    - Guion acumulado regenerado hasta `Rg14PrivilegioMinimo`; `Designer` de Rg14 alineado.
+    - Web 649/649; MAUI 561/561.
+  - **Bloqueo:** defecto de H-11. Tras un restore real con la API arriba, la empresa responde 500 de 5 a 60 s (`PoolBlockingPeriod` de SqlClient).
+    - Por decisión del propietario, **A lo corrige primero en #24**, con su prueba de regresión y la validación del arquitecto.
+    - Después B une #24, #26, #21 y #28.
+    - Hallazgo `2026-10-14-hallazgo-h11-500-tras-restauracion`.
+  - **Registrado en master `f7a87bf`:** precisiones de ADR-61 y ADR-62 (F-2 y F-3).
+  - **Seguimiento:** `System.Security.Cryptography.Pkcs` 10.0.0, transitivo en `GPOS.Core`, con vulnerabilidad Alta y Moderada conocidas (GHSA-846f-f764-76mx, GHSA-2fmv-rv2c-59x7). Actualizar según la política de paquetes.
 - **2026-10-14, noche:**
   - **Unidos a `feature/modelo-ng` `e59d8de`:** PR #29 → #30 (licencia L1a-1) y #25 → #27 (H-2, H-3 y H-6), los cuatro validados contra lo firmado.
     - Suite oficial del árbol integrado: 2470 correctas (2 fallas de entorno, en verde al repetirlas).
