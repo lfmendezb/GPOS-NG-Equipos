@@ -3,6 +3,13 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-14, noche (tras el reinicio):**
+  - **PR #28** (RG-14 lote 1, `a/rg14-lote1` @ `f1551aa8`): seguridad final «Aprobado con observaciones», sin Medios. **Listo para unir.** Suite completa 2252/5/19 (las 5 de la base, reproducidas en `ad6015d7`).
+  - **PR #29** (`GPOS.Criptografia` y contratos, `a/lic-l1a-1` @ `945e5c62`): seguridad «Aprobado». **Listo para unir; unir primero** (H-17 v2 va encima).
+  - **PR #30** (verificador, `a/lic-l1a-1-verificador` @ `348fbeda`, sobre #29): «Aprobado con observaciones»; CR-08 y CR-07 ya ajustados. Unir después del #29.
+  - **Licencia del lote 2:** blueprint, hoja DL-01 a DL-14 y borradores ADR-82 a 84, todos v2.1, seguridad «Aprobado con observaciones». **Esperan firma** (DL-07 y DL-08 antes del 2026-10-16; DL-13 antes de generar `s1`).
+  - **Para devops:** CR-04 b y CR-11 (publicación solo Release, sin recurso de desarrollo ni `GPOS.Tests.dll`); SEG-RG14-02 en PUB-06; contención y modo mixto en la instancia de pruebas (decisión del propietario).
+  - **Sin tareas en curso:** espera uniones, firmas o encargo nuevo (siguiente natural: L1a-2/L1a-3 y lote 2 de identidades, tras DL-07).
 - **2026-10-14, tarde:**
   - **PR #25 abierto:** H-2 y H-3, con H-4, la parte de datos de H-6, H-7 y CT-1.
     - Rebasado sobre `4d376a6c`; ahora está en `c51ca8af`.
