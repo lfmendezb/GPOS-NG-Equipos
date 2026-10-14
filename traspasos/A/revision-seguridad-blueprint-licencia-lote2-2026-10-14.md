@@ -498,3 +498,154 @@ Es una recomendación técnica: la decisión es del propietario.
   - qa-automatizado → variantes de PA-45 (columnas, borrado y reinserción), retroceso del padrón, Amplio en Release, `s` alto, tope de vigencia Básica, S-03 con fallo inyectado.
   - desarrollador-backend (I y L) → remediaciones en SL, L1a-1, L1a-2 y EM según la sección 8.
 - Próximo paso recomendado: que el arquitecto-software incorpore las condiciones y el arquitecto-maestro prepare la hoja DL-01 a DL-14. No generar `s1` (AI-09) hasta que DL-13 esté cumplida.
+
+---
+
+## Lectura de diferencias v2 (2026-10-14)
+
+**Documentos leídos (solo lectura):**
+- `blueprint-licencia-lote2-2026-10-14.md` v2 (`[BP2]`): registro de cambios, §2.2, §2.3, §2.4, §5.1, §5.2, §8, §9.2, §10.3, §10.5, §10.6, §13 y §14;
+- `hoja-firma-dl01-dl13-licencia-2026-10-14.md` v2 (`[HF2]`): DL-01 a DL-14, §4.4, §5, §6 y anexos A y B;
+- `borradores-adr-082-084-2026-10-14.md` v2 (`[ADR2]`): ADR-83 y ADR-84.
+
+No volví a leer código: los cambios de la v2 son de diseño, y §14 de `[BP2]` cita una copia de trabajo sin confirmar que no reviso aquí.
+
+### D.1 ¿Quedó incorporada cada condición de la sección 9?
+
+| Condición de `[SEG]` §9 | `[BP2]` | `[HF2]` | `[ADR2]` | Resultado |
+|---|---|---|---|---|
+| **DL-01 (a)**: cupo desde el padrón, nivel en cada entrada, actualización por diferencias, purga del SUPER | §2.3:149-171, §2.4:192, §6.3:421-434, S-04 en §5.1:301 | DL-01 | ADR-83, punto sobre el padrón (:169-171) | **Incorporada.** Cierra SEG-L2-01. La tabla de manipulaciones de §2.3:165-171 cubre las tres variantes que señalé |
+| **DL-01 (b)**: copia en disco; prevalece la mayor versión | §2.3:174-177, con orden de escritura «confirmar y después el disco» | DL-01 | ADR-83 (:172) | **Incorporada**, con una mejora del arquitecto (el disco nunca adelanta a la base). Diferencia de nombre: `[BP2]` usa el archivo `padron` y `[ADR2]` dice «archivo `estado`»; hay que alinearlos (D.6, punto 3) |
+| **DL-02**: en Release ningún modo sella ni crea cuentas; no arrancar en Amplio con licencia `Produccion` o `Beta` | §2.2 SH-3:139, §2.5 R-S3:204, §8:502 | DL-02 | ADR-82, punto 9 | **Incorporada.** Cierra SEG-L2-05 |
+| **DL-03**: S-02 y S-03 después de la fase A de ADR-81; S-03 idempotente; vigente solo si el RNC coincide | §5.1:299-311 | DL-03 | — | **Incorporada, con el ajuste de SEG-L2-12** (D.2) |
+| **DL-05 obligatoria**: hash de la contraseña y factor del SUPER | §2.2 SH-5:141, §6.3:416-419, :445 | DL-05 | ADR-83 (:192, :205) | **Incorporada.** Ver D-1 (D.4) |
+| **DL-07**: revisión de código de EM y `GPOS.Criptografia` | §10.3:627, §13.1:872 | DL-07 | — | **Incorporada** (dos tandas: después de H-2 y en S9) |
+| **DL-10**: condiciones de `s1r`; «cubre la pérdida, no el compromiso» | §10.5:684 y :697, §13.1:875 | DL-10 | ADR-84 (:270) | **Incorporada.** Ver D-2 (D.4) sobre la opción (b)/(c) |
+| **DL-11**: cofirma `s1` + `a1` | §9.2 regla 9:557 | DL-11 | ADR-84 | **Incorporada**, con una precisión correcta del arquitecto: el archivo cofirmado también cumple DL-14 |
+| **DL-12**: revisión de la aceptación, como máximo el 2027-03-31; si vence, se vuelve a firmar | §10.5 R-B14:699 | DL-12 | ADR-84 (:280) | **Incorporada.** La fecha de compra queda como campo del propietario (D-4 de `[HF2]`): lo acepto. La condición que importa es la caducidad de la aceptación |
+| **DL-13 obligatoria y previa a AI-09** | §10.3:624-625, §10.6 E-1:719, §13.2 AI-09:893 | DL-13 | ADR-84, punto 9 | **Incorporada.** Ver D-3 (D.4): hace falta precisar E-1 en un equipo de desarrollo |
+| **DL-14**: tope de 200 días | §9.2 regla 5:542-550, §8:503 | DL-14 | ADR-84 (:290) | **Incorporada**, verificada en la API y en el emisor |
+| **AP-04**: texto adaptado con las mitigaciones retiradas, las sustitutas y el vector corregido | §10.3:631 | §4.4, FY-15-B y R-L11-B | — | **Incorporada.** El texto de FY-15-B es correcto y completo: incluye el resumen falso, la falta de retiro en el cliente que no actualiza, la detección solo al renovar, el residual condicionado a (1)-(5) y la caducidad |
+| E-7 en el acta de AI-09; comparación `sec`/`lid`/SHA-256; emisor reproducible | §10.3:625-628, §9.2 regla 8:556, §10.6 | §1, puntos 3 a 6 | ADR-84 | **Incorporadas** |
+| E-1 a E-15 | §10.6:715-735 | Anexo A | ADR-84 (:253) | **Incorporadas**, con el momento de cada una («antes de AI-09» o «antes de la primera licencia de pago») bien repartido |
+
+**Los tres hallazgos Altos quedan cerrados en el diseño:**
+- SEG-L2-01, con DL-01 (a)+(b);
+- SEG-L2-02, con DL-14;
+- SEG-L2-03, con DL-13 obligatoria antes de AI-09 y el vector corregido en R-B13 y en FY-15-B.
+
+Los Medios y Bajos SEG-L2-04 a SEG-L2-20 también quedan incorporados, salvo los dos ajustes que reviso en D.2 y D.3.
+
+### D.2 Ajuste de SEG-L2-12: verbos provisionales de `GPOS.Migracion`
+
+**Acepto el ajuste.**
+- El arquitecto tiene razón: sin `sellos --legitimar` no habría forma de recuperar una cuenta legítima sin sello antes de la fase A de ADR-81.
+- Los tres verbos (`empresa --cambiar-rnc`, `sellos --legitimar` y `sellos --purgar`) exigen acceso de Windows al servidor y al anillo. Quien los puede ejecutar ya está en el residual de CP-4: podría rehacer los MAC con el anillo.
+- No abren ninguna ampliación del cupo, porque `--legitimar` controla el cupo desde el padrón y `--purgar` solo retira entradas de filas que ya no existen, el mismo efecto que inhabilitar.
+- `--cambiar-rnc` no fabrica licencias: la licencia sigue atada al `InstalacionId`.
+
+**Condiciones menores para la construcción (Baja, no bloquean):**
+1. Cada uso deja un **evento crítico** con el SID y el nombre de la cuenta de Windows, el equipo y el motivo. Además se muestra al SUPER en S-01 o en Diagnóstico en su siguiente inicio de sesión. Así un uso por el TI de un cliente con servidor propio queda visible para GSF.
+2. Los verbos se niegan a ejecutarse si el anillo no verifica la fila `Licencia.InstalacionId`, para no escribir MAC con otro anillo.
+3. **Después de la fase A de ADR-81**, los verbos siguen solo como vía fuera de banda (equivalente a la vía (b) de ADR-81, punto 7). Cuando exista el perfil Avanzada, exigen la autorización firmada por GSF (b+). Conviene anotarlo en ADR-83 para que no quede como una puerta permanente sin dueño.
+
+### D.3 Ajuste de SEG-L2-18: identidad por SHA-256 del contenido y rechazo de la regla de `s` bajo
+
+**Acepto el ajuste.**
+- Es mejor que mi propuesta, por la razón que da el arquitecto: el SHA-256 del archivo es maleable también por la envoltura JSON de la serialización general (espacios y orden de los miembros), no solo por (r, n − s).
+- El contenido está cubierto por la firma, así que su SHA-256 no se puede cambiar sin la llave.
+- El rechazo de la regla de `s` bajo como **control principal** es razonable. Una precisión: la normalización se podría hacer en el emisor después de recibir la firma (s' = n − s), sin ayuda del proveedor. Pero no hace falta con la identidad por contenido, y no cerraría la vía de la envoltura.
+- El vector que documenta que la firma maleada verifica y devuelve el mismo `Contenido` (L1-6 (a)) es correcto.
+
+**Hueco nuevo que introduce el ajuste (SEG-L2-24, Baja; no bloquea ningún DL):**
+- **Qué pasa:** con la identidad por contenido, un archivo con las mismas firmas *menos* la Avanzada tiene el mismo SHA-256 de contenido. En la reemisión de transición, el archivo va cofirmado con `s1` y `a1` (9.2, regla 9) y cumple DL-14. Quien tenga el archivo, normalmente el propio cliente, puede **quitarle la firma `a1`** y cargar primero esa versión. Los binarios nuevos la aceptan como Básica (la firma `s1` verifica, cumple DL-14 y `nivelMin: avanzado` se ignora como `PisoHeredado` por D-2). Después rechazan el archivo original como «ya aceptado».
+- **Resultado:** el piso de esa instalación no sube y `s1` sigue abierta allí hasta que los binarios la retiren.
+- **Por qué es Baja:** el efecto solo importa si además `s1` está comprometida, y lo acota el retiro de `s1` por binarios (AP-05).
+- **Remediación (unos 0,1 dp en L1a-2 y L1a-4):** un archivo cuyo contenido ya fue aceptado, pero que trae una firma verificada de **nivel superior** a la registrada, no se descarta como «ya aceptado»: se procesa para recalcular el piso (INV-4 e INV-11) y se registra como una carga nueva (`Resultado = 'A'`, con su propio SHA-256 de archivo). El índice único pasa a ser (`Sha256Contenido`, `NivelFirma`), o la regla se resuelve antes de insertar; lo decide el arquitecto de datos.
+- **Prueba de QA:** cargar primero la versión sin `a1` y después la cofirmada. El piso tiene que terminar en `avanzado`.
+
+### D.4 Respuesta a las discrepancias de `[HF2]` §6
+
+**D-1 · DL-05 solo con el hash: de acuerdo. Retiro mi alternativa del `SelloSeguridad`.**
+- El `SelloSeguridad` de CS-1 solo se renueva cuando la credencial cambia **por la API**. Un `sysadmin` que reemplaza el `PasswordHash` por SQL lo deja intacto, así que el sello seguiría coincidiendo. Mi «o el `SelloSeguridad`» de SEG-L2-06 era un error.
+- La regla correcta es la de `[BP2]` §6.3:418-419: **huella del `PasswordHash` más `FactorAlta` en los SUPER**, con un sellado nuevo en cada cambio de contraseña, en cada hash rehecho al entrar y en el alta o la baja del factor.
+- Queda confirmado para la hoja y para ADR-83 (:205 ya lo da como descartado; se puede quitar la marca «lo confirma el auditor»).
+
+**D-2 · YubiKeys FIPS como opción en lugar del TPM: de acuerdo con el fondo, con una condición de separación de dispositivos.**
+- Comprar la serie FIPS en lugar de la no FIPS por unos USD 33 más por unidad (precios sin verificar) es razonable: en nivel Básico se obtiene lo mismo que con la no FIPS (PIN y toque en cada firma, atestación de que la llave nació en el dispositivo) y la compra no se desperdicia.
+- **Desde la seguridad, la opción con YubiKey es mejor que la del TPM.** Elimina la firma silenciosa (R-B13) y la llave de reserva en un segundo equipo (DL-10 (a)). Lleva R-B11 + R-B13 a **Bajo-Medio** con DL-14.
+- **Lo que no comparto es «después para la ceremonia sin otra compra».** Las dos YubiKeys usadas para `s1` y `s1r` se conectan al equipo de uso diario. En PIV, el PIN es uno por dispositivo y la ceremonia empieza con `piv reset` (10.1, paso 3), que destruiría `s1`, y `s1` sigue haciendo falta durante la transición y la cofirma (DL-11).
+- **Condición:** las llaves Avanzadas (`lic-a1`, `lic-b1`, `upd-a1`, `upd-b1`) se generan en **dispositivos que nunca firmaron en Básico ni se conectaron al equipo de uso diario**. En total: 2 dispositivos para Básico y 4 para la ceremonia (AP-01). Con la serie FIPS, unos USD 176 ahora y los USD 352 ya presupuestados después [I: precios de lista].
+- *Alternativa:* reutilizar las dos de Básico como `upd-*` después de un `piv reset` y una vez cerrada la transición de `s1`. Ahorra unos USD 176, pero mezcla el historial de exposición con la llave del manifiesto. No la recomiendo.
+- **Si el propietario elige esta opción** (DL-10 (c) de `[HF2]`), DL-13 puede bajar de obligatoria a **muy recomendada**: el toque físico sustituye la barrera que E-1 aportaba frente a la firma silenciosa. Siguen obligatorias E-2, E-3, E-5, E-8, E-11, E-12 y E-14, adaptadas a la YubiKey: PIN y toque «always» comprobados en el acta, y atestación verificada hasta la raíz de Yubico (paso 8 de 10.1, ejecutado de verdad y no como ensayo). Es una decisión del propietario porque cambia el «TPM» de F-2.
+
+**D-3 · E-1 en un equipo principal que también es de desarrollo: la regla se mantiene, con dos precisiones.**
+- **E-1 es viable en un equipo de desarrollo.** No prohíbe elevar privilegios para una tarea concreta: la cuenta diaria estándar eleva **por operación** con las credenciales de la cuenta administradora en el escritorio seguro (instalar SQL Server, cargas de trabajo de .NET o MAUI, el instalador del DEMO, registrar servicios o certificados de máquina). Lo que prohíbe es:
+  - iniciar sesión en la cuenta administradora para el trabajo diario;
+  - dejar terminales o agentes ejecutándose elevados;
+  - compilar o ejecutar agentes desde la cuenta administradora.
+
+  Las compilaciones con `dotnet` y los agentes no necesitan privilegios de administrador.
+- **Precisión que sí cambia E-1 (SEG-L2-25, Media; se agrega a la hoja, no bloquea la firma):** en un equipo de desarrollo, «cuenta estándar» no es una frontera por sí sola si la cuenta diaria tiene privilegios equivalentes a los de un administrador.
+  - **`sysadmin` de una instancia local de SQL Server.** En la PC A, `DevLab00\lfmen` es `sysadmin` (`[DAT]` 1.1). Un `sysadmin` puede ejecutar código del sistema operativo con la cuenta del servicio de SQL Server, y las cuentas de servicio tienen `SeImpersonatePrivilege`: es una vía conocida de elevación a `SYSTEM` [I].
+  - **Pertenencia a grupos con efectos de administrador**, como «Administradores de Hyper-V», y posiblemente `docker-users`, según la versión de Docker Desktop [I].
+- **Condición que se agrega a E-1:**
+  - la cuenta diaria **no es `sysadmin`** de ninguna instancia local. Para las pruebas basta `dbcreator`, porque crean sus bases `GPOS_TEST_*` (`[DAT]` 1.2). Las tareas que exigen `sysadmin` (`GPOS.Migracion crear-lectura`, restauraciones) se hacen con un inicio de sesión nominal aparte, que se usa solo cuando hace falta;
+  - la cuenta diaria no pertenece a grupos con efectos de administrador;
+  - el inventario de O-6 (devops) incluye esta revisión.
+- **Si el inventario muestra que no es viable** (por ejemplo, el trabajo diario exige `sysadmin` permanente o Hyper-V), la salida correcta es D-2 (YubiKey con toque) o firmar en otro equipo. **No es correcto** relajar E-1 manteniendo `s1` en el TPM: la estimación volvería a Medio-Alto.
+
+### D.5 Estimación del riesgo con la v2
+
+| Escenario | R-B11 + R-B13 |
+|---|---|
+| `s1` en el TPM con DL-13 (E-1 con la precisión de D.3), DL-14 y las condiciones de la primera licencia de pago | **Medio**, igual que FY-15. Coincido con `[BP2]` §10.5:708 |
+| Igual, pero con la cuenta diaria `sysadmin` de una instancia SQL local o en grupos con efectos de administrador | **Medio-Alto** (SEG-L2-25) |
+| `s1` y `s1r` en YubiKey (FIPS o no) con toque «always», DL-14 y las demás condiciones | **Bajo-Medio** |
+
+R-B12, R-B14 y R-B15: sin cambios respecto de mi informe; la v2 las trata bien.
+
+### D.6 Inconsistencias documentales (Baja; se corrigen al registrar, no bloquean)
+
+1. `[HF2]` anexo B, fila SEG-L2-18, todavía dice «rechazar firmas con `s` alto, o "ya aceptado" sobre la entrada de la firma». Debe decir «identidad por SHA-256 del contenido (`[BP2]` §5.2), más SEG-L2-24».
+2. `[HF2]` «Fuentes» cita `[BP]` v1; debe citar la v2.
+3. Nombre del archivo de la copia del padrón: `padron` en `[BP2]` §2.3:174, «`estado`» en `[ADR2]` ADR-83 (:172). Se elige uno, y recomiendo `padron`, separado de `estado`.
+4. `[BP2]` §10.3:634 y §13.1:875 presentan DL-10 (b) con YubiKeys **no FIPS**; `[HF2]` DL-10 (c) y D-2, con YubiKeys **FIPS**. Se unifica según la elección del propietario, con la separación de dispositivos de D.4.
+5. Carga del desarrollador I: `[HF2]` §2 dice «unos 25 dp»; `[BP2]` (registro de cambios) dice 26,1 dp, que con +35 % es unos 35,2 dp, por encima de los 34,4 dp de capacidad sin el recorte 1. No es de seguridad. Lo concilia el orquestador; ninguno de los recortes de 11.4 toca controles de seguridad.
+
+### D.7 Dictamen final
+
+**Aprobado con observaciones.**
+- No queda ningún hallazgo Crítico ni Alto: SEG-L2-01, SEG-L2-02 y SEG-L2-03 están cerrados en el diseño de la v2 y en la hoja.
+- Los ajustes de SEG-L2-12 y SEG-L2-18 se aceptan.
+- D-1: de acuerdo con el Maestro.
+- D-2: de acuerdo, con la separación de dispositivos.
+- D-3: E-1 se mantiene, con la precisión sobre `sysadmin` y los grupos con efectos de administrador.
+
+Es una recomendación técnica; la decisión es del propietario.
+
+**Observaciones que quedan abiertas (ninguna bloquea la firma de DL-01 a DL-14):**
+
+| # | Sev. | Qué | Dónde se resuelve |
+|---|---|---|---|
+| SEG-L2-25 | Media | E-1: la cuenta diaria no es `sysadmin` de ninguna instancia SQL local ni pertenece a grupos con efectos de administrador; las elevaciones son por operación | **Agregar a E-1 en el anexo A de `[HF2]` y en `[BP2]` §10.6 antes de firmar DL-13**; lo verifica devops en el inventario de O-6, antes de AI-09 |
+| SEG-L2-24 | Baja | Archivo con la firma Avanzada quitada, aceptado antes que el cofirmado: el piso no sube | L1a-2 y L1a-4, y arquitecto de datos (índice). Antes de la versión con las llaves Avanzadas; no afecta al corte |
+| D.2 | Baja | Verbos provisionales: evento crítico visible al SUPER, comprobación del anillo y destino después de la fase A | SL y RN; anotación en ADR-83 |
+| D.4 (D-2) | Baja | Si se eligen YubiKeys: dispositivos separados para Básico y para la ceremonia | Hoja (DL-10 (c)) y ADR-84 |
+| D.6 | Baja | Cinco inconsistencias documentales | Arquitecto-maestro, arquitecto-software y documentador |
+
+**Pendiente de mi parte:** la revisión de código de `GPOS.Criptografia` (después de H-2) y del emisor (S9), condición de DL-07 y de la primera licencia de pago.
+
+### Cierre
+- Estado: Aprobado con observaciones (recomendación técnica; DL-01 a DL-14 siguen Pendientes de firma del propietario).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\revision-seguridad-blueprint-licencia-lote2-2026-10-14.md` (sección «Lectura de diferencias v2» agregada).
+- Supuestos: la vía de elevación desde `sysadmin` de SQL Server mediante `SeImpersonatePrivilege` y el carácter de administrador de «Administradores de Hyper-V» y `docker-users` son [I]; los precios de las YubiKey son de lista y no están verificados; no volví a leer código.
+- Decisiones candidatas a ADR: precisión de ADR-83 (identidad por contenido con excepción de firma de nivel superior, SEG-L2-24; verbos provisionales como vía fuera de banda); precisión de ADR-84 (E-1 sin `sysadmin` local ni grupos con efectos de administrador; separación de dispositivos si se eligen YubiKeys en Básico).
+- Entregas a otros agentes:
+  - arquitecto-maestro: agregar SEG-L2-25 a E-1 en el anexo A, corregir el anexo B y las fuentes, y unificar DL-10 (b)/(c) con la separación de dispositivos;
+  - arquitecto-software: SEG-L2-24 en §5.2 y §9.2, precisión de E-1 en §10.6 y nombre del archivo del padrón;
+  - arquitecto de datos: índice de «ya aceptado» compatible con SEG-L2-24;
+  - devops: inventario de O-6 con la revisión de `sysadmin` y de grupos antes de AI-09;
+  - qa-automatizado: prueba de la carga con la firma Avanzada quitada antes del archivo cofirmado;
+  - orquestador: conciliar la carga del desarrollador I (D.6, punto 5).
+- Próximo paso recomendado: el propietario puede firmar DL-01 a DL-14 con la precisión de E-1 agregada; no generar `s1` hasta que devops confirme E-1 con el inventario de O-6.
