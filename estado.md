@@ -3,6 +3,12 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-14, tarde:**
+  - **PR #25 abierto:** H-2 y H-3, con H-4, la parte de datos de H-6, H-7 y CT-1.
+    - Rebasado sobre `4d376a6c`; ahora está en `c51ca8af`.
+    - Suite: 2243 aprobadas, 5 fallidas y 18 omitidas.
+    - Las 5 fallas ya ocurren en `feature/modelo-ng` sin H-2 (hallazgo para B).
+  - **Siguiente:** las pruebas con SQL del PR-2b de H-11.
 - **Retoma 2026-10-14 (Claude):**
   - **Corredor de pruebas desbloqueado:** la causa era `testhost.exe`; el arreglo es borrarlo tras compilar.
   - **PR #24 en `cd456f4c`:** SEC-H11-01 y guardas de arquitectura, 121/121.
