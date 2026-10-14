@@ -8,7 +8,8 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - Rebasado sobre `4d376a6c`; ahora está en `c51ca8af`.
     - Suite: 2243 aprobadas, 5 fallidas y 18 omitidas.
     - Las 5 fallas ya ocurren en `feature/modelo-ng` sin H-2 (hallazgo para B).
-  - **Siguiente:** las pruebas con SQL del PR-2b de H-11.
+  - **PR #24 en `cb8cbc88`:** suite 2260 aprobadas, 5 fallidas (las de la base), 18 omitidas; dos correcciones de pruebas. PDS-06 en curso.
+  - **Siguiente:** PR-2b (rebasado), H-6 de aplicación, T3-12/RG-14.
 - **Retoma 2026-10-14 (Claude):**
   - **Corredor de pruebas desbloqueado:** la causa era `testhost.exe`; el arreglo es borrarlo tras compilar.
   - **PR #24 en `cd456f4c`:** SEC-H11-01 y guardas de arquitectura, 121/121.
