@@ -59,9 +59,20 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - Mvp 22/22 en las dos instancias; Web 610/610; MAUI 538/538.
     - Aviso `2026-10-14-uniones-demo-config-terceros-adr126`.
   - **master `f5e73b0`:** ADR-126 registrado (libres de B: 127 a 129) y la lista de pruebas del DEMO 10b.
-  - **`b/config-terceros` `c6b7193`:** URL del padrón en commit normal. T1 en curso (faltan las pruebas de O-3, Roboto local y la guarda).
+  - **T1 de ADR-126 unido a `feature/modelo-ng` `4ace678`** (después del reinicio del equipo y la actualización de SQL Server). Incluye:
+    - la URL del padrón sin constante y las pruebas O-3;
+    - Roboto local, sin Google Fonts;
+    - la guarda `ValoresDeTercerosTests`.
+
+    Cifras:
+    - 151/151 en Arquitectura;
+    - Web 610/610;
+    - Mvp 22/22 en las dos instancias;
+    - solución completa con Android, sin errores.
+
+    Aviso `2026-10-14-t1-valores-terceros-unido`. **Siguiente:** T2. **Pendiente:** fijar la tanda de G-01 a G-03.
   - **Sin unir, por orden:** T1 de ADR-118/119 (27-oct) → `b/ola3b` → `b/ola5-auditoria`, que necesita la migración regenerada después de la 3b, `SecExportacion` en `Todas`, el rango por nodo, el documento AE-01 a AE-04 y la QA de AE-09 y AE-10.
-  - **Entorno LFMB por completar (propietario):** origen NuGet local ausente y workloads de MAUI Android para el SDK 10.0.301.
+  - **Entorno LFMB:** workloads de Android listos (propietario, 2026-10-14). Falta el origen NuGet local `C:\Users\lfmen\source\NugetLocalFeed`; se restaura con `--ignore-failed-sources`.
   - Vigilante (regla 8) sin armar, a la espera de la indicación del propietario.
 - **Actualizado:** 2026-10-09, 19:10 (primera sesión en el equipo nuevo; sin agentes activos)
 - **Coordinación:** confirmado el aviso `2026-10-09-coordinacion-pasa-al-equipo-nuevo`: B coordina (une a `feature/modelo-ng` y `master`, `CLAUDE.md`, manifiesto de pruebas, «Pendientes del propietario» y publicación de `memoria/` y `agentes/`). A trabaja en ramas `a/` y no une.
