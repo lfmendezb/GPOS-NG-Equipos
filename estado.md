@@ -9,7 +9,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - Suite: 2243 aprobadas, 5 fallidas y 18 omitidas.
     - Las 5 fallas ya ocurren en `feature/modelo-ng` sin H-2 (hallazgo para B).
   - **PR #24 en `cb8cbc88`:** suite 2260 aprobadas, 5 fallidas (las de la base), 18 omitidas; dos correcciones de pruebas. PDS-06 en curso.
-  - **PR #26 abierto** (PR-2b, apilado sobre #24). PDS-06: 8.2 (5) cumple; el candado cuesta +0,040 ms por alta, con firma pendiente (aviso `pds06-requiere-decision`).
+  - **PR #26 abierto** (PR-2b, apilado sobre #24). PDS-06 cerrada: el propietario aceptó el costo (paso 2, `768f0a61`).
   - **PR #27 abierto** (H-6 de aplicación, apilado sobre #25). T3-12/RG-14: diseño y hoja D-01 a D-11 por firmar.
   - **Sin tareas en curso:** espera firmas o un encargo nuevo.
 - **Retoma 2026-10-14 (Claude):**
