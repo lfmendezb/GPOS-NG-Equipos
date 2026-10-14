@@ -1,6 +1,6 @@
 ---
 name: dos-equipos-a-coordina
-description: "2026-10-09: la coordinación pasa al equipo nuevo (con el Equipo B restaurado); la PC A pasa a ser el equipo de soporte por los apagones sin UPS. Antes (2026-10-06) A coordinaba. ADR en master, un archivo por ADR, rangos A 68-99 y B 100-129"
+description: "B coordina e integra y A apoya; el equipo C fue disuelto el 2026-10-14 y sus funciones se repartieron entre A y B. ADR en master, un archivo por ADR, rangos A 68-99 y B 100-129 (130-159 congelado)"
 metadata:
   node_type: memory
   type: project
@@ -20,4 +20,12 @@ metadata:
 
 **Confirmación del propietario a B (2026-10-09, primera sesión en el equipo nuevo):** «a partir de este momento el equipo B será el que coordine y realice las integraciones de las ramas»; «el equipo A queda como apoyo»; «toma desde ya las actividades principales que estaba desarrollando A». B hereda la construcción de `feature/modelo-ng` (cierre de la ola 4, ADR-118/119, 3b, tandas de núcleo) además de la ola 5.
 
-**Equipo C (2026-10-09, decisión del propietario):** la antigua PC B (LAPTOP-DUMQQ5QK, 8 núcleos, 7,8 GB; también corre el DEMO) pasa a ser el **equipo C**, de apoyo a B como A: ramas `c/`, PR sin unir, avisos en `avisos/C-a-B/` (B le escribe en `avisos/B-a-C/`), `traspasos/C/`, commits `[C]`. Límite de agentes de la antigua PC B. Encargarle diseño, revisión, documentos o construcción mediana, no suites completas ni cargas. Los scripts del área común admiten `-Equipo C`. Rango de ADR de C: 130-159 (propietario, 2026-10-09; master `fd05bdc`). Pendiente del propietario: si C hace el ensayo del DEMO.
+**Equipo C DISUELTO el 2026-10-14 (decisión del propietario: «Disuelve al equipo C y distribuye sus funciones entre el equipo A y B»).** Desde entonces solo hay dos equipos: B coordina (en LFMB desde el 2026-10-14) y A apoya.
+- **Pasan a B:** PR #21 (C-10, rebase y SQL), C-5 (UX de ADR-118/119), C-13 (correo de lote), las revisiones y dictámenes de PR, la QA de estabilidad y fiscal, y el DEMO.
+- **Pasan a A:** la construcción de la fase A de ADR-81 (con el diseño de `c/adr81-fase-a-diseno`, después de #26) y el apoyo en diseño, revisión y documentos.
+- El rango de ADR 130 a 159 queda congelado.
+- Las carpetas de C en el área común quedan como historial de solo lectura.
+- Avisos: `B-a-C/2026-10-14-disolucion-del-equipo-c.md` y `B-a-A/2026-10-14-disolucion-c-nuevas-funciones-de-a.md`.
+- No encargar nada a C ni escribirle avisos nuevos.
+
+**Historia, equipo C (2026-10-09, decisión del propietario):** la antigua PC B (LAPTOP-DUMQQ5QK, 8 núcleos, 7,8 GB; también corre el DEMO) pasa a ser el **equipo C**, de apoyo a B como A: ramas `c/`, PR sin unir, avisos en `avisos/C-a-B/` (B le escribe en `avisos/B-a-C/`), `traspasos/C/`, commits `[C]`. Límite de agentes de la antigua PC B. Encargarle diseño, revisión, documentos o construcción mediana, no suites completas ni cargas. Los scripts del área común admiten `-Equipo C`. Rango de ADR de C: 130-159 (propietario, 2026-10-09; master `fd05bdc`). Pendiente del propietario: si C hace el ensayo del DEMO.

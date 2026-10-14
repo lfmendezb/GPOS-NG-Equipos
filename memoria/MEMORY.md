@@ -26,7 +26,7 @@
 - [avisar-cambio-de-sesion](avisar-cambio-de-sesion.md) — Avisar al propietario cuándo abrir sesión nueva, en un punto sin agentes activos y con nota de traspaso
 - [adjuntos-en-documentos](adjuntos-en-documentos.md) — Adjuntar archivos en mermas y en todos los documentos (salvo POS); nube del cliente en fase tardía
 - [responder-en-espanol](responder-en-espanol.md) — Responder siempre en español, también los avisos de avance
-- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — Desde 2026-10-09 B coordina e integra; A (PC A) y C (antigua PC B) son apoyo con ramas a/ y c/, no unen; ADR en master; área común GPOS-NG-Equipos
+- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — B coordina e integra, A apoya (ramas a/, no une); equipo C DISUELTO 2026-10-14 (funciones a A y B, ADR 130-159 congelado); área común GPOS-NG-Equipos
 - [sucursal-en-linea-sqlite-y-licencia](sucursal-en-linea-sqlite-y-licencia.md) — ADR-53: nodo elegible; SQLite local en sucursal en línea tras las olas; licencia por empresa por usuarios; SUPER siempre de la plataforma
 - [fable-revision-general-tras-olas](fable-revision-general-tras-olas.md) — Fable 5.1 solo para la revisión general al completar las olas; agentes con Opus
 - [ecf-conectores-enchufables](ecf-conectores-enchufables.md) — e-CF y ERP (AdmCloud, Alegra, IQ) como complementos que NUNCA tocan el núcleo de GPOS NG
@@ -56,3 +56,4 @@
 - [librerias-publicas-antes-que-propias](librerias-publicas-antes-que-propias.md) — Librería libre muy usada antes que solución propia (XLSX: OpenXml en flujo; ClosedXML para importar)
 - [restaurante-catering-ejecutivos](restaurante-catering-ejecutivos.md) — Restaurante sin mesas: catering + ejecutivos (menú diario y corporativos a crédito por empleado); hoja firmada 2026-10-09 (tramo 3d)
 - [numero-al-final-del-guardado](numero-al-final-del-guardado.md) — Principio firmado: número/NCF como último paso del guardado + M-C (foto mensual de costo) + D-8; construcción en noviembre
+- [marcas-migraciones-orden-de-union](marcas-migraciones-orden-de-union.md) — Marcas de migraciones EF = orden de unión; la rama posterior regenera (B, 2026-10-14); orden #24→#26→#21→#28

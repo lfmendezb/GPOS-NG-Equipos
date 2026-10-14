@@ -145,13 +145,28 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG-AddOn-Kit / Polaris | `main` | Nuevos (solo README); construcción después de K1 |
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
 
-## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK — soporte de B desde el 2026-10-09)
+## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK) — DISUELTO el 2026-10-14
+- **Disuelto por decisión del propietario (2026-10-14).** Las funciones se repartieron así (aviso `B-a-C/2026-10-14-disolucion-del-equipo-c`):
+  - **Pasan a B:** PR #21 (C-10), C-5, C-13, las revisiones de PR, la QA de estabilidad y fiscal, y el DEMO.
+  - **Pasan a A:** la fase A de ADR-81 (desde el diseño de `c/adr81-fase-a-diseno`) y el apoyo en diseño, revisión y documentos.
+  - El rango de ADR 130 a 159 queda congelado.
+  - Pendiente del propietario: retirar la tarea de vigilancia en la laptop.
+  - Lo que sigue es historial.
 - **Retoma 2026-10-11 por encargo del propietario:** Codex continúa PR #21 en `c/compra-variable-tabla`; corrección `9f02c95b` publicada y compilada (0 errores). Integración bloqueada por acceso SQL (9 fallidas al aprovisionar, 0 aprobadas, 1 omitida). Ver aviso `2026-10-11-c10-retoma-validacion-pendiente`. PR sin unir; se conserva la condición del 14-oct.
 - **Actualizado:** 2026-10-10
 - **Rol:** soporte de B junto con A; ramas `c/...`, PR sin unir. Recursos (2026-10-10, sin Visual Studio ni DEMO): 8 núcleos, 7,8 GB de RAM (1,9 GB libres en reposo), 37,8 GB libres en C:; solo .NET 10 SDK con workloads de MAUI; `sqlcmd` (go-sqlcmd) instalado por el propietario. `SQLEXPRESS` con memoria 512/2.048 MB (propietario, 2026-10-10). Rige el límite de agentes de la antigua PC B hasta que el propietario decida.
 - **Trabajando en:** nada; sin agentes activos, disponible. Entregado hoy: C-2 (H-11 Rechazado como publicable por C2-01; sin revertir la unión), C-8 (PR #19, unido), C-9 (PR #20, unido), C-10 (PR #21, no unir antes del 14-oct) y la fase A de ADR-81 en diseño cerrado (blueprint v3 y pantallas v2, P-81A-14 firmada). Siguiente posible: construir la fase A tras el segundo PR de H-11 (T1 antes, si B lo encarga). Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
 
 ## Pendientes del propietario
+- **Equipo C disuelto (2026-10-14):**
+  - retirar en LAPTOP-DUMQQ5QK la tarea programada de vigilancia;
+  - decidir si la laptop sigue como equipo de prueba del DEMO;
+  - decidir qué pasa con el rango de ADR 130 a 159 (congelado).
+- **Firmas abiertas:**
+  - la hoja de la licencia DL-01 a DL-14 (DL-07 y DL-08 antes del 16-oct);
+  - los 2 supuestos de #24;
+  - las 2 preguntas de #26;
+  - quién prepara ADR-82.
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
 - **DEMO:** probar la actualización del 2026-10-08 en LAPTOP-DUMQQ5QK (memoria de SQL Server 1.024 / 3.072 MB) y medir la importación de suplidores y clientes.
 - **Backup Tool:** indicar la unión tras la revisión de QA de B; firmar la fuente de carpeta (BT-01 a BT-09); comparar el literal de `1bd735f` con la clave heredada real; L-1 a L-7 y K-1 a K-5 en cada instalación.
