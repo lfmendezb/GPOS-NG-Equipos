@@ -54,6 +54,15 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-14, tarde (B en el equipo LFMB, tras el traspaso de emergencia):**
+  - **Unido a `feature/modelo-ng` `ad6015d`:** `b/demo-2026-10-10b`, `b/demo-revision-1` y la propuesta de `b/config-terceros`.
+    - Mvp 22/22 en las dos instancias; Web 610/610; MAUI 538/538.
+    - Aviso `2026-10-14-uniones-demo-config-terceros-adr126`.
+  - **master `f5e73b0`:** ADR-126 registrado (libres de B: 127 a 129) y la lista de pruebas del DEMO 10b.
+  - **`b/config-terceros` `c6b7193`:** URL del padrón en commit normal. T1 en curso (faltan las pruebas de O-3, Roboto local y la guarda).
+  - **Sin unir, por orden:** T1 de ADR-118/119 (27-oct) → `b/ola3b` → `b/ola5-auditoria`, que necesita la migración regenerada después de la 3b, `SecExportacion` en `Todas`, el rango por nodo, el documento AE-01 a AE-04 y la QA de AE-09 y AE-10.
+  - **Entorno LFMB por completar (propietario):** origen NuGet local ausente y workloads de MAUI Android para el SDK 10.0.301.
+  - Vigilante (regla 8) sin armar, a la espera de la indicación del propietario.
 - **Actualizado:** 2026-10-09, 19:10 (primera sesión en el equipo nuevo; sin agentes activos)
 - **Coordinación:** confirmado el aviso `2026-10-09-coordinacion-pasa-al-equipo-nuevo`: B coordina (une a `feature/modelo-ng` y `master`, `CLAUDE.md`, manifiesto de pruebas, «Pendientes del propietario» y publicación de `memoria/` y `agentes/`). A trabaja en ramas `a/` y no une.
 - **Entorno comprobado:** .NET SDK 10.0.401; 16 núcleos y 31 GB de RAM (límite de agentes por acordar con el propietario); paquetes de `gsf-local` con huellas correctas; carpetas `GPOS-B-ola5-construccion`, `GPOS-B-ola5`, `GPOS-B-verticales` y `GPOS-B-admcloud` creadas y al día con GitHub. `GPOS.Reportes.Tests` en `b/ola5` (`781b1eb`): 216/216 contra la instancia predeterminada (SQL Server 2025); contra `.\SQLEXPRESS` falla la creación de bases por permisos de su carpeta de datos (lo corrige el propietario).
