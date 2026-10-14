@@ -1,93 +1,127 @@
-# Hoja de firma DL-01 a DL-13: licencia firmada en el lote 2 de RG-14
+# Hoja de firma DL-01 a DL-14: licencia firmada en el lote 2 de RG-14 (v2)
 
-**Fecha:** 2026-10-14 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
-**Fuentes (leídas hoy, solo lectura)**
-- `[BP]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (arquitecto-software), sobre todo la sección 13 y las que cita (2, 4, 9, 10, 11).
-- `[DAT]` = `Solucion GPOS NG\datos-t3-12-rg14-2026-10-14.md` v2 (arquitecto de datos): D-01 a D-11 y L-01 firmadas el 2026-10-14; D-04 (ii) **sin firma**.
-- `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (textos literales de FY-15, CP-4, CP-5 y R-L11 / R-F11, líneas 131 y 243-247).
-- ADR-38, 44, 58 a 63, 68 y 81 en `GPOS NG\docs\adr`; ADR-126 en `master` (leído con `git show` desde `GPOS-NG-lic`).
-- **Informe del auditor-seguridad sobre 10.5 y 10.6 de `[BP]`** (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`): **no existía al cerrar esta hoja.** DL-10 a DL-13 llevan el marcador «pendiente del dictamen de seguridad».
+## Registro de cambios
 
-**Convención.** *[V]* verificado en la fuente; *[I]* inferido por mí. **dp** = días-persona. Costo de referencia: USD 300 a 400 por dp (USD 1 500 a 2 000 por semana-persona).
+| Versión | Fecha | Cambios |
+|---|---|---|
+| 1 | 2026-10-14 | Primera versión: DL-01 a DL-13. DL-10 a DL-13 «pendientes del dictamen de seguridad» |
+| **2** | 2026-10-14 | **Incorpora el dictamen del auditor-seguridad** (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante `[SEG]`): Rechazado en v1 por tres hallazgos Altos (SEG-L2-01, 02 y 03); pasa a Aprobado con observaciones si la hoja incorpora su sección 9.<br>- Se quitan los marcadores «pendiente del dictamen».<br>- **Agrega DL-14** (tope de vigencia de 200 días para las licencias Básicas; era la observación O-3 de la v1).<br>- **Cambian:** DL-01 (cupo desde el padrón y copia en el disco), DL-02 (condición de Release), DL-03 (rutas después de la fase A de ADR-81, idempotente), DL-05 (de opcional a **obligatoria**, con el estado del factor), DL-07 (revisión de código del emisor), DL-10 (`s1r` con la cuenta deshabilitada y fuera de un equipo de desarrollo), DL-11 (cofirma en la transición), DL-12 (revisión de la aceptación a más tardar el **2027-03-31**) y DL-13 (de recomendada a **obligatoria antes de AI-09**).<br>- **Reescribe AP-04 / FY-15-B y R-L11-B** con las mitigaciones retiradas, las sustitutas y el vector corregido.<br>- Agrega el anexo A (condiciones E-1 a E-15) y el anexo B (hallazgos que se resuelven al construir).<br>- Sección 6 nueva: dónde discrepo del auditor y qué propongo en su lugar |
+
+**Fuentes (solo lectura)**
+- `[BP]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` v1 (arquitecto-software).
+- `[DAT]` = `Solucion GPOS NG\datos-t3-12-rg14-2026-10-14.md` v2: D-01 a D-11 y L-01 firmadas; D-04 (ii) sin firma.
+- `[SEG]` = `Solucion GPOS NG\revision-seguridad-blueprint-licencia-lote2-2026-10-14.md` (auditor-seguridad), secciones 4, 6 y 9.
+- `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11; líneas 131 y 243-247).
+- ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
+
+**Convención.** *[V]* verificado en la fuente; *[I]* inferido. **dp** = días-persona (USD 300 a 400 cada uno).
 
 **Palabras que se repiten**
-- **`s1`**: la llave con la que GSF firma hoy las licencias (nivel Básico). Vive en el chip TPM de un equipo y no se puede copiar, pero quien controle ese equipo la puede **usar**.
+- **`s1`**: la llave con la que GSF firma hoy las licencias (nivel Básico). Vive en el chip TPM de un equipo; no se puede copiar, pero quien controle ese equipo la puede **usar**.
 - **YubiKeys**: llaves físicas (nivel Avanzado). Todavía no se han comprado.
-- **Sello de habilitación**: una marca cifrada que la API pone en cada cuenta habilitada. Sin sello válido, la cuenta no entra ni ocupa cupo. Impide ampliar la licencia insertando usuarios por SQL.
-- **Padrón de sellos**: la lista protegida de los sellos vigentes.
+- **Sello de habilitación**: una marca cifrada que la API pone en cada cuenta habilitada. Sin sello válido, la cuenta no entra.
+- **Padrón**: la lista protegida de las cuentas selladas. Con la v2, **el cupo se cuenta desde el padrón**.
 - **Estricto / Amplio**: Estricto es el modo de producción, con identidades de mínimo privilegio. Amplio es el de desarrollo, pruebas y DEMO.
 
 ---
 
 ## 1. Ya firmado hoy (2026-10-14): no se vuelve a preguntar
 
-| # | Decisión del propietario | Qué sustituye o amplía | Dónde queda registrada |
-|---|---|---|---|
-| **F-1** | **Dos desarrolladores en paralelo** (identidades y licencia), **sin mover el corte de mediados de diciembre** | R-RG14-10 de `[DAT]` (un solo desarrollador no alcanza) | Borrador de ADR-82 (consecuencias) y DL-07 / DL-08 de esta hoja |
-| **F-2** | **Las licencias de pago se pueden firmar en nivel Básico** (`s1` en el TPM) hasta que existan las YubiKeys. **Riesgo Medio-Alto aceptado como temporal.** | Precisa ADR-62 y AP-05: sustituye «la primera licencia de pago se firma en Avanzado» (ADR-62, consecuencias). **Amplía P-F1 / FY-15**, cuyo texto literal hablaba de un equipo dedicado y de la caducidad del 2026-12-31 | Borrador de ADR-84, puntos 1 y 2. Texto para el registro en la sección 3.4 |
-| **F-3** | **Equipo emisor: el equipo principal del propietario, con una cuenta de Windows dedicada solo a firmar.** Sin mini-PC. **Ceremonia de las YubiKeys preparada y sin fecha** | Precisa ADR-61 y Q-19 (de la opción (a), mini-PC, a una variante de la (b)). AP-01 y AP-05 quedan sin fecha | Borrador de ADR-84, puntos 3 y 6 |
+| # | Decisión del propietario | Qué sustituye o amplía |
+|---|---|---|
+| **F-1** | **Dos desarrolladores en paralelo** (identidades y licencia), **sin mover el corte de mediados de diciembre** | R-RG14-10 de `[DAT]` |
+| **F-2** | **Licencias de pago firmables en nivel Básico** (`s1` en el TPM) hasta que existan las YubiKeys. **Riesgo Medio-Alto aceptado como temporal** | Precisa ADR-62 y AP-05: sustituye «la primera licencia de pago se firma en Avanzado». **Amplía P-F1 / FY-15**. El texto literal está en la sección 4.4 |
+| **F-3** | **Equipo emisor: el equipo principal del propietario, con una cuenta de Windows dedicada solo a firmar.** Sin mini-PC. **Ceremonia de las YubiKeys preparada y sin fecha** | Precisa ADR-61 y Q-19 (de la opción (a) a una variante de la (b)) |
 
-**Efecto de F-2 y F-3 sobre lo que exigía la primera licencia de pago.** La barrera de `[DAT]` 6.5 («AP-01 a AP-06») queda así: **ya no exige AP-01 ni AP-05**. Exige el código del lote 2 en verde (PA-12, QA-L01 a L17), AI-08, AI-09, **AP-03 y AP-04 adaptados** y AP-06 (`[BP]` 10.3) [V].
+`[SEG]` no discute F-2 ni F-3. Evalúa si las mitigaciones bastan y qué condiciones tienen que ser obligatorias.
+
+**Lo que exige la primera licencia de pago, con la v2** (`[BP]` 10.3 más `[SEG]` 9):
+1. Lote 2 en verde: PA-12 y QA-L01 a L17.
+2. AI-08 (pruebas R-E11 sobre Release).
+3. **AI-09 con DL-13 cumplida antes** y acta con E-1 a E-15 (TPM revisado, prueba negativa y PIN pedido en cada firma).
+4. **DL-14 construida** (tope de vigencia).
+5. **Comparación de `sec`, `lid` y SHA-256 de la licencia vigente en la solicitud** (SEG-L2-09).
+6. **Emisor reproducible y revisado por el auditor** (SEG-L2-08).
+7. **AP-03 y AP-04 adaptados.**
+8. AP-06.
+
+Ya **no** exige AP-01 ni AP-05.
 
 ---
 
-## 2. Resumen de las decisiones que piden firma
+## 2. Resumen
 
-| # | En una línea | Recomendación | Costo | Firmar antes de |
+| # | En una línea | Recomendación (con `[SEG]`) | Costo | Firmar antes de |
 |---|---|---|---|---|
-| DL-01 | Padrón de sellos protegido, contra la repetición de un sello viejo | **Aprobar** | 1,0 dp | 2026-11-06 |
-| DL-02 | En producción, la API no crea cuentas al arrancar | **Aprobar** | 0,5 dp | 2026-11-06 |
-| DL-03 | El RNC de la empresa solo lo cambia el SUPER | **Aprobar** | 0,75 dp + pantalla | 2026-11-13 |
-| DL-04 | Los eventos de la licencia y del sello van a `BitacoraSeguridad` | **Aprobar** | 0,5 dp | 2026-10-30 |
-| DL-05 | El sello cubre también la contraseña guardada | **Aprobar** (opcional) | +0,5 dp | 2026-11-06 |
-| DL-07 | Reparto del trabajo entre los dos desarrolladores | **Aprobar** | 0 | **2026-10-16** |
-| DL-08 | Calendario: la licencia queda construida para el corte | **Aprobar** (registro) | 0 | 2026-10-16 |
-| DL-09 | Recorte de la autorización de regreso, si hay atraso | **Autorizar con disparador** | −1,75 dp si se usa | 2026-11-13 |
-| DL-10 | Segunda llave Básica de reserva en otro equipo | **Aprobar** · *pendiente del dictamen de seguridad* | 0,5 dp | 2026-11-20 |
-| DL-11 | La caducidad de `s1` la fija la versión con YubiKeys | **Aprobar** · *pendiente del dictamen de seguridad* | Incluido | 2026-12-01 |
-| DL-12 | Punto de revisión para comprar las YubiKeys | **Punto de revisión sin fecha fija** · *pendiente del dictamen de seguridad* | USD 352 (ya presupuestados) | Sin urgencia |
-| DL-13 | Cuenta diaria sin permisos de administrador en el equipo emisor | **Aprobar** · *pendiente del dictamen de seguridad* | 0 | Antes de generar `s1` (AI-09) |
+| DL-01 | Padrón de sellos: el cupo se cuenta desde el padrón, con copia en el disco | **Aprobar con la precisión** | 1,5 dp | 2026-11-06 |
+| DL-02 | La API no crea cuentas al arrancar en Estricto **ni en ninguna compilación Release** | **Aprobar con la condición** | 0,75 dp | 2026-11-06 |
+| DL-03 | El RNC solo lo cambia el SUPER; la ruta sale después de la fase A de ADR-81 | **Aprobar con la condición** | 0,85 dp + pantalla | 2026-11-13 |
+| DL-04 | Eventos en `BitacoraSeguridad`, con una sola DDL | **Aprobar** | 0,5 dp | 2026-10-30 |
+| DL-05 | El sello cubre el hash de la contraseña y, en el SUPER, el estado del factor | **Aprobar, obligatoria** | 0,75 dp | 2026-11-06 |
+| DL-07 | Reparto entre los dos desarrolladores, con revisión de código del emisor | **Aprobar** | 0 + revisión | **2026-10-16** |
+| DL-08 | La licencia queda construida para el corte | **Aprobar** (registro) | 0 | 2026-10-16 |
+| DL-09 | Recorte de `autNivel` si hay atraso | **Autorizar con disparador** | −1,75 dp si se usa | 2026-11-13 |
+| DL-10 | Llave Básica de reserva `s1r`, con la cuenta deshabilitada | **Aprobar con condiciones**, o la alternativa de la sección 6 | 0,5 dp | 2026-11-20 |
+| DL-11 | La caducidad de `s1` la fija la versión con YubiKeys; cofirma en la transición | **Aprobar** | Incluido | 2026-12-01 |
+| DL-12 | Fecha de compra y **revisión de la aceptación a más tardar el 2027-03-31** | **Aprobar con la condición** | USD 352 (ya presupuestados) | 2026-10-30 |
+| DL-13 | Cuenta diaria sin permisos de administrador y condiciones E-1 a E-15 | **Aprobar, obligatoria antes de AI-09** | 0,75 dp de devops | **Antes de generar `s1`** |
+| **DL-14** | **Nueva:** una licencia Básica vence como máximo 200 días después de emitida | **Aprobar** | 0,35 dp | 2026-11-06 |
 
 *DL-06 está retirada: la sustituye F-2.*
 
-**Recomendación de conjunto: Aprobar con observaciones** (sección 5). Las observaciones no cambian ninguna recomendación. Dos de ellas conviene mirarlas antes de firmar: O-2, sobre DL-09, y O-3, una mejora barata para R-B11.
+**Recomendación de conjunto: Aprobar con observaciones.** Con las condiciones de `[SEG]` 9 incorporadas, el auditor pasa de Rechazado a Aprobado con observaciones. Para cerrarlo falta además que el arquitecto-software actualice §2.3, §10.5 y §10.6 de `[BP]` y que el auditor lo confirme en una lectura de diferencias (`[SEG]` 9).
+
+**Calendario:** las remediaciones suman unos 4 dp [`SEG` 8, I]. Mi reparto aproximado:
+- Desarrollador de identidades (I): de 23,0 a unos 25 dp.
+- Desarrollador de la licencia (L): de 23,4 a unos 24,5 dp.
+
+Los dos siguen por debajo de los 34,4 dp de capacidad. En el peor caso (+35 %), I llega a unos 33,8 dp: **el margen baja a menos de 1 dp**. Ver la observación O-5.
 
 ---
 
 ## 3. Las decisiones, una por una
 
-### DL-01 · Padrón de sellos contra la repetición
+### DL-01 · Padrón de sellos: el cupo se cuenta desde el padrón
 
-**Qué se decide.** Hoy el diseño del sello tiene un hueco (`[BP]` 2.2, SH-1, severidad **Alta**). Con acceso a SQL se puede copiar el sello de la cuenta A, inhabilitar A (libera el cupo), dar de alta B y volver a pegar el sello viejo de A. Resultado: A y B habilitadas, y el cupo duplicado, tantas veces como se quiera. La corrección es guardar, protegida, la lista de los sellos vigentes (el padrón). Una cuenta solo entra y cuenta si su sello verifica **y** figura en el padrón.
+**Qué se decide.** El sello impide ampliar la licencia insertando usuarios por SQL. `[BP]` encontró que repetir un sello viejo duplicaba el cupo (SH-1) y propuso el padrón. `[SEG]` (SEG-L2-01, **Alta**) encontró otro camino: el cupo se seguía contando con columnas de la tabla (`Inhabilitado`, `Nivel`) que se editan por SQL. Basta con «apagar» una cuenta por SQL, dar de alta otra y volver a «encenderla». Además, restaurar un padrón viejo devolvía cuentas después de una reducción de cupo (SEG-L2-07).
 
-**Recomendación: Aprobar.** Sin el padrón, el sello no cumple el propósito firmado («insertar filas a mano no amplía la licencia»).
+**Recomendación: Aprobar con la precisión de `[SEG]`:**
+- **(a)** El cupo se cuenta desde las entradas no SUPER del padrón verificado, nunca desde las columnas. Cada entrada guarda el nivel.
+  - El padrón se actualiza por diferencias y solo con acciones de la API.
+  - Una fila borrada o alterada sigue contando hasta que el SUPER la purgue, con motivo y segundo factor.
+- **(b)** Hay una copia completa del padrón en el disco del equipo de la API (carpeta protegida de ADR-77), y vale la versión mayor que verifique.
+- *Mi precisión:* mientras la fase A de ADR-81 no esté unida, la purga se hace con `GPOS.Migracion` en el servidor, igual que en DL-03.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Padrón protegido (recomendada)** | Cierra SH-1. Si alguien devuelve el padrón entero a un estado anterior, el sistema queda en una situación que fue legítima en su momento, y se avisa al SUPER (`PadronRetrocedido`). Unos 70 KB con 1 000 cuentas [I]; solo se escribe al administrar usuarios, nunca al vender |
-| (b) En exceso de cupo, dejar entrar solo a las N cuentas más antiguas | Contradice ADR-58, punto 9 («nadie pierde la sesión») y permite turnar cuentas |
-| (c) Guardar las revocaciones en la bitácora | Un `sysadmin` borra filas de la bitácora: no protege |
+| **(a) + (b) (recomendada)** | Cierra SH-1 y sus variantes. Una fila borrada por error sigue ocupando cupo hasta que GSF la purgue. Quien solo tiene acceso a SQL no puede retroceder el padrón; un administrador de Windows sí (residual de CP-4) |
+| (c) Padrón de la v1, sin la precisión | **Rechazada por el auditor:** el cupo se duplica sin tocar ningún MAC |
+| (d) Sin padrón | El sello no cumple su propósito |
 
-**Costo:** 1,0 dp (dentro de SL). Precisa ADR-58, punto 9, y `[DAT]` 6.3. Va en ADR-83.
+**Costo:** 1,0 + 0,25 + 0,25 = 1,5 dp (SL). Precisa ADR-58, punto 9. Va en ADR-83.
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
+`[ ] Aprobar (a)+(b)`   `[ ] Otra: ____`   `[ ] Aplazar`
 
 ---
 
-### DL-02 · En producción, la API no crea cuentas al arrancar
+### DL-02 · La API no crea cuentas al arrancar (Estricto y Release)
 
-**Qué se decide.** Hoy, si no hay ningún SUPER, la API crea uno al arrancar (`UsuariosService.cs:266-287`, `:421-433` [V en `[BP]`]). Con SQL basta borrar los SUPER y reiniciar para **fabricar un SUPER**, que además la API sellaría (SH-3, **Alta**). En modo Estricto, las cuentas iniciales las crearía solo `GPOS.Migracion sistema --cuentas-iniciales`, ejecutado por el técnico de GSF, la primera vez. En Amplio (desarrollo, pruebas y DEMO) todo sigue igual.
+**Qué se decide.** Hoy, si no hay SUPER, la API crea uno al arrancar: borrar los SUPER por SQL y reiniciar fabrica un SUPER (SH-3). La v1 lo cerraba en Estricto. `[SEG]` (SEG-L2-05) muestra que Amplio es solo una clave de configuración, así que cambiarla reabriría el hueco y además provocaría un sellado nuevo de las cuentas insertadas a mano.
 
-**Recomendación: Aprobar.**
+**Recomendación: Aprobar con la condición de `[SEG]`:**
+- en una **compilación Release ningún modo sella ni crea cuentas al arrancar**: lo hace solo `GPOS.Migracion sistema` (el DEMO también, desde su instalador);
+- con una licencia vigente de anillo `Produccion` o `Beta`, la API **no arranca en Amplio**;
+- la creación automática queda solo en `Debug`.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Solo `GPOS.Migracion` crea las cuentas iniciales en Estricto (recomendada)** | Cierra SH-3. Si un cliente se queda sin SUPER, la recuperación exige al técnico en el servidor. Es raro: ADR-81 ya exige que GSF mantenga al menos dos SUPER por instalación |
-| (b) Mantener la creación automática | Deja abierta la vía para fabricar un SUPER por SQL |
+| **(a) Con la condición de Release (recomendada)** | Cierra SH-3 también frente a un cambio de configuración. **El instalador del DEMO tiene que llamar a `GPOS.Migracion sistema`** (devops). Una instalación Beta tiene que estar en Estricto |
+| (b) La v1: solo en Estricto | Amplio queda como un interruptor de la licencia, contra ADR-60, punto 6 |
 
-**Costo:** 0,5 dp. Precisa SEC-07 (claves iniciales solo interactivas) y SES-16 del estándar de acceso. Va en ADR-83.
+**Costo:** 0,5 + 0,25 dp. Precisa SEC-07 y SES-16. Va en ADR-83.
 
 `[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
 
@@ -95,17 +129,20 @@
 
 ### DL-03 · El RNC de la empresa solo lo cambia el SUPER
 
-**Qué se decide.** La licencia está atada al RNC de cada empresa. La regla firmada NV-07 (ADR-59) solo da un período de transición cuando el cambio de RNC lo hizo el SUPER, y hoy **el ADMIN también edita el RNC** (`AdministracionService.cs:64`, `:109` [V en `[BP]`]). Se propone que el cambio pase a una ruta solo del SUPER, con motivo y segundo factor, que deje una prueba protegida. Si el ADMIN intenta cambiarlo, recibe el aviso «solo el SUPER puede cambiar el RNC» (409 `RNC_SOLO_SUPER`).
+**Qué se decide.** La licencia está atada al RNC. La regla firmada NV-07 (ADR-59) solo da transición si el cambio lo hizo el SUPER, y hoy el ADMIN también lo edita (`AdministracionService.cs:64`, `:109` [V en `[BP]`]). Se propone una ruta solo del SUPER, con motivo y segundo factor, que deja una prueba protegida. El ADMIN recibe el aviso «solo el SUPER puede cambiar el RNC».
 
-**Recomendación: Aprobar.** Cambiar el RNC exige de todos modos una licencia nueva de GSF (precisión de ADR-59 del 2026-10-08: 30 días como máximo). Que lo haga GSF no agrega un paso real.
+**Recomendación: Aprobar con la condición de `[SEG]`** (SEG-L2-12 y SEG-L2-16):
+- las rutas del SUPER para cambiar el RNC (S-03) y legitimar cuentas (S-02) **no se publican hasta que esté unida la fase A de ADR-81**. Sin el segundo factor, una contraseña filtrada del SUPER bastaría;
+- mientras tanto, el cambio de RNC se hace con `GPOS.Migracion` en el servidor, con motivo;
+- S-03 es **idempotente**, y el cambio solo cuenta cuando el RNC de la empresa ya es el nuevo.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Solo el SUPER, con motivo y segundo factor (recomendada)** | **Cambia lo que ve el ADMIN:** el campo RNC queda de solo lectura para él. Corregir un error de captura requiere a GSF |
-| (b) El ADMIN sigue editándolo | Por la regla firmada, la empresa queda `Invalida` **sin gracia** en cuanto cambia el RNC: una trampa para el cliente |
-| (c) El ADMIN lo edita solo mientras la empresa nunca tuvo licencia | Más casos que probar. Con la regla (iii) firmada (GSF hace la implantación), no aporta [I] |
+| **(a) Solo el SUPER, rutas después de la fase A de ADR-81 (recomendada)** | El ADMIN ve el RNC de solo lectura **desde ya**. Hasta la fase A, cambiar un RNC exige al técnico de GSF en el servidor |
+| (b) El ADMIN sigue editándolo | Por la regla firmada, la empresa queda `Invalida` sin gracia en cuanto cambia el RNC |
+| (c) Publicar S-03 sin segundo factor | Rechazada por el auditor |
 
-**Costo:** 0,75 dp más un ajuste en la pantalla de configuración (frontend). Es una precisión de ADR-59 (NV-07), no un ADR nuevo.
+**Costo:** 0,75 + 0,1 dp, más un ajuste de pantalla. Es una precisión de ADR-59 (NV-07).
 
 `[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
 
@@ -113,55 +150,58 @@
 
 ### DL-04 · Bitácora de la licencia y del sello
 
-**Qué se decide.** Los ADR firmados mandan los eventos de la licencia a `BitacoraSistema` (ADR-37 y ADR-60, punto 8), pero **esa bitácora no existe en el código**. Tampoco `BitacoraSeguridad` de ADR-81 (`[BP]` C-05 [V]). Se propone usar `BitacoraSeguridad` (en `GPOS_SYSDATA`, solo inserción y retención de 2 años, ya firmada con ADR-81) hasta que exista `BitacoraSistema`. En ese momento se decide si se unen.
+**Qué se decide.** `BitacoraSistema` (ADR-37 y ADR-60) no existe. Los eventos irían a `BitacoraSeguridad` (ADR-81: solo inserción, 2 años de retención) hasta que exista. `[SEG]` la da por correcta.
 
-**Recomendación: Aprobar, con una precisión mía:** la tabla la diseña **una sola vez** el arquitecto de datos y la crea `GPOS.Migracion sistema` (ADR-38, M-4). Ni el desarrollador de la licencia ni el de ADR-81 la crean por su cuenta. `[BP]` decía «la crea quien llegue primero», y eso arriesga dos versiones de la misma tabla.
+**Recomendación: Aprobar**, con mi precisión de la v1: **una sola DDL**, del arquitecto de datos, que crea `GPOS.Migracion sistema` (ADR-38, M-4), y no la del desarrollador «que llegue primero».
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) `BitacoraSeguridad` con una sola DDL del arquitecto de datos (recomendada)** | Una sola bitácora de seguridad, con retención ya firmada. Hay que unirla con `BitacoraSistema` cuando llegue |
-| (b) Construir ahora `BitacoraSistema` | Adelanta trabajo de la versión 1 del acceso multiempresa sin dueño ni calendario |
-| (c) Solo el Visor de eventos de Windows | No viaja con los respaldos, y quien administra el servidor lo borra |
+| **(a) `BitacoraSeguridad` con una sola DDL (recomendada)** | Hay que unirla con `BitacoraSistema` cuando llegue |
+| (b) Construir ya `BitacoraSistema` | Adelanta trabajo sin dueño ni calendario |
+| (c) Solo el Visor de eventos | No viaja con los respaldos; quien administra el servidor lo borra |
 
-**Costo:** 0,5 dp. Es una precisión de ADR-81 (punto 12) y de ADR-60 (punto 8), no un ADR nuevo.
+**Costo:** 0,5 dp. Es una precisión de ADR-81 (punto 12) y de ADR-60 (punto 8).
 
-`[ ] Aprobar (a) con la precisión`   `[ ] Otra: ____`   `[ ] Aplazar`
+`[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
 
 ---
 
-### DL-05 · El sello cubre también la contraseña guardada (opcional)
+### DL-05 · El sello cubre la contraseña y el factor (obligatoria)
 
-**Qué se decide.** Hoy, un `sysadmin` puede reemplazar el hash de la contraseña de una cuenta sellada (incluso la de un SUPER o un ADMIN) por uno que conozca y entrar con ella. No amplía el cupo, pero es tomar una cuenta (SH-5, Media). Incluir en el sello la huella del hash lo impide. A cambio, hay que volver a sellar en cada cambio o restablecimiento de contraseña.
+**Qué se decide.** Un `sysadmin` puede reemplazar el hash de la contraseña de una cuenta sellada y entrar con ella (SH-5). `[SEG]` (SEG-L2-06) agrega dos cosas:
+- ADR-81 no está construido;
+- aun construido, si se borra por SQL la fila del factor de un SUPER, quien entre con la contraseña cambiada **da de alta su propio factor**.
 
-**Recomendación: Aprobar.** `[BP]` la condiciona a que el SUPER no tenga el segundo factor antes del corte. Yo la recomiendo igual, por tres motivos:
-- el segundo factor obligatorio (ADR-81) cubre **solo al SUPER**, y el ADMIN queda expuesto;
-- cuesta 0,5 dp y cabe en la holgura del desarrollador de identidades (pasa de 23,0 a 23,5 dp de 34,4 disponibles);
-- no depende de que la fase A de ADR-81 llegue a tiempo.
+**Recomendación: Aprobar como obligatoria (ya no es opcional):**
+- el sello incluye la huella del hash de la contraseña;
+- en los SUPER incluye además el estado «factor dado de alta: sí o no». Si un SUPER sellado con factor pierde esa fila, no entra y se restablece solo por las vías de ADR-81, punto 7.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Sí, con la huella del hash de la contraseña (recomendada)** | Cierra SH-5 para todas las cuentas. Cada cambio de contraseña también actualiza el padrón (raro, y sin efecto en la venta) |
-| (b) No | Riesgo residual Bajo para el SUPER cuando exista ADR-81; Medio para el ADMIN |
-| (c) Incluir el «sello de seguridad» aleatorio (SH-8) en lugar del hash | **No cierra SH-5** [I]: quien cambia el hash por SQL deja intacto ese valor, así que el sello seguiría verificando |
+| **(a) Hash de la contraseña + estado del factor del SUPER (recomendada)** | Cierra SH-5 y la variante del factor. Se vuelve a sellar en cada cambio o restablecimiento de contraseña y en el alta o baja del factor |
+| (b) Usar el `SelloSeguridad` en lugar del hash (`[SEG]` lo admite) | **Discrepo** (sección 6, D-1): no cierra SH-5 |
+| (c) No | Rechazada por el auditor |
 
-**Costo:** +0,5 dp. Va en ADR-83.
+**Costo:** 0,5 + 0,25 dp. Va en ADR-83.
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] No`
+`[ ] Aprobar (a)`   `[ ] Otra: ____`
 
 ---
 
 ### DL-07 · Reparto entre los dos desarrolladores
 
-**Qué se decide.** Tú firmaste dos desarrolladores (F-1). Falta cómo repartir el trabajo. Si el desarrollador «dedicado a la licencia» lo hace todo, incluido el programa emisor, la carga es de unos 37 dp frente a 34,4 de capacidad: **no cabe** (`[BP]` 11.4 [V, comprobé la suma]). El reparto propuesto pasa al desarrollador de identidades el sello (SL), el anillo H-17 v2 (CR), el cambio de RNC (RN) y el emisor (EM).
+**Qué se decide.** Tú firmaste dos desarrolladores (F-1). El reparto propuesto pasa al desarrollador de identidades el sello, el anillo H-17 v2, el cambio de RNC y el emisor. Si el desarrollador de la licencia lo hiciera todo, no cabría: unos 37 dp frente a 34,4.
 
-**Recomendación: Aprobar**, con una condición: **que el desarrollador de identidades no tenga otras tareas hasta el corte.** Si además lleva el segundo PR de H-11 u otra pieza, el reparto se rehace (supuesto 1 de `[BP]`).
+**Recomendación: Aprobar, con dos condiciones:**
+1. El desarrollador de identidades **no tiene otras tareas hasta el corte** (por ejemplo, el segundo PR de H-11).
+2. Condición de `[SEG]` (SEG-L2-08): **revisión de código del auditor sobre el emisor y `GPOS.Criptografia`** antes de la primera licencia de pago.
 
-| Opción | Licencia (L) | Identidades (I) | ¿Cabe? |
+| Opción | L | I | ¿Cabe? |
 |---|---|---|---|
-| **(a) Reparto propuesto (recomendada)** | ≈ 23,4 dp | ≈ 23,0 dp (23,5 con DL-05) | Sí: 68 % y 67 % de la capacidad; con +35 %, unos 3 dp de margen cada uno |
-| (b) Reparto literal: L hace toda la licencia | ≈ 37 dp | ≈ 6 dp | **No** en el escenario central; I queda con unos 28 dp sin carga |
+| **(a) Reparto propuesto (recomendada)** | ≈ 24,5 dp con la v2 | ≈ 25 dp con la v2 | Sí en el escenario central; **menos de 1 dp de margen para I con +35 %** |
+| (b) Reparto literal | ≈ 38 dp | ≈ 6 dp | No |
 
-**Costo:** 0 (es reparto). Cada desarrollador trabaja en su propia copia y su rama (regla de un solo editor por árbol).
+**Costo:** 0, más unos 2 a 3 días del auditor para la revisión [I].
 
 `[ ] Aprobar (a)`   `[ ] Otra: ____`
 
@@ -169,117 +209,140 @@
 
 ### DL-08 · Calendario: la licencia queda construida para el corte
 
-**Qué se decide.** Registrar que el código de la licencia se completa para el corte del 2026-12-15. Sustituye las fechas firmadas en Q-24 y Q-25 (inicio el 2026-11-02 y publicación la primera semana de enero de 2027). Con F-2, la primera licencia de pago depende de las condiciones de la sección 1, no del hardware.
+**Qué se decide.** Registrar que el código de la licencia se completa para el 2026-12-15, en lugar de las fechas de Q-24 y Q-25 (inicio el 2026-11-02 y publicación en enero de 2027). Es consecuencia de F-1. El auditor no tiene objeción.
 
-**Recomendación: Aprobar.** Es la consecuencia directa de F-1. El orquestador la registra (G-1.6).
+**Recomendación: Aprobar.** El orquestador lo registra (G-1.6).
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Registrar (recomendada)** | Plan semanal de `[BP]` 11.3 con cuatro hitos: H-1 el 10-23, H-2 el 11-06, H-3 el 11-13 y código completo el 12-04 |
-| (b) Mantener Q-24 y Q-25 | Contradice F-1 («sin mover el corte», con la licencia dentro del lote 2) |
-
-**Riesgo real del calendario, fuera de los dos desarrolladores** (`[BP]` 11.4): la toma nueva de la ola 3 unida antes del 2026-11-16; AI-07; QA y frontend desde el 2026-11-23; certificados de H-17 v2 antes del 2026-11-02.
+| **(a) Registrar (recomendada)** | Hitos de `[BP]` 11.3: H-1 el 10-23, H-2 el 11-06, H-3 el 11-13 y código completo el 12-04 |
+| (b) Mantener Q-24 y Q-25 | Contradice F-1 |
 
 `[ ] Aprobar (a)`   `[ ] Otra: ____`
 
 ---
 
-### DL-09 · Recorte de la autorización de regreso a Básico, si hay atraso (condicional)
+### DL-09 · Recorte de `autNivel` si hay atraso (condicional)
 
-**Qué se decide.** Si el calendario se atrasa, el recorte número 4 de `[BP]` 11.4 deja fuera de esta versión la «autorización de regreso temporal a Básico» (`autNivel`) y ahorra 1,75 dp. Esa autorización solo sirve cuando ya existen las YubiKeys, y con F-2 y F-3 no existen. Es segura de agregar después: un programa que no la entiende rechaza el archivo.
+**Qué se decide.** Si el calendario se atrasa, la «autorización de regreso temporal a Básico» sale de esta versión: ahorra 1,75 dp. Solo sirve cuando existan las YubiKeys. `[SEG]`: sin objeción, porque falla cerrado.
 
-**Recomendación: autorizarla ya, pero solo con un disparador objetivo.** Así no hay que esperar una firma en medio de la urgencia. El disparador: **el orquestador confirma que L1b va con 5 días hábiles o más de atraso respecto de H-3 (2026-11-13)**. Ver la observación O-2: aplicarla también precisa ADR-62 (Q-17).
+**Recomendación: autorizarlo ya con un disparador objetivo:** el orquestador confirma un atraso de 5 días hábiles o más respecto de H-3 (2026-11-13). Si se usa, se registra como precisión de ADR-62 (Q-17 decía «desde L1»; observación O-2).
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Autorizada con el disparador (recomendada)** | Sin demoras de firma si llega el atraso. Al usarla, se registra como precisión de ADR-62 (Q-17) y de Q-24 |
-| (b) No firmar ahora; decidir si llega el atraso | Una firma más en el momento de mayor presión |
-| (c) No recortar nunca | Si hay atraso, se sacrifica otra cosa o el corte |
+| **(a) Con el disparador (recomendada)** | Sin demoras de firma en el momento de presión |
+| (b) Decidir si llega el atraso | Una firma más en el peor momento |
+| (c) No recortar nunca | Se sacrifica otra cosa o el corte |
 
 `[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
 
 ---
 
-### DL-10 · Llave Básica de reserva en otro equipo
+### DL-10 · Llave Básica de reserva `s1r`
 
-> **Pendiente del dictamen de seguridad.** El auditor-seguridad está revisando 10.5 y 10.6 de `[BP]`. Si su informe pone condiciones, se agregan aquí antes de firmar.
+**Qué se decide.** Con F-2, toda la firma de pago depende de `s1` en un solo equipo. Si ese TPM se pierde, GSF no puede renovar hasta publicar una versión nueva y que cada cliente la instale (R-B12, Media / Alto). La reserva es una segunda llave `s1r` en el TPM de **otro** equipo, incluida en los programas del corte. `[SEG]` (SEG-L2-11): sirve contra la pérdida, pero **duplica los lugares desde donde se pueden falsificar licencias** y no acelera el retiro.
 
-**Qué se decide.** Con F-2, toda la firma de pago depende de una sola llave (`s1`) en un solo equipo. Si ese TPM se borra, se reinstala Windows o el equipo falla, GSF no puede renovar a nadie hasta publicar una versión con una llave nueva **y** que cada cliente la instale. Mientras tanto, los clientes pasan a la gracia y luego a solo consulta (R-B12, Media / Alto). La propuesta es una segunda llave Básica (`gsf-lic-s1r`) en el TPM de **otro** equipo, con su propia cuenta dedicada y su acta, incluida en los programas desde el corte.
+**Recomendación: Aprobar con las condiciones de `[SEG]`:**
+1. el segundo equipo **no es de desarrollo** ni ejecuta agentes;
+2. cumple E-1 a E-15 (anexo A);
+3. la cuenta de `s1r` **queda deshabilitada** salvo en la firma de prueba trimestral y en una emergencia; el equipo puede quedar apagado;
+4. el PIN de `s1r` lo custodia otra persona (el suplente de AP-02) o queda en un sobre precintado.
 
-**Recomendación: Aprobar**, con dos precisiones mías:
-- el segundo equipo se enciende solo para firmar o para el ensayo, porque cada equipo con una llave es otro lugar desde el que se podría falsificar (R-B11);
-- conviene que lo custodie el suplente (AP-02), si se designa.
+Además se corrige `[BP]` §10.5: «DL-10 cubre la pérdida; el compromiso lo acota DL-14».
+**Alternativa que pongo a tu consideración** (sección 6, D-2): dos YubiKeys en lugar de la reserva en TPM.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) `s1r` en otro equipo con TPM (recomendada)** | Perder el equipo principal ya no corta las renovaciones. Hay dos lugares que proteger en lugar de uno. Necesita un segundo equipo con TPM 2.0 (supuesto 8 de `[BP]`, sin verificar) |
-| (b) Sin reserva; solo el procedimiento de emergencia (publicar una versión con una llave nueva) | Depende de que cada cliente instale la versión nueva antes de que se le acabe la gracia (unos 10 días por omisión). Riesgo Medio / Alto |
-| (c) Reserva en el mismo equipo | No protege contra la pérdida del equipo, que es el caso principal |
+| **(a) `s1r` con las condiciones (recomendada si no se compran YubiKeys)** | Cubre la pérdida. Necesita un segundo equipo que no sea de desarrollo [I: hay que identificarlo] |
+| (b) Sin reserva | Depende de que cada cliente instale una versión nueva dentro de su gracia (unos 10 días) |
+| (c) Comprar YubiKeys para `s1` y `s1r` (D-2) | Cubre la pérdida **y** la firma silenciosa de R-B13 por unos USD 110 a 176. Cambia «en el TPM» de F-2, así que requiere tu decisión expresa |
 
-**Costo:** 0,25 dp de desarrollo y 0,25 de devops. Sin equipo nuevo si ya existe uno con TPM [I].
-**Plazo:** la llave pública tiene que entrar en los programas del corte. Hay que generarla con acta antes del 2026-11-27 (código completo el 12-04).
+**Costo:** 0,5 dp (desarrollo y devops). **Plazo:** generarla con acta antes del 2026-11-27.
 
-`[ ] Aprobar (a) con las precisiones`   `[ ] (b)`   `[ ] Otra: ____`
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c), ver D-2`
 
 ---
 
 ### DL-11 · Cuándo deja de valer `s1`
 
-> **Pendiente del dictamen de seguridad.**
+**Qué se decide.** La caducidad del 2026-12-31 (Q-16) solo rige cuando hay una llave Avanzada en los programas (INV-1), así que hoy no tiene efecto, y si quedara fija rompería la transición en 2027. La propuesta: la fecha de fin de `s1` (y de `s1r`) **la fija la versión que trae las YubiKeys**, en su publicación más 45 días.
 
-**Qué se decide.** La regla firmada fijaba que `s1` dejaría de aceptarse para archivos nuevos el **2026-12-31** (Q-16). Esa fecha solo rige cuando los programas ya traen una llave Avanzada (INV-1). Con F-2 y F-3, esa llave no existe, así que la fecha **no tiene efecto**. Además, si se dejara fija y las YubiKeys llegaran en 2027, la versión con YubiKeys rechazaría desde el primer día todo archivo firmado solo con `s1`, incluidas las reemisiones de transición. La propuesta: la fecha de fin de `s1` (y de `s1r`) **la fija la versión que incorpora las YubiKeys**, en su publicación más 45 días (un ciclo mensual, la gracia y margen).
-
-**Recomendación: Aprobar.** Mi precisión: la fecha queda **escrita en el programa** en el PR de las llaves, calculada sobre la fecha prevista de publicación. Si la publicación se retrasa más de 7 días, se corrige antes de publicar, y QA lo comprueba.
+**Recomendación: Aprobar**, con dos precisiones:
+- la mía: la fecha queda escrita en el PR de las llaves y se corrige si la publicación se retrasa más de 7 días;
+- la de `[SEG]` (SEG-L2-22): **en la reemisión de transición, cofirmar cada archivo con `s1` y `a1`**. Así lo aceptan los programas viejos y los nuevos, y los 45 días dejan de ser críticos para quien actualiza tarde.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Publicación de la versión con YubiKeys + 45 días (recomendada)** | Deja 45 días para reemitir en Avanzado a todos los clientes de pago: unos 5 a 10 minutos de firma por cada 50 clientes [I, `[BP]` 10.3] |
-| (b) Fecha de compilación + 90 días (Q-16, escenario B, sin cambios) | Más ventana de exposición de `s1` sin necesidad |
-| (c) Mantener el 2026-12-31 | Sin efecto hoy, y rompe la transición si las YubiKeys llegan después de esa fecha |
+| **(a) Versión con YubiKeys + 45 días, con cofirma (recomendada)** | Transición sin cortes. Cofirmar cuesta un toque más por archivo [I] |
+| (b) Fecha de compilación + 90 días (Q-16, escenario B) | Más exposición de `s1` sin necesidad |
+| (c) Mantener el 2026-12-31 | Rompe la transición si las YubiKeys llegan en 2027 |
 
-**Límite que no resuelve ninguna opción:** un cliente que **no instala** versiones nuevas sigue aceptando `s1` hasta el `vence` de su licencia (R-B11, NV-08). Ver la observación O-3.
-**Costo:** dentro de los 0,5 dp de 10.3. Precisa Q-16 e INV-1 (ADR-62, punto 3). Va en ADR-84.
+**Costo:** dentro de los 0,5 dp de `[BP]` 10.3. Precisa Q-16 e INV-1. Va en ADR-84.
 
-`[ ] Aprobar (a) con la precisión`   `[ ] (b)`   `[ ] Otra: ____`
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] Otra: ____`
 
 ---
 
-### DL-12 · Punto de revisión para comprar las YubiKeys
+### DL-12 · Fecha de compra y caducidad de la aceptación del riesgo
 
-> **Pendiente del dictamen de seguridad.**
+**Qué se decide.** Firmaste la ceremonia **sin fecha** (F-3), y eso no se reabre. `[SEG]` (SEG-L2-13) pide que la **aceptación** del riesgo Medio-Alto tenga caducidad: sin ella, una medida «temporal» se vuelve permanente sin que nadie lo vuelva a decidir.
 
-**Qué se decide.** Firmaste que la ceremonia queda **preparada y sin fecha** (F-3), y eso no se reabre. `[BP]` pide además una «fecha objetivo» de compra (R-B14: sin fecha, el nivel Básico de pago puede durar indefinidamente). Lo único que queda por decidir es si se fija un **punto de revisión** que no obligue a nada.
-
-**Recomendación: un punto de revisión sin fecha fija:** «revisar la compra cuando se firme el contrato del **primer cliente de pago**, o en la sesión de cierre del corte (2026-12-15), lo que llegue antes». La compra (unos USD 352, ya presupuestados) no obliga a fijar la ceremonia. Comprarlas antes permite verificar el certificado CMVP y ensayar con el hardware real. El envío a República Dominicana puede tardar de 1 a 3 semanas [I].
+**Recomendación: Aprobar con la condición de `[SEG]`:**
+- **la aceptación vence el 2027-03-31 como máximo**, o antes si ocurre lo primero de esto: el primer contrato de pago, o la sesión de cierre del corte (2026-12-15), según mi propuesta de la v1;
+- al vencer sin ceremonia, **se vuelve a firmar con la estimación de ese momento**. No se detiene la emisión: solo se vuelve a decidir;
+- **fecha de compra:** la fijas tú. Mi sugerencia es no más tarde que el primer contrato de pago. Comprar no fija la ceremonia, que sigue sin fecha.
 
 | Opción | Consecuencia |
 |---|---|
-| (a) Nada más: queda como está firmado | El tablero del emisor muestra los clientes de pago en Básico; nadie revisa la decisión de forma periódica |
-| **(b) Punto de revisión sin fecha fija (recomendada)** | Una decisión consciente cuando el riesgo deja de ser teórico (primer pago) |
-| (c) Fecha objetivo de compra | Más disciplina, pero choca con el espíritu de F-3 |
+| **(a) Revisión con tope del 2027-03-31 y fecha de compra (recomendada)** | Cumple la condición del auditor sin tocar F-3 |
+| (b) Sin fechas (como en F-3) | El auditor la rechaza (SEG-L2-13) |
 
-`[ ] (a)`   `[ ] Aprobar (b)`   `[ ] (c), fecha: ____`
+`[ ] Aprobar (a)`, fecha de compra: ____ , fecha de revisión (≤ 2027-03-31): ____
+`[ ] (b)`
 
 ---
 
-### DL-13 · Cuenta diaria sin permisos de administrador en el equipo emisor
+### DL-13 · Cuenta diaria sin permisos de administrador (obligatoria antes de AI-09)
 
-> **Pendiente del dictamen de seguridad.**
+**Qué se decide.** `[SEG]` (SEG-L2-03, **Alta**) corrige la premisa de la v1:
+- si tu cuenta diaria es administradora, un programa malicioso puede capturar el PIN **una vez** y desde entonces **usar `s1` en silencio en cualquier momento**, sin abrir la cuenta de firma y sin que veas ningún resumen [I: se confirma en el ensayo];
+- el «PIN en cada firma» no protege frente a eso;
+- en el equipo principal además corren compilaciones, instaladores y agentes de IA que procesan contenido externo.
 
-**Qué se decide.** Con F-3, `s1` vive en tu equipo principal, que navega y recibe correo. Si la cuenta que usas a diario es administradora, un programa malicioso en ella puede usar la llave (no copiarla) o engañar a la pantalla del emisor para que firme otra cosa (R-B13). La condición 6 de `[BP]` 10.6 propone que la cuenta diaria pase a **estándar** y que una cuenta administradora aparte se use solo para el mantenimiento.
-
-**Recomendación: Aprobar.** Es la medida que más baja el riesgo y no cuesta dinero: según `[BP]` 10.6, el riesgo pasa de **Medio-Alto** (el que aceptaste como temporal) a **Medio**.
+**Recomendación: Aprobar como obligatoria y previa a AI-09** (la generación de `s1`). Si `s1` nace con la cuenta diaria administradora, el PIN puede quedar capturado desde el primer día. Las condiciones son **E-1 a E-15** (anexo A). E-1 es la central: tu cuenta diaria pasa a estándar y la cuenta administradora aparte se usa solo para mantenimiento, **nunca para navegar, leer correo, compilar ni ejecutar agentes**.
 
 | Opción | Consecuencia |
 |---|---|
-| **(a) Cuenta diaria estándar y cuenta administradora aparte (recomendada)** | Instalar programas pedirá la contraseña de la cuenta administradora. Es una molestia ocasional. Riesgo: Medio |
-| (b) Mantener la cuenta diaria administradora | Queda el Medio-Alto aceptado en F-2 |
-| (c) Mini-PC dedicado | **Descartado por ti** (F-3). Solo se menciona porque sigue siendo la mejora más barata si el auditor no acepta el riesgo |
+| **(a) Obligatoria con E-1 a E-15 (recomendada)** | Con DL-14 y las condiciones de la primera licencia de pago (sección 1), el riesgo baja a **Medio** según `[SEG]`. Costo de uso: cambiar de sesión para firmar y de cuenta para administrar. **Ver O-6:** si el equipo principal es el de desarrollo, el costo de uso es alto |
+| (b) Recomendada, no obligatoria | El auditor la rechaza |
+| (c) Mini-PC dedicado | Descartado por ti (F-3) |
 
-**Costo:** 0 en dinero; unas 2 horas de devops contigo para la configuración [I].
-**Plazo:** antes de generar `s1` (AI-09), para que quede en el acta.
+**Costo:** 0 en dinero; unos 0,75 dp de devops.
 
-`[ ] Aprobar (a)`   `[ ] (b)`
+`[ ] Aprobar (a)`   `[ ] Otra: ____`
+
+---
+
+### DL-14 · Tope de vigencia de las licencias Básicas (nueva)
+
+**Qué se decide.** Hoy una licencia no tiene un vencimiento máximo. Si `s1` se compromete, quien la use firma una licencia que vence dentro de muchos años, y un cliente que no instala versiones nuevas la conserva indefinidamente (SEG-L2-02, **Alta**). Dos de las mitigaciones de FY-15 ya no existen: la caducidad del 2026-12-31 y las «vigencias mensuales», que **nunca fueron una regla técnica**. La propuesta:
+- un archivo **sin firma Avanzada propia** se rechaza (422) si algún `vence`, de empresa o de módulo, pasa de **`emitida` + 200 días**;
+- el emisor Básico da a los clientes anuales archivos semestrales.
+
+Coincide con mi observación O-3 de la v1.
+
+**Recomendación: Aprobar.** Tiene que ir en los programas del corte: el problema son justamente los clientes que no actualizan.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) 200 días (recomendada)** | Una licencia falsificada vale como máximo unos 7 meses. El cliente anual recibe dos archivos al año mientras dure el Básico (compatible con la reemisión semestral, ADR-61) |
+| (b) 62 días | Acota a unos 2 meses, pero el cliente anual carga un archivo cada mes, sin agente |
+| (c) 400 días | Solo evita el «año fijado por el falsificador» |
+| (d) Sin tope | Rechazada por el auditor; bloquea la primera licencia de pago |
+
+**Costo:** 0,25 dp (L1a-2) + 0,1 dp (emisor). Precisa ADR-62 e INV-1. Va en ADR-84.
+
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
 
 ---
 
@@ -288,112 +351,173 @@
 ### 4.1 CI-7 / AI-07 · Validación legal de las tres excepciones (antes del 2026-11-16)
 
 **Qué es.** Con la licencia vencida (solo consulta), tres operaciones siguen permitidas por ley ([LIC] LV-12):
-1. rectificar o suprimir datos personales a pedido del titular (Ley 172-13);
+1. rectificar o suprimir datos personales (Ley 172-13);
 2. anular o comunicar secuencias y rangos de NCF y e-CF no usados (incluido el ANECF);
 3. restablecer contraseñas y desbloquear cuentas.
 
-El especialista-pos y el asesor legal deben confirmar la lista.
-
-**Qué se necesita del propietario:** encargar la consulta al asesor legal **esta semana**. Quedan 33 días y la respuesta hace falta antes de clasificar las rutas (2026-11-16).
-**Si no llega a tiempo** (R-B2): las tres operaciones quedan bloqueadas en solo consulta, lo que falla del lado restrictivo, y se habilitan cuando llegue la validación. No se viola ninguna regla firmada, pero un cliente vencido no podría, por ejemplo, atender una solicitud de la Ley 172-13 hasta entonces.
+**Qué se necesita:** encargar la consulta al asesor legal **esta semana**. Quedan 33 días.
+**Si no llega a tiempo:** las tres quedan bloqueadas, lo que falla del lado restrictivo, hasta la validación.
 
 ### 4.2 AP-02 · Custodio suplente
 
-**Qué cambia con F-2.** Mientras no haya YubiKeys, el suplente deja de ser condición de la primera licencia de pago (`[BP]` 10.3). **Excepción:** si se firma DL-10, conviene designarlo ya para custodiar `s1r`.
-**Qué se necesita del propietario:** decidir si se designa ahora (recomendado con DL-10). El nombre va en el acta, no en los documentos.
+Deja de ser condición mientras no haya `b1`. **Con DL-10 (a)**, alguien distinto de ti debe custodiar el PIN de `s1r`, o este va en un sobre precintado. **Qué se necesita:** decidir si se designa ahora. El nombre va en el acta, no en los documentos.
 
-### 4.3 AP-03 · Procedimientos escritos y ensayados, adaptados al nivel Básico
+### 4.3 AP-03 · Procedimientos adaptados al nivel Básico (antes de la primera licencia de pago)
 
-**Antes de la primera licencia de pago.** Devops los redacta contigo. Los procedimientos son:
-1. **compromiso de `s1`** (o de `s1r`): reemitir, publicar una versión que retire la llave y avisar a los clientes;
-2. **pérdida de `s1` o del equipo**: pasar a `s1r` si existe; si no, emisión de emergencia por una versión nueva;
-3. **ausencia del titular**;
-4. con DL-10, **el uso de `s1r`**.
+Los redacta devops contigo y se ensayan una vez, con la llave de desarrollo:
+1. compromiso de `s1` o de `s1r`: reemisión, versión que retira la llave y aviso a los clientes;
+2. pérdida de `s1` o del equipo: pasar a `s1r` o emitir una versión de emergencia;
+3. ausencia del titular;
+4. **(nuevo, E-15)**: no aceptar nunca un «reinicio del fTPM» ni un «borrado del TPM»; protocolo antes de cada actualización del BIOS (suspender BitLocker y revisar el aviso del fabricante); **firma de prueba trimestral** con `s1` y con `s1r`, para detectar una pérdida antes de necesitar la llave.
 
-Se ensayan una vez con la llave de desarrollo, nunca con la real.
-**Qué se necesita del propietario:** unas 2 horas para revisar y un ensayo con devops [I].
+**Qué se necesita:** unas 2 a 3 horas y un ensayo con devops [I].
 
-### 4.4 AP-04 · Aceptaciones escritas, con los textos adaptados
+### 4.4 AP-04 · Aceptaciones escritas (textos adaptados; antes de la primera licencia de pago)
 
-**Antes de la primera licencia de pago.**
-- **CP-4** (modificación de los binarios) y **CP-5** (clonación deliberada): **sin cambios**, con el texto literal de `[HOJA]` 245-246.
-- **R-L11 / R-F11:** el texto firmado habla de «las dos YubiKeys». En Básico, el riesgo es perder `s1`. Propongo este texto adaptado, que **sustituye a R-L11 mientras se firme en Básico**. El texto original vuelve a regir cuando existan las YubiKeys. Elige una variante según lo que se firme en DL-10.
+- **CP-4** (modificación de los binarios) y **CP-5** (clonación deliberada): sin cambios, con el texto literal de `[HOJA]` 245-246. El residual de CP-4 incluye ahora, de forma expresa, que **el sello no protege los permisos granulares** frente a un `sysadmin` (SEG-L2-04).
 
-  > **R-L11-B (con DL-10 firmada).** *«Acepto por escrito que, mientras GSF firme las licencias en Seguridad Básica, si se pierden a la vez la llave `gsf-lic-s1` del equipo principal y la llave de reserva `gsf-lic-s1r` del segundo equipo (por falla o borrado del TPM, reinstalación de Windows o pérdida de los equipos), GSF no podrá emitir ni renovar licencias hasta publicar una versión de GPOS NG con una llave nueva y que cada cliente la instale; y que, si eso tarda más que la gracia de cada cliente, esos clientes pasarán a solo consulta. Se mitiga con las dos llaves en equipos y lugares distintos, el procedimiento de emergencia ensayado y las vigencias mensuales. Riesgo residual: Bajo.»*
+- **FY-15-B: texto literal de la ampliación de P-F1.** Registra lo que firmaste en F-2. Lo reescribí con lo que exige `[SEG]` 9: las mitigaciones retiradas, las que las sustituyen y el vector corregido. Confirma que refleja tu decisión:
+
+  > *«Amplío mi aceptación de P-F1 (FY-15). Mientras no existan las YubiKeys, GSF firmará también las licencias de pago en Seguridad Básica, con la llave `gsf-lic-s1` en el TPM de mi equipo principal, en una cuenta de Windows dedicada solo a firmar.*
   >
-  > **R-L11-B (sin DL-10).** *«Acepto por escrito que, mientras GSF firme las licencias en Seguridad Básica, si se pierde la llave `gsf-lic-s1` (por falla o borrado del TPM, reinstalación de Windows o pérdida del equipo principal), GSF no podrá emitir ni renovar licencias hasta publicar una versión de GPOS NG con una llave nueva y que cada cliente la instale; y que, si eso tarda más que la gracia de cada cliente, esos clientes pasarán a solo consulta. Se mitiga con el procedimiento de emergencia ensayado y las vigencias mensuales. Riesgo residual: Medio.»*
+  > *Acepto que, si un programa con privilegios de administrador de ese equipo captura el PIN de la llave, podrá usarla (no copiarla) en cualquier momento, sin abrir la cuenta de firma y sin que yo vea ningún resumen, para firmar licencias de pago para cualquier instalación; y que un programa en la sesión de firma podría mostrarme un resumen y firmar otro contenido. Acepto también que una licencia así no se puede retirar en un cliente que no instale las versiones nuevas, que no hay corte inmediato para los clientes en Básico y que GSF solo la detectará cuando ese cliente pida una renovación.*
+  >
+  > *Dejan de existir dos mitigaciones de FY-15: el equipo dedicado y la caducidad técnica del 2026-12-31, que no rige mientras no haya llaves Avanzadas en los programas. Las vigencias mensuales nunca fueron una regla técnica.*
+  >
+  > *Las sustituyen:*
+  > - *(1) la cuenta diaria sin privilegios de administrador y las condiciones E-1 a E-15, cumplidas antes de generar la llave (DL-13);*
+  > - *(2) el tope técnico de 200 días de vigencia para toda licencia sin firma Avanzada (DL-14);*
+  > - *(3) el emisor compilado de forma reproducible y revisado;*
+  > - *(4) la comparación de la licencia vigente en cada solicitud;*
+  > - *(5) la revisión del TPM y la prueba negativa en el acta;*
+  > - *(6) se mantienen el PIN de la llave, la confirmación de cada firma y el registro encadenado con ancla enviada desde otro dispositivo.*
+  >
+  > *Riesgo residual: Medio-Alto mientras falte alguna de las sustituciones (1) a (5); Medio con todas cumplidas. Esta aceptación es temporal y **vence el [fecha de DL-12, no después del 2027-03-31]**, o antes si se reemite en Avanzado (AP-05). Al vencer, se vuelve a firmar con la estimación de ese momento.»*
 
-  La parte de R-F11 sobre las YubiKeys del manifiesto no cambia: rige cuando existan, y el agente llega después del corte.
+- **R-L11-B: sustituye a R-L11 mientras se firme en Básico.** La parte de R-F11 sobre las YubiKeys del manifiesto no cambia.
 
-**Texto para el registro de F-2 (no es una decisión nueva).** La ampliación de P-F1 / FY-15 ya está firmada. Para registrarla hace falta un texto literal, porque el de FY-15 ya no describe la realidad: menciona un equipo dedicado y la caducidad del 2026-12-31. Propongo este; confirma que refleja lo que firmaste:
-
-> **FY-15-B.** *«Amplío mi aceptación de P-F1 (FY-15): mientras no existan las YubiKeys, GSF firmará también las licencias de pago en Seguridad Básica, con la llave `gsf-lic-s1` en el TPM de mi equipo principal, en una cuenta de Windows dedicada solo a firmar, y sin fecha de fin. Acepto que un programa malicioso en ese equipo podría usar la llave (no copiarla) para firmar licencias de pago para cualquier instalación, o mostrar un resumen y firmar otro contenido; que una licencia así no se puede retirar en un cliente que no instale las versiones nuevas; que no hay corte inmediato para los clientes en Básico; y que la caducidad técnica del 2026-12-31 no rige hasta que haya llaves Avanzadas en los programas. Se mitiga con la cuenta dedicada, el PIN de la llave, la confirmación de cada firma, el registro encadenado con ancla por correo y las vigencias mensuales. Riesgo residual: Medio-Alto, temporal, hasta la reemisión en Avanzado (AP-05).»*
->
-> Si se firma DL-13, la última frase dice «Medio», sujeto al dictamen de seguridad.
+  > **Con DL-10 (a).** *«Acepto por escrito que, mientras GSF firme las licencias en Seguridad Básica, si se pierden a la vez la llave `gsf-lic-s1` del equipo principal y la llave de reserva `gsf-lic-s1r` del segundo equipo (por falla o borrado del TPM, reinicio del fTPM, reinstalación de Windows o pérdida de los equipos), GSF no podrá emitir ni renovar licencias hasta publicar una versión de GPOS NG con una llave nueva y que cada cliente la instale; y que, si eso tarda más que la gracia de cada cliente, esos clientes pasarán a solo consulta. Se mitiga con las dos llaves en equipos y lugares distintos, la firma de prueba trimestral de cada una y el procedimiento de emergencia ensayado. Riesgo residual: Bajo.»*
+  >
+  > **Sin DL-10.** *«Acepto por escrito que, mientras GSF firme las licencias en Seguridad Básica, si se pierde la llave `gsf-lic-s1` (por falla o borrado del TPM, reinicio del fTPM, reinstalación de Windows o pérdida del equipo principal), GSF no podrá emitir ni renovar licencias hasta publicar una versión de GPOS NG con una llave nueva y que cada cliente la instale; y que, si eso tarda más que la gracia de cada cliente, esos clientes pasarán a solo consulta. Se mitiga con la firma de prueba trimestral y el procedimiento de emergencia ensayado. Riesgo residual: Medio.»*
 
 `[ ] Confirmo FY-15-B`   `[ ] Corregir: ____`
-`[ ] Acepto R-L11-B (variante: con DL-10 / sin DL-10)`   `[ ] Acepto CP-4`   `[ ] Acepto CP-5`
+`[ ] Acepto R-L11-B (con DL-10 / sin DL-10)`   `[ ] Acepto CP-4`   `[ ] Acepto CP-5`
 
-### 4.5 AP-06 · Contrato de suscripción revisado por el asesor legal (antes del primer cliente)
+### 4.5 AP-06 · Contrato de suscripción con el asesor legal (antes del primer cliente)
 
-**Qué debe cubrir** (según lo firmado):
+Debe cubrir:
 - la cláusula del último período;
-- la regla (iii) de D-04: GSF administra la instancia y el TI del cliente no es `sysadmin`;
-- que alterar la instalación (binarios, base, sellos) es un incumplimiento (CP-4 y CP-5).
+- la regla (iii) de D-04 (GSF administra la instancia; el TI del cliente no es `sysadmin`);
+- que alterar la instalación es un incumplimiento (CP-4 y CP-5).
 
-**Agrego dos puntos que salen de F-2:**
-- el contrato **no** debe presentar la firma de las licencias como «hardware validado» ni FIPS mientras se firme en Básico (Q-21);
-- debe prever la reemisión de la licencia al pasar a Avanzado.
+Además, por F-2 y DL-14:
+- no presentar la firma Básica como «hardware validado» ni FIPS (Q-21);
+- prever la reemisión al pasar a Avanzado;
+- **los clientes anuales reciben dos archivos de licencia al año** mientras dure el Básico.
 
-**Qué se necesita del propietario:** encargarlo junto con AI-07 (el mismo asesor) para ahorrar una ronda.
+**Qué se necesita:** encargarlo junto con AI-07, al mismo asesor.
 
-### 4.6 Otros pendientes del propietario (acciones, no decisiones)
+### 4.6 Otras acciones del propietario
 
 | Qué | Cuándo |
 |---|---|
-| **AI-09:** generar `s1` en el TPM de la cuenta dedicada, con devops y con acta (condiciones de `[BP]` 10.6) | Se puede hacer ya; después de decidir DL-13 |
-| Custodia del certificado del servidor y del de recuperación de H-17 v2 (Q-22) | Antes del 2026-11-02 |
-| Activar `contained database authentication` en la PC A para la suite `Rg14` | Antes de PA-12 |
-| Precisión de ADR-58: licencia por empresa contando usuarios, y cláusula de módulos | La prepara el Maestro (sin fecha) |
-| **Quién registra ADR-82 en `master`** (pregunta que el coordinador B ya te pasó) | Antes de unir el lote 1 |
+| **DL-13 / E-1 cumplida y AI-09** (generar `s1` con devops y acta con E-1 a E-15) | AI-09 **después** de DL-13; plan S3-S4 (10-26 a 11-06) |
+| Identificar el segundo equipo para `s1r` (DL-10): que no sea de desarrollo | Antes del 2026-11-20 |
+| Custodia de los certificados de H-17 v2 (Q-22) | Antes del 2026-11-02 |
+| `contained database authentication` en la PC A | Antes de PA-12 |
+| Quién registra ADR-82 en `master` (pregunta que B ya te pasó) | Antes de unir el lote 1 |
 
 ---
 
-## 5. Observaciones del Maestro (contradicciones y huecos encontrados al consolidar)
+## 5. Observaciones del Maestro
 
-| # | Observación | Evidencia | Severidad | Cómo queda |
-|---|---|---|---|---|
-| **O-1** | `[BP]` 0.10 y 10.3 dicen que el riesgo Medio «ya está aceptado» (P-F1, FY-15). Pero el texto literal de FY-15 se apoya en un **equipo dedicado** y en la **caducidad del 2026-12-31**, y ninguna de las dos se cumple con F-2 y F-3 | `[HOJA]`:131; ADR-62, consecuencias | Media (registro) | Lo cubre tu firma de hoy (Medio-Alto temporal). Falta el texto literal FY-15-B (4.4) |
-| **O-2** | **DL-09 choca con una precisión firmada de ADR-62:** la de Q-17 dice que la autorización de regreso trae el campo `instalaciones` «desde L1» y que «el campo no se agrega después de L1». Si se recorta `autNivel`, la autorización entera llega después de L1 | ADR-62, precisión del punto 6 [V] | Baja | Técnicamente es seguro (`crit`). Si se usa el recorte, se registra como precisión de ADR-62 (Q-17). Por eso DL-09 pide el disparador |
-| **O-3** | **Mejora barata para R-B11, para el auditor y el arquitecto-software.** Una licencia falsificada con `s1` puede traer un `vence` lejano y, en un cliente que no actualiza, valdría hasta esa fecha. Propuesta: que la API **rechace los archivos firmados solo en Básico cuyo `vence` supere `emitida` + 200 días** (cubre la reemisión semestral del cliente anual, ADR-61). Tiene que ir en los programas del corte, porque el problema son justamente los clientes que no actualizan | `[BP]` 10.5 (NV-08, R-B11); ADR-61, nota del 2026-10-08 | Media [I] | **Candidata a DL-14.** No la someto a firma hasta que la vean el auditor y el arquitecto-software. Unos 0,25 dp [I] |
-| O-4 | `[BP]` SH-8 sugiere usar el «sello de seguridad» en lugar del hash para DL-05. No cierra SH-5 (ver DL-05 (c)) | `[BP]` 2.2 | Baja [I] | DL-05 recomienda el hash |
-| O-5 | DL-07 depende de que el desarrollador de identidades no tenga otras tareas. El segundo PR de H-11 (rama `a/h11-p7-candado`) también es de backend y debe incorporar D-05 (`usp_RespaldoCopia`) | `[BP]` supuesto 1; `[DAT]` 3 | Media (calendario) | Condición de DL-07. El orquestador asigna H-11 a otra persona o la cuenta en la carga |
-| O-6 | El total de la licencia es «unos 55 dp» en `[BP]` 11.2. La suma de sus propias partidas da entre 53 y 54 | `[BP]` 11.2 | Baja | No cambia ninguna conclusión. Dinero: unos USD 16 000 a 22 000 |
-| O-7 | `[DAT]` 6.3 manda el evento `USUARIO_SIN_SELLO` a `BitacoraSistema`, que no existe | `[DAT]`:1029; `[BP]` C-05 | Baja | Se resuelve con DL-04 |
-| O-8 | **ADR-126** (ningún valor de un tercero en el código): las fuentes NTP del emisor son valores de terceros y deben ir en su configuración. Las llaves públicas y la caducidad de `s1` **no**: van en los programas, por ADR-60, punto 6 («sin interruptores»). Es una excepción de seguridad, no un valor de tercero | ADR-126, punto 1; ADR-60, punto 6 | Baja | Anotado en el borrador de ADR-84 |
-| O-9 | `[BP]` 10.6, condición 2 [I]: la política «PIN en cada uso» del proveedor TPM de Windows no está confirmada | `[BP]` supuesto 4 | Media | Se confirma en el ensayo de AI-09. Si no funciona, el auditor dictamina antes de la primera licencia de pago |
-
-**No encontré contradicciones con ADR vigentes** fuera de las que resuelven F-2 y F-3 (ADR-61, ADR-62, Q-16, Q-19), O-2 (ADR-62, Q-17, solo si se usa DL-09) y las precisiones de ADR-82 (ADR-38 M-4, ADR-44 AC-4 y DD-13 de H-11).
+| # | Observación | Severidad | Cómo queda |
+|---|---|---|---|
+| O-1 | El texto de FY-15 se apoyaba en mitigaciones que ya no existen | Media | Resuelta con FY-15-B (4.4) |
+| O-2 | Si se usa DL-09, contradice la precisión Q-17 de ADR-62 («desde L1») | Baja | Se registra como precisión si se usa |
+| ~~O-3~~ | *Pasó a DL-14 (coincide con SEG-L2-02)* | — | — |
+| O-4 | Ver la discrepancia D-1 (sección 6) | Baja | — |
+| **O-5** | **Margen del calendario.** Con unos 4 dp de remediaciones, el desarrollador I queda con menos de 1 dp de margen en el peor caso (+35 %). Además hay unos 2 a 3 días del auditor para la revisión del emisor | Media | El orquestador vigila H-2 (11-06). Si I se atrasa, se aplican primero los recortes 1 a 3 de `[BP]` 11.4, que no necesitan firma |
+| **O-6** | **El «equipo principal» puede ser el de desarrollo.** E-1 prohíbe que la cuenta administradora compile o ejecute agentes. Si en ese equipo corren los agentes, las compilaciones y los instaladores del DEMO (que piden permisos de administrador), el costo de uso de DL-13 es alto y la superficie de SEG-L2-03 es la máxima | Media | Devops hace un inventario de las tareas de desarrollo que exigen administrador antes de AI-09. Si son muchas, ver D-2 |
+| O-7 | `[BP]` §10.5 y §10.6 siguen en v1 | Baja | El arquitecto-software los actualiza con `[SEG]`, y el auditor hace la lectura de diferencias |
+| O-8 | ADR-126: las fuentes NTP del emisor van en su configuración; las llaves y su caducidad van en los programas (ADR-60, punto 6) | Baja | En el borrador de ADR-84 |
 
 ---
 
-## 6. Registro de la firma
+## 6. Dónde discrepo del auditor (y qué propongo en su lugar)
+
+| # | Punto de `[SEG]` | Mi posición | Alternativa |
+|---|---|---|---|
+| **D-1** | DL-05: el sello cubre «el hash de la contraseña **o** el `SelloSeguridad`» | **El `SelloSeguridad` no basta** [I]. Un `sysadmin` que cambia el hash por SQL deja ese valor intacto, y el sello seguiría verificando | Solo el hash (más el estado del factor del SUPER). Pido al auditor que lo confirme en la lectura de diferencias |
+| **D-2** | SEG-L2-23 (informativa): `s1` en una YubiKey **no FIPS** (unos USD 55) con toque obligatorio | **De acuerdo con el fondo, pero comprar la serie FIPS cuesta casi lo mismo.** La FIPS cuesta unos USD 88, unos USD 33 más (precios de lista sin verificar). Si se van a comprar YubiKeys, conviene comprar las FIPS: sirven ya para `s1` y `s1r` en nivel Básico, con el proveedor YubiKey y el toque obligatorio, y después para la ceremonia sin otra compra | **Opción para tu decisión, no recomendación sobre F-2:** comprar ya dos YubiKeys FIPS de licencias (unos USD 176), usarlas en Básico con toque obligatorio en lugar del TPM, y hacer la ceremonia cuando quieras. Cierra la firma silenciosa (Bajo-Medio según `[SEG]`), sustituye a DL-10 y reduce el costo de uso de DL-13 (O-6). **Toca el «TPM» de F-2, así que solo procede si tú lo eliges** |
+| D-3 | DL-13 / E-1: la cuenta administradora «nunca compila ni ejecuta agentes» | De acuerdo con la regla. Discrepo solo en que sea viable sin más en un equipo de desarrollo (O-6) | Inventario previo de devops; si no es viable, D-2 o un equipo distinto para firmar |
+| D-4 | DL-12: «fecha de compra» obligatoria | De acuerdo con la caducidad de la aceptación (2027-03-31). La fecha de compra la pongo como campo tuyo, no como condición, para no reabrir F-3 | Si el auditor la exige como condición, basta con una fecha cualquiera no posterior a la revisión |
+
+En todo lo demás coincido con `[SEG]`: DL-01 (a)+(b), DL-02 con la condición de Release, DL-03 después de la fase A de ADR-81, DL-05 y DL-13 obligatorias, DL-10 con condiciones, la cofirma de DL-11, DL-14 a 200 días y las condiciones de la primera licencia de pago.
+
+---
+
+## 7. Registro de la firma
 
 | Campo | Valor |
 |---|---|
 | Firmado por | |
 | Fecha | |
 | Respuesta literal | |
-| Dictamen de seguridad incorporado en DL-10 a DL-13 | `[ ]` Sí, informe: ____ `[ ]` Firmado sin esperarlo |
+| Lectura de diferencias del auditor sobre `[BP]` actualizado | `[ ]` Hecha: ____ `[ ]` Pendiente |
 
 **Si firmas según la recomendación:**
-- el desarrollador L arranca L1a-1 y el desarrollador I arranca el lote 1 con PA-47 (semana 1);
-- el arquitecto de datos diseña `BitacoraSeguridad`, el padrón y `CambiosRnc`;
-- devops prepara AI-09 con las condiciones de 10.6 (y DL-13);
-- el documentador registra ADR-82, ADR-83 y ADR-84 a partir de los borradores (`borradores-adr-082-084-2026-10-14.md`) y las precisiones de ADR-59, ADR-60, ADR-61, ADR-62 y ADR-81.
+- **no se genera `s1` (AI-09) hasta cumplir DL-13 / E-1**;
+- el desarrollador L arranca L1a-1 e incorpora DL-14 en L1a-2;
+- el desarrollador I arranca el lote 1 con PA-47 y construye SL con DL-01 (a)+(b), DL-02 y DL-05;
+- el arquitecto-software actualiza `[BP]`;
+- el arquitecto de datos diseña `BitacoraSeguridad`, el padrón con nivel y `CambiosRnc`;
+- devops prepara E-1 a E-15 y el inventario de O-6;
+- el documentador registra ADR-82 a 84 a partir de `borradores-adr-082-084-2026-10-14.md`.
 
 **Si rechazas alguna:**
-- **DL-01, DL-02 o DL-05:** el sello se construye con el diseño de `[DAT]` 6.3 y el hueco queda como riesgo aceptado por escrito;
-- **DL-03:** hay que redactar otra prueba de NV-07, o aceptar que un cambio de RNC del ADMIN deja la empresa `Invalida` sin gracia;
-- **DL-07:** el orquestador presenta otro reparto, o se recorta el emisor a enero;
-- **DL-10 a DL-13:** se esperan las condiciones del auditor.
+- **DL-01, DL-05, DL-13 o DL-14:** quedan abiertos hallazgos Altos o Medios del auditor. Hace falta una aceptación escrita adicional y **la primera licencia de pago queda bloqueada** en el caso de DL-13 y DL-14;
+- **DL-03:** hay que redactar otra prueba de NV-07;
+- **DL-07:** el orquestador presenta otro reparto o el emisor pasa a enero;
+- **DL-10:** queda R-B12 (Medio / Alto), aceptado con R-L11-B sin DL-10.
+
+---
+
+## Anexo A · Condiciones E-1 a E-15 del equipo y la cuenta de firma (resumen de `[SEG]` §6)
+
+Las verifica devops contigo y quedan en el acta de AI-09 **antes de generar `s1`**.
+
+| # | Condición |
+|---|---|
+| **E-1** | **Cuenta diaria estándar** y cuenta administradora aparte, solo para mantenimiento (nunca navegar, correo, compilar ni agentes); UAC en «notificar siempre». **Obligatoria (DL-13)** |
+| E-2 | `gsf-firma`: cuenta local estándar, sin cuenta Microsoft, escritorio remoto, correo, navegador ni sincronización; contraseña de 16 caracteres o más, no guardada en el equipo |
+| E-3 | Se entra solo para firmar y **se cierra la sesión** al terminar |
+| E-4 | El firewall bloquea todo el tráfico saliente de `gsf-firma` salvo NTP hacia las dos fuentes del emisor [I] |
+| E-5 | Ninguna herramienta de acceso remoto activa durante la firma (recomendado: ninguna instalada) |
+| E-6 | `s1` no exportable, PIN pedido en cada firma (comprobado con dos firmas seguidas), PIN de 8 caracteres alfanuméricos o más, no guardado en el equipo |
+| E-7 | TPM revisado (fabricante, modelo y firmware; no afectado por TPM-FAIL) y **prueba negativa**: intentar usar la llave desde la cuenta administradora |
+| E-8 | Resumen derivado de los bytes que se firman y verificación posterior con la llave pública publicada |
+| E-9 | Carpeta de la llave fuera de respaldos, instantáneas y sincronización desde la generación |
+| E-10 | BitLocker con PIN de arranque; clave de recuperación fuera del equipo |
+| E-11 | Emisor compilado de forma reproducible fuera del equipo emisor, con el hash comparado en otro dispositivo e instalado en `Program Files` con la cuenta administradora |
+| E-12 | Registro encadenado; el ancla la envías **desde otro dispositivo** (por ejemplo, el teléfono); copia semanal fuera de Drive |
+| E-13 | Arranque seguro, integridad de memoria (HVCI), Defender con protección contra alteraciones, Windows Update al día, `w32time` confiable |
+| E-14 | Auditoría de los usos de la llave y comparación mensual con el registro del emisor [I] |
+| E-15 | AP-03 adaptado: nunca reiniciar el fTPM ni borrar el TPM; protocolo antes de actualizar el BIOS; firma de prueba trimestral |
+
+**Costo:** 0 en dinero, unos 0,75 dp de devops.
+
+## Anexo B · Hallazgos de `[SEG]` que se resuelven al construir (sin firma)
+
+| Hallazgo | Qué se hace | Dónde |
+|---|---|---|
+| SEG-L2-04 (Media) | SH-2 baja de Alta a Media. El sello protege el cupo, el nivel y la sucursal, no los permisos granulares (residual de CP-4). Se mantiene la verificación por petición | `[BP]` §2.2, `[DAT]` 6.2 |
+| SEG-L2-08 / 09 (Media) | Emisor reproducible y revisado; `SecVigente`, `LidVigente` y SHA-256 en la solicitud, comparados por el emisor | Condiciones de la primera licencia de pago (sección 1) |
+| SEG-L2-14 (Baja) | Ancla desde otro dispositivo; `gsf-firma` sin escritura en carpetas sincronizadas | E-12 |
+| SEG-L2-15 (Baja) | L-08 (licencia vigente) solo para el SUPER | L1b |
+| SEG-L2-16 (Baja) | S-03 idempotente | DL-03 |
+| SEG-L2-17 (Baja) | El sello se comprueba **antes** que la contraseña, con hash ficticio | SL |
+| SEG-L2-18 (Baja) | Rechazar firmas con `s` alto, o «ya aceptado» sobre la entrada de la firma; vector negativo | L1a-1 |
+| SEG-L2-19 (Baja) | Resumen derivado de los bytes; verificación tras firmar; vectores DER con ceros | EM |
+| SEG-L2-20 (Baja) | Caché global del padrón por versión | SL |
+| SEG-L2-21 (Inf.) | Verificador con `ECDsa` de la plataforma; Q-21 se mantiene | L1a-1 |
