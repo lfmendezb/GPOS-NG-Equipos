@@ -218,3 +218,52 @@ Es una recomendación técnica. La decisión de unir la toma el propietario (C2)
   - devops: CR-04 (b), la publicación solo con `-c Release` y la comprobación automática de que el ensamblado no trae `LlavesGsf.Desarrollo.json` (QA-L17); CR-11, que la salida publicada no incluya `GPOS.Tests.dll`.
   - qa-automatizado: los vectores de CR-08 y la prueba de contrato de CR-10.
 - Próximo paso recomendado: que el desarrollador L aplique CR-06 y CR-01 en el PR #29 y el resto en el PR #30 o en uno de seguimiento antes de empezar L1a-2.
+
+---
+
+## 8. Lectura de diferencias (2026-10-14, segunda pasada)
+
+**Commits:** PR #29 `4c3d8760..945e5c62`; PR #30 `1068bd36..df85bc00`, que pasa por la unión `2666e4ad`. Revisé solo en lectura, sin compilar. Las pruebas son las que declara el coordinador: 167/168 en Debug y en Release (1 omitida a propósito, la de SEG-L2-24) y 115/115 de arquitectura. **No las reproduje.**
+
+### 8.1 Estado de cada hallazgo
+
+| ID | Estado | Evidencia y comentario |
+|---|---|---|
+| CR-01 | **Cerrado** | `Llaves` y `Buscar` devuelven copias (`Copia`) y el verificador usa `BuscarInterna`, que es `internal` (`ConjuntoLlaves.cs`, `VerificadorJws.cs:106`). Hay una prueba que muta lo devuelto y la entrada |
+| CR-02 | **Cerrado** | `FormatoKid` (`^[a-z0-9-]{1,32}$`, `LlaveGsf.cs:85-96`) se exige en el encabezado y en el recurso. El `nivel` del encabezado tiene que ser un valor de `NivelesLlave` (`VerificadorJws.cs:218-219`). Hay vectores de mayúsculas, salto de línea, espacios, guion bajo, ñ, 33 caracteres y frontera de 32, y `KidsIgnorados` queda vacío al rechazar |
+| CR-03 | **Cerrado** | Hay `try/catch (CryptographicException)` en `VerificaFirma`, y la importación también queda dentro del bloque |
+| CR-04 | **Cerrado en el código**; la parte de devops sigue abierta | La condición del `.csproj` usa el símbolo `DEBUG`, el mismo criterio que `Compilacion.Depuracion`, y una prueba comprueba que los dos coinciden en la compilación que corre. Sigue pendiente en devops: publicar solo con `-c Release` y comprobar que el recurso de desarrollo no está (QA-L17) |
+| CR-05 | **Cerrado** | Hay dos tipos distintos, `Sha256Contenido` y `Sha256Archivo` (`Huellas.cs`). El constructor es interno y `DesdeHex` valida 64 caracteres hexadecimales y normaliza. `MismaSec` solo acepta `Sha256Contenido` y rechaza `default`. SEG-L2-24 queda anclado en el `summary` y en una prueba omitida. Residual, informativo: `DesdeHex` tiene que leer la columna correcta en L1a-4; eso no se puede comprobar con tipos |
+| CR-06 | **Cerrado** | `ResultadoJws` y `FirmaVerificada` tienen constructores `internal` y propiedades sin `init`, así que `with` no puede cambiarlas. Las listas se copian en una `ReadOnlyCollection`. Una prueba por reflexión lo vigila |
+| CR-07 | **Cerrado** | `CriptografiaArquitecturaTests` lee los metadatos y el IL, incluidos los métodos asíncronos y las lambdas, y comprueba tres cosas: solo referencias del marco; nada de E/S de archivos, registro, entorno, configuración, red, procesos, datos ni X509; y solo `RecursoLlavesGsf` llama a `GetManifestResourceStream`. Hay dos límites menores, informativos: el lector descarta en silencio los tokens que no resuelve (`catch (ArgumentException)`), y `System.Reflection` (`Assembly.Load*`) no está en la lista de prohibidos. Conviene agregarlo |
+| CR-08 | **Cerrado en parte** | Se agregaron `b64` en el encabezado no protegido y las firmas límite (r o s = 0, = n y = n + 1, todo ceros y todo unos), que esperan 422. **Residual (Baja, solo prueba):** el vector `Un_duplicado_escrito_con_escapes_en_el_contenido_o_en_el_encabezado_protegido_se_rechaza` escribe `"vence"` y `"alg"` en literales C# normales. El compilador los convierte en `vence` y `alg` antes de llegar al JSON, así que prueba un duplicado **literal**, no uno escrito con escape. Hay que usar `\u0076ence` y `\u0061lg`, o un literal *verbatim* o *raw*, como hace el vector del contenedor (`\u0070ayload`). El código lo cubre igual: `GetString` desescapa |
+| CR-09 | **Cerrado** | `TryGetInt32` en `RecursoLlavesGsf.cs:74`. Hay vectores de versión decimal, fuera de rango y como texto, también contra `DesdeRecurso` |
+| CR-10 | **Cerrado** | `EstadoLicenciaUsuarioDto(string Estado, bool Franja)` es un tipo aparte, y una prueba de contrato comprueba que solo trae esos dos campos. Que la ruta L-01 lo use para el USER queda para L1a-3/L1b |
+| CR-11 | Sin cambio (informativo) | Sigue la entrega a devops: que la publicación no incluya `GPOS.Tests.dll` |
+| CR-12 | Sin cambio (informativo) | Para L1a-2 |
+
+### 8.2 Resolución del conflicto en `ConjuntoLlaves.cs` (unión `2666e4ad`)
+
+Es correcta. En `df85bc00` el archivo conserva las tres cosas que tenía que conservar:
+- de la rama del PR #30, la fábrica `DesdeRecurso`, sin llaves de desarrollo y envolviendo los errores en `InvalidDataException`;
+- de la rama del PR #29, las copias en `Llaves` y `Buscar` y el `BuscarInterna` interno (CR-01);
+- `Validar` con `FormatoKid`, que llegó después de la unión, en `df85bc00`.
+
+No se perdió nada de ninguno de los dos lados. `ConRetiros` y `DeFuncion` siguen pasando por el constructor, que vuelve a validar y a copiar. El verificador es el único que usa `BuscarInterna`.
+
+### 8.3 Dictamen final
+
+| PR | Recomendación | Motivo |
+|---|---|---|
+| **#29** (`945e5c62`) | **Aprobado** | CR-01, CR-04 (código), CR-06 y CR-10 están cerrados. Lo que queda (CR-04 en devops y CR-11) es de la canalización, no del PR |
+| **#30** (`df85bc00`) | **Aprobado con observaciones** | Todo está cerrado salvo el residual de CR-08: un vector que no prueba el escape que dice probar, ≈ 0,01 dp. Es un arreglo de prueba y puede ir en un PR de seguimiento sin bloquear la unión. Además, dos informativos de CR-07 (agregar `System.Reflection` a los prohibidos y no descartar en silencio los tokens) |
+
+Sin hallazgos Críticos, Altos ni Medios. Es una recomendación técnica: la unión la decide el propietario.
+
+### Cierre (lectura de diferencias)
+- Estado: PR #29 Aprobado; PR #30 Aprobado con observaciones
+- Artefactos: este informe (sección 8 agregada)
+- Supuestos: los resultados de las pruebas son los declarados, sin reproducir
+- Decisiones candidatas a ADR: Ninguna
+- Entregas a otros agentes: desarrollador-backend (L) → corregir los escapes del vector de CR-08 y, si quiere, los dos ajustes de CR-07; devops → CR-04 (b) y CR-11
+- Próximo paso recomendado: unir el PR #29 y después el #30, con el ajuste del vector de CR-08 en un PR de seguimiento
