@@ -6,8 +6,9 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Retoma 2026-10-14 (Claude):**
   - **Corredor de pruebas desbloqueado:** la causa era `testhost.exe`; el arreglo es borrarlo tras compilar.
   - **PR #24 en `cd456f4c`:** SEC-H11-01 y guardas de arquitectura, 121/121.
-  - **En curso:** la suite completa de H-2 y el segundo PR de H-11 (`a/h11-sysdata-candado`).
-  - Ver el aviso `2026-10-14-corredor-pruebas-y-pr24`.
+  - **H-2:** 2165/8/18; 5 fallas sin explicar y pendiente de rebase; sin PR.
+  - **PR-2b de H-11:** subido en `30606afc`; 123/123 sin SQL; pruebas con SQL pendientes.
+  - **En pausa** por la actualización de Windows y el reinicio. Ver el aviso `2026-10-14-h2-suite-y-pausa-por-reinicio`.
 - **Entrega 2026-10-11:** PR #24 actualizado a `3a3a6920`: impide escrituras de negocio con candado de empresa desconocido; 8/8 pruebas sin SQL y compilación con 0 errores. Ver aviso `2026-10-11-h11-candado-desconocido-corregido`. Revisión parcial, sin aprobación global ni unión; PDS-06 e integración pendientes.
 - **Retoma 2026-10-11 por encargo del propietario:** Codex continúa los pendientes de A. H-2 en 37694341: compilación comprobada; validación SQL bloqueada (16 pruebas de NCF histórico, 0 aprobadas por acceso denegado al aprovisionar). Ver aviso `2026-10-11-retoma-h2-bloqueo-corredor`. PR #24 sigue sin unir; revisión de seguridad/PDS-06, H-11 sistema, H-6 aplicación y T3-12/RG-14 pendientes.
 - **Actualizado:** 2026-10-10, 10:50
