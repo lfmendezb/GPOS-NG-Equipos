@@ -61,6 +61,18 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-14, noche:**
+  - **Unidos a `feature/modelo-ng` `e59d8de`:** PR #29 → #30 (licencia L1a-1) y #25 → #27 (H-2, H-3 y H-6), los cuatro validados contra lo firmado.
+    - Suite oficial del árbol integrado: 2470 correctas (2 fallas de entorno, en verde al repetirlas).
+    - Web 636/636; MAUI 556/556; Mvp 22/22 en las dos instancias.
+    - Aviso `2026-10-14-uniones-29-30-25-27-y-rebase-24-26-28`.
+  - **Las «5 fallas de la base» de A** son pruebas `Transicion=Ola5/Defecto`, fuera del filtro oficial. La base `4ace678` está sana.
+  - **Regla de marcas de migraciones:** siguen el orden de unión; la rama que llega después las regenera.
+  - **Por unir, en orden:**
+    1. #24 → #26 (A rebasa; H-11 con marca nueva);
+    2. #21 (C rebasa; marca nueva; B corre el SQL);
+    3. #28 (RG-14 lote 1, después de #24 por GRANT/DENY de BACKUP).
+  - **Al propietario:** los 2 supuestos de #24, las 2 preguntas de #26, la hoja DL (DL-07 y DL-08 antes del 16-oct) y quién prepara ADR-82.
 - **2026-10-14, tarde (B en el equipo LFMB, tras el traspaso de emergencia):**
   - **Unido a `feature/modelo-ng` `ad6015d`:** `b/demo-2026-10-10b`, `b/demo-revision-1` y la propuesta de `b/config-terceros`.
     - Mvp 22/22 en las dos instancias; Web 610/610; MAUI 538/538.
