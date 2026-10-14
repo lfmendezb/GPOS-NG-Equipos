@@ -148,10 +148,38 @@ El `DENY VIEW DEFINITION` por esquema (D-11) no alcanza los objetos de ámbito d
 
 **Aprobado con observaciones** (recomendación técnica; la decisión de unir es del propietario). No quedan hallazgos Críticos ni Altos. El Medio SEG-RG14-01 conviene cerrarlo antes de unir o dejarlo registrado como condición explícita del lote 1, porque afecta al control compensatorio de una decisión firmada (D-11).
 
+## 8. Lectura de diferencias `4d10ecaf..f1551aa8` (2026-10-14)
+
+Revisé en solo lectura los commits `57ec5dea` y `f1551aa8`, sin compilar. Los resultados de las pruebas (Rg14 31/32 con 1 omitida; Arquitectura 111/111) los informa el coordinador; no los verifiqué.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| SEG-RG14-01 (Media) | **Cerrado** | `PermisosLecturaReportes.cs` `SqlT312`: sin `DENY VIEW DEFINITION` en `rpt`, `rptc` e `imp`, y retira el que hubiera dejado la versión anterior (`REVOKE` con `QUOTENAME`). `PrivilegioMinimoSistema.cs`: lo mismo para `rptsis`. S4 agrega `GRANT_ROL_LECTURA` (clases 1 y 3, todo lo que no sea el `SELECT` permitido por rol y esquema). Nueva prueba con `TAKE OWNERSHIP` sobre `rpt.VentaDocumento`: la detectan O-2 y S4 |
+| SEG-RG14-02 (Baja) | Abierto, para el lote 2 | Sin cambios; DL-02 / SEG-L2-05 y PUB-06 |
+| SEG-RG14-03 (Baja) | **Cerrado** | `VERIFICADOR_SIN_VISIBILIDAD` en la base (`VIEW DEFINITION`) y en la instancia (`VIEW ANY DEFINITION`); no es aviso, así que cuenta para `--estricto` |
+| SEG-RG14-04 (Baja) | **Cerrado** | `PERMISO_SOBRE_PRINCIPAL` (clase 4); los 15 `DENY` de `gpos_app` y de `gpos_api`; `DENY` de `conf.__EFMigrationsHistory`; `DELETE` en `SobresAbiertos` (S5). Lo que la lista no cubre (`CREATE ASSEMBLY` y similares) queda como defensa en profundidad no exigida |
+| SEG-RG14-05 (Baja) | Abierto, para el lote 2 | Sin cambios (límite de frecuencia de `usp_RespaldoCopia`) |
+| SEG-RG14-06 (Baja) | **Cerrado** | La clave viaja como parámetro y entra con `QUOTENAME(@c, '''')`; el login se crea deshabilitado y sin `CHECK_POLICY = OFF`; al empezar se barren los `gpos_test_pa47_%` de tipo `S` (patrón con `_` escapado). Los usuarios huérfanos que dejara una corrida interrumpida quedan solo en bases `GPOS_TEST_*` |
+| SEG-RG14-07 (Baja) | **Cerrado** | `IdentidadSql.cs`: la captura pasa a `when (ex is not OperationCanceledException \|\| !ct.IsCancellationRequested)`, solo con el número o el tipo, nunca el mensaje |
+| SEG-RG14-08 (Baja) | Abierto, ahora algo más amplio | Ver la evaluación de D-11 abajo |
+
+**Consecuencia de D-11: aceptable.** Si un administrador concede `GRANT VIEW DEFINITION TO public` (o a los roles de lectura), los usuarios de reportes verían la definición de las vistas de `rpt`, `rptc`, `imp` y `rptsis`. Las razones para aceptarlo:
+- Es metadato: texto SQL, tablas y columnas de origen. No hay filas.
+- Cada empresa tiene su propia base, así que no se cruzan datos entre empresas.
+- La consecuencia exige primero un error administrativo.
+- Esa cuenta ya lee las filas de esas mismas vistas.
+- A cambio, O-2 conserva la cobertura de objeto en los esquemas que la credencial lee, que es la más valiosa.
+
+Riesgo residual: Bajo. Remediación barata, que sigue abierta como SEG-RG14-08 para el lote 2: S4 debe marcar un `GRANT VIEW DEFINITION` o `SHOWPLAN` de nivel de base a `public` o a los roles de lectura (hoy `PERMISO_ADMIN` no lo incluye). ≈ 0,05 días-persona.
+
+**Observación nueva (sin severidad).** El texto de la migración `Rg14PrivilegioMinimo` cambió después de `4d10ecaf`. Una base de desarrollo o del DEMO que ya la hubiera aplicado conserva el `DENY` en `rpt`, `rptc` e `imp` (más restrictivo) hasta que se vuelva a aplicar `crear-lectura`. Si alguna base la aplicó, conviene reaplicar la constante o recrear la base.
+
+**Dictamen final: Aprobado con observaciones** (recomendación técnica; la firma es del propietario). No quedan hallazgos Críticos, Altos ni Medios. Quedan abiertos tres Bajos (02, 05 y 08), asignados al lote 2.
+
 ### Cierre
 - Estado: Aprobado con observaciones
 - Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\revision-seguridad-pr28-rg14-lote1-2026-10-14.md`
 - Supuestos: sin compilar ni ejecutar pruebas (pedido expreso), así que los resultados de las pruebas no se confirmaron; SUPER es de la plataforma (memoria «sucursal-en-linea-sqlite-y-licencia»); el técnico que ejecuta `verificar` es `sysadmin` (D-09, D-04 iii).
 - Decisiones candidatas a ADR: ninguna nueva. Precisar D-11: si `rpt`/`rptc`/`imp` llevan el `DENY VIEW DEFINITION` y cuál es el control compensatorio en S4.
 - Entregas a otros agentes: arquitecto-datos → S4 con `GRANT_ROL_LECTURA` y alcance de D-11 (SEG-RG14-01, 03, 04, 08); backend → captura amplia en `IdentidadSql` (07) y límite del respaldo (05); qa-automatizado → PA-47 parametrizado y barrido (06), prueba de `TAKE OWNERSHIP` en `rpt`; devops → `ModoIdentidad` en la lista de PUB-06 y comprobación del paquete (02).
-- Próximo paso recomendado: decidir SEG-RG14-01 (corregir en este PR o registrarlo como condición) y unir el PR #28.
+- Próximo paso recomendado: el propietario decide la unión del PR #28 (`f1551aa8`); SEG-RG14-02, 05 y 08 pasan al lote 2.
