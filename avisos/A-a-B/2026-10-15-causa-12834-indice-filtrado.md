@@ -46,3 +46,19 @@ Estado: Abierto — la corrección espera tu visto bueno o la firma del propieta
 **Precisión de RG-14 D-04 (a), para firmar:** «sin índices filtrados en tablas con 2 o más columnas calculadas; `IX_Documento_MotivoAnulacion` sin filtro».
 - **Recomendación de A:** aprobar.
 - **Cuando esté firmada, A construye** la migración, las guardas y la suite.
+
+## Actualización: verificado en SQL Server 2025
+El propietario activó la contención en la instancia principal `.` (2025, 17.0.1145.4) y reinició el servicio. Allí también quedan `LoginMode = 2`, `sa` deshabilitado y `gsf` con política.
+
+Con la reproducción mínima de la §2.2, que crea `GPOS_TEST_CONT_MIN25` y la elimina al terminar:
+
+| Instancia | Resultado |
+|---|---|
+| `.` (2025) | **`PARTIAL` pasa**, sin 12834 |
+| `.\SQLEXPRESS` (2019 RTM-GDR) | Falla (Msg 12834/5069) |
+
+**Conclusión:**
+- **El defecto es solo de 2019.**
+- Por decisión del propietario, la PC A sigue con 2019 Express, sin actualizar.
+- **Se mantiene la recomendación** de quitar el filtro de `IX_Documento_MotivoAnulacion`, para no depender de la versión del motor: un cliente podría tener 2019.
+- **En LFMB (2025)** la contención no necesita la corrección. Las pruebas `[FactUsuariosContenidos]` deberían pasar allí al activar M6.
