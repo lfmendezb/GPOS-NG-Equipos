@@ -74,6 +74,13 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-15, tarde-noche:**
+  - **Unidos a `feature/modelo-ng`, por decisión del propietario (`65d4324f`):** el **#42** (L1b-2) y **A-N3**.
+    - Sin licencia cargada el cupo es 0: el DEMO se actualiza desde una rama anterior al #42 hasta tener `s1`.
+    - El DEMO se publica ahora con `-Destino Demo`.
+  - **`b/prep-27oct` (`fe5f08f8`)** trae la punta y corrige la lectura de plan de `Uf05PlanTests` (952 junto con Mvp).
+  - **Pendiente:** la suite oficial completa y T6, con la máquina sola, antes del 27-oct.
+  - Aviso `B-a-A/2026-10-15-unidos-42-y-a-n3-65d4324f`.
 - **2026-10-15, noche (sesión nueva de B):** el propietario firmó según la recomendación las DL pendientes de la licencia (DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18 a DL-22 con 2 min en DL-22, C-1, C-5 y las P de v2.2 a v2.4). Siguen pendientes C-3, C-2/C-4 (conocimiento), AP-04, la fecha de compra de DL-12 y el custodio suplente. Aviso `B-a-A/2026-10-15-firmas-dl-segun-recomendacion`. **`b/prep-27oct` rehecha sobre `7898beeb` → `855ea392`** (respaldo de la anterior en `b/prep-27oct-antes-rebase-15oct`): T1 `20261015010000`, 3b `20261015020000`, TI, #38 y un solo guion; Mvp 24/24 en las dos instancias. **A-N2 construida por B y unida (`799a5add`, `Uf05ForceSeek 20261015142020`)**; **A-N3 hecha** (`b/devops-publicacion` @ `e6457402`, sin unir; el DEMO se publica ahora con `-Destino Demo`); suite oficial completa sobre `855ea392`: **3115 correctas, 2 fallas de concurrencia (K1_01 y CP170, pasan solas) y 27 omitidas**; tras A-N2, una corrida reducida, y la completa otra vez antes de unir, junto con T6. Aviso `B-a-A/2026-10-15-prep-27oct-rehecha-sobre-7898beeb`.
 - **2026-10-15, tarde:** unidos #40, #41, #39, #34 y #37 (`7898beeb`); #38 a `b/prep-27oct`; #42 rechazado (interruptor de UseLicencia, Estricto sin InstalacionId, Web sin migrar, DL-02). **Cambio de sesión de B:** traspaso `traspasos/B/2026-10-15-traspaso-B-cambio-de-sesion.md`.
 - **2026-10-15:** unidos a `feature/modelo-ng` #24, #26, #21, #28 (`bc15304d`) y #36, #32, #33, #35 (`30b4d5b3`). Mvp 22/22 en las dos instancias; suite oficial sin fallas propias (PA30/PA40 fallan en LFMB por el modo «solo Windows»). #34 y #37 esperan los 3072 bits de H-17 v2. T6: criterios 1 y 2 en verde, faltan 2 corridas por lado (dispersión). Aviso `2026-10-15-unidos-24-26-21-28-36-32-33-35`.
