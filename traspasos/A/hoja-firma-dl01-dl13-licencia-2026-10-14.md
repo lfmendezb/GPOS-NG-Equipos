@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-17: licencia firmada en el lote 2 de RG-14 (v2.4)
+# Hoja de firma DL-01 a DL-17: licencia firmada en el lote 2 de RG-14 (v2.5)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.4 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2.5 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -13,6 +13,7 @@
 | **2.2** | 2026-10-14 | Incorpora el blueprint v2.2 (validación del PR #31, L1a-3 «Motor de estados») y el inventario O-6.<br>- **Agrega DL-15** (H-3, Media): un archivo sin firma Avanzada respeta el mínimo de la transición al acortar un `vence`.<br>- **DL-03** recoge la precisión P-3 / SEG-PR31-01: S-03 escribe la fila «del RNC licenciado al actual», conservando `RncAnterior` y `CambiadoUtc`; la fila solo vale contra la licencia aceptada antes del cambio.<br>- **Inventario O-6:** la PC A no cumple E-1 (con SEG-L2-25), E-5, E-10 ni E-13. Recomienda DL-10 (b) y que el propietario **confirme cuál es el equipo principal**.<br>- Cargas actualizadas: L ≈ 25,05 dp; I ≈ 24,25 dp con el recorte 1 (26,25 dp sin él) |
 | **2.3** | 2026-10-14 | Incorpora el blueprint v2.3 (validación del modelo de datos de L1a-4, `[VDL]`).<br>- **Agrega DL-16:** la bitácora deja de ser fuente de `UltimaVerificacionUtc`.<br>- **Sección 3.1 nueva («Confirmaciones»):** la regla 3 de la §6.1.1, que el auditor pidió confirmar con firma, y las precisiones de `[DAT]` 6.3 que `[VDL]` confirmó (información, sin decisión) |
 | **2.4** | 2026-10-14 | Incorpora el blueprint v2.4 (validación del PR #32, L1a-2 «Reglas de aceptación») y la revisión del auditor `[RA]`.<br>- **Agrega DL-17** (RA-01, Media): el techo de 48 h de INV-6 se mide solo sobre el reloj protegido.<br>- **Sección 3.1:** agrega **C-3** (RA-06: fechas civiles en hora de RD para DL-14 y `aceptarHasta`) y **C-4** (RA-04: procedimiento de GSF ante una sospecha sobre el emisor) |
+| **2.5** | 2026-10-14 | **Registra la firma del propietario de DL-07 (a), con el recorte 1, y DL-08 (a)** (sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firma-dl07-dl08.md`). Sin otros cambios |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -67,8 +68,8 @@ Ya **no** exige AP-01 ni AP-05.
 | DL-03 | El RNC solo lo cambia el SUPER; la ruta sale tras la fase A de ADR-81 | **Aprobar con la condición** | 1,25 dp + pantalla | 2026-11-13 |
 | DL-04 | Eventos en `BitacoraSeguridad`, con una sola DDL | **Aprobar** | 0,5 dp | 2026-10-30 |
 | DL-05 | El sello cubre el hash de la contraseña y, en el SUPER, el estado del factor | **Aprobar, obligatoria** | 0,75 dp | 2026-11-06 |
-| DL-07 | Reparto entre los dos desarrolladores, con revisión de código del emisor | **Aprobar, con el recorte 1 anticipado** | 0 + revisión | **2026-10-16** |
-| DL-08 | La licencia queda construida para el corte | **Aprobar** (registro) | 0 | 2026-10-16 |
+| DL-07 | Reparto entre los dos desarrolladores, con revisión de código del emisor | **FIRMADA 2026-10-14: (a) con el recorte 1** | 0 + revisión | **2026-10-16** |
+| DL-08 | La licencia queda construida para el corte | **FIRMADA 2026-10-14: (a)** | 0 | 2026-10-16 |
 | DL-09 | Recorte de `autNivel` si hay atraso | **Autorizar con disparador** | −1,75 dp si se usa | 2026-11-13 |
 | DL-10 | Respaldo de `s1` frente a la pérdida: (a) `s1r` en TPM o (b) YubiKeys en Básico | **Aprobar (b)** si aceptas el gasto y cambiar el «TPM» de F-2; si no, (a) | (a) 0,5 dp · (b) ≈ USD 110 (no FIPS) o ≈ USD 176 (FIPS), a tu elección | 2026-11-20 |
 | DL-11 | La caducidad de `s1` la fija la versión con YubiKeys; cofirma en la transición | **Aprobar** | Incluido | 2026-12-01 |
@@ -218,7 +219,7 @@ Ya **no** exige AP-01 ni AP-05.
 | (a') Reparto propuesto, sin recorte | 24,3 dp | 26,1 dp | En el centro sí; en el peor caso I se pasa en unos 0,8 dp |
 | (b) Reparto literal | ≈ 38 dp | ≈ 6 dp | No |
 
-`[ ] Aprobar (a)`   `[ ] (a')`   `[ ] Otra: ____`
+`[x] (a), con el recorte 1`, **FIRMADA por el propietario el 2026-10-14** (sección 7). Condiciones: (1) el desarrollador I no tiene otras tareas hasta el corte; (2) revisión de código del auditor-seguridad de `GPOS.Criptografia` y del emisor antes de la primera licencia de pago; (3) recorte 1 adelantado: el tablero, el CSV de pagos y la subida a Drive del emisor pasan a enero.
 
 ---
 
@@ -233,7 +234,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **(a) Registrar (recomendada)** | Hitos H-1 (10-23), H-2 (11-06), H-3 (11-13) y código completo (12-04) |
 | (b) Mantener Q-24 y Q-25 | Contradice F-1 |
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-14** (sección 7): hitos H-1 (10-23), H-2 (11-06), H-3 (11-13), código completo (12-04) y corte (12-15).
 
 ---
 
@@ -571,9 +572,10 @@ Encargarlo con AI-07, al mismo asesor.
 
 | Campo | Valor |
 |---|---|
-| Firmado por | |
-| Fecha | |
-| Respuesta literal | |
+| Firmado por | Leonardo Méndez (propietario), en la sesión de B, recibido por el aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firma-dl07-dl08.md` |
+| Fecha | 2026-10-14 |
+| Respuesta literal | «Firmo DL-07 y DL-08 Fijando a los dos desarrolladores en paralelo». Precisión respondida: DL-07 en la variante «(a) con recorte 1» |
+| Firmadas | **DL-07 (a) con el recorte 1** (con sus tres condiciones) y **DL-08 (a)** (hitos H-1 10-23, H-2 11-06, H-3 11-13, código completo 12-04 y corte 12-15). **Las demás DL, C-1, C-3 y AP-04 siguen Pendientes de firma** |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
