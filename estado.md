@@ -180,5 +180,12 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - quién prepara ADR-82.
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
 - **DEMO:** probar la actualización del 2026-10-08 en LAPTOP-DUMQQ5QK (memoria de SQL Server 1.024 / 3.072 MB) y medir la importación de suplidores y clientes.
-- **Backup Tool:** indicar la unión tras la revisión de QA de B; firmar la fuente de carpeta (BT-01 a BT-09); comparar el literal de `1bd735f` con la clave heredada real; L-1 a L-7 y K-1 a K-5 en cada instalación.
+- **Backup Tool, revisión para producción del 2026-10-14: NO LISTO.**
+  - 10 bloqueantes (B1 a B10; 3 críticos: instalador, cuenta y ACL del servicio, retención).
+  - Unos 2 sp para cerrarlos.
+  - Informe en Backup Tool `master` `3d936df`; aviso `B-a-A/2026-10-14-entrega-backup-tool-no-listo`.
+  - El propietario lo deja registrado, sin plan por ahora.
+  - Lo que bloquea y depende del propietario: unir n01, firmar ADR-0004 y S-3a.
+
+  Anterior: indicar la unión tras la revisión de QA de B; firmar la fuente de carpeta (BT-01 a BT-09); comparar el literal de `1bd735f` con la clave heredada real; L-1 a L-7 y K-1 a K-5 en cada instalación.
 - **Contador:** enviar la sección 7 de la hoja de la 3b (C-17), y C-37 y C-38.
