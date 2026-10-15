@@ -146,3 +146,48 @@ No hay hallazgos Críticos, Altos ni Medios. Quedan cerrados SEG-RG14-08 y SEG-R
   - devops y la herramienta de respaldos: limpiar las bases temporales de las restauraciones de prueba (RG2-04).
   - qa-automatizado: el vector de concurrencia del tope (RG2-01).
 - Próximo paso recomendado: unir el PR #28 y luego el #36, y llevar RG2-01 al lote 3 o a un seguimiento antes de Estricto en producción.
+
+---
+
+## 9. Lectura de diferencias (`ac4b9489..c4a1b259`)
+
+**Commits:** `ecff6f08`, `e2ad4c72`, `38fc998b` y `c4a1b259`. Revisé solo en lectura, sin compilar. No reproduje las pruebas declaradas.
+
+| Punto | Estado | Evidencia y comentario |
+|---|---|---|
+| **RG2-01** | **Cerrado** | El tope pasa a **4 por hora y 12 por día** por base (`MaximoPorHora`, `MaximoPorDia`). Contar y respaldar ocurre bajo `sp_getapplock` exclusivo **por base** (el recurso de aplicación es de la base en curso), con 60 s de espera; si vence, devuelve 51608. Eso cierra la carrera. El volumen queda acotado a 12 copias completas por base y por día. **Informativa:** sin retención, el disco sigue creciendo a lo largo de varios días; conviene una limpieza de las copias `GPOS - …` antiguas (la herramienta de respaldos o un trabajo del Agente). El historial toma ahora el usuario del nombre del respaldo, porque `user_name` es el dueño (`EXECUTE AS OWNER`); es solo un dato que se muestra en la interfaz (`RespaldoCopia.cs:43-91`) |
+| **RG2-02** | **Cerrado** | Tras revocar, `SinConnectAsync` exige que el usuario anterior no exista o tenga `DENY CONNECT`; si no, `credencial-app`/`aprovisionar` terminan en error («puede seguir entrando»). Un permiso tiene un solo estado por principal, así que un `DENY` excluye un `GRANT` vigente. S4 marca `GPOS_APP_CONNECT` (`CredencialApp.cs`; `VerificacionPrivilegios.cs`) |
+| **Reapertura PA-30** | **Correcta: no reintenta comandos ni transacciones y no oculta otros errores** | `ReaperturaConexionEmpresa` es un interceptor de **apertura** de conexión. Solo atrapa el `SqlException` 18456 de `Open`; relee la cadena guardada (`Olvidar` y `ObtenerAsync`) y abre **una sola vez** más. Si la relectura no da una cadena, vuelve a lanzar la excepción original, y si la segunda apertura falla, ese error sube tal cual. Cualquier otro número de error no se toca. Como actúa antes de que exista ningún comando, no hay nada que repetir. `UnidadTrabajo` copia el interceptor al contexto que comparte la conexión. `CandadoEmpresas` reintenta solo si la conexión no llegó a abrirse (`!abierta && 18456`). **Informativas:** (a) la ruta síncrona usa `.GetAwaiter().GetResult()`, que no tiene riesgo de bloqueo en ASP.NET Core (no hay contexto de sincronización) pero conviene evitarlo si se usa en otro anfitrión; (b) un 18456 legítimo (contraseña errónea sin rotación) cuesta un descifrado y un intento más, sin efecto de seguridad (`ReaperturaConexionEmpresa.cs`; `Sesion.cs`; `UnidadTrabajo.cs`; `CandadoEmpresas.cs`) |
+
+### Riesgo declarado: bloqueo de sesión que queda tomado
+
+**Diagnóstico.** `BACKUP` no se puede ejecutar dentro de una transacción de usuario, así que **no se puede usar un bloqueo de transacción** (`@LockOwner = 'Transaction'`). El bloqueo de sesión es la única opción dentro del procedimiento. El `CATCH` lo libera ante los errores normales. Lo que **no** pasa por el `CATCH`:
+- la **cancelación del cliente**, que envía una atención: la petición HTTP se corta (el `ct` de la petición llega a `ExecuteSqlRawAsync`) o vence el `CommandTimeout` (30 min y 3 600 s). La atención aborta el lote sin ejecutar el `CATCH`;
+- un error de severidad 20 o más, que cierra la sesión y con ella libera el bloqueo (ese caso no es problema).
+
+**Consecuencia.** Con la agrupación de conexiones, la conexión vuelve al grupo con el bloqueo tomado. No verifiqué si `sp_reset_connection` libera los bloqueos de aplicación de sesión cuando se reutiliza la conexión [inferido]: hay que comprobarlo con una prueba. Mientras siga tomado, los respaldos siguientes de esa base esperan 60 s y fallan con 51608, hasta que la conexión se cierre (por expiración en el grupo o al reiniciar la API). El efecto es solo de **disponibilidad** y es **restrictivo** (impide respaldos, no permite más), así que la severidad es **Baja**.
+
+**Recomendación**, en lugar de cambiar el tipo de bloqueo:
+1. **Llamar al procedimiento con una conexión propia sin agrupación** (`Pooling = false`, o `SqlConnection.ClearPool` al terminar si hubo error o cancelación). Al cerrarla, la sesión termina y SQL Server libera el bloqueo. Cubre la cancelación y el tiempo de espera. Costo ≈ 0,05 dp en `RespaldoService` y `RespaldosPosteriores`.
+2. **No propagar al `BACKUP` la cancelación de la petición:** un respaldo iniciado debe terminar aunque el usuario cierre el navegador. Usar un token propio del servidor, o `CancellationToken.None` con el `CommandTimeout` largo que ya tiene.
+3. **Mantener el `@LockTimeout = 60000`** como salvaguarda, y como mucho añadir al mensaje de 51608 que puede haber un respaldo en curso (ya lo dice).
+4. **Prueba:** cancelar una llamada a mitad del `BACKUP` y comprobar que la siguiente respalda sin esperar.
+
+**Alternativas descartadas:**
+- Un bloqueo de transacción: `BACKUP` lo prohíbe.
+- Un candado con una fila de tabla y `UPDATE … WHERE libre`: tampoco sobrevive a la atención sin una limpieza por antigüedad, y añade estado.
+- Bajar `@LockTimeout` a 0: no arregla el bloqueo que quedó tomado; solo hace que el fallo llegue antes.
+
+### Dictamen final del PR #36
+
+**Aprobado con observaciones.** RG2-01 y RG2-02 están cerrados. La reapertura PA-30 es correcta. Queda RG2-03 (Baja) y una observación Baja nueva: liberar el bloqueo de sesión ante una cancelación, con una conexión sin agrupación y sin propagar la cancelación. No hay hallazgos Críticos, Altos ni Medios. Es una recomendación técnica: la decisión es del propietario.
+
+### Cierre (lectura de diferencias)
+- Estado: Aprobado con observaciones
+- Artefactos: este informe (sección 9 agregada)
+- Supuestos: los resultados de pruebas son los declarados, sin reproducir. No verifiqué si `sp_reset_connection` libera los bloqueos de aplicación de sesión
+- Decisiones candidatas a ADR: Ninguna
+- Entregas a otros agentes:
+  - desarrollador I: conexión sin agrupación y sin la cancelación de la petición para `usp_RespaldoCopia` (con su prueba), y RG2-03;
+  - devops o la herramienta de respaldos: retención de las copias `GPOS - …`
+- Próximo paso recomendado: unir el PR #28 y luego el #36; la conexión sin agrupación puede ir en el mismo PR o en un seguimiento
