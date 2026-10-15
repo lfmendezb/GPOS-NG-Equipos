@@ -166,3 +166,36 @@ No hay hallazgos Críticos ni Altos. El código cumple `[LIC]` 3.1.1 y 6.2, `[PS
   - GSF y documentador: el procedimiento de RA-04 (retirar `s2` por manifiesto ante sospecha sobre el emisor).
   - qa-automatizado: un vector de cargas sucesivas con `emitida` creciente para fijar el comportamiento que se decida en RA-01.
 - Próximo paso recomendado: unir el PR #32 y llevar RA-01 al arquitecto antes de la firma de DL-14.
+
+---
+
+## 9. Lectura de diferencias (`a1562505..9e47cc68`)
+
+**Commits:** `af86bc45` (correcciones de validación, RA-02 y RA-03) y `9e47cc68` (DL-14 con la fecha civil de RD). Revisé solo en lectura, sin compilar.
+
+| Punto | Estado | Evidencia y comentario |
+|---|---|---|
+| **RA-02** | **Cerrado** | `PisoNivelEfectivo` agrega `FuentesAusentes` y `Eventos`, con el evento nuevo `PisoFuenteAusente`. Una fuente con MAC (`Configuracion` o `pisonivel`) que falta cuenta como ausente si el piso es `avanzado` o si la otra fuente con MAC existe; en una instalación nueva no se genera ruido. Además se pide `PisoNivelFuenteInvalida` (`PisoNivelFirma.cs`, `Efectivo`). Si se borran las tres fuentes, el piso baja sin evento: es el residual que `[PSF]` 4A.5 ya acepta (requiere `sysadmin` y administrador de Windows) |
+| **RA-03** | **Cerrado** | `ReglasAceptacion(IVerificadorJws)` pasa a ser `internal`; la API solo tiene `ReglasAceptacion()`, con el `VerificadorJws` real. Residual informativo: `PisoNivelFirma.EleveDesdeLicencia(…, IVerificadorJws)` y `AutorizacionRegresoNivel.Verificar(…, IVerificadorJws, …)` siguen siendo públicos con el verificador como parámetro. Es el mismo patrón y el mismo requisito (código propio dentro del proceso); conviene que L1a-4 los llame siempre con el verificador real, o dejarlos `internal` en un seguimiento |
+| **`[assembly: InternalsVisibleTo("GPOS.Tests")]` en GPOS.Core** | **No abre ninguna vía en Release** | El atributo es nuevo en GPOS.Core: antes solo lo tenía `GPOS.Criptografia`. Va sin llave pública, así que cualquier ensamblado llamado `GPOS.Tests` **cargado dentro del proceso** ve los miembros internos de **todo** GPOS.Core, no solo los de la licencia. Para eso hay que poder cargar código propio en la API, y con eso ya se puede hacer cualquier cosa: no cruza ninguna frontera de confianza nueva (mismo análisis que CR-11). Las llaves de desarrollo siguen cerradas por las constantes de compilación de `GPOS.Criptografia` (CR-04). **Dos observaciones informativas:** (a) la entrega a devops de CR-11 (que la publicación no incluya `GPOS.Tests.dll`) vale ahora también para Core; (b) declararlo en `FormatoInstalacionId.cs` en lugar de en `GPOS.Core.csproj` lo deja fuera de la vista: conviene moverlo al `.csproj` cuando se libere ese archivo |
+| Autorización con modelo cerrado | **Mejora** | Un miembro desconocido rechaza la autorización (no tiene `crit` ni `fmt`, así que es la única forma de no fallar abierto con un campo restrictivo futuro). Las `instalaciones` tienen que cumplir `FormatoInstalacionId` |
+| La misma `sec` con otra ventana | **Mejora** | `a.Hasta != p.HastaVigente` rechaza también la misma `sec` con una ventana más corta (antes solo la más larga) |
+| `InstalacionId` | **Mejora** | GUID en formato `D` y en minúsculas, comparado en ordinal, en la licencia, en la autorización y en la entrada local (que falla cerrada si no lo cumple). Cada valor tiene una sola escritura |
+| DL-14 y `hasta` + 31 días con la fecha civil de RD | **Correcto y del lado restrictivo** | `VenceMaximo` y `FechaCivilRd` usan UTC−4: dan la misma fecha UTC o la del día anterior. Cierra la segunda parte de RA-06. `9e47cc68` solo toca `ReglaVigenciaBasica.cs` y su prueba, así que se puede revertir por separado |
+| RA-01 | **Sigue abierto** (Media, de diseño) | Ahora hay una prueba que fija el comportamiento actual, a la espera de la decisión del arquitecto sobre INV-6. No bloquea la unión |
+| RA-04, RA-05 y la primera parte de RA-06 | Sin cambio (informativos) | — |
+
+### Dictamen final del PR #32
+
+**Aprobado con observaciones.** RA-02 y RA-03 están cerrados, y el `InternalsVisibleTo` en Core no abre ninguna vía en Release. No quedan hallazgos Críticos ni Altos. Queda abierto RA-01 (Media, de diseño), con su prueba de comportamiento, como condición antes de dar por cerrado DL-14. Es una recomendación técnica: la decisión es del propietario.
+
+### Cierre (lectura de diferencias)
+- Estado: Aprobado con observaciones
+- Artefactos: este informe (sección 9 agregada)
+- Supuestos: los resultados de pruebas son los declarados por el PR, sin reproducir
+- Decisiones candidatas a ADR: la misma de antes (precisión de INV-6, RA-01)
+- Entregas a otros agentes:
+  - arquitecto-maestro y arquitecto-software: RA-01;
+  - desarrollador L: dejar `internal` las sobrecargas con `IVerificadorJws`, o comprometerse a usar siempre el verificador real en L1a-4, y mover el `InternalsVisibleTo` al `.csproj`;
+  - devops: que la publicación no incluya `GPOS.Tests.dll`, ahora también por GPOS.Core
+- Próximo paso recomendado: unir el PR #32 y decidir RA-01 antes de firmar DL-14
