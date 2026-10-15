@@ -186,3 +186,53 @@ No hay hallazgos Críticos ni Altos. La criptografía es correcta, cumple FIPS y
   - arquitecto-software: la precisión de CV-05 (AN-01) para la hoja de firma.
   - qa-automatizado: vectores de una llave conforme inyectada con otra recuperación (debe descartarse), de una heredada con `MigradaUtc` manipulado y de una carpeta con la DACL heredada.
 - Próximo paso recomendado: unir con el escalón 1 de AN-01 y AN-02/AN-03 en un seguimiento antes de Estricto, y llevar la firma de las llaves al arquitecto.
+
+---
+
+## 9. Lectura de diferencias (`aee7f718..386f02cc`)
+
+**Commit:** `386f02cc`. Revisé solo en lectura, sin compilar. Las pruebas son las declaradas por el PR (Anillo 51/51; anillo, arquitectura y Data Protection 230/230 en Debug y en Release); no las reproduje.
+
+| Hallazgo | Estado | Evidencia y comentario |
+|---|---|---|
+| **AN-01, escalón 1** | **Cerrado** | `ConformidadAnillo.MotivoRechazo` descarta, en **cada** lectura, las llaves conformes cuyo principal no esté entre los certificados admitidos (el configurado más `CertificadosServidorAnteriores`) o cuya recuperación no sea la anclada (o la configurada, mientras no haya ancla). La recuperación anterior solo se admite durante `--cambiar-recuperacion` y con la expiración acotada. Las revocaciones se leen de los elementos **sin filtrar**: borrar el archivo de una llave no deshace su revocación. Una llave inyectada con la recuperación del atacante ya no se usa nunca. (`AnilloDataProtection.cs`, `RepositorioAnilloConforme.GetAllElements`; `ConformidadAnillo.cs`, `MotivoRechazo` y `Revocadas`) |
+| **AN-02** | **Cerrado** | La lista de heredadas pasa a la fila `Anillo.Heredadas` de `Configuracion`, con MAC y un propósito propio. Si no verifica, cuenta como lista vacía (lado restrictivo). Cada heredada se devuelve con `expirationDate = mín(original, MigradaUtc)`, así que nunca puede ser la predeterminada. Quien solo escribe en la carpeta ya no puede declarar heredadas ni mover `MigradaUtc`. (`HeredadasAnillo.cs`; `ConformidadAnillo.Acotar`) |
+| **AN-03** | **Cerrado**, con una observación | La carpeta se crea con una DACL protegida en una sola operación. Al arrancar se comprueba que no sea un punto de reanálisis, que su dueño sea SYSTEM, Administradores o la identidad del servicio, que la DACL esté protegida y que ningún ACE `Allow` dé acceso a otra cuenta. Si no cumple: `AnilloCarpetaNoConforme`, el cifrador se niega a crear llaves y, en Estricto, la API no arranca. **El criterio de dueño no abre ninguna falla:** solo admite las tres identidades, y un dueño técnico (por ejemplo, una carpeta creada por `GPOS.Migracion` sin `IdentidadServicio`) hace que la API la rechace (falla cerrado). **Observaciones (Baja):** (a) sin `IdentidadServicio`, se admite la identidad del proceso; si fuera una cuenta compartida (`NETWORK SERVICE`, `LOCAL SERVICE`), otros servicios escribirían en la carpeta. Conviene exigir `IdentidadServicio` en Estricto y rechazar los SID compartidos y de grupo (Usuarios, Usuarios autenticados, Todos). (b) Solo se comprueba la carpeta, no los **archivos**: un archivo de llave anterior a la corrección con un ACE explícito permisivo se podría modificar. Conviene comprobar que los `*.xml` no tengan ACE explícitos (que todo sea heredado). (`CarpetaAnillo.cs`; `ComprobacionAnillo.cs:130-137`; `AnilloDataProtection.cs:101`) |
+| **AN-05** | **Cerrado**, con una observación | En Release sin `CertificadoServidor`, la API no arranca salvo con `GPOS:DataProtection:DpapiDemo = true`, que Estricto rechaza, y `AnilloInactivo` se registra. **El indicador `DpapiDemo` no abre una falla nueva:** es configuración que solo puede cambiar un administrador, que ya domina el equipo. Hay un **riesgo de error de configuración (Baja):** Estricto se detecta con `GPOS:Seguridad:ModoIdentidad`, un valor distinto del modo de la licencia (`OpcionesLicencia.Modo`, L1a-4). Copiar el `appsettings` del DEMO a una instalación con licencia de producción dejaría el anillo en DPAPI. Remedio barato: rechazar `DpapiDemo` también cuando la licencia vigente sea del anillo `Produccion` o `Beta` (en L1b, junto con SEG-L2-05), y unificar el origen del modo cuando RG-14 lo implemente. (`ProteccionDatosInstalacion.cs:57-66`) |
+| AN-04 | Sin cambio | Se cierra con el escalón 2 (DL-20) |
+| AN-06 | Sin cambio | Depende de C-05 |
+
+**Informativa (disponibilidad, no seguridad):** después de `--cambiar-recuperacion`, la API que siga en marcha conserva en memoria el ancla anterior y descarta la llave nueva, la de la recuperación nueva. Lo reprotegido con ella no se podrá abrir en la API hasta reiniciarla (falla cerrada). Hay que documentar en el procedimiento 4C.4 bis que la API se reinicia después del verbo, o hacer que vuelva a leer el ancla.
+
+### Residual hasta DL-20 (escalón 2: firma de cada llave)
+
+Quien pueda escribir en la carpeta puede todavía inyectar una llave conforme con **los destinatarios correctos** (un principal admitido y la recuperación anclada), elegir el material de la llave y hacerla predeterminada. Con escritura en la base, eso le permite falsificar cualquier valor protegido (ancla, `Anillo.Heredadas`, filas de la licencia, reloj de H-16). Puede además borrar archivos de revocación de llaves de los mismos destinatarios, o reutilizar sobres bajo otro id (AN-04).
+
+Tras AN-03, el conjunto de quienes escriben en la carpeta queda en:
+- SYSTEM y los administradores, frente a los que la firma tampoco protege;
+- la identidad del servicio, si sufre un error de escritura de archivos en la API;
+- la restauración de un respaldo manipulado de la carpeta.
+
+**Severidad residual: Media**, con probabilidad baja. Recomiendo resolver DL-20 antes de Avanzada o de la primera licencia de pago, y que la herramienta de respaldos (N-01) verifique la integridad de la carpeta del anillo al restaurar mientras tanto.
+
+### Dictamen final del PR #34
+
+**Aprobado con observaciones.**
+- AN-01 (escalón 1), AN-02, AN-03 y AN-05 están cerrados.
+- Las correcciones fallan cerradas y no abren ninguna vía nueva.
+- Quedan dos observaciones Bajas: `IdentidadServicio` y los ACE de los archivos (AN-03), y `DpapiDemo` con una licencia de producción (AN-05).
+- Queda el residual Medio hasta DL-20.
+
+No hay hallazgos Críticos ni Altos. Es una recomendación técnica: la decisión es del propietario.
+
+### Cierre (lectura de diferencias)
+- Estado: Aprobado con observaciones
+- Artefactos: este informe (sección 9 agregada)
+- Supuestos: los resultados de pruebas son los declarados, sin reproducir
+- Decisiones candidatas a ADR: DL-20 (firma de las llaves del anillo); origen único del modo Estricto (RG-14)
+- Entregas a otros agentes:
+  - desarrollador-backend: exigir `IdentidadServicio` en Estricto y rechazar SID compartidos, comprobar los ACE de los archivos, y la relectura del ancla o la nota de reinicio;
+  - desarrollador L (L1b): rechazar `DpapiDemo` con una licencia `Produccion` o `Beta`;
+  - devops y la herramienta de respaldos: verificar la carpeta del anillo al restaurar;
+  - arquitecto: DL-20
+- Próximo paso recomendado: unir el PR #34 y llevar DL-20 a firma antes de Avanzada
