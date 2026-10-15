@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-21: licencia firmada en el lote 2 de RG-14 (v2.9)
+# Hoja de firma DL-01 a DL-21: licencia firmada en el lote 2 de RG-14 (v2.10)
 
-**Fecha:** 2026-10-14 (v2.8 y v2.9: 2026-10-15) · **Versión:** 2.9 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 (v2.8 a v2.10: 2026-10-15) · **Versión:** 2.10 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -18,6 +18,7 @@
 | **2.7** | 2026-10-14 | Agrega **DL-18** (PA-02) y **DL-19** (PA-01), que salen de la revisión de seguridad del PR #33 y de la validación de L1a-4 (persistencia), correcciones 7 y 9, con el blueprint v2.6. La validación las numeraba DL-17 y DL-18, pero DL-17 ya está firmada; el arquitecto-software las renumera. El resto de la hoja no cambia |
 | **2.8** | 2026-10-15 | Agrega **DL-20** (AN-01, revisión de seguridad del PR #34, H-17 v2): firma de cada llave del anillo de Data Protection. El resto de la hoja no cambia |
 | **2.9** | 2026-10-15 | Agrega **DL-21** (LB-02, revisión de seguridad del PR #35, L1b-1; validación de L1b-1 y blueprint v2.9 §6.2 y §13.1): la hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada propia. El resto de la hoja no cambia |
+| **2.10** | 2026-10-15 | Precisión de **DL-20**: la firma de las llaves cubre también el anillo de GPOS.Web (PR #37, AW-01, Baja). El costo sube de ≈ 0,4 a ≈ 0,5 dp, y devops necesita también el certificado de la Web con uso `digitalSignature`. El resto de la hoja no cambia |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -88,7 +89,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **FIRMADA 2026-10-14: (a)** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
 | **DL-18** | Nunca rige una licencia más vieja que la última atestiguada con MAC | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 7 de L1a-4 |
 | **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
-| **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor | **Aprobar** | ≈ 0,4 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
+| **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor (API y Web) | **Aprobar** | ≈ 0,5 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
 | **DL-21** | La hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada | **Aprobar** (conviene firmarla junto con DL-18 y DL-19) | 0 (sin costo de desarrollo; ver la consecuencia) | Antes de unir el cableado de L1b-2 |
 
 *DL-06 está retirada: la sustituye F-2.*
@@ -505,6 +506,8 @@ Desde ese momento puede **falsificar cualquier valor protegido** y **descifrar l
 
 Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
 
+**Alcance (v2.10): la firma cubre también el anillo de GPOS.Web** (PR #37, AW-01 de `revision-seguridad-pr37-anillo-web-2026-10-15.md`, Baja). La Web no tiene ancla con MAC, así que quien escribe en su carpeta (su identidad de servicio, un respaldo restaurado o un administrador) también puede inyectar una llave conforme. El impacto es bajo: una cookie falsificada no da una sesión, porque esta vive en memoria con un id aleatorio, y la antifalsificación ya está mitigada por `SameSite=Strict`. Pero es el mismo hueco y se cierra con el mismo decorador. Mientras tanto basta la DACL de AN-03.
+
 **Recomendación: Aprobar**, antes del perfil Avanzado o de la primera licencia de pago, lo que llegue antes. Sin esta firma, los MAC que protegen la licencia y el reloj dependen solo de la DACL de una carpeta.
 
 | Opción | Consecuencia |
@@ -514,7 +517,7 @@ Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
 | (c) Lista de ids de llaves en una tabla de solo inserción | **Descartada:** ata cada lectura de Data Protection a SQL; una caída de la base dejaría a la API sin anillo |
 | (d) Un HMAC de las llaves | **Descartada:** no hay ningún secreto fuera del propio anillo, así que sería circular |
 
-**Costo:** ≈ 0,4 dp (desarrollador I, CR) más el certificado del servidor con uso `digitalSignature` (devops, dentro de la custodia de Q-22). Precisa H-17 v2 y CV-05 (`[PSF]` 4C.3).
+**Costo:** ≈ 0,5 dp: 0,4 dp para la API y unos 0,1 dp más para la Web [I], porque reutiliza el decorador y solo agrega su configuración y sus pruebas (desarrollador I, CR). Además, el certificado del servidor **y el de la Web** con uso `digitalSignature` (devops, dentro de la custodia de Q-22). Precisa H-17 v2 y CV-05 (`[PSF]` 4C.3).
 
 `[ ] Aprobar (a)`   `[ ] (b)`
 
