@@ -174,10 +174,11 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - decidir si la laptop sigue como equipo de prueba del DEMO;
   - decidir qué pasa con el rango de ADR 130 a 159 (congelado).
 - **Firmas abiertas:**
-  - la hoja de la licencia v2.4: DL-07 (a) y DL-08 (a) **firmados el 2026-10-14**; faltan DL-01 a DL-05, DL-09 a DL-17 (DL-14 junto con DL-17; DL-13 antes de `s1`), la regla 3 y P-1 a P-6;
+  - la hoja de la licencia v2.5: **firmados el 2026-10-14** DL-07 (a), DL-08 (a), DL-14 (a), DL-17 (a), DL-13 y DL-10 (a); faltan DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, la regla 3 y las P de v2.2 a v2.4;
+  - CI-7/AI-07, AP-06 y AP-02 aprobados (el propietario los encarga; falta el nombre del suplente);
   - los 2 supuestos de #24;
   - las 2 preguntas de #26;
-  - quién prepara ADR-82.
+  - ADR-82: lo prepara B (propietario, 2026-10-14).
 - **ADR-102:** ¿archivo propio o solo precisión de ADR-31? (recomendado: archivo propio).
 - **DEMO:** probar la actualización del 2026-10-08 en LAPTOP-DUMQQ5QK (memoria de SQL Server 1.024 / 3.072 MB) y medir la importación de suplidores y clientes.
 - **Backup Tool, revisión para producción del 2026-10-14: NO LISTO.**
