@@ -167,3 +167,40 @@ No hay hallazgos Críticos ni Altos. La regla, la marca, la lista aprobada y QA-
   - coordinador: que SL no registre `EstadoLicenciaHeredado` en `Program.cs` sin la guarda de LB-01.
   - qa-automatizado: el vector de LB-02 (tres cargas con `emitida` creciente).
 - Próximo paso recomendado: unir el PR #35 y llevar LB-02 al arquitecto antes del PR de L1b que cablea `Corroborar` y registra `IEstadoLicencia`.
+
+---
+
+## 9. Lectura de diferencias (`8a4e86ee..7dd3f00d`)
+
+**Commits:** `24960ed7` y `7dd3f00d`. Revisé solo en lectura, sin compilar. Las pruebas son las que declara el PR (Licencia 381 en Debug y 380 en Release, con 1 omitida; Arquitectura 181/181; suite 2679/0/19); **no las reproduje**.
+
+| Punto | Estado | Evidencia y comentario |
+|---|---|---|
+| **LB-01** | **Cerrado** | `EstadoLicenciaHeredado` queda dentro de `#if DEBUG`: en Release el tipo no existe y no se puede registrar. Además, una prueba falla si el host de la API resuelve `IEstadoLicencia` a ese tipo. Hay que borrarlo en el PR que registre `EstadoLicenciaService` (`IEstadoLicencia.cs`) |
+| **LB-03** | **Cerrado** | `POST /importaciones/{tipo}/validar` pierde la marca y queda `Operativa`, igual que importar, para todos los tipos (`ImportacionesEndpoints.cs`) |
+| **LB-06** | **Cerrado** | `POST /api/admin/respaldos`: un respaldo cada 10 minutos por empresa (`LimitesPeticiones.Respaldos`, por empresa de la sesión o por IP) y uno a la vez por empresa (semáforo; 409 `RESPALDO_EN_CURSO`). El semáforo vive en el proceso: con varias instancias de la API, cada una tiene el suyo, y el tope de `usp_RespaldoCopia` sigue siendo el freno de fondo (PR #36, RG2-01). `POST /api/notificaciones/documento` queda con el límite de reportes |
+| **Ruta nueva `POST /api/admin/usuarios/{codigo}/inhabilitar` (`Esencial`)** | **Correcta; no permite escalar ni operar** | Ver el detalle abajo |
+| LB-02 | Sigue abierto (Media, de diseño) | Pendiente de la decisión del arquitecto antes de conectar `Corroborar` con `emitida` |
+| LB-04, LB-05 | Siguen abiertos (Bajos) | Van con `UseLicencia` (L1b) |
+
+**Análisis de `inhabilitar`**, en `AdminEndpoints.cs` (la ruta nueva) y `UsuariosService.GuardarAsync` (las reglas que reutiliza):
+- **Autorización:** está en el grupo `/api/admin` (`RequiereAdmin`, solo la central), el mismo que `POST /usuarios`.
+- **Propia cuenta:** se rechaza, comparando con la cuenta que resuelve la base (el mismo criterio H-1 de `POST /usuarios`).
+- **SUPER:** un ADMIN no los ve (`ListarAsync(sesion.EsSuper)` → «no existe»). Y aunque los viera, `GuardarAsync` impide que un no SUPER modifique a un SUPER, y mantiene las guardas de «al menos un administrador» y «al menos un Super Usuario habilitado».
+- **Sin entrada del cliente salvo el código:** la ficha la arma el servidor a partir de la cuenta guardada, y solo cambian `Inhabilitado = true`, `EsNuevo = false` y `ClaveNueva = null`. No se puede cambiar el nivel, los perfiles ni la contraseña por esta vía, y no permite habilitar: rehabilitar sigue en `POST /usuarios`, que es `Operativa` y se bloquea en solo consulta. Por eso, en solo consulta solo sirve para dejar de consumir cupo (ADR-59, punto 6), no para operar.
+- **Efectos:** invalida la caché de permisos, revoca las sesiones (`ForzarNuevoInicioAsync`) y deja dos líneas de auditoría.
+- **Observación sin severidad:** hacer el viaje de ida y vuelta con la ficha completa depende de que `ListarAsync` devuelva todos los campos que `GuardarAsync` escribe. Si en el futuro la lista omite uno, inhabilitar lo borraría. Lo cubre la prueba `MembresiasLicenciaHttpTests` (perfiles conservados); conviene que la misma prueba compare la ficha completa antes y después.
+
+### Dictamen final del PR #35
+
+**Aprobado con observaciones.** LB-01, LB-03 y LB-06 están cerrados. La ruta `inhabilitar` es segura. Siguen abiertos LB-02 (Media, de diseño, como condición antes de conectar `Corroborar` con `emitida` en L1b) y LB-04 y LB-05 (Bajos, con `UseLicencia`). No hay hallazgos Críticos ni Altos. Es una recomendación técnica: la decisión es del propietario.
+
+### Cierre (lectura de diferencias)
+- Estado: Aprobado con observaciones
+- Artefactos: este informe (sección 9 agregada)
+- Supuestos: los resultados de pruebas son los declarados, sin reproducir
+- Decisiones candidatas a ADR: LB-02, como antes
+- Entregas a otros agentes:
+  - arquitecto-software: LB-02;
+  - desarrollador L: LB-04 y LB-05 en `UseLicencia`, borrar el sustituto al registrar `EstadoLicenciaService`, y la comparación de la ficha completa en la prueba de `inhabilitar`
+- Próximo paso recomendado: unir el PR #35 y decidir LB-02 antes del PR de L1b que conecte `Corroborar`
