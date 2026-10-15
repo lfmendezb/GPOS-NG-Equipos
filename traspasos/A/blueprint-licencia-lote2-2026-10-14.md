@@ -1,7 +1,7 @@
 # [Blueprint Técnico] Licencia firmada en el lote 2 de RG-14: cierre de AI-01, sello de habilitación, piezas construibles, calendario hasta el corte, ceremonia sin hardware y licencias de pago en nivel Básico
 
 - **Fecha:** 2026-10-14. **Autor:** arquitecto-software, equipo A.
-- **Versión: 2.4.** La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
+- **Versión: 2.5.** La v2.5 (2026-10-14) incorpora la validación del PR #33 (L1a-4; registro de cambios v2.5). La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
 - **Estado del documento:** diseño. Las decisiones nuevas de este documento quedan **Pendientes de firma** (sección 13). Nada de lo que aquí se describe existe en el código, salvo lo que el desarrollador L lleva construido de L1a-1 (sección 14). La hoja de firma la rehace aparte el arquitecto-maestro; la sección 13 solo dice qué tiene que constar en ella.
 - **Entradas:**
   - RG-14 firmado el 2026-10-14: D-01 a D-11, D-04 precisada y **L-01** (la licencia firmada de ADR-58 a 66 entra en el lote 2). Fuente: `datos-t3-12-rg14-2026-10-14.md` v2 (`[DAT]`).
@@ -104,6 +104,18 @@ Dictamen: `validacion-l1a-2-reglas-aceptacion-2026-10-14.md`. Son precisiones de
 | P-3 | Las fechas civiles del formato (`vence`, `aceptarHasta`, el tope de DL-14 y el de `hasta` + 31 días) se leen en hora de RD | 6.1.2 | L1a-2 +0,05; EM +0,05 |
 | P-4 | Una misma `sec` de autorización exige el mismo contenido | 6.1.2 | L1a-2 +0,05 |
 | P-5 | El `InstalacionId` es un GUID en formato `D` en minúsculas, y se compara sin distinguir mayúsculas | 6.1.2 | 0 |
+
+### Registro de cambios v2.5 (validación del PR #33, L1a-4 «Persistencia y arranque»)
+
+Dictamen: `validacion-l1a-4-persistencia-2026-10-14.md`.
+
+| # | Precisión | Secciones | Pieza y costo |
+|---|---|---|---|
+| P-1 | El SQL de la licencia va en `GPOS.Core/Infraestructura/Motor/` (`SqlLicenciaSistema.cs`, `ComandosLicencia.cs`), no en `Data/Sistema`, porque así lo impone CA-0.8 | 7 | 0 |
+| P-2 | El registro en DI y las rutas L-03, L-05 y L-06 van en L1b | 4.1 | 0 |
+| P-3 | **Modo de verificación de integridad** en `GPOS.Criptografia`: una firma de un `kid` retirado en los binarios verifica, marcada como retirada, solo al volver a verificar (LV-20 y LV-21), nunca al aceptar. Con él, NV-08 funciona también con un retiro hecho por los binarios. Es condición de la versión que retire un `kid` en los binarios, y el recurso conserva la llave pública del `kid` retirado | 6.1 | ≈ 0,3 dp, con esa versión |
+| P-4 | En modo Amplio, una licencia `Produccion` o `Beta` también se rechaza al cargarla en caliente (`ANILLO_NO_ADMITIDO`) | 8 | ≈ 0,05 dp |
+| P-5 | El perfil vigente (`perfilMin`) sale de fuentes verificables, igual que el piso (INV-11): los JWS con firma Avanzada propia, más la fila con MAC `Licencia.PerfilMin` y el archivo de disco, cada uno con su `sec`. Gana la que verifica con la mayor `sec` | 6.1.2 | ≈ 0,2 dp, antes de las llaves Avanzadas |
 
 ---
 
@@ -634,7 +646,7 @@ src/GPOS.Core/Sistema/Licencia/                ReglasAceptacion.cs, MotorEstados
                                                AlmacenLicenciaDisco.cs, HuellaEntorno.cs, SolicitudLicencia.cs, ImportadorCarpetaEntrada.cs,
                                                TrabajoAvisosLicencia.cs, FilasProtegidas.cs
 src/GPOS.Core/Sistema/Usuarios/                SellosHabilitacion.cs, PadronSellos.cs
-src/GPOS.Core/Data/Sistema/                    SqlLicenciaSistema.cs (C-11)
+src/GPOS.Core/Data/Sistema/                    SqlLicenciaSistema.cs (C-11)   (v2.5: en el código, GPOS.Core/Infraestructura/Motor/SqlLicenciaSistema.cs y ComandosLicencia.cs, por CA-0.8)
 src/GPOS.Core/Infraestructura/Bitacora/        BitacoraSeguridad.cs (C-05)
 src/GPOS.Api/Seguridad/                        ModoLicencia.cs, ClaseLicencia.cs
 src/GPOS.Api/Endpoints/                        LicenciaEndpoints.cs, SellosEndpoints.cs
@@ -1108,7 +1120,7 @@ Contrastado, solo lectura, con la copia de trabajo `GPOS-NG-lic` (cambios sin co
 
 ### Cierre
 - Estado: Completado. Versión 2.1 del blueprint: la v2 respondió los 23 hallazgos de `[SEG]` (21 aceptados, 2 con ajuste, ninguno rechazado) y el auditor le dio «Aprobado con observaciones» en la lectura de diferencias; la v2.1 incorpora esas observaciones (SEG-L2-24, SEG-L2-25, D.2 y D.4). DL-01 a DL-14 siguen Pendientes de firma (DL-06, retirada).
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.4, mismo archivo; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.5, mismo archivo; la v2.5 agrega el registro de cambios v2.5 y la ubicación de 7; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
 - Supuestos: los catorce de la sección «Supuestos» (10 a 14, nuevos desde la v2).
 - Decisiones candidatas a ADR:
   - **ADR-83 · Sello de habilitación de cuentas con padrón protegido como fuente del cupo** (DL-01 con (a) y (b), DL-02 con la regla de Release, DL-05 obligatoria con el estado del factor; SH-1 a SH-8). Precisa ADR-58 (punto 9), ADR-36 (R-3), ADR-68 y SEC-07. *Descartadas:* limitar por antigüedad en exceso de cupo, las revocaciones en la bitácora, reconstruir el padrón desde las filas, sellar los permisos granulares y usar el `SelloSeguridad` en el sello.
