@@ -1,7 +1,7 @@
-# Hoja de firma DL-01 a DL-22: licencia firmada en el lote 2 de RG-14 (v2.12)
+# Hoja de firma DL-01 a DL-22: licencia firmada en el lote 2 de RG-14 (v2.13)
 
-**Fecha:** 2026-10-14 (v2.8 a v2.12: 2026-10-15) · **Versión:** 2.12 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
-**Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
+**Fecha:** 2026-10-14 (v2.8 a v2.13: 2026-10-15) · **Versión:** 2.13 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Estado: firmada en su mayor parte; lo que queda está Pendiente de firma** (ver la sección 7). Esta hoja no firma nada por sí misma: cada casilla la marca el propietario, y las casillas marcadas recogen sus respuestas literales.
 
 ## Registro de cambios
 
@@ -21,6 +21,7 @@
 | **2.10** | 2026-10-15 | Precisión de **DL-20**: la firma de las llaves cubre también el anillo de GPOS.Web (PR #37, AW-01, Baja). El costo sube de ≈ 0,4 a ≈ 0,5 dp, y devops necesita también el certificado de la Web con uso `digitalSignature`. El resto de la hoja no cambia |
 | **2.11** | 2026-10-15 | Agrega la confirmación **C-5** (sección 3.1), pedida por B antes de activar `UseLicencia` (L1b-2): respaldos, cerrar sesiones, resolver el reloj y sincronizar el espejo de numeración son `Esencial` además del punto 6 de ADR-59. El resto de la hoja no cambia |
 | **2.12** | 2026-10-15 | Agrega **DL-22**, que es **de RG-14, no de la licencia**: precisión de D-04 y PA-30 del diseño `datos-t3-12-rg14-2026-10-14.md` (rotación de `gpos_app` sin `KILL` inmediato), según la sección B de `validacion-rg14-lote2b-y-s1-2026-10-15.md`, integrada con la propuesta del auditor (`revision-seguridad-pr39-rg14-lote2b-2026-10-15.md`, sección 5): `KILL` diferido obligatorio de 2 a 6 min a elección del propietario, `ClearPool` en la API y aviso de S4. El resto de la hoja no cambia |
+| **2.13** | 2026-10-15 | **Registra la tercera firma del propietario** (sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-15-firmas-dl-segun-recomendacion.md`): DL-01, DL-02, DL-03, DL-05, DL-09, DL-11, DL-12, DL-15, DL-16 y DL-18 a DL-22 en la opción recomendada (DL-22 con 2 min); C-1 y C-5 confirmadas; precisiones P del blueprint v2.2 a v2.4 aprobadas. **DL-04 se marca firmada según la interpretación de B**, con su salvedad. Marca las casillas, la tabla de la sección 2 y la sección 7; completa la fecha de vencimiento del texto de FY-15-B con lo firmado en DL-12; anota que ADR-82 ya está en `master`. **Observación nueva:** C-3 coincide con la precisión P-3 de la v2.4, ya aprobada (sección 7). Siguen pendientes: C-3, C-2, C-4, las aceptaciones de AP-04, la fecha de compra de DL-12 y el nombre del custodio suplente (AP-02) |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -74,27 +75,27 @@ Ya **no** exige AP-01 ni AP-05.
 
 | # | En una línea | Recomendación (con `[SEG]`) | Costo | Firmar antes de |
 |---|---|---|---|---|
-| DL-01 | El cupo se cuenta desde el padrón, con copia en el disco | **Aprobar con la precisión** | 1,5 dp | 2026-11-06 |
-| DL-02 | La API no crea cuentas al arrancar en Estricto **ni en ninguna compilación Release** | **Aprobar con la condición** | 0,75 dp | 2026-11-06 |
-| DL-03 | El RNC solo lo cambia el SUPER; la ruta sale tras la fase A de ADR-81 | **Aprobar con la condición** | 1,25 dp + pantalla | 2026-11-13 |
-| DL-04 | Eventos en `BitacoraSeguridad`, con una sola DDL | **Aprobar** | 0,5 dp | 2026-10-30 |
-| DL-05 | El sello cubre el hash de la contraseña y, en el SUPER, el estado del factor | **Aprobar, obligatoria** | 0,75 dp | 2026-11-06 |
+| DL-01 | El cupo se cuenta desde el padrón, con copia en el disco | **FIRMADA 2026-10-15: (a)+(b)** | 1,5 dp | 2026-11-06 |
+| DL-02 | La API no crea cuentas al arrancar en Estricto **ni en ninguna compilación Release** | **FIRMADA 2026-10-15: (a)** | 0,75 dp | 2026-11-06 |
+| DL-03 | El RNC solo lo cambia el SUPER; la ruta sale tras la fase A de ADR-81 | **FIRMADA 2026-10-15: (a)**, con P-3 | 1,25 dp + pantalla | 2026-11-13 |
+| DL-04 | Eventos en `BitacoraSeguridad`, con una sola DDL | **FIRMADA 2026-10-15: (a), según la interpretación de B** (sección 7) | 0,5 dp | 2026-10-30 |
+| DL-05 | El sello cubre el hash de la contraseña y, en el SUPER, el estado del factor | **FIRMADA 2026-10-15: (a)**, obligatoria | 0,75 dp | 2026-11-06 |
 | DL-07 | Reparto entre los dos desarrolladores, con revisión de código del emisor | **FIRMADA 2026-10-14: (a) con el recorte 1** | 0 + revisión | **2026-10-16** |
 | DL-08 | La licencia queda construida para el corte | **FIRMADA 2026-10-14: (a)** | 0 | 2026-10-16 |
-| DL-09 | Recorte de `autNivel` si hay atraso | **Autorizar con disparador** | −1,75 dp si se usa | 2026-11-13 |
+| DL-09 | Recorte de `autNivel` si hay atraso | **FIRMADA 2026-10-15: (a)**, con el disparador | −1,75 dp si se usa | 2026-11-13 |
 | DL-10 | Respaldo de `s1` frente a la pérdida: (a) `s1r` en TPM o (b) YubiKeys en Básico | **FIRMADA 2026-10-14: (a)** `s1r` en TPM de otro equipo | (a) 0,5 dp · (b) ≈ USD 110 (no FIPS) o ≈ USD 176 (FIPS), a tu elección | 2026-11-20 |
-| DL-11 | La caducidad de `s1` la fija la versión con YubiKeys; cofirma en la transición | **Aprobar** | Incluido | 2026-12-01 |
-| DL-12 | Fecha de compra y **revisión de la aceptación a más tardar el 2027-03-31** | **Aprobar con la condición** | USD 352 (ya presupuestados) | 2026-10-30 |
+| DL-11 | La caducidad de `s1` la fija la versión con YubiKeys; cofirma en la transición | **FIRMADA 2026-10-15: (a)** | Incluido | 2026-12-01 |
+| DL-12 | Fecha de compra y **revisión de la aceptación a más tardar el 2027-03-31** | **FIRMADA 2026-10-15: (a)**, revisión a más tardar el 2027-03-31; **fecha de compra por fijar** | USD 352 (ya presupuestados) | 2026-10-30 |
 | DL-13 | Cuenta diaria sin privilegios de administrador (tampoco `sysadmin` en SQL) y E-1 a E-15 | **FIRMADA 2026-10-14: (a)**, obligatoria antes de AI-09 | 0,75 dp de devops | **Antes de generar `s1`** |
 | **DL-14** | Una licencia Básica vence como máximo 200 días después de emitida | **FIRMADA 2026-10-14: (a)** 200 días | 0,35 dp | 2026-11-06 |
-| **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **Aprobar** | ≈ 0,1 dp | 2026-11-06 |
-| **DL-16** | La bitácora deja de ser fuente de la «última verificación correcta» | **Aprobar** | 0 | 2026-11-06 |
+| **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **FIRMADA 2026-10-15: (a)** | ≈ 0,1 dp | 2026-11-06 |
+| **DL-16** | La bitácora deja de ser fuente de la «última verificación correcta» | **FIRMADA 2026-10-15: (a)** | 0 | 2026-11-06 |
 | **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **FIRMADA 2026-10-14: (a)** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
-| **DL-18** | Nunca rige una licencia más vieja que la última atestiguada con MAC | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 7 de L1a-4 |
-| **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
-| **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor (API y Web) | **Aprobar** | ≈ 0,5 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
-| **DL-21** | La hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada | **Aprobar** (conviene firmarla junto con DL-18 y DL-19) | 0 (sin costo de desarrollo; ver la consecuencia) | Antes de unir el cableado de L1b-2 |
-| **DL-22** *(RG-14)* | Rotar la credencial de la API sin cortar sesiones en el acto (`KILL` diferido de 2 a 6 min, a tu elección; `ClearPool` y S4; inmediato con `--urgente`) | **Aprobar** | ≈ 0,2 dp | Antes de unir la rotación de `credencial-app` |
+| **DL-18** | Nunca rige una licencia más vieja que la última atestiguada con MAC | **FIRMADA 2026-10-15: (a)** | ≈ 0,1 dp | Antes de unir la corrección 7 de L1a-4 |
+| **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **FIRMADA 2026-10-15: (a)** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
+| **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor (API y Web) | **FIRMADA 2026-10-15: (a)**, API y Web | ≈ 0,5 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
+| **DL-21** | La hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada | **FIRMADA 2026-10-15: (a)**, junto con DL-18 y DL-19 | 0 (sin costo de desarrollo; ver la consecuencia) | Antes de unir el cableado de L1b-2 |
+| **DL-22** *(RG-14)* | Rotar la credencial de la API sin cortar sesiones en el acto (`KILL` diferido de 2 a 6 min, a tu elección; `ClearPool` y S4; inmediato con `--urgente`) | **FIRMADA 2026-10-15: (a), plazo de 2 min** | ≈ 0,2 dp | Antes de unir la rotación de `credencial-app` |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -137,7 +138,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 1,5 dp (SL). Precisa ADR-58, punto 9. Va en ADR-83.
 
-`[ ] Aprobar (a)+(b)`   `[ ] Otra: ____`   `[ ] Aplazar`
+`[x] (a)+(b)`, **FIRMADA por el propietario el 2026-10-15** (sección 7): cupo desde el padrón verificado, con copia en `Licencia\padron`; purga y legitimación con los verbos provisionales hasta la fase A de ADR-81.
 
 ---
 
@@ -157,7 +158,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 0,75 dp. Va en ADR-83.
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7): en Release ningún modo sella ni crea cuentas al arrancar; con una licencia `Produccion` o `Beta`, la API no arranca en Amplio; la creación automática queda solo en `Debug`.
 
 ---
 
@@ -181,7 +182,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 1,25 dp (con los verbos provisionales y la prueba de fallo inyectado) más un ajuste de pantalla. Es una precisión de ADR-59 (NV-07).
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7), con la precisión P-3 (SEG-PR31-01).
 
 ---
 
@@ -199,7 +200,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 0,5 dp. Es una precisión de ADR-81 (punto 12) y de ADR-60 (punto 8).
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`   `[ ] Aplazar`
+`[x] (a)`, **registrada como firmada el 2026-10-15 según la interpretación de B** (sección 7): no figuraba por nombre en la lista que vio el propietario. Si el propietario la corrige, B avisa y esta casilla se desmarca.
 
 ---
 
@@ -216,7 +217,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 0,75 dp. Va en ADR-83.
 
-`[ ] Aprobar (a)`   `[ ] Otra: ____`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7), como obligatoria.
 
 ---
 
@@ -266,7 +267,7 @@ Ya **no** exige AP-01 ni AP-05.
 | (b) Decidir si llega el atraso | Una firma más en el peor momento |
 | (c) No recortar nunca | Se sacrifica otra cosa o el corte |
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7): recorte autorizado si el orquestador confirma un atraso de 5 días hábiles o más respecto de H-3. **No se ha usado:** la precisión de ADR-62 (Q-17) se registra solo si se dispara.
 
 ---
 
@@ -304,7 +305,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** dentro de los 0,5 dp de `[BP2]` 10.3. Precisa Q-16 e INV-1. Va en ADR-84.
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] Otra: ____`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7).
 
 ---
 
@@ -322,8 +323,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **(a) Revisión con tope del 2027-03-31 y fecha de compra (recomendada)** | Cumple la condición del auditor sin tocar F-3 |
 | (b) Sin fechas | El auditor la rechaza (SEG-L2-13) |
 
-`[ ] Aprobar (a)`, fecha de compra: ____ , fecha de revisión (≤ 2027-03-31): ____
-`[ ] (b)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7). Fecha de revisión: **a más tardar el 2027-03-31** (o antes, al primer contrato de pago o en la sesión de cierre del corte). Fecha de compra: **____ (pendiente: casilla del propietario; la hoja no recomienda una)**.
 
 ---
 
@@ -390,7 +390,7 @@ La propuesta (`[BP2]` 13.1):
 
 **Costo:** ≈ 0,1 dp (L1a-3). Hasta la firma, el motor aplica el texto literal. Precisa ADR-59, punto 4.
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7).
 
 ---
 
@@ -412,7 +412,7 @@ El motivo es doble. Adelantar la marca ya exige el anillo en las dos fuentes, as
 
 **Costo:** 0. Precisa ADR-59, punto 3, y `[LIC]` 4.1.2.
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7).
 
 ---
 
@@ -464,7 +464,7 @@ Precisa el orden de recuperación firmado en `[LIC]` 4.1.2, que decía primero e
 
 **Costo:** ≈ 0,1 dp (L1a-4). Se construye detrás de la firma (corrección 7 de `[VAL4]`), con su prueba.
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (d)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7).
 
 ---
 
@@ -486,7 +486,7 @@ Precisa el orden de recuperación firmado en `[LIC]` 4.1.2, que decía primero e
 
 **Costo:** ≈ 0,1 dp (L1a-4). Se construye detrás de la firma (corrección 9 de `[VAL4]`). Precisa `[LIC]` 3.3.1 y ADR-58, punto 5 («una lectura fallida conserva la última huella y genera una alerta»).
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7).
 
 ---
 
@@ -523,7 +523,7 @@ Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
 
 **Costo:** ≈ 0,5 dp: 0,4 dp para la API y unos 0,1 dp más para la Web [I], porque reutiliza el decorador y solo agrega su configuración y sus pruebas (desarrollador I, CR). Además, el certificado del servidor **y el de la Web** con uso `digitalSignature` (devops, dentro de la custodia de Q-22). Precisa H-17 v2 y CV-05 (`[PSF]` 4C.3).
 
-`[ ] Aprobar (a)`   `[ ] (b)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7): también el anillo de GPOS.Web. Devops: certificados de la API y de la Web con uso `digitalSignature`.
 
 ---
 
@@ -546,7 +546,7 @@ Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
 
 **Costo:** sin desarrollo adicional (es una condición en el punto de la llamada), más la prueba de QA: tres cargas Básicas con `emitida` +47 h cada una; la tercera da `LICENCIA_FECHA_FUTURA` y la hora protegida no se mueve. Precisa H-16 v2.1. Hasta la firma, L1b-2 se construye con la restricción y se marca «PENDIENTE DE LA FIRMA DE DL-21». Si no se firma, se vuelve al texto literal.
 
-`[ ] Aprobar (a)`   `[ ] (d)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7).
 
 ---
 
@@ -579,7 +579,7 @@ Las credenciales de lectura (`rotar-lectura`) no cambian.
 
 **Costo:** ≈ 0,2 dp (desarrollador I): 0,15 de la rotación y unos 0,05 de `ClearPool` y S4 [I]. Hasta la firma, se construye marcado «PENDIENTE DE FIRMA». Si no se firma, se mantiene el `KILL` inmediato.
 
-`[ ] Aprobar (a)`, plazo del `KILL` diferido: `[ ] 2 min`  `[ ] 6 min`  `[ ] otro (entre 2 y 6): ____`   `[ ] (b)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-15** (sección 7), plazo del `KILL` diferido: `[x] 2 min`. Según la recomendación firmada, si PA-30 muestra errores 500 con 2 min, el plazo se sube hacia 6 min dentro del rango firmado; conviene avisar al propietario si se hace.
 
 ---
 
@@ -588,7 +588,7 @@ Las credenciales de lectura (`rotar-lectura`) no cambian.
 **C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
 **Recomendación: confirmar.** Así el corte nunca cae a media jornada de ventas, y el tope por empresa sigue rigiendo. La alternativa (terminar exactamente a las 72 h) puede cortar en plena venta. Es una precisión de ADR-59, punto 2.
 
-`[ ] Confirmo C-1`   `[ ] Prefiero que terminen exactamente a las 72 h`
+`[x] Confirmo C-1`, **confirmada por el propietario el 2026-10-15** (sección 7).
 
 **C-2 · Precisiones del modelo de datos (`[DAT]` 6.3) que `[VDL]` confirmó.** Son solo información: no requieren decisión y no cambian nada visible.
 
@@ -611,6 +611,8 @@ Además, `[VDL]` corrige la regla 12 de la §6.1.1 (NV-08 en la cadena): una lic
 
 `[ ] Confirmo C-3`
 
+*Nota del Maestro (v2.13):* el contenido de C-3 es la precisión **P-3 del blueprint v2.4**, que el propietario aprobó el 2026-10-15 con «las P de v2.2 a v2.4». B la mantiene pendiente; ver la observación de la sección 7.
+
 **C-4 · RA-04: procedimiento de GSF ante una sospecha sobre el equipo emisor (nota, sin decisión).** Una autorización de regreso que acorta la ventana solo surte efecto en la instalación que la recibe. **El cierre real de `s2` es su retiro por el manifiesto de actualización.** Ante una sospecha sobre el emisor, GSF retira `s2` por manifiesto **además** de emitir la autorización que acorta. Se agrega a los procedimientos de AP-03 (precisión de ADR-61, punto 8). Solo importa cuando existan las YubiKeys y el agente.
 
 `[ ] Tomo conocimiento de C-4`
@@ -630,7 +632,7 @@ Además, `[VDL]` corrige la regla 12 de la §6.1.1 (NV-08 en la cadena): una lic
 **Si se rechaza:** las cuatro pasan a `Operativa` y quedan bloqueadas en solo consulta. Un cliente vencido **no podría respaldar su información**, ni resolver un problema del reloj, ni cortar sesiones. Lo primero choca con el punto 7 de ADR-59 (conservar la información).
 **Fuentes:** `validacion-l1b-1-2026-10-15.md` y la validación de B del 2026-10-15 (`GPOS-NG-Equipos/avisos/B-a-A/2026-10-15-validacion-pr32-a-pr37.md`). Es una precisión de ADR-59, punto 6.
 
-`[ ] Confirmo C-5`   `[ ] Rechazo C-5 (las cuatro quedan bloqueadas en solo consulta)`
+`[x] Confirmo C-5`, **confirmada por el propietario el 2026-10-15** (sección 7): respaldos, cerrar las sesiones de una cuenta, resolver el reloj y sincronizar el espejo de numeración siguen permitidos en solo consulta (precisión de ADR-59, punto 6).
 
 ---
 
@@ -680,7 +682,7 @@ Unas 2 a 3 horas tuyas [I].
   > - *(5) la revisión del TPM y la prueba negativa en el acta;*
   > - *(6) se mantienen el PIN de la llave, la confirmación de cada firma y el registro encadenado con ancla enviada desde otro dispositivo.*
   >
-  > *Riesgo residual: Medio-Alto mientras falte alguna de las sustituciones (1) a (5); Medio con todas cumplidas. Esta aceptación es temporal y **vence el [fecha de DL-12, no después del 2027-03-31]**, o antes si se reemite en Avanzado (AP-05). Al vencer, se vuelve a firmar con la estimación de ese momento.»*
+  > *Riesgo residual: Medio-Alto mientras falte alguna de las sustituciones (1) a (5); Medio con todas cumplidas. Esta aceptación es temporal y **vence el 2027-03-31 como máximo, o antes, al primer contrato de pago o en la sesión de cierre del corte (DL-12, firmada el 2026-10-15)**, o antes si se reemite en Avanzado (AP-05). Al vencer, se vuelve a firmar con la estimación de ese momento.»*
 
 - **R-L11-B: sustituye a R-L11 mientras se firme en Básico.**
 
@@ -713,7 +715,7 @@ Encargarlo con AI-07, al mismo asesor.
 | Endurecer la PC A de todos modos (E-1: cuenta estándar, `dbcreator`, un inicio de sesión SQL nominal aparte con permisos mínimos, quitar AnyDesk) | Recomendado por `[O6]` como buena práctica, no como paso previo a AI-09: unos 0,75 dp y de 5 a 15 min por semana |
 | Custodia de los certificados de H-17 v2 (Q-22) | Antes del 2026-11-02 |
 | `contained database authentication` en la PC A | Antes de PA-12 |
-| Quién registra ADR-82 en `master` | Antes de unir el lote 1 |
+| ~~Quién registra ADR-82 en `master`~~ **Hecho:** B lo registró (`10712963`, estado Aceptado) | — |
 
 ---
 
@@ -754,10 +756,22 @@ Encargarlo con AI-07, al mismo asesor.
 | Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
 | Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
 | ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
-| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, DL-22, C-1 (regla 3), C-5, las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| Tras la segunda firma seguían Pendientes | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, DL-22, C-1 (regla 3), C-5, las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| **Tercera firma** (2026-10-15, sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-15-firmas-dl-segun-recomendacion.md`) | **Respuesta literal:** «Aprobado según la recomendación: Las firmas de licencia DL-01, 02, 03, 05 y las demás de la lista.»<br>«La lista» es la de pendientes de firma de licencia que B le presentó al propietario al abrir la sesión, tomada del traspaso de B del 2026-10-15: DL-01, DL-02, DL-03, DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18 a DL-22, la regla 3 (C-1), las precisiones P del blueprint v2.2 a v2.4, C-5 y la precisión de las cuatro rutas `Esencial` de #35 |
+| Firmadas en la tercera firma (opción recomendada de la v2.12) | - **DL-01 (a)+(b):** cupo desde el padrón verificado, con copia en `Licencia\padron`; purga y legitimación con los verbos provisionales hasta la fase A de ADR-81.<br>- **DL-02 (a):** en Release ningún modo sella ni crea cuentas al arrancar (solo `GPOS.Migracion sistema`); con licencia `Produccion` o `Beta`, la API no arranca en Amplio; creación automática solo en `Debug`.<br>- **DL-03 (a):** el RNC solo lo cambia el SUPER; el ADMIN lo ve de solo lectura desde ya; S-03 y S-02 no se publican antes de la fase A de ADR-81; verbos provisionales mientras tanto; con la precisión P-3 (SEG-PR31-01).<br>- **DL-05 (a), obligatoria:** el sello cubre el hash de la contraseña y, en el SUPER, el estado del factor.<br>- **DL-09 (a):** recorte de `autNivel` autorizado con el disparador de 5 días hábiles de atraso respecto de H-3 (precisión de ADR-62, Q-17, solo si se usa).<br>- **DL-11 (a):** la caducidad de `s1` la fija la versión con YubiKeys + 45 días, con cofirma `s1`+`a1`.<br>- **DL-12 (a):** aceptación del riesgo con revisión a más tardar el **2027-03-31**. **La fecha de compra queda por fijar.**<br>- **DL-15 (a), DL-16 (a), DL-18 (a), DL-19 (a) y DL-21 (a).**<br>- **DL-20 (a):** firma RSA-PSS-SHA256 de cada llave del anillo, de la API y de la Web; devops: certificados con `digitalSignature`.<br>- **DL-22 (a), de RG-14, con plazo de 2 min:** `KILL` diferido 2 min con `ClearPool`; se sube hacia 6 si PA-30 muestra errores 500.<br>- **C-1 confirmada:** las gracias especiales e `Ilegible` terminan en el corte siguiente.<br>- **C-5 confirmada:** las cuatro rutas `Esencial` (precisión de ADR-59, punto 6).<br>- **Precisiones P del blueprint v2.2 a v2.4: aprobadas** |
+| **Interpretación de B (no es una respuesta literal del propietario)** | **DL-04** no figuraba por nombre en la lista que vio el propietario. Como dijo «DL-01, 02, 03, 05 y las demás» y la hoja la tenía pendiente con la recomendación «Aprobar», B la registra como **firmada (a)** y se lo indicó al propietario en el mismo turno. Si la corrige, B avisa. Esta hoja la marca igual, **con esta salvedad**, que heredan el punto 8 de ADR-83 y la precisión de ADR-81 (punto 12) y ADR-60 (punto 8) |
+| **Observación del Maestro (v2.13)** | **C-3 coincide con una precisión ya aprobada.** B la deja pendiente, pero su contenido (fechas civiles en hora de RD) es la precisión **P-3 del blueprint v2.4**, que el propietario aprobó con «las P de v2.2 a v2.4». No la marco como confirmada porque B no lo hizo. **Recomendación:** que B se lo diga al propietario y, si está de acuerdo, se registre C-3 como cubierta por esa aprobación. No bloquea nada: L1a-2 ya se construye así |
+| **Siguen pendientes tras la tercera firma** | - **C-3:** confirmar (ver la observación anterior).<br>- **C-2 y C-4:** tomar conocimiento.<br>- **AP-04:** las aceptaciones escritas de FY-15-B, R-L11-B (variante «con respaldo», por DL-10 (a)), CP-4 y CP-5, antes de la primera licencia de pago.<br>- **DL-12:** la **fecha de compra** de las YubiKeys (casilla del propietario; la hoja no recomienda una).<br>- **AP-02:** el **nombre del custodio suplente** (va en el acta, no en este documento).<br>- Sin cambios, y no son firmas: AP-03, la confirmación del equipo principal, la custodia de Q-22 y `contained database authentication` (sección 4.6) |
+| ADR (tercera firma) | Textos listos para registrar en `traspasos/A/adr-licencia-2026-10-15/`: precisiones de ADR-58, ADR-59, ADR-62 (solo si se dispara DL-09) y ADR-82, y ADR-83 y ADR-84 completos. Los registra B en `master` |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
-**Si firmas según la recomendación:**
+**Efectos de la tercera firma** (aviso de B del 2026-10-15):
+- **#42 (L1b-2):** cae el motivo «apoya en DL-02 sin firma». Siguen los otros tres del rechazo: el interruptor `GPOS:Licencia:Aplicar` (contra ADR-60, punto 6), Estricto sin `InstalacionId` y `/api/super/licencia` retirada mientras la Web la usa. Con DL-21 y C-5 firmadas, `UseLicencia` se puede activar en la versión corregida.
+- **Desarrollador I:** SL con DL-01 (a)+(b), DL-02 y DL-05; RN con DL-03; la rotación de DL-22 con 2 min. Ya no hace falta la marca «PENDIENTE DE FIRMA» en lo que cubren estas DL.
+- **Desarrollador L:** DL-15, DL-18, DL-19 y DL-21.
+- **Devops:** DL-20 (certificados de la API y de la Web con `digitalSignature`).
+
+**Si firmas según la recomendación** (texto de la v2.12, se conserva como referencia):
 - devops hace el inventario de O-6 y verifica E-1 (con SEG-L2-25) **antes** de generar `s1` (AI-09), o prepara las YubiKeys si eliges DL-10 (b);
 - el desarrollador L incorpora DL-14 y SEG-L2-24;
 - el desarrollador I construye SL con DL-01 (a)+(b), DL-02 y DL-05, más los verbos provisionales, y **adelanta el recorte 1**;
