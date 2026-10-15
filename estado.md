@@ -5,15 +5,23 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
 - **2026-10-15, tarde:**
   - **Unidos por B:** #24, #26, #21, #28, #36, #32, #33, #35, #40, #41, #39, #34 y #37 (`7898beeb`); #38 (A-N1) a `b/prep-27oct`. A-N2 y A-N3 las tomó B.
-  - **En curso:**
-    - #42: rebase sobre `7898beeb` y los 5 motivos del rechazo; después, el PR de activación de `UseLicencia`;
-    - hoja v2.13 de la licencia y las precisiones de ADR, con ADR-83 y ADR-84 y la hoja corta de PUB-06 (M3 y M5);
-    - A-N4, el guion de contención y modo mixto (el reinicio lo hace el propietario);
-    - dictamen sobre el bloqueo de cuentas en los usuarios contenidos.
-  - **En cola:**
-    - el desarrollador I con DL-02 (a) en código, S0 y `LOGIN_SERVICIO_CON_POLITICA`;
-    - un PR corto de observaciones Bajas.
-  - Aviso: `2026-10-15-acuse-a-n2-a-n3-y-cola-de-a`.
+  - **Entregado (noche), todo esperando la validación de B:**
+    - **#42 → #46 → #45 → #47:** L1b-2 rebasado (`5c9c6a30`), la reimpresión por POST (`f8e4f6bf`), la activación de `UseLicencia` (`063b2e88`) y la limpieza (`3284d576`). La suite oficial sobre #45 dio 3078 correctas; solo fallan las 5 de la contención.
+    - **#43 (A-N4):** aplicado por el propietario en `.\SQLEXPRESS`. La instancia `.` quedó con la contención activada a mano.
+    - **#44:** DL-02 (a), S0 y `verificar`. Suite oficial: 3083 correctas, las 5 de la contención y C10 intermitente.
+    - **Documentos:**
+      - hoja v2.13, con DL-04 (a) confirmada por el propietario en la sesión de A;
+      - las precisiones de ADR y ADR-83 y ADR-84 en Aceptado, para que B los registre;
+      - la hoja de PUB-06 (PB-1 a PB-7), para firma;
+      - el dictamen sobre el bloqueo de los usuarios contenidos, con BL-03 (`gsf` con política) corregido en las dos instancias.
+  - **Hallazgo 12834:** es un defecto de SQL 2019 con `IX_Documento_MotivoAnulacion` filtrado; en 2025 pasa. La corrección (el índice sin filtro, ~1 dp) **espera la firma** de la precisión de RG-14 D-04 (a).
+  - **Espera a B o a una firma:**
+    - el instalador del DEMO con `GPOS.Migracion sistema`, por definir si lo hace A o B;
+    - los nombres `gpos_srv_*`;
+    - Amplio frente a cualquier licencia de cliente;
+    - el texto de `MensajeSinPermiso` en Amplio;
+    - confirmar la lectura de C-08 en el #42.
+  - **La PC A sigue con SQL 2019 Express**, por decisión del propietario.
 - **2026-10-14, noche (tras el reinicio):**
   - **#29 y #30 unidos por B** (`e59d8de`), junto con #25 y #27.
   - **Rebase sobre `e59d8de` hecho** (encargo de B), listos para unir en orden **#24 → #26 → #28**:
