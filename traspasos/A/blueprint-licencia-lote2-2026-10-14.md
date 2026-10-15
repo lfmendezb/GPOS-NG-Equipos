@@ -1,7 +1,7 @@
 # [Blueprint Técnico] Licencia firmada en el lote 2 de RG-14: cierre de AI-01, sello de habilitación, piezas construibles, calendario hasta el corte, ceremonia sin hardware y licencias de pago en nivel Básico
 
 - **Fecha:** 2026-10-14. **Autor:** arquitecto-software, equipo A.
-- **Versión: 2.2.** La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
+- **Versión: 2.3.** La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
 - **Estado del documento:** diseño. Las decisiones nuevas de este documento quedan **Pendientes de firma** (sección 13). Nada de lo que aquí se describe existe en el código, salvo lo que el desarrollador L lleva construido de L1a-1 (sección 14). La hoja de firma la rehace aparte el arquitecto-maestro; la sección 13 solo dice qué tiene que constar en ella.
 - **Entradas:**
   - RG-14 firmado el 2026-10-14: D-01 a D-11, D-04 precisada y **L-01** (la licencia firmada de ADR-58 a 66 entra en el lote 2). Fuente: `datos-t3-12-rg14-2026-10-14.md` v2 (`[DAT]`).
@@ -82,6 +82,16 @@ Dictamen: `validacion-l1a-3-motor-estados-2026-10-14.md`. Revisión del auditor:
 | **DL-15 (nueva)** | Un `vence` acortado por un archivo sin firma Avanzada propia respeta el mínimo de la transición (H-3) | 13.1 | ≈ 0,1 dp si se firma |
 
 **Efecto en la carga:** L suma ≈ 0,75 dp (de 24,3 a ≈ 25,05) e I suma 0,05 dp. Cabe en el margen de 11.4; lo concilia el orquestador.
+
+### Registro de cambios v2.3 (validación del modelo de datos de L1a-4)
+
+Dictamen: `validacion-datos-l1a4-2026-10-14.md`, sobre `datos-licencia-l1a4-2026-10-14.md`.
+
+| # | Precisión | Secciones | Pieza y costo |
+|---|---|---|---|
+| P-1 | NV-08 dentro de la cadena de NV-02: una licencia anterior cuyas llaves están todas retiradas sigue en `Anteriores`, pero el derecho previo que da queda limitado por su retiro efectivo (`RetiroEfectivoUtc`) | 6.1.1 (12) | L1a-3 +0,1; L1a-4 +0,05 (L) |
+| P-2 | `AceptadaUtc` es la columna `Licencias.AceptadaUtc`: la mínima de su `sec` y la del sello `.acept` en una reinserción. Esquema `dbo` confirmado | 6.1.1 (13) | 0 |
+| **DL-16 (nueva)** | Las fuentes de `UltimaVerificacionUtc` son la fila `Licencia.Gracias` y el archivo `estado`; la bitácora sigue siendo fuente solo de las marcas de inicio | 6.1.1 (13), 13.1 | 0 |
 
 ---
 
@@ -494,6 +504,20 @@ El motor es **puro**: no lee la base, el disco ni el reloj. Las funciones están
     - `ToLocalTime` y `ToUniversalTime`;
     - `CultureInfo.CurrentCulture` y `CurrentUICulture`;
     - cualquier tipo `GPOS.*` fuera de `GPOS.Contracts`, `GPOS.Core.Sistema.Licencia` y `HoraEmpresa.DesfaseUtc`.
+
+12. **(v2.3) NV-08 en la cadena.** `LicenciaAceptada` agrega `DateTime? RetiroEfectivoUtc`:
+    - es null si al menos uno de sus `kid` no está retirado;
+    - si todos lo están, L1a-4 lo calcula con `GraciaLlaveRetirada` (NV-08), con el redondeo al corte.
+
+    Al calcular `r` (regla 4) con una anterior que lo tenga:
+    - si `RetiroEfectivoUtc ≤ t`, la empresa no tenía derecho;
+    - si no, `r.TopeGraciaUtc = mín(r.TopeGraciaUtc, RetiroEfectivoUtc, fin de vigencia de la entrada)`.
+
+    La licencia no se excluye de `Anteriores`. Si su JWS no verifica, la lista se corta ahí (datos L1a-4, 4.2).
+13. **(v2.3) Origen de los datos.**
+    - `AceptadaUtc` = `Licencias.AceptadaUtc`: la mínima de su `sec`, que en una reinserción `RESTAURACION` es la del sello `.acept`.
+    - `UltimaVerificacionUtc` = la más antigua entre la fila `Licencia.Gracias` y el archivo `estado`. La bitácora no es fuente de esta marca: es DL-16, pendiente de firma.
+    - Las tablas van en el esquema `dbo`.
 
 
 ### 6.2 Reloj (cierre de H-16, C-04)
@@ -978,6 +1002,7 @@ La hoja de firma la rehace el arquitecto-maestro. Esta tabla dice qué recomiend
 | **DL-13** | Cuenta diaria del propietario estándar y cuenta administradora aparte en el equipo emisor | **Sí, obligatoria** (v1: recomendada). Con DL-10 (b), **muy recomendada** | **Previa a AI-09** (la generación de `s1`), no solo a la primera licencia de pago, con las condiciones E-1 a E-15 (10.6). **(v2.1)** E-1 incluye SEG-L2-25: sin `sysadmin` en SQL local (`dbcreator` para pruebas; inicio de sesión nominal aparte para lo demás) ni grupos con efecto de administrador, verificado por devops en el inventario de O-6 antes de AI-09. Con DL-13 sola el riesgo sigue Medio-Alto; baja a Medio con el conjunto de 10.5 | USD 0; 0,75 dp de devops |
 | **DL-14 (nueva)** | **Tope de vigencia de las licencias sin firma Avanzada propia:** cada `vence` ≤ `emitida` + 200 días; si no, 422 `LICENCIA_VIGENCIA_BASICA`. El emisor Básico emite a los clientes anuales archivos semestrales. Precisa ADR-62 e INV-1 | **Sí** | Se verifica en la API (reglas de aceptación, L1a-2) y en el emisor. Es condición de la primera licencia de pago y del texto adaptado de AP-04 | 0,25 dp (L1a-2) + 0,1 dp (EM) + 0,1 dp (QA) |
 | **DL-15 (nueva, v2.2)** | **Un `vence` acortado sin firma Avanzada propia respeta el mínimo de la transición.** Caso: al aceptar la vigente, la empresa tenía derecho con la anterior y sigue operando, pero su tope nuevo es anterior a `mín(fin de la gracia previa, SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h)))`. Entonces el tope efectivo pasa a ser ese mínimo, con `EnGracia(Transicion)` desde el tope nuevo. Hoy un archivo Básico puede cortar en horas con un `vence` cuya gracia termina justo después de la aceptación, lo que rodea CW-02 (H-3 de la validación del PR #31). Precisa ADR-59, punto 4 | **Sí** | Hasta la firma, el motor aplica el texto literal («un `vence` cuya gracia ya terminó»). *Alternativa descartada:* sin firma Avanzada, no acortar nunca por debajo del fin previo. Es coherente con la omisión, pero GSF no podría corregir un `vence` erróneo mientras dure el nivel Básico | ≈ 0,1 dp (L1a-3) |
+| **DL-16 (nueva, v2.3)** | **Fuentes de la última verificación correcta:** la fila `Licencia.Gracias` y el archivo `estado` del disco (la más antigua). La bitácora sigue siendo fuente de las marcas de inicio de entorno y de retiro, pero no de esta. Precisa ADR-59, punto 3, y `[LIC]` 4.1.2, que la nombran entre las fuentes | **Sí** | Adelantar la marca exige el anillo en las dos fuentes. Con menos frecuencia de escritura, la bitácora solo acortaría la gracia de 72 h sin que haya un ataque. *Alternativa descartada:* un evento `LicenciaVerificada` cada 15 minutos en `BitacoraSeguridad` (unas 35 000 filas al año [I]) | 0 |
 
 ### 13.2 Condiciones ya firmadas que siguen abiertas
 
@@ -1044,7 +1069,7 @@ Contrastado, solo lectura, con la copia de trabajo `GPOS-NG-lic` (cambios sin co
 
 ### Cierre
 - Estado: Completado. Versión 2.1 del blueprint: la v2 respondió los 23 hallazgos de `[SEG]` (21 aceptados, 2 con ajuste, ninguno rechazado) y el auditor le dio «Aprobado con observaciones» en la lectura de diferencias; la v2.1 incorpora esas observaciones (SEG-L2-24, SEG-L2-25, D.2 y D.4). DL-01 a DL-14 siguen Pendientes de firma (DL-06, retirada).
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.2, mismo archivo; agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.3, mismo archivo; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
 - Supuestos: los catorce de la sección «Supuestos» (10 a 14, nuevos desde la v2).
 - Decisiones candidatas a ADR:
   - **ADR-83 · Sello de habilitación de cuentas con padrón protegido como fuente del cupo** (DL-01 con (a) y (b), DL-02 con la regla de Release, DL-05 obligatoria con el estado del factor; SH-1 a SH-8). Precisa ADR-58 (punto 9), ADR-36 (R-3), ADR-68 y SEC-07. *Descartadas:* limitar por antigüedad en exceso de cupo, las revocaciones en la bitácora, reconstruir el padrón desde las filas, sellar los permisos granulares y usar el `SelloSeguridad` en el sello.

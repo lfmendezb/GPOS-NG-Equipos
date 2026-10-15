@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-15: licencia firmada en el lote 2 de RG-14 (v2.2)
+# Hoja de firma DL-01 a DL-16: licencia firmada en el lote 2 de RG-14 (v2.3)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.2 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2.3 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -11,13 +11,15 @@
 | 2 | 2026-10-14 | Incorpora el dictamen del auditor-seguridad (`[SEG]`, sección 9: Rechazado en v1 por SEG-L2-01, 02 y 03).<br>- Agrega DL-14 (tope de 200 días).<br>- DL-05 y DL-13 pasan a obligatorias.<br>- Condiciones nuevas en DL-01, DL-02, DL-03, DL-07, DL-10, DL-11 y DL-12.<br>- FY-15-B y R-L11-B reescritos.<br>- Anexos A y B, y sección 6 de discrepancias |
 | **2.1** | 2026-10-14 | Incorpora la **lectura de diferencias del auditor** (`[SEG]`, «Lectura de diferencias v2», D.1 a D.7): **Aprobado con observaciones**.<br>- **E-1** (anexo A y DL-13) agrega **SEG-L2-25**: la cuenta diaria no es `sysadmin` de ninguna instancia SQL local ni pertenece a grupos con efecto de administrador; `dbcreator` para pruebas; un inicio de sesión nominal aparte para lo que exija `sysadmin`; `s1` no se genera hasta que devops lo verifique.<br>- **Anexo B:** SEG-L2-18 como quedó en el blueprint v2 (identidad por SHA-256 del contenido), SEG-L2-24 (Baja) y los verbos provisionales (D.2).<br>- **Fuentes:** citan el blueprint v2.<br>- **DL-10 unificada con el blueprint v2:** (a) `s1r` en TPM; (b) YubiKeys en Básico. Recoge la condición del auditor de usar dispositivos distintos para Básico y para la ceremonia.<br>- **Sección 6:** D-1 cerrada de acuerdo; D-2 con la condición del auditor; D-3 con su respuesta; D-4 aceptada.<br>- **Carga del desarrollador I** con las cifras del blueprint v2 (24,1 dp con el recorte 1 anticipado; 26,1 dp sin él); el **recorte 1 queda como recomendación explícita** |
 | **2.2** | 2026-10-14 | Incorpora el blueprint v2.2 (validación del PR #31, L1a-3 «Motor de estados») y el inventario O-6.<br>- **Agrega DL-15** (H-3, Media): un archivo sin firma Avanzada respeta el mínimo de la transición al acortar un `vence`.<br>- **DL-03** recoge la precisión P-3 / SEG-PR31-01: S-03 escribe la fila «del RNC licenciado al actual», conservando `RncAnterior` y `CambiadoUtc`; la fila solo vale contra la licencia aceptada antes del cambio.<br>- **Inventario O-6:** la PC A no cumple E-1 (con SEG-L2-25), E-5, E-10 ni E-13. Recomienda DL-10 (b) y que el propietario **confirme cuál es el equipo principal**.<br>- Cargas actualizadas: L ≈ 25,05 dp; I ≈ 24,25 dp con el recorte 1 (26,25 dp sin él) |
+| **2.3** | 2026-10-14 | Incorpora el blueprint v2.3 (validación del modelo de datos de L1a-4, `[VDL]`).<br>- **Agrega DL-16:** la bitácora deja de ser fuente de `UltimaVerificacionUtc`.<br>- **Sección 3.1 nueva («Confirmaciones»):** la regla 3 de la §6.1.1, que el auditor pidió confirmar con firma, y las precisiones de `[DAT]` 6.3 que `[VDL]` confirmó (información, sin decisión) |
 
 **Fuentes (solo lectura)**
-- `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.2** (arquitecto-software).
+- `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.3** (arquitecto-software).
 - `[DAT]` = `Solucion GPOS NG\datos-t3-12-rg14-2026-10-14.md` v2: D-01 a D-11 y L-01 firmadas; D-04 (ii) sin firma.
 - `[SEG]` = `Solucion GPOS NG\revision-seguridad-blueprint-licencia-lote2-2026-10-14.md` (auditor-seguridad): secciones 4, 6 y 9, y «Lectura de diferencias v2» (D.1 a D.7).
 - `[VAL]` = `Solucion GPOS NG\validacion-l1a-3-motor-estados-2026-10-14.md` (validación del PR #31, H-3), con la revisión del auditor `revision-seguridad-pr31-motor-estados-2026-10-14.md` (SEG-PR31-01 a 07).
 - `[O6]` = `Solucion GPOS NG\inventario-o6-equipo-a-2026-10-14.md` (devops, PC A `DevLab00`).
+- `[VDL]` = `Solucion GPOS NG\validacion-datos-l1a4-2026-10-14.md` (validación del modelo de datos de L1a-4).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -72,6 +74,7 @@ Ya **no** exige AP-01 ni AP-05.
 | DL-13 | Cuenta diaria sin privilegios de administrador (tampoco `sysadmin` en SQL) y E-1 a E-15 | **Aprobar, obligatoria antes de AI-09** (muy recomendada si se elige DL-10 (b)) | 0,75 dp de devops | **Antes de generar `s1`** |
 | **DL-14** | Una licencia Básica vence como máximo 200 días después de emitida | **Aprobar** | 0,35 dp | 2026-11-06 |
 | **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **Aprobar** | ≈ 0,1 dp | 2026-11-06 |
+| **DL-16** | La bitácora deja de ser fuente de la «última verificación correcta» | **Aprobar** | 0 | 2026-11-06 |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -371,6 +374,51 @@ La propuesta (`[BP2]` 13.1):
 
 ---
 
+### DL-16 · Fuentes de la última verificación correcta de la licencia (nueva)
+
+**Qué se decide.** La licencia guarda la hora de su **última verificación correcta** (`UltimaVerificacionUtc`). Si la licencia se vuelve ilegible, esa marca sirve para calcular la gracia: la API sigue operando hasta 72 h después de la marca. ADR-59, punto 3, y `[LIC]` 4.1.2 nombran la bitácora entre las fuentes de esa marca. El arquitecto de datos propone, y `[VDL]` confirma, quitarla:
+- las fuentes pasan a ser la fila `Licencia.Gracias` (con MAC) y el archivo `estado` del disco, y vale **la más antigua**;
+- la bitácora **sigue siendo fuente** de las marcas de inicio de la gracia de entorno y de la de retiro.
+
+El motivo es doble. Adelantar la marca ya exige el anillo en las dos fuentes, así que la bitácora no agrega defensa. Y como se escribe con menos frecuencia, solo acortaría la gracia de 72 h sin que haya un ataque. Además, la bitácora todavía no existe (DL-04).
+
+**Recomendación: Aprobar.** Se aparta de la letra del texto firmado, por eso pide firma.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Fila `Licencia.Gracias` y archivo `estado`, la más antigua (recomendada)** | Misma protección; la gracia ante una licencia ilegible no se acorta por error. L1a-4 ya se construye así hasta la firma |
+| (b) Mantener la bitácora como tercera fuente, con un evento `LicenciaVerificada` cada 15 minutos | Unas 35 000 filas al año en `BitacoraSeguridad` [I], sin defensa adicional |
+| (c) Mantener la bitácora con la cadencia actual | Acorta la gracia de 72 h sin que haya ataque |
+
+**Costo:** 0. Precisa ADR-59, punto 3, y `[LIC]` 4.1.2.
+
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+
+---
+
+### 3.1 Confirmaciones (precisiones dentro de lo firmado)
+
+**C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
+**Recomendación: confirmar.** Así el corte nunca cae a media jornada de ventas, y el tope por empresa sigue rigiendo. La alternativa (terminar exactamente a las 72 h) puede cortar en plena venta. Es una precisión de ADR-59, punto 2.
+
+`[ ] Confirmo C-1`   `[ ] Prefiero que terminen exactamente a las 72 h`
+
+**C-2 · Precisiones del modelo de datos (`[DAT]` 6.3) que `[VDL]` confirmó.** Son solo información: no requieren decisión y no cambian nada visible.
+
+| # | Precisión | Por qué |
+|---|---|---|
+| a | `Licencias.AceptadaUtc` separada de `RecibidaUtc`, con la mínima por `sec` en la cadena de licencias anteriores | Una reinserción `RESTAURACION` no rompe la cadena ni la condición de NV-07 |
+| b | `Kid` pasa a `Kids` | Un archivo cofirmado (DL-11) tiene dos `kid` |
+| c | Índice de «ya aceptado» único sobre (`Sha256Contenido`, `NivelFirma`) con `Resultado = 'A'` | Resuelve SEG-L2-24 sin migrar el índice de una tabla de solo inserción |
+| d | `Licencia.SecMax` guarda también el SHA-256 del contenido y los `Kids` | Lo exige `ReglasAceptacion`; coherente con SEG-L2-18 |
+| e | `Usuarios.SelloHabilitacion` como `varbinary(512)` | Condición para SL: una prueba que selle la cuenta más larga con los dos cifradores (Data Protection y `CifradorAnillo`) y compruebe que cabe |
+
+Además, `[VDL]` corrige la regla 12 de la §6.1.1 (NV-08 en la cadena): una licencia con todas sus llaves retiradas sigue en la cadena, pero su derecho previo queda acotado por el retiro efectivo. Es una precisión técnica, sin firma.
+
+`[ ] Tomo conocimiento de C-2`
+
+---
+
 ## 4. Pendientes que no son DL: lo que se necesita del propietario
 
 ### 4.1 CI-7 / AI-07 · Validación legal de las tres excepciones (antes del 2026-11-16)
@@ -501,6 +549,7 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-07:** otro reparto, o el emisor pasa a enero;
 - **DL-10 (c):** R-B12 queda Media / Alto, aceptado con R-L11-B «sin respaldo».
 - **DL-15:** queda el hueco H-3 (un archivo Básico puede cortar en horas), aceptado de forma expresa.
+- **DL-16:** la bitácora sigue como fuente de la última verificación y hay que construir la escritura periódica (opción (b) o (c)).
 
 ---
 
