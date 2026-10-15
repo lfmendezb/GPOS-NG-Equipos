@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-21: licencia firmada en el lote 2 de RG-14 (v2.11)
+# Hoja de firma DL-01 a DL-22: licencia firmada en el lote 2 de RG-14 (v2.12)
 
-**Fecha:** 2026-10-14 (v2.8 a v2.11: 2026-10-15) · **Versión:** 2.11 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 (v2.8 a v2.12: 2026-10-15) · **Versión:** 2.12 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -20,6 +20,7 @@
 | **2.9** | 2026-10-15 | Agrega **DL-21** (LB-02, revisión de seguridad del PR #35, L1b-1; validación de L1b-1 y blueprint v2.9 §6.2 y §13.1): la hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada propia. El resto de la hoja no cambia |
 | **2.10** | 2026-10-15 | Precisión de **DL-20**: la firma de las llaves cubre también el anillo de GPOS.Web (PR #37, AW-01, Baja). El costo sube de ≈ 0,4 a ≈ 0,5 dp, y devops necesita también el certificado de la Web con uso `digitalSignature`. El resto de la hoja no cambia |
 | **2.11** | 2026-10-15 | Agrega la confirmación **C-5** (sección 3.1), pedida por B antes de activar `UseLicencia` (L1b-2): respaldos, cerrar sesiones, resolver el reloj y sincronizar el espejo de numeración son `Esencial` además del punto 6 de ADR-59. El resto de la hoja no cambia |
+| **2.12** | 2026-10-15 | Agrega **DL-22**, que es **de RG-14, no de la licencia**: precisión de D-04 y PA-30 del diseño `datos-t3-12-rg14-2026-10-14.md` (rotación de `gpos_app` sin `KILL` inmediato), según la sección B de `validacion-rg14-lote2b-y-s1-2026-10-15.md`, integrada con la propuesta del auditor (`revision-seguridad-pr39-rg14-lote2b-2026-10-15.md`, sección 5): `KILL` diferido obligatorio de 2 a 6 min a elección del propietario, `ClearPool` en la API y aviso de S4. El resto de la hoja no cambia |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -32,6 +33,7 @@
 - `[VAL4]` = `Solucion GPOS NG\validacion-l1a-4-persistencia-2026-10-14.md` (validación de L1a-4, correcciones 6 a 9); `[PA]` = `Solucion GPOS NG\revision-seguridad-pr33-persistencia-2026-10-14.md` (auditor-seguridad, PA-01 a PA-08).
 - `[AN]` = `Solucion GPOS NG\revision-seguridad-pr34-anillo-2026-10-15.md` (auditor-seguridad, PR #34, H-17 v2: AN-01 a AN-04).
 - `[LB]` = `Solucion GPOS NG\revision-seguridad-pr35-l1b-1-2026-10-15.md` (auditor-seguridad, LB-01 y LB-02); `[VALB]` = `Solucion GPOS NG\validacion-l1b-1-2026-10-15.md` (validación de L1b-1, con la adenda de la decisión del arquitecto).
+- `[VR14]` = `Solucion GPOS NG\validacion-rg14-lote2b-y-s1-2026-10-15.md`, sección B (DL-22, de RG-14).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -92,6 +94,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
 | **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor (API y Web) | **Aprobar** | ≈ 0,5 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
 | **DL-21** | La hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada | **Aprobar** (conviene firmarla junto con DL-18 y DL-19) | 0 (sin costo de desarrollo; ver la consecuencia) | Antes de unir el cableado de L1b-2 |
+| **DL-22** *(RG-14)* | Rotar la credencial de la API sin cortar sesiones en el acto (`KILL` diferido de 2 a 6 min, a tu elección; `ClearPool` y S4; inmediato con `--urgente`) | **Aprobar** | ≈ 0,2 dp | Antes de unir la rotación de `credencial-app` |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -547,6 +550,39 @@ Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
 
 ---
 
+### DL-22 · Rotación de la credencial de la API sin `KILL` inmediato (nueva; **de RG-14, no de la licencia**)
+
+**Qué se decide.** Esta decisión es de las identidades SQL (RG-14), no de la licencia: precisa **D-04 y PA-30** (y T3-03) del diseño `datos-t3-12-rg14-2026-10-14.md`.
+
+Hoy, al rotar la credencial de la API en una base de empresa (`gpos_app_a|b`), se aplican `DENY CONNECT` y `KILL` a la generación anterior, y sus sesiones se cierran en el acto. Bajo carga, el `KILL` puede producir un **error 500** en una venta en curso: la reconexión automática entra con la credencial vieja, y el error 18456 sale en el comando, donde la reapertura automática no lo cubre [I].
+
+Hay dos propuestas que coinciden en lo esencial y en descartar «solo `DENY CONNECT`»: la del arquitecto (`[VR14]`, sección B) y la del auditor (`revision-seguridad-pr39-rg14-lote2b-2026-10-15.md`, sección 5). Integradas:
+1. **Rotación normal:** se crea la generación nueva, se escribe la cadena nueva y se aplica `DENY CONNECT` a la anterior de inmediato, **sin `KILL` en el acto**.
+2. **`KILL` diferido y obligatorio:** pasado el plazo, `credencial-app` hace `KILL` de lo que quede de la generación anterior. El auditor propone unos 2 minutos y el arquitecto 6. **El plazo lo eliges tú en la casilla, entre 2 y 6 minutos.**
+3. **`Connection Lifetime`** en las cadenas de la API, **igual o menor que el plazo**, para que el pool recicle sus conexiones antes del `KILL`.
+4. **En la API:** al detectar el 18456 de una empresa, `SqlConnection.ClearPool` de la cadena anterior, para no reutilizar conexiones abiertas con la credencial vieja. Es la propuesta del auditor.
+5. **`credencial-app --urgente`** (o `--inmediato`), ante una sospecha de compromiso: `DENY CONNECT` y `KILL` sin espera, con unos pocos 500 transitorios avisados en la salida.
+6. **`GPOS.Migracion verificar` (S4)** informa toda sesión abierta de un `gpos_app_*` que no sea el vigente.
+7. **Prueba PA-30:** dos rotaciones normales bajo carga sin ningún 500, y ninguna sesión de la generación anterior al vencer el plazo.
+
+Las credenciales de lectura (`rotar-lectura`) no cambian.
+
+**Recomendación: Aprobar** con el `KILL` diferido, `ClearPool` y S4.
+- **Plazo:** con `ClearPool`, 2 minutos suelen bastar y acortan la exposición. Si en la prueba PA-30 aparecen 500, se sube hacia 6. Ninguno de los dos extremos tiene riesgo alto.
+- La intención firmada (que la generación anterior pierda el acceso) se cumple igual, sin errores visibles para el cajero en una rotación de rutina, y el corte inmediato queda para un compromiso.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) `DENY CONNECT` inmediato, `KILL` diferido obligatorio (2 a 6 min), `Connection Lifetime` ≤ plazo, `ClearPool`, S4 y `--urgente` (recomendada)** | Sin 500 en la rotación normal. **Riesgo:** la generación anterior conserva sesiones abiertas durante el plazo elegido (2 a 6 min); ante un compromiso se usa `--urgente` |
+| (b) Mantener el `KILL` inmediato (texto firmado) | Cierre en el acto, pero un 500 posible bajo carga en cada rotación; PA-30 obligaría a reabrir en el comando, que es más complejo |
+| (c) Solo `DENY CONNECT`, sin `KILL` posterior | **Descartada por el arquitecto y el auditor:** las sesiones de la generación anterior, incluidas las de un atacante, seguirían vivas sin límite, porque el pool las conserva |
+
+**Costo:** ≈ 0,2 dp (desarrollador I): 0,15 de la rotación y unos 0,05 de `ClearPool` y S4 [I]. Hasta la firma, se construye marcado «PENDIENTE DE FIRMA». Si no se firma, se mantiene el `KILL` inmediato.
+
+`[ ] Aprobar (a)`, plazo del `KILL` diferido: `[ ] 2 min`  `[ ] 6 min`  `[ ] otro (entre 2 y 6): ____`   `[ ] (b)`
+
+---
+
 ### 3.1 Confirmaciones (precisiones dentro de lo firmado)
 
 **C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
@@ -718,7 +754,7 @@ Encargarlo con AI-07, al mismo asesor.
 | Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
 | Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
 | ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
-| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, C-1 (regla 3), C-5, las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, DL-22, C-1 (regla 3), C-5, las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
@@ -740,6 +776,7 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-19:** queda PA-01: un clon que niega la lectura de la huella opera sin límite; solo hay aviso diario.
 - **DL-20:** queda AN-01: quien escribe en la carpeta del anillo puede falsificar los valores protegidos; solo el escalón 1 y la DACL.
 - **DL-21:** queda LB-02: con `s1` y la administración del servidor, la corroboración por `emitida` rodea DL-17 y DL-14; se vuelve al texto literal de H-16.
+- **DL-22 (RG-14):** se mantiene el `KILL` inmediato en cada rotación, con un 500 posible bajo carga; PA-30 exige reabrir en el comando.
 
 ---
 
