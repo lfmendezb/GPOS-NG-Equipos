@@ -162,3 +162,33 @@ Total: unos 0,3 dp, de los que 0,15 dp corresponden a los dos Medios.
 - Decisiones candidatas a ADR: precisión de NV-07: la fila `CambiosRnc` solo vale contra la licencia aceptada antes del cambio (alternativa descartada: atarla a la `sec`, que cambia el formato de DL-03)
 - Entregas a otros agentes: arquitecto-maestro → decidir la lectura de SEG-PR31-01; desarrollador de L1a-4 → guardar `TopeGraciaUtc` tal cual (null incluido), pasar las gracias especiales también con la licencia ilegible y pasar como `Anterior` solo la inmediatamente anterior por `sec`; desarrollador de L1b → tratar toda excepción del motor como «no opera»; qa-automatizado → pruebas de SEG-PR31-01 a -04
 - Próximo paso recomendado: aplicar SEG-PR31-02 en el PR #31 y llevar SEG-PR31-01 al arquitecto antes de unir
+
+---
+
+## Lectura de diferencias `4f86390b..87ec8e38` (2026-10-14)
+
+Lectura en solo lectura del `diff` (4 archivos, +471/−168), sin compilar ni ejecutar. Las pruebas que declara el coordinador (motor 98/98 en Debug y Release, Licencia+Criptografía 278 con 1 omitida, Arquitectura 174/174) **no las verifiqué**. Las líneas citadas son las de `87ec8e38`.
+
+| Hallazgo | Corrección | Estado |
+|---|---|---|
+| **SEG-PR31-01** | La fila `CambiosRnc` solo da transición si `AceptadaUtc ≤ CambiadoUtc` y la entrada no trae un corte inmediato con firma Avanzada propia (`MotorEstados.cs:323-327`). Con la cadena de anteriores, una licencia aceptada después del cambio con el RNC anterior conserva la transición que ya existía, **sin alargarla** (rama (a), `:280-281`, fin = `r.Tope` de la licencia previa). Lo comprobé recorriendo L1→cambio→L2→L3 con el RNC anterior: el fin sigue siendo el `finGracia` de L1 y ya no es permanente. Pruebas en el `diff`: `Seg_pr31_01_…_no_alarga_la_transicion` y `…_corte_inmediato_de_firma_avanzada` | **Cerrado** |
+| **SEG-PR31-02** | En `AplicarEspeciales`, el tope pasa a null en `SoloConsulta` y es igual al fin de la especial en `EnGracia` (`:374`, `:376`). `EvaluarIlegible` sin gracia también deja el tope en null (`:385`). La ramificación que deja el cálculo intacto (`:377`) solo ocurre si fin = tope. Prueba `Seg_pr31_02_…` | **Cerrado** |
+| SEG-PR31-03 | Con rangos fuera de lo permitido devuelve `NoLicenciada` sin lanzar excepción (`:116-128`, `:196-197`, `:260-261`). `Vigente` solo antes de mín(inicio de `PorVencer`, fin de la vigencia) (`:103`). Una entrada duplicada no abre transición (`:263`, `:432-433`) | Cerrado. Las horas `Local` siguen lanzando excepción como error de programación: la entrega a L1b («excepción = no opera») se mantiene |
+| SEG-PR31-04 | `t = máx(AceptadaUtc, Emitida)` (`:270`). Ilegible cuenta desde mín(última verificación, ahora) (`:172`) | Cerrado |
+| SEG-PR31-05 | `CadenaOrdenada` corta la lista en el primer elemento fuera de orden por `sec` o por aceptación (`:235-248`); desde ahí no hay derecho previo | Cerrado |
+| SEG-PR31-06 | `RncCanonico`: solo quita espacios y guiones y exige 9 u 11 dígitos ASCII (`:440-449`) | Cerrado |
+| SEG-PR31-07 | Se prohíben `TimeZoneInfo`, `ToLocalTime`/`ToUniversalTime` y `CurrentCulture`/`CurrentUICulture`. De GPOS solo se admiten `GPOS.Contracts.*`, `GPOS.Core.Sistema.Licencia.*` y `HoraEmpresa.DesfaseUtc`. Un token no resuelto se considera prohibido. Hay pruebas del propio detector (`MotorEstadosLicenciaPuroTests.cs`) | Cerrado. Sigue siendo una guarda de un solo nivel, pero ya no puede llamar a otro código de GPOS, que era lo que hacía falta |
+
+**Ramas nuevas: ¿abren algún fallo abierto?** No encontré ninguna.
+- La recursión `EvaluarCadena` es lineal. Valida los parámetros en cada nivel, y una licencia anterior inválida da `SinLicencia`, así que no hay derecho previo.
+- La rama (a) nunca alarga una transición: su fin es el tope de la licencia previa.
+- La rama (b) conserva la fórmula firmada de NV-02.
+- Una lista de anteriores truncada o fuera de orden falla cerrada.
+
+**Notas, sin severidad:**
+- **Regla 3 del blueprint v2.2:** las gracias especiales e `Ilegible` ahora terminan en el corte siguiente. Eso les suma hasta 24 h sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). Debe constar como firmada con la v2.2; si no lo está, la decide el propietario.
+- **Condición de SEG-PR31-01:** usa `AceptadaUtc` y no `máx(AceptadaUtc, Emitida)`. La diferencia solo aparece con el reloj protegido atrasado, y el efecto queda acotado por la rama (a).
+
+**Dictamen final: Aprobado** (recomendación técnica; la decisión de unir es del propietario). No queda ningún hallazgo abierto. Entregas que siguen vigentes:
+- L1a-4: guardar `TopeGraciaUtc` tal cual, null incluido, y entregar los anteriores en orden descendente de `sec` (al menos los 24 últimos).
+- L1b: tratar cualquier excepción del motor como «no opera».
