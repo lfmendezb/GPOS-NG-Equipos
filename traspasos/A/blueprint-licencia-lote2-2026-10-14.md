@@ -1,7 +1,7 @@
 # [Blueprint Técnico] Licencia firmada en el lote 2 de RG-14: cierre de AI-01, sello de habilitación, piezas construibles, calendario hasta el corte, ceremonia sin hardware y licencias de pago en nivel Básico
 
 - **Fecha:** 2026-10-14. **Autor:** arquitecto-software, equipo A.
-- **Versión: 2.5.** La v2.5 (2026-10-14) incorpora la validación del PR #33 (L1a-4; registro de cambios v2.5). La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
+- **Versión: 2.6.** La v2.6 (2026-10-14) incorpora PA-01 y PA-02 de la revisión de seguridad del PR #33 (registro de cambios v2.6). La v2.5 (2026-10-14) incorpora la validación del PR #33 (L1a-4; registro de cambios v2.5). La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
 - **Estado del documento:** diseño. Las decisiones nuevas de este documento quedan **Pendientes de firma** (sección 13). Nada de lo que aquí se describe existe en el código, salvo lo que el desarrollador L lleva construido de L1a-1 (sección 14). La hoja de firma la rehace aparte el arquitecto-maestro; la sección 13 solo dice qué tiene que constar en ella.
 - **Entradas:**
   - RG-14 firmado el 2026-10-14: D-01 a D-11, D-04 precisada y **L-01** (la licencia firmada de ADR-58 a 66 entra en el lote 2). Fuente: `datos-t3-12-rg14-2026-10-14.md` v2 (`[DAT]`).
@@ -116,6 +116,18 @@ Dictamen: `validacion-l1a-4-persistencia-2026-10-14.md`.
 | P-3 | **Modo de verificación de integridad** en `GPOS.Criptografia`: una firma de un `kid` retirado en los binarios verifica, marcada como retirada, solo al volver a verificar (LV-20 y LV-21), nunca al aceptar. Con él, NV-08 funciona también con un retiro hecho por los binarios. Es condición de la versión que retire un `kid` en los binarios, y el recurso conserva la llave pública del `kid` retirado | 6.1 | ≈ 0,3 dp, con esa versión |
 | P-4 | En modo Amplio, una licencia `Produccion` o `Beta` también se rechaza al cargarla en caliente (`ANILLO_NO_ADMITIDO`) | 8 | ≈ 0,05 dp |
 | P-5 | El perfil vigente (`perfilMin`) sale de fuentes verificables, igual que el piso (INV-11): los JWS con firma Avanzada propia, más la fila con MAC `Licencia.PerfilMin` y el archivo de disco, cada uno con su `sec`. Gana la que verifica con la mayor `sec` | 6.1.2 | ≈ 0,2 dp, antes de las llaves Avanzadas |
+
+### Registro de cambios v2.6 (PA-01 y PA-02 de `revision-seguridad-pr33-persistencia-2026-10-14.md`)
+
+Texto exacto para el desarrollador: correcciones 6 a 9 de `validacion-l1a-4-persistencia-2026-10-14.md` (adenda).
+
+| # | Precisión | Secciones | Pieza y costo |
+|---|---|---|---|
+| P-1 | **Vigente fila a fila (PA-02, punto 1):** dentro de cada `sec` se elige la fila que verifica. Si en una misma `sec` verifican dos contenidos distintos, esa `sec` cuenta como no verificable. Una fila que no verifica nunca hace saltar su `sec` si otra fila de esa `sec` sí verifica | 6.1.1 (14) | L1a-4 +0,15 |
+| P-2 | **Sin regreso silencioso (PA-02, punto 2):** nunca rige una `sec` menor que la máxima atestiguada con MAC. Primero se busca esa licencia en el disco y, si no está, se pasa a `Ilegible`. Las filas `'A'` de `sec` mayor sin MAC no disparan `Ilegible` (así se evita una denegación de servicio con las credenciales de la API). **Cambia el orden de recuperación firmado en `[LIC]` 4.1.2 → DL-18** | 6.1.1 (14), 13.1 | L1a-4 +0,1, tras la firma |
+| P-3 | **Huella persistida (PA-01):** la última huella va en las filas con MAC y en el disco. Una lectura fallida nunca borra una marca de entorno | 6.1.1 (15) | L1a-4 +0,15 |
+| P-4 | **Lectura de la huella fallida más de `máx(graciaDias, 72 h)` = entorno distinto (PA-01, punto 3).** Contradice «un error no cuenta como cambio» de `[LIC]` 3.3.1 → **DL-19** | 6.1.1 (15), 13.1 | L1a-4 +0,1, tras la firma |
+| — | **Descartado:** `DENY INSERT` en `Licencias` con un procedimiento de aceptación. El procedimiento no verifica el JWS y quien tiene las credenciales de la API puede llamarlo igual | — | 0 |
 
 ---
 
@@ -542,6 +554,15 @@ El motor es **puro**: no lee la base, el disco ni el reloj. Las funciones están
     - `AceptadaUtc` = `Licencias.AceptadaUtc`: la mínima de su `sec`, que en una reinserción `RESTAURACION` es la del sello `.acept`.
     - `UltimaVerificacionUtc` = la más antigua entre la fila `Licencia.Gracias` y el archivo `estado`. La bitácora no es fuente de esta marca: es DL-16, pendiente de firma.
     - Las tablas van en el esquema `dbo`.
+
+14. **(v2.6) Elección de la vigente (PA-02).**
+    - Por `sec` descendente se verifican todas las filas `'A'` de cada `sec` y se elige la que verifica. Dos filas que verifican con contenidos distintos hacen que esa `sec` no sea verificable.
+    - **(Pendiente de DL-18)** Nunca rige una `sec` menor que la máxima atestiguada con MAC (`Licencia.SecMax` o `secmax`). Si esa licencia no está en la base, se busca en el disco por su SHA-256. Si tampoco está allí, la instalación queda `Ilegible`.
+    - Las filas sin MAC no disparan `Ilegible`.
+15. **(v2.6) Huella del entorno (PA-01).**
+    - `UltimaHuella` y `UltimaHuellaUtc` van en `Licencia.Gracias` y en `estado`, y se usan cuando la lectura falla, también tras reiniciar.
+    - `Entorno = null` solo se escribe tras una lectura correcta que coincide con la huella de la vigente.
+    - **(Pendiente de DL-19)** Sin ninguna lectura correcta durante más de `máx(graciaDias, 72 h)`, se trata como un entorno distinto.
 
 
 ### 6.1.2 Reglas de aceptación (L1a-2; v2.4, validación del PR #32)
@@ -1054,6 +1075,8 @@ La hoja de firma la rehace el arquitecto-maestro. Esta tabla dice qué recomiend
 | **DL-14 (nueva)** | **Tope de vigencia de las licencias sin firma Avanzada propia:** cada `vence` ≤ `emitida` + 200 días; si no, 422 `LICENCIA_VIGENCIA_BASICA`. El emisor Básico emite a los clientes anuales archivos semestrales. Precisa ADR-62 e INV-1 | **Sí** | Se verifica en la API (reglas de aceptación, L1a-2) y en el emisor. Es condición de la primera licencia de pago y del texto adaptado de AP-04 | 0,25 dp (L1a-2) + 0,1 dp (EM) + 0,1 dp (QA) |
 | **DL-15 (nueva, v2.2)** | **Un `vence` acortado sin firma Avanzada propia respeta el mínimo de la transición.** Caso: al aceptar la vigente, la empresa tenía derecho con la anterior y sigue operando, pero su tope nuevo es anterior a `mín(fin de la gracia previa, SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h)))`. Entonces el tope efectivo pasa a ser ese mínimo, con `EnGracia(Transicion)` desde el tope nuevo. Hoy un archivo Básico puede cortar en horas con un `vence` cuya gracia termina justo después de la aceptación, lo que rodea CW-02 (H-3 de la validación del PR #31). Precisa ADR-59, punto 4 | **Sí** | Hasta la firma, el motor aplica el texto literal («un `vence` cuya gracia ya terminó»). *Alternativa descartada:* sin firma Avanzada, no acortar nunca por debajo del fin previo. Es coherente con la omisión, pero GSF no podría corregir un `vence` erróneo mientras dure el nivel Básico | ≈ 0,1 dp (L1a-3) |
 | **DL-16 (nueva, v2.3)** | **Fuentes de la última verificación correcta:** la fila `Licencia.Gracias` y el archivo `estado` del disco (la más antigua). La bitácora sigue siendo fuente de las marcas de inicio de entorno y de retiro, pero no de esta. Precisa ADR-59, punto 3, y `[LIC]` 4.1.2, que la nombran entre las fuentes | **Sí** | Adelantar la marca exige el anillo en las dos fuentes. Con menos frecuencia de escritura, la bitácora solo acortaría la gracia de 72 h sin que haya un ataque. *Alternativa descartada:* un evento `LicenciaVerificada` cada 15 minutos en `BitacoraSeguridad` (unas 35 000 filas al año [I]) | 0 |
+| **DL-18 (nueva, v2.6)** | **Sin regreso silencioso a una licencia anterior:** la instalación nunca se rige por una `sec` menor que la máxima atestiguada con MAC. El orden es: la fila de esa `sec` que verifica; después, la copia del disco con su SHA-256; si no, `Ilegible`. Precisa `[LIC]` 4.1.2, que firmaba buscar primero en el historial y después en el disco (PA-02) | **Sí** | Las filas sin MAC no disparan `Ilegible`. *Descartado:* `Ilegible` ante cualquier fila de `sec` mayor que no verifica (denegación de servicio con las credenciales de la API) | ≈ 0,1 dp (L1a-4) |
+| **DL-19 (nueva, v2.6)** | **Lectura de la huella fallida de forma prolongada:** sin ninguna lectura correcta durante más de `máx(graciaDias, 72 h)` con una vigente, se trata como un entorno distinto, con la primera detección al inicio de las fallas. Precisa `[LIC]` 3.3.1 («un error no cuenta como cambio de entorno»; PA-01) | **Sí** | Sin DL-19, una instalación clonada a la que se le niega a la API la lectura opera sin gracia de entorno mientras dure la negación (agrava el residual K-LV-06). *Alternativa:* solo alertar, que es lo que rige hasta la firma | ≈ 0,1 dp (L1a-4) |
 
 ### 13.2 Condiciones ya firmadas que siguen abiertas
 
@@ -1120,7 +1143,7 @@ Contrastado, solo lectura, con la copia de trabajo `GPOS-NG-lic` (cambios sin co
 
 ### Cierre
 - Estado: Completado. Versión 2.1 del blueprint: la v2 respondió los 23 hallazgos de `[SEG]` (21 aceptados, 2 con ajuste, ninguno rechazado) y el auditor le dio «Aprobado con observaciones» en la lectura de diferencias; la v2.1 incorpora esas observaciones (SEG-L2-24, SEG-L2-25, D.2 y D.4). DL-01 a DL-14 siguen Pendientes de firma (DL-06, retirada).
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.5, mismo archivo; la v2.5 agrega el registro de cambios v2.5 y la ubicación de 7; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.6, mismo archivo; la v2.6 agrega el registro de cambios v2.6, las reglas 14 y 15 de 6.1.1 y DL-18 y DL-19; la v2.5 agrega el registro de cambios v2.5 y la ubicación de 7; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
 - Supuestos: los catorce de la sección «Supuestos» (10 a 14, nuevos desde la v2).
 - Decisiones candidatas a ADR:
   - **ADR-83 · Sello de habilitación de cuentas con padrón protegido como fuente del cupo** (DL-01 con (a) y (b), DL-02 con la regla de Release, DL-05 obligatoria con el estado del factor; SH-1 a SH-8). Precisa ADR-58 (punto 9), ADR-36 (R-3), ADR-68 y SEC-07. *Descartadas:* limitar por antigüedad en exceso de cupo, las revocaciones en la bitácora, reconstruir el padrón desde las filas, sellar los permisos granulares y usar el `SelloSeguridad` en el sello.

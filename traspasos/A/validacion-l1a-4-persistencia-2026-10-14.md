@@ -47,3 +47,38 @@
   - **arquitecto-datos:** la fila `Licencia.PerfilMin` y el archivo de disco (corrección 4).
   - **auditor-seguridad:** el modo de integridad de la corrección 3.
 - Próximo paso recomendado: aplicar las correcciones 1 y 2, unir el PR #33 después del #32 y planificar la 3 y la 4 con la versión de las llaves Avanzadas.
+
+---
+
+## Adenda: hallazgos del auditor (`revision-seguridad-pr33-persistencia-2026-10-14.md`, PA-01 y PA-02)
+
+| # | Dictamen | ¿Cambia algo firmado? |
+|---|---|---|
+| **PA-02** | **Lo acepto con un ajuste.** El auditor propone pasar a `Ilegible` ante **cualquier** fila `'A'` de `sec` mayor que no verifique. Lo descarto como disparador: con las credenciales de la API bastaría insertar una fila basura de `sec` alta para llevar a toda la instalación a `Ilegible` y, 72 h después, a `SoloConsulta`, que es una denegación de servicio barata. El disparador es solo la `sec` máxima **atestiguada con MAC** (fila `Licencia.SecMax` o archivo `secmax`). **Descarto también el `DENY INSERT` con un procedimiento de aceptación:** el procedimiento no puede verificar el JWS (eso se hace en .NET), y quien tiene las credenciales de la API puede llamarlo con los mismos parámetros, así que no protege nada y añade una pieza | **Sí, el punto 2:** cambia el orden de recuperación de `[LIC]` 4.1.2, que es texto firmado («por `sec` descendente, la última del historial que sí verifique, y después las copias en disco»). Va a la hoja del propietario como **DL-18**. El punto 1 no cambia nada firmado: es la propia «última que sí verifique» aplicada fila a fila |
+| **PA-01** | **Acepto los puntos 1, 2 y 4.** Persistir la última huella aplica lo que ya está firmado («se conserva la última huella calculada», `[LIC]` 3.3.1). El punto 3 lo propongo también, como decisión aparte | **Sí, el punto 3:** `[LIC]` 3.3.1 firma que «un error no cuenta como cambio de entorno». Tratar una lectura fallida que se prolonga como un entorno distinto contradice esa letra. Va a la hoja como **DL-19**. Hasta la firma: alerta diaria `EntornoLecturaFallida` al SUPER, sin cambiar el estado |
+
+**Texto exacto para el desarrollador (se suma a la lista de correcciones):**
+
+6. **(PA-02, punto 1; bloquea la unión)** Elegir la vigente dentro de cada `sec`.
+   - Para cada `sec`, en orden descendente, se verifican **todas** sus filas `'A'` y se elige la que verifica.
+   - Si verifican dos o más filas con distinto `Sha256Contenido`, la `sec` cuenta como **no verificable**: se registra `FilaLicenciaInvalida` y se aplica la corrección 7.
+   - Las filas que no verifican se ignoran y registran `FilaLicenciaInvalida`.
+   - `Anteriores` sigue la misma regla y se corta en la primera `sec` sin ninguna fila que verifique.
+   - La consulta 4.2 devuelve **todas** las filas de cada `sec`, no una sola por `sec` con `ROW_NUMBER`.
+   - Prueba: insertar una fila `'A'` con la `sec` de la vigente y otro contenido, o con `NivelFirma = 'avanzado'` y un JWS que no verifica. Sigue rigiendo la vigente.
+7. **(PA-02, punto 2; pendiente de DL-18; se construye detrás de esa firma)** No volver en silencio a una licencia anterior.
+   - Sea `S` la `sec` máxima atestiguada con MAC: el máximo de `Licencia.SecMax` y `secmax`, excluidas las de `kid` todos retirados.
+   - Si la vigente encontrada tiene `sec < S`, se busca en el disco (`vigente.gposlic` y `Procesados`) el JWS de `sec = S` cuyo SHA-256 del contenido coincide con el atestiguado.
+     - Si verifica, es la vigente y se reinserta (LV-21).
+     - Si no, se evalúa como `Ilegible` (72 h, con el tope de `Gracias`), con el evento crítico `FilaLicenciaInvalida`.
+   - Nunca se rige por una `sec` menor que `S`.
+   - Las filas `'A'` de `sec` mayor que no están atestiguadas con MAC **no** disparan `Ilegible`: se ignoran con el evento.
+   - Prueba: con `S` igual a la vigente, borrar su fila (con `sysadmin`, sin disparadores) y quitar el archivo del disco. El resultado es `Ilegible`, no la anterior.
+8. **(PA-01, puntos 1, 2 y 4; bloquea la unión)** Persistir la huella.
+   - `Licencia.Gracias` y el archivo `estado` guardan `UltimaHuella` (SHA-256 hex) y `UltimaHuellaUtc`.
+   - Si la lectura falla, también después de reiniciar, se usa la `UltimaHuella` más reciente que verifique entre la fila y el disco, y se registra `EntornoLecturaFallida`.
+   - **Nunca** se escribe `Entorno = null` sobre una marca guardada, salvo que una lectura **correcta** coincida con la `huella` de la vigente. Si la lectura falla, la marca existente (la más antigua de las dos fuentes) se arrastra tal cual.
+   - Prueba: con la marca guardada, reiniciar con la lectura fallando. La marca se conserva y la gracia sigue contando.
+9. **(PA-01, punto 3; pendiente de DL-19; se construye detrás de esa firma)** Si con una vigente no hubo ninguna lectura correcta de la huella durante más de `máx(graciaDias, 72 h)` desde `UltimaHuellaUtc` (o desde la primera falla si nunca hubo una), se trata como entorno distinto. La primera detección es el inicio de las fallas, y se avisa al SUPER. Hasta la firma, solo el aviso diario.
+
+**Costo [I]:** correcciones 6 y 8, ≈ 0,3 dp; 7 y 9, ≈ 0,2 dp cuando se firmen. **Ninguna toca el formato del archivo de licencia.**

@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-17: licencia firmada en el lote 2 de RG-14 (v2.6)
+# Hoja de firma DL-01 a DL-19: licencia firmada en el lote 2 de RG-14 (v2.7)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.6 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2.7 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -15,6 +15,7 @@
 | **2.4** | 2026-10-14 | Incorpora el blueprint v2.4 (validación del PR #32, L1a-2 «Reglas de aceptación») y la revisión del auditor `[RA]`.<br>- **Agrega DL-17** (RA-01, Media): el techo de 48 h de INV-6 se mide solo sobre el reloj protegido.<br>- **Sección 3.1:** agrega **C-3** (RA-06: fechas civiles en hora de RD para DL-14 y `aceptarHasta`) y **C-4** (RA-04: procedimiento de GSF ante una sospecha sobre el emisor) |
 | **2.5** | 2026-10-14 | **Registra la firma del propietario de DL-07 (a), con el recorte 1, y DL-08 (a)** (sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firma-dl07-dl08.md`). Sin otros cambios |
 | **2.6** | 2026-10-14 | **Registra la segunda firma del propietario:** DL-14 (a), DL-17 (a), DL-13 (a) y DL-10 (a); aprobados CI-7 / AI-07, AP-06 y AP-02 (falta el nombre del custodio); ADR-82 lo prepara B (aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firmas-dl14-dl17-dl13-dl10-y-adr82.md`). Sin otros cambios |
+| **2.7** | 2026-10-14 | Agrega **DL-18** (PA-02) y **DL-19** (PA-01), que salen de la revisión de seguridad del PR #33 y de la validación de L1a-4 (persistencia), correcciones 7 y 9, con el blueprint v2.6. La validación las numeraba DL-17 y DL-18, pero DL-17 ya está firmada; el arquitecto-software las renumera. El resto de la hoja no cambia |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -24,6 +25,7 @@
 - `[O6]` = `Solucion GPOS NG\inventario-o6-equipo-a-2026-10-14.md` (devops, PC A `DevLab00`).
 - `[VDL]` = `Solucion GPOS NG\validacion-datos-l1a4-2026-10-14.md` (validación del modelo de datos de L1a-4).
 - `[VAL2]` = `Solucion GPOS NG\validacion-l1a-2-reglas-aceptacion-2026-10-14.md` (validación del PR #32, L1a-2); `[RA]` = `Solucion GPOS NG\revision-seguridad-pr32-reglas-aceptacion-2026-10-14.md` (auditor-seguridad, RA-01 a RA-06).
+- `[VAL4]` = `Solucion GPOS NG\validacion-l1a-4-persistencia-2026-10-14.md` (validación de L1a-4, correcciones 6 a 9); `[PA]` = `Solucion GPOS NG\revision-seguridad-pr33-persistencia-2026-10-14.md` (auditor-seguridad, PA-01 a PA-08).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -80,6 +82,8 @@ Ya **no** exige AP-01 ni AP-05.
 | **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **Aprobar** | ≈ 0,1 dp | 2026-11-06 |
 | **DL-16** | La bitácora deja de ser fuente de la «última verificación correcta» | **Aprobar** | 0 | 2026-11-06 |
 | **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **FIRMADA 2026-10-14: (a)** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
+| **DL-18** | Nunca rige una licencia más vieja que la última atestiguada con MAC | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 7 de L1a-4 |
+| **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -427,6 +431,54 @@ DL-14 queda anulado en la práctica.
 
 ---
 
+### DL-18 · Nunca rige una licencia más vieja que la última atestiguada (nueva)
+
+**Qué se decide.** Hoy, con solo las credenciales de la API (que pueden insertar filas en `Licencias`, por necesidad), se puede hacer que la licencia vigente «no verifique». El sistema vuelve entonces **en silencio a la licencia anterior** y deshace un corte, una baja de empresa o una reducción de cupo (PA-02, Media). La corrección 6 de `[VAL4]` cierra la parte de la fila con la misma `sec` y no necesita firma. Esta decisión cierra el resto. Sea `S` la `sec` máxima atestiguada con MAC (fila `Licencia.SecMax` o archivo `secmax`, sin contar las de llaves todas retiradas):
+- **nunca rige una licencia con `sec` menor que `S`**;
+- el orden es:
+  1. la fila de `Licencias` con esa `sec` que verifica;
+  2. si no la hay, la copia del disco (`vigente.gposlic` o `Procesados`) cuyo SHA-256 del contenido coincide con el atestiguado, y se reinserta;
+  3. si tampoco la hay, `Ilegible` (72 h, con el tope por empresa) y el evento crítico `FilaLicenciaInvalida`.
+
+Precisa el orden de recuperación firmado en `[LIC]` 4.1.2, que decía primero el historial y después el disco, sin piso de `sec`.
+
+**Recomendación: Aprobar.**
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Piso en la `sec` atestiguada con MAC (recomendada)** | Cierra la vuelta silenciosa a una licencia anterior. Si alguien borra la fila y la copia del disco, la instalación pasa a `Ilegible` (72 h y luego solo consulta), lo que es visible y se recupera cargando el archivo |
+| (b) La propuesta del auditor: `Ilegible` ante **cualquier** fila de `sec` mayor que no verifique | **Descartada por el arquitecto:** con las credenciales de la API bastaría insertar una fila basura para llevar a toda la instalación a `Ilegible` (denegación de servicio barata). Las filas no atestiguadas se ignoran con el evento |
+| (c) Un `DENY INSERT` con un procedimiento de aceptación | Descartada: el procedimiento no puede verificar el JWS (eso se hace en .NET), y las credenciales de la API lo pueden llamar igual |
+| (d) Mantener el texto firmado | Queda PA-02: un corte o una reducción de cupo se deshacen sin rastro visible |
+
+**Costo:** ≈ 0,1 dp (L1a-4). Se construye detrás de la firma (corrección 7 de `[VAL4]`), con su prueba.
+
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (d)`
+
+---
+
+### DL-19 · Una huella ilegible por mucho tiempo cuenta como cambio de entorno (nueva)
+
+**Qué se decide.** La licencia compara una huella del servidor SQL para detectar un clon o un traslado (gracia de entorno). `[LIC]` 3.3.1 firma que **«un error no cuenta como cambio de entorno»**. El auditor (PA-01, Media) mostró que eso abre un hueco: un clon cuyo dueño le niega a la API la lectura de la huella opera **sin gracia de entorno y sin límite**. Las correcciones 8 de `[VAL4]` (persistir la huella y no borrar nunca la marca guardada) aplican lo ya firmado y no necesitan firma. Esta decisión agrega el límite:
+- si con una licencia vigente **no hubo ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h)**, contado desde la última correcta o desde la primera falla, se trata como **entorno distinto**;
+- la gracia de entorno empieza al inicio de las fallas, y se avisa al SUPER.
+
+**Contradice la letra de `[LIC]` 3.3.1**: por eso pide firma. Hasta la firma, solo hay un aviso diario `EntornoLecturaFallida` al SUPER, sin cambio de estado.
+
+**Recomendación: Aprobar.** Un error pasajero sigue sin contar. Solo cuenta uno que dura más que la gracia, y eso basta para cerrar el clon «sin límite» del residual K-LV-06.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Entorno distinto tras máx(`graciaDias`, 72 h) sin lecturas correctas (recomendada)** | Cierra PA-01. Una instalación con los permisos de la huella mal puestos (por ejemplo, PA-47 sin confirmar) entra en gracia de entorno y, si no se corrige, llega a solo consulta. Se ve antes por el aviso diario, y lo corrige el técnico |
+| (b) Solo el aviso diario, sin cambio de estado | Respeta la letra firmada, pero el clon sin lecturas de huella opera sin límite |
+| (c) Tratar como entorno distinto desde la primera falla | Demasiado estricto: un error pasajero abriría la gracia de entorno |
+
+**Costo:** ≈ 0,1 dp (L1a-4). Se construye detrás de la firma (corrección 9 de `[VAL4]`). Precisa `[LIC]` 3.3.1 y ADR-58, punto 5 («una lectura fallida conserva la última huella y genera una alerta»).
+
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+
+---
+
 ### 3.1 Confirmaciones (precisiones dentro de lo firmado)
 
 **C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
@@ -581,7 +633,7 @@ Encargarlo con AI-07, al mismo asesor.
 | Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
 | Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
 | ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
-| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
@@ -599,6 +651,8 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-15:** queda el hueco H-3 (un archivo Básico puede cortar en horas), aceptado de forma expresa.
 - **DL-16:** la bitácora sigue como fuente de la última verificación y hay que construir la escritura periódica (opción (b) o (c)).
 - **DL-17:** queda RA-01: DL-14 no acota de verdad lo firmado con una llave Básica comprometida.
+- **DL-18:** queda PA-02: con las credenciales de la API se puede volver en silencio a una licencia anterior.
+- **DL-19:** queda PA-01: un clon que niega la lectura de la huella opera sin límite; solo hay aviso diario.
 
 ---
 
