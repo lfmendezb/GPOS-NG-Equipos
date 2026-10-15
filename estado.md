@@ -63,6 +63,10 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-14/15, preparación del 27-oct (PQ-3):** `b/prep-27oct` (`cc4694d`, en GitHub) = punta + #24/#26/#21/#28 (pendiente) + T1 de ADR-118/119 (`20261015010000_NegativosTresNiveles`) + ola 3b tramo 1 (`20261015020000_Ola3bTransferencias`). Un solo guion.
+  - **Corregido en la unión:** la migración de la 3b borraba la regla de H-4 en `CK_Autorizacion_Motivo` (Alto). También se ajustaron las pruebas de los conteos de numeración por el tipo TI.
+  - **Pruebas:** suite oficial 2724 correctas; Mvp **24/24** en las dos instancias, **F10 incluido**; Numeración 638/638. Solo queda la falla de restauración de H-11, que espera la corrección de A.
+  - **Pendientes:** T6 (medición de rendimiento con la máquina sola, unas 5 a 6 h); rehacer sobre la punta cuando A entregue H-11; unir el 27-oct si todo está en verde.
 - **2026-10-14, cierre del día:**
   - **#24, #26, #21 y #28 integrados en local, sin publicar:** `b/integracion-pendiente-14oct` (`455a7c4`) en GitHub.
     - #21 (C-10) lo rebasó B con la marca `20261014205000`, entre H11 y Rg14 (`b/c10-compra-variable-tabla`).
