@@ -82,3 +82,11 @@
 9. **(PA-01, punto 3; pendiente de DL-19; se construye detrás de esa firma)** Si con una vigente no hubo ninguna lectura correcta de la huella durante más de `máx(graciaDias, 72 h)` desde `UltimaHuellaUtc` (o desde la primera falla si nunca hubo una), se trata como entorno distinto. La primera detección es el inicio de las fallas, y se avisa al SUPER. Hasta la firma, solo el aviso diario.
 
 **Costo [I]:** correcciones 6 y 8, ≈ 0,3 dp; 7 y 9, ≈ 0,2 dp cuando se firmen. **Ninguna toca el formato del archivo de licencia.**
+
+**Adenda 2 (`48e22905`): extensión de la corrección 6 a la carga. Confirmada.**
+
+En la aceptación, la `sec` máxima efectiva y el perfil vigente salen solo de fuentes que verifican:
+- **`sec` máxima efectiva:** las filas de `Licencias` cuyo JWS verifica (regla de la corrección 6, fila a fila), la fila con MAC `Licencia.SecMax` y el archivo `secmax`.
+- **Perfil vigente:** las filas cuyo JWS verifica (y la corrección 4 cuando llegue).
+
+Una fila sin firma válida no cuenta para ninguno de los dos. Es la misma regla de las fuentes verificables que INV-11 aplica al piso y que DL-18 aplica a la vigente. Evita que con las credenciales de la API se bloqueen cargas legítimas o se fije un perfil distinto. Precisa la sección 4.3 de los datos de L1a-4, que contaba todas las filas `'A'`. No cambia nada firmado.

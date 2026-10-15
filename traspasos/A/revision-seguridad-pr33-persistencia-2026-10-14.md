@@ -197,3 +197,46 @@ No hay hallazgos Críticos ni Altos. PA-01 y PA-02 son Medios y de código, y sa
   - agente o L4: escribir en `Entrada` con un temporal `.` y renombrar (PA-06);
   - qa-automatizado: vectores de PA-01 (reinicio con la lectura fallando) y PA-02 (fila insertada con la misma `sec`).
 - Próximo paso recomendado: corregir PA-02 y PA-01 en un seguimiento de L1a-4 antes de empezar L1b.
+
+---
+
+## 9. Lectura de diferencias (`9e4326c8..48e22905`)
+
+**Commits:** `69a13a24` (une L1a-2 con DL-17 y DL-14 firmadas) y `48e22905` (correcciones 1, 2, 6 y 8 de la validación de L1a-4). Revisé solo en lectura, sin compilar. Las pruebas son las que declara el PR (persistencia 34/34, Licencia 468 con 1 omitida, Arquitectura 174/174, suite 2766/0/19): **no las reproduje**.
+
+| Punto | Estado | Evidencia y comentario |
+|---|---|---|
+| **PA-02, parte sin firma (corrección 6)** | **Cerrado** | La consulta 4.2 devuelve **todas** las filas `'A'` de cada `sec` y `PorSec` verifica cada una. Una fila cuenta solo si coinciden JWS, SHA-256, nivel y `sec` con la fila. Las que no verifican se ignoran con `FilaLicenciaInvalida`, y dos contenidos que verifican en la misma `sec` dejan esa `sec` sin verificar. Así, una fila insertada con la `sec` vigente (otro contenido, nivel `avanzado` con un JWS falso, o un JWS real con otra `sec`) ya no hace saltar la vigente. Rellenar la ventana de 32 `sec` con filas falsas deja la instalación en `Ilegible`, es decir, falla cerrado. (`ComandosLicencia.cs`, `UltimasAceptadasAsync`; `EstadoLicenciaService.cs`, `PorSec` y `LeerCadenaAsync`) |
+| **La corrección 6 extendida a la carga** | **No abre ninguna falla; cierra una** | En la carga, la `sec` máxima efectiva y el perfil vigente salen ahora solo de filas que verifican. Antes, una fila insertada con una `sec` mayor y `PerfilMin = 'basica'` podía **bajar el perfil heredado**: esa falla abierta queda cerrada. La `sec` máxima sigue siendo el máximo junto con las dos fuentes con MAC (la fila `Licencia.SecMax` y el archivo `secmax`), así que no cae por ignorar filas falsas. Queda un caso límite, informativo: si unos binarios **quitaran** un `kid` del recurso (en vez de retirarlo), sus filas dejarían de contar y solo quedarían las fuentes con MAC. GSF no debe quitar llaves del recurso, solo retirarlas |
+| **PA-05 (corrección 2)** | **Cerrado** | En Amplio, una carga en caliente (L-03 o el importador) de una licencia `Produccion` o `Beta` se rechaza con `LICENCIA_ANILLO_NO_ADMITIDO`, `ArranqueAmplioBloqueado` y un mensaje para el SUPER. Se aplica antes de insertar. Una recarga idempotente no tiene efecto, y el arranque la bloquea igual. La reinserción con sello desde el disco no pasa por esta regla, pero queda bloqueada en el arranque siguiente |
+| **PA-01 (corrección 8)** | **Cerrado en parte** | (1) La última huella correcta y su hora se guardan en la fila `Gracias` y en el archivo `estado` (con MAC), y se usan cuando la lectura falla, también después de reiniciar. (2) La marca de entorno se arrastra cuando la lectura falla y **solo** se borra tras una lectura correcta que coincide con la huella de la vigente. (3) `EntornoLecturaFallida` avisa una vez al día. Con esto, **borrar la marca provocando un fallo de lectura ya no es posible**. **Sigue abierto hasta DL-19:** en un clon que niega a la API la lectura de la huella desde el primer arranque, la huella guardada es la del original (viaja en la base y en el disco clonados) y coincide con la de la licencia, así que el clon nunca entra en gracia de entorno. Tampoco ayuda la solicitud a GSF, porque el clon puede copiar los archivos de renovación del original. El aviso diario le llega al SUPER, que en este escenario es el propio atacante. **Severidad residual: Media, pendiente de la firma de DL-19** (tratar como entorno distinto una lectura que falla más de máx(`graciaDias`, 72 h)) |
+| **PA-02, parte con firma (DL-18)** | Pendiente de firma | Aún no se construye que la vigente no pueda caer en silencio por debajo de la `sec` atestiguada con MAC. Con la corrección 6, el único camino que queda para caer a una anterior es que la fila real deje de verificar: no puede alterarse (solo inserción) y solo ocurre si cambia el recurso de llaves (retiro por binarios, informativo). DL-18 cierra ese resto |
+| **RA-01 / DL-17** | **Cerrado** (PR #32) | `HoraReferencia(ahora)` usa solo la hora protegida, y la carga ya la usa así. Queda una sobrecarga de compatibilidad que ignora la `emitida`; conviene marcarla `[Obsolete]` para que nadie crea que la tiene en cuenta (informativo) |
+| `InternalsVisibleTo` | Movido a `GPOS.Core.csproj` | Responde a la observación del PR #32. Sin cambio en el análisis de Release |
+| Corrección 1 (perfil en la reinserción) | **Correcto** | Al reinsertar con sello, el perfil sigue INV-4 con D-2: solo una firma Avanzada propia lo fija; sin ella, se hereda el vigente. Antes, la reinserción desde el disco podía bajar el perfil |
+
+### Lo que queda hasta DL-18 y DL-19
+
+- **DL-19 (PA-01 residual, Media):** un clon que bloquea la lectura de la huella opera sin gracia de entorno. Mitigación mientras se firma: GSF puede revisar en su tablero las instalaciones que avisan `EntornoLecturaFallida`, aunque ese aviso queda en el registro local y no llega a GSF sin el agente. Recomiendo firmar DL-19 antes de la primera licencia de pago, igual que AP-04.
+- **DL-18 (PA-02 residual, Baja después de la corrección 6):** que nunca rija en silencio una `sec` menor que la atestiguada con MAC.
+- **Sin cambios:** PA-03, PA-04 y PA-06 (Bajos), PA-07 y PA-08 (informativos).
+
+### Dictamen final del PR #33
+
+**Aprobado con observaciones.**
+- PA-05 está cerrado.
+- PA-02 está cerrado en su parte sin firma, y la extensión a la carga cierra además la falla abierta del perfil.
+- PA-01 está cerrado en cuanto a borrar la marca. Queda abierto su residual Medio (el clon que bloquea la huella) hasta DL-19.
+
+No hay hallazgos Críticos ni Altos. Es una recomendación técnica: la decisión es del propietario.
+
+### Cierre (lectura de diferencias)
+- Estado: Aprobado con observaciones
+- Artefactos: este informe (sección 9 agregada)
+- Supuestos: los resultados de pruebas son los declarados, sin reproducir
+- Decisiones candidatas a ADR: DL-18 y DL-19, ya en la hoja de firma; recomiendo firmar DL-19 antes de la primera licencia de pago
+- Entregas a otros agentes:
+  - desarrollador L: PA-03, PA-06, `[Obsolete]` en la sobrecarga de `HoraReferencia`, y DL-18 y DL-19 cuando se firmen;
+  - devops: PA-04;
+  - GSF: no quitar `kid` del recurso, solo retirarlos
+- Próximo paso recomendado: unir el PR #33 y llevar DL-19 a firma antes de L1b
