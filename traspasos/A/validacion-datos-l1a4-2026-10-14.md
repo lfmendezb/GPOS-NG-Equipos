@@ -22,7 +22,7 @@
 - Al calcular `r` (regla 4) con una anterior que tenga `RetiroEfectivoUtc`:
   - si `RetiroEfectivoUtc ≤ t`, la empresa **no tenía derecho**;
   - si no, `r.TopeGraciaUtc = mín(r.TopeGraciaUtc, RetiroEfectivoUtc, fin de vigencia de la entrada)`.
-- Prueba mínima: la anterior firmada solo con una llave retirada antes de `t` y la vigente que omite la empresa dan una transición limitada a `SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h))`, no al `vence` de la anterior.
+- Prueba mínima (corregida el 2026-10-14; rige la regla 12): (a) si la anterior está firmada solo con llaves cuyo retiro efectivo es anterior o igual a `t`, y la vigente omite la empresa, la empresa no tenía derecho: queda `NoLicenciada`, sin transición; (b) si el retiro efectivo es posterior a `t` (por ejemplo, el 9 de enero), `r.TopeGraciaUtc` queda limitado a esa fecha y la transición dura hasta `máx(9 de enero, SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h)))` (por ejemplo, el 17 de enero), nunca hasta el `vence` de la anterior.
 - Costo [I]: ≈ 0,1 dp en L1a-3 y ≈ 0,05 dp en L1a-4.
 
 **Otras observaciones (no bloquean):**

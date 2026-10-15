@@ -192,3 +192,19 @@ Lectura en solo lectura del `diff` (4 archivos, +471/−168), sin compilar ni ej
 **Dictamen final: Aprobado** (recomendación técnica; la decisión de unir es del propietario). No queda ningún hallazgo abierto. Entregas que siguen vigentes:
 - L1a-4: guardar `TopeGraciaUtc` tal cual, null incluido, y entregar los anteriores en orden descendente de `sec` (al menos los 24 últimos).
 - L1b: tratar cualquier excepción del motor como «no opera».
+
+## Lectura de diferencias `87ec8e38..5dc8e3b3` (2026-10-14)
+
+Cambio de la regla 12 del blueprint v2.3. Lectura del `diff` en solo lectura, sin compilar. Las 6 pruebas nuevas no las ejecuté.
+
+- **El parámetro nuevo solo puede restringir.** `LicenciaAceptada.RetiroEfectivoUtc` es opcional (null = sin retiro) y entra solo en `EvaluarCadena` (`MotorEstados.cs:278-288`):
+  - si el retiro de la licencia anterior ocurre en `t` o antes, sale sin transición (sin derecho previo);
+  - si no, `finPrevio` = mín(tope, retiro, fin de la vigencia de la entrada anterior).
+- **Ambas ramas usan el `finPrevio` ya recortado:**
+  - la rama (a), que conserva una transición en curso, toma `HastaUtc = finPrevio`, así que ya no puede pasar del retiro;
+  - la rama (b) conserva el mínimo firmado de NV-02 (máx(`graciaDias`, 72 h) desde el ancla de la vigente), que viene de una licencia con llaves válidas y no de la retirada.
+- **No abre ningún fallo abierto.** El código nuevo solo agrega salidas tempranas y mínimos. Una hora `Local` sigue siendo un error de programación (entrega a L1b ya registrada).
+- **La retirada como vigente no la limita esta regla.** Ese límite sigue llegando por la gracia `LlaveRetirada` que pasa L1a-4.
+- **Cambio de documentación en `UltimaVerificacionUtc`:** la bitácora ya no figura como fuente de la marca. Que eso coincida con lo firmado (`[LIC]` 4.1.2 nombra «base, bitácora y disco») lo debe confirmar el arquitecto de datos.
+
+**Dictamen: sigue en Aprobado** (recomendación técnica; la decisión de unir es del propietario).
