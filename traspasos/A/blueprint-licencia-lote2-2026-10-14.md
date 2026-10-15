@@ -1,7 +1,7 @@
 # [Blueprint Técnico] Licencia firmada en el lote 2 de RG-14: cierre de AI-01, sello de habilitación, piezas construibles, calendario hasta el corte, ceremonia sin hardware y licencias de pago en nivel Básico
 
 - **Fecha:** 2026-10-14. **Autor:** arquitecto-software, equipo A.
-- **Versión: 2.3.** La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
+- **Versión: 2.4.** La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
 - **Estado del documento:** diseño. Las decisiones nuevas de este documento quedan **Pendientes de firma** (sección 13). Nada de lo que aquí se describe existe en el código, salvo lo que el desarrollador L lleva construido de L1a-1 (sección 14). La hoja de firma la rehace aparte el arquitecto-maestro; la sección 13 solo dice qué tiene que constar en ella.
 - **Entradas:**
   - RG-14 firmado el 2026-10-14: D-01 a D-11, D-04 precisada y **L-01** (la licencia firmada de ADR-58 a 66 entra en el lote 2). Fuente: `datos-t3-12-rg14-2026-10-14.md` v2 (`[DAT]`).
@@ -92,6 +92,18 @@ Dictamen: `validacion-datos-l1a4-2026-10-14.md`, sobre `datos-licencia-l1a4-2026
 | P-1 | NV-08 dentro de la cadena de NV-02: una licencia anterior cuyas llaves están todas retiradas sigue en `Anteriores`, pero el derecho previo que da queda limitado por su retiro efectivo (`RetiroEfectivoUtc`) | 6.1.1 (12) | L1a-3 +0,1; L1a-4 +0,05 (L) |
 | P-2 | `AceptadaUtc` es la columna `Licencias.AceptadaUtc`: la mínima de su `sec` y la del sello `.acept` en una reinserción. Esquema `dbo` confirmado | 6.1.1 (13) | 0 |
 | **DL-16 (nueva)** | Las fuentes de `UltimaVerificacionUtc` son la fila `Licencia.Gracias` y el archivo `estado`; la bitácora sigue siendo fuente solo de las marcas de inicio | 6.1.1 (13), 13.1 | 0 |
+
+### Registro de cambios v2.4 (validación del PR #32, L1a-2 «Reglas de aceptación»)
+
+Dictamen: `validacion-l1a-2-reglas-aceptacion-2026-10-14.md`. Son precisiones de `[PSF]` 4A.6 y de DL-14, que sigue pendiente de firma.
+
+| # | Precisión | Secciones | Pieza y costo |
+|---|---|---|---|
+| P-1 | `IVerificadorJws.VerificarCompacto`, solo para el `typ` `gpos-autorizacion-nivel+jws`, y su inclusión en la revisión de código del auditor (SEG-L2-08) | 6.1, 6.1.2, 13.2 | 0 |
+| P-2 | La autorización `autNivel` tiene un conjunto **cerrado** de campos: si trae uno desconocido, se rechaza | 6.1.2 | L1a-2 +0,05; EM 0 |
+| P-3 | Las fechas civiles del formato (`vence`, `aceptarHasta`, el tope de DL-14 y el de `hasta` + 31 días) se leen en hora de RD | 6.1.2 | L1a-2 +0,05; EM +0,05 |
+| P-4 | Una misma `sec` de autorización exige el mismo contenido | 6.1.2 | L1a-2 +0,05 |
+| P-5 | El `InstalacionId` es un GUID en formato `D` en minúsculas, y se compara sin distinguir mayúsculas | 6.1.2 | 0 |
 
 ---
 
@@ -421,7 +433,7 @@ public sealed record EmpresaRncDto(string Codigo, string Rnc, DateTime CambiadoU
 // GPOS.Criptografia
 public sealed record FirmaVerificada(string Kid, string Nivel);
 public sealed record ResultadoJws(bool Valido, string? Codigo, ReadOnlyMemory<byte> Contenido, IReadOnlyList<FirmaVerificada> Firmas, IReadOnlyList<string> KidsIgnorados);
-public interface IVerificadorJws { ResultadoJws Verificar(ReadOnlySpan<byte> jws, string typEsperado, ConjuntoLlaves llaves); }  // 3.1.1 puntos 1-6
+public interface IVerificadorJws { ResultadoJws Verificar(ReadOnlySpan<byte> jws, string typEsperado, ConjuntoLlaves llaves); ResultadoJws VerificarCompacto(string jwsCompacto, string typEsperado, ConjuntoLlaves llaves); /* v2.4: solo la autorización autNivel */ }  // 3.1.1 puntos 1-6
 public sealed record LlaveGsf(string Kid, string Funcion /* lic|upd */, string Nivel, string Estado, DateOnly Desde, DateOnly? AceptarHasta, ECParameters Publica);
 public interface IRecursoLlavesGsf { ConjuntoLlaves Efectivo { get; } string HuellaRecurso { get; } }   // QA-L17 inspecciona Efectivo (NV-05 a)
 
@@ -518,6 +530,33 @@ El motor es **puro**: no lee la base, el disco ni el reloj. Las funciones están
     - `AceptadaUtc` = `Licencias.AceptadaUtc`: la mínima de su `sec`, que en una reinserción `RESTAURACION` es la del sello `.acept`.
     - `UltimaVerificacionUtc` = la más antigua entre la fila `Licencia.Gracias` y el archivo `estado`. La bitácora no es fuente de esta marca: es DL-16, pendiente de firma.
     - Las tablas van en el esquema `dbo`.
+
+
+### 6.1.2 Reglas de aceptación (L1a-2; v2.4, validación del PR #32)
+
+1. **Autorización `autNivel`** (JWS compacto, `typ` `gpos-autorizacion-nivel+jws`, verificado con `VerificarCompacto`):
+   - campos `kid`, `desde`, `hasta`, `inicioRegreso`, `motivo` (la causa del catálogo cerrado), `instalaciones` y `sec`, con las horas en UTC (`Z`);
+   - **un campo desconocido rechaza la autorización** (`LICENCIA_AUTORIZACION_INVALIDA`); la autorización no tiene `crit` y un campo nuevo exige binarios nuevos;
+   - la emiten igual la API y el emisor.
+2. **Fechas civiles en hora de RD:**
+   - `aceptarHasta` rige desde las 00:00 de RD de ese día;
+   - DL-14: `vence ≤ fecha_RD(emitida) + 200`;
+   - autorización: `vence ≤ fecha_RD(hasta) + 31`.
+3. **Cotas de tiempo al aceptar:**
+   - las superiores (caducidad de INV-1 y `hasta`) usan máx(hora de referencia, `emitida` del candidato);
+   - la inferior (`desde`) usa la hora de referencia.
+4. **Cadena de autorizaciones:**
+   - una `sec` menor que la última vista se rechaza;
+   - la misma `sec` exige el mismo contenido;
+   - una `sec` mayor solo acorta, salvo la renovación contigua de `[PSF]` 4A.6, punto 4.
+5. **Piso:**
+   - `nivelMin` solo sube, y solo con firma Avanzada propia;
+   - `perfilMin` lo fija, lo baja o lo quita (si falta) solo un archivo con firma Avanzada propia;
+   - una recarga idempotente no vuelve a evaluar la caducidad ni los retiros (INV-7).
+6. **Otras reglas:**
+   - una firma latente sin `autNivel` se ignora si otra firma cuenta;
+   - el `InstalacionId` es un GUID en formato `D` en minúsculas y se compara sin distinguir mayúsculas;
+   - una licencia sin empresas se acepta.
 
 
 ### 6.2 Reloj (cierre de H-16, C-04)
@@ -1017,7 +1056,7 @@ La hoja de firma la rehace el arquitecto-maestro. Esta tabla dice qué recomiend
 | **CI-7 / AI-07** | Validación legal de las tres excepciones de LV-12 | Especialista-pos y asesor legal | **2026-11-16** (antes de clasificar las rutas) |
 | AI-08 | R-E11 (a) a (s) en verde sobre Release antes de la primera licencia Básica | QA | S8, antes de la primera licencia, sea del DEMO, Beta o de pago |
 | **AI-09** | `s1` en el TPM de la cuenta dedicada del equipo principal, con acta y las condiciones de 10.6 que le corresponden | Devops con el propietario | **v2: solo después de cumplir DL-13 (E-1)**, **v2.1: con el inventario de O-6 que confirme SEG-L2-25**; previsto en S6-S7. **No generar `s1` antes** |
-| — | **Revisión de código del auditor-seguridad sobre EM y `GPOS.Criptografia`** (SEG-L2-08) | Auditor-seguridad | Criptografía tras H-2; EM en S9 |
+| — | **Revisión de código del auditor-seguridad sobre EM y `GPOS.Criptografia`** (SEG-L2-08). **(v2.4)** Incluye `VerificarCompacto` | Auditor-seguridad | Criptografía tras H-2; EM en S9 |
 | — | **Registro de las precisiones firmadas (b) y (c)**: ADR-62 / AP-05 y Q-19. Revisión de FY-15 / P-F1 para el alcance nuevo | Arquitecto-maestro y documentador | Antes de la primera licencia de pago |
 | — | Precisión de ADR-58 «licencia por empresa contando usuarios» y cláusula de módulos | Arquitecto-maestro → propietario | Por preparar; hasta entonces rige la suma de cupos |
 | — | ADR-82 (RG-14) | Arquitecto-maestro → propietario | Por preparar |
@@ -1069,7 +1108,7 @@ Contrastado, solo lectura, con la copia de trabajo `GPOS-NG-lic` (cambios sin co
 
 ### Cierre
 - Estado: Completado. Versión 2.1 del blueprint: la v2 respondió los 23 hallazgos de `[SEG]` (21 aceptados, 2 con ajuste, ninguno rechazado) y el auditor le dio «Aprobado con observaciones» en la lectura de diferencias; la v2.1 incorpora esas observaciones (SEG-L2-24, SEG-L2-25, D.2 y D.4). DL-01 a DL-14 siguen Pendientes de firma (DL-06, retirada).
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.3, mismo archivo; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.4, mismo archivo; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
 - Supuestos: los catorce de la sección «Supuestos» (10 a 14, nuevos desde la v2).
 - Decisiones candidatas a ADR:
   - **ADR-83 · Sello de habilitación de cuentas con padrón protegido como fuente del cupo** (DL-01 con (a) y (b), DL-02 con la regla de Release, DL-05 obligatoria con el estado del factor; SH-1 a SH-8). Precisa ADR-58 (punto 9), ADR-36 (R-3), ADR-68 y SEC-07. *Descartadas:* limitar por antigüedad en exceso de cupo, las revocaciones en la bitácora, reconstruir el padrón desde las filas, sellar los permisos granulares y usar el `SelloSeguridad` en el sello.

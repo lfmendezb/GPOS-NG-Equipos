@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-16: licencia firmada en el lote 2 de RG-14 (v2.3)
+# Hoja de firma DL-01 a DL-17: licencia firmada en el lote 2 de RG-14 (v2.4)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.3 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2.4 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -12,14 +12,16 @@
 | **2.1** | 2026-10-14 | Incorpora la **lectura de diferencias del auditor** (`[SEG]`, «Lectura de diferencias v2», D.1 a D.7): **Aprobado con observaciones**.<br>- **E-1** (anexo A y DL-13) agrega **SEG-L2-25**: la cuenta diaria no es `sysadmin` de ninguna instancia SQL local ni pertenece a grupos con efecto de administrador; `dbcreator` para pruebas; un inicio de sesión nominal aparte para lo que exija `sysadmin`; `s1` no se genera hasta que devops lo verifique.<br>- **Anexo B:** SEG-L2-18 como quedó en el blueprint v2 (identidad por SHA-256 del contenido), SEG-L2-24 (Baja) y los verbos provisionales (D.2).<br>- **Fuentes:** citan el blueprint v2.<br>- **DL-10 unificada con el blueprint v2:** (a) `s1r` en TPM; (b) YubiKeys en Básico. Recoge la condición del auditor de usar dispositivos distintos para Básico y para la ceremonia.<br>- **Sección 6:** D-1 cerrada de acuerdo; D-2 con la condición del auditor; D-3 con su respuesta; D-4 aceptada.<br>- **Carga del desarrollador I** con las cifras del blueprint v2 (24,1 dp con el recorte 1 anticipado; 26,1 dp sin él); el **recorte 1 queda como recomendación explícita** |
 | **2.2** | 2026-10-14 | Incorpora el blueprint v2.2 (validación del PR #31, L1a-3 «Motor de estados») y el inventario O-6.<br>- **Agrega DL-15** (H-3, Media): un archivo sin firma Avanzada respeta el mínimo de la transición al acortar un `vence`.<br>- **DL-03** recoge la precisión P-3 / SEG-PR31-01: S-03 escribe la fila «del RNC licenciado al actual», conservando `RncAnterior` y `CambiadoUtc`; la fila solo vale contra la licencia aceptada antes del cambio.<br>- **Inventario O-6:** la PC A no cumple E-1 (con SEG-L2-25), E-5, E-10 ni E-13. Recomienda DL-10 (b) y que el propietario **confirme cuál es el equipo principal**.<br>- Cargas actualizadas: L ≈ 25,05 dp; I ≈ 24,25 dp con el recorte 1 (26,25 dp sin él) |
 | **2.3** | 2026-10-14 | Incorpora el blueprint v2.3 (validación del modelo de datos de L1a-4, `[VDL]`).<br>- **Agrega DL-16:** la bitácora deja de ser fuente de `UltimaVerificacionUtc`.<br>- **Sección 3.1 nueva («Confirmaciones»):** la regla 3 de la §6.1.1, que el auditor pidió confirmar con firma, y las precisiones de `[DAT]` 6.3 que `[VDL]` confirmó (información, sin decisión) |
+| **2.4** | 2026-10-14 | Incorpora el blueprint v2.4 (validación del PR #32, L1a-2 «Reglas de aceptación») y la revisión del auditor `[RA]`.<br>- **Agrega DL-17** (RA-01, Media): el techo de 48 h de INV-6 se mide solo sobre el reloj protegido.<br>- **Sección 3.1:** agrega **C-3** (RA-06: fechas civiles en hora de RD para DL-14 y `aceptarHasta`) y **C-4** (RA-04: procedimiento de GSF ante una sospecha sobre el emisor) |
 
 **Fuentes (solo lectura)**
-- `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.3** (arquitecto-software).
+- `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
 - `[DAT]` = `Solucion GPOS NG\datos-t3-12-rg14-2026-10-14.md` v2: D-01 a D-11 y L-01 firmadas; D-04 (ii) sin firma.
 - `[SEG]` = `Solucion GPOS NG\revision-seguridad-blueprint-licencia-lote2-2026-10-14.md` (auditor-seguridad): secciones 4, 6 y 9, y «Lectura de diferencias v2» (D.1 a D.7).
 - `[VAL]` = `Solucion GPOS NG\validacion-l1a-3-motor-estados-2026-10-14.md` (validación del PR #31, H-3), con la revisión del auditor `revision-seguridad-pr31-motor-estados-2026-10-14.md` (SEG-PR31-01 a 07).
 - `[O6]` = `Solucion GPOS NG\inventario-o6-equipo-a-2026-10-14.md` (devops, PC A `DevLab00`).
 - `[VDL]` = `Solucion GPOS NG\validacion-datos-l1a4-2026-10-14.md` (validación del modelo de datos de L1a-4).
+- `[VAL2]` = `Solucion GPOS NG\validacion-l1a-2-reglas-aceptacion-2026-10-14.md` (validación del PR #32, L1a-2); `[RA]` = `Solucion GPOS NG\revision-seguridad-pr32-reglas-aceptacion-2026-10-14.md` (auditor-seguridad, RA-01 a RA-06).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -75,6 +77,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **DL-14** | Una licencia Básica vence como máximo 200 días después de emitida | **Aprobar** | 0,35 dp | 2026-11-06 |
 | **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **Aprobar** | ≈ 0,1 dp | 2026-11-06 |
 | **DL-16** | La bitácora deja de ser fuente de la «última verificación correcta» | **Aprobar** | 0 | 2026-11-06 |
+| **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **Aprobar** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -346,7 +349,7 @@ Ya **no** exige AP-01 ni AP-05.
 | (c) 400 días | Acota poco |
 | (d) Sin tope | Rechazada por el auditor; bloquea la primera licencia de pago |
 
-**Costo:** 0,35 dp. Precisa ADR-62 e INV-1. Va en ADR-84.
+**Costo:** 0,35 dp. Precisa ADR-62 e INV-1. Va en ADR-84. **Para que el tope sea real hace falta DL-17** (RA-01): sin ella, cada carga aceptada adelanta la referencia 48 h. La fecha de `emitida` se toma en hora de RD (C-3).
 
 `[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
 
@@ -396,6 +399,32 @@ El motivo es doble. Adelantar la marca ya exige el anillo en las dos fuentes, as
 
 ---
 
+### DL-17 · El techo de 48 h se mide solo con el reloj protegido (nueva)
+
+**Qué se decide.** Una licencia no se acepta si su fecha de emisión (`emitida`) está más de 48 h en el futuro (INV-6). Hoy ese techo se mide desde **la mayor** entre la hora protegida del equipo y la `emitida` de la licencia vigente, como dice el texto firmado (ADR-62, punto 7, INV-6; `[LIC]` 4.1.3). Eso crea un hueco (RA-01, Media, de diseño):
+- cada carga aceptada sube la referencia 48 h para la siguiente;
+- quien tenga `s1`, o un lote de archivos firmados con ella para una instalación, puede llevar `emitida` (y con ella el tope de 200 días de DL-14) **tan lejos como cargas haga**, en una sola sesión;
+- mientras tanto, las licencias legítimas de GSF darían `ANTERIOR` hasta que la hora real alcance a las falsas.
+
+DL-14 queda anulado en la práctica.
+
+**Recomendación: Aprobar.**
+- El techo se mide **solo** sobre la hora protegida, que ya tiene el piso de la fecha de compilación (INV-10) y es monótona.
+- La `emitida` vigente se sigue usando solo para evaluar el **estado** de la licencia.
+- Un archivo legítimo solo fallaría si el reloj del servidor estuviera atrasado más de 47 h, porque GSF emite con NTP − 1 h. Ese caso ya registra `RelojInconsistente`.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Techo solo sobre la hora protegida, para todos los archivos (recomendada)** | Cierra RA-01: una licencia falsificada no puede adelantarse más de 48 h sobre la hora real. Con el reloj del servidor muy atrasado, una carga legítima se rechaza (falla cerrada) hasta corregir el reloj |
+| (b) Techo sobre la hora protegida solo para los archivos sin firma Avanzada propia; los Avanzados siguen con la referencia actual | Más conservadora con lo Avanzado, pero son dos reglas que mantener y probar; el riesgo que se cierra es el del nivel Básico |
+| (c) Mantener el texto firmado | DL-14 no acota de verdad lo firmado con una llave Básica comprometida en un cliente que no actualiza |
+
+**Costo:** ≈ 0,05 dp (L1a-2) y un vector de QA de cargas sucesivas con `emitida` creciente. **Cambia el texto firmado de INV-6** (precisión de ADR-62, punto 7, y de `[LIC]` 4.1.3). Según `[RA]`, hay que resolverlo antes de dar por cerrado DL-14 y antes de usar L1 en producción.
+
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+
+---
+
 ### 3.1 Confirmaciones (precisiones dentro de lo firmado)
 
 **C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
@@ -416,6 +445,17 @@ El motivo es doble. Adelantar la marca ya exige el anillo en las dos fuentes, as
 Además, `[VDL]` corrige la regla 12 de la §6.1.1 (NV-08 en la cadena): una licencia con todas sus llaves retiradas sigue en la cadena, pero su derecho previo queda acotado por el retiro efectivo. Es una precisión técnica, sin firma.
 
 `[ ] Tomo conocimiento de C-2`
+
+**C-3 · RA-06: las fechas civiles del formato se leen en hora de RD.** Ya lo aplica la validación v2.4 (`[VAL2]`, puntos 3 y 4; `[BP2]` 6.1.2, P-3).
+- `aceptarHasta` rige desde las 00:00 de RD de ese día.
+- El tope de DL-14 (`emitida` + 200 días) y el de `hasta` + 31 días toman la fecha de `emitida` en hora de RD, igual que `vence`, que es el último día pagado en RD.
+- La diferencia con la lectura en UTC es de un día como máximo, y va del lado restrictivo. El emisor usa el mismo criterio.
+
+`[ ] Confirmo C-3`
+
+**C-4 · RA-04: procedimiento de GSF ante una sospecha sobre el equipo emisor (nota, sin decisión).** Una autorización de regreso que acorta la ventana solo surte efecto en la instalación que la recibe. **El cierre real de `s2` es su retiro por el manifiesto de actualización.** Ante una sospecha sobre el emisor, GSF retira `s2` por manifiesto **además** de emitir la autorización que acorta. Se agrega a los procedimientos de AP-03 (precisión de ADR-61, punto 8). Solo importa cuando existan las YubiKeys y el agente.
+
+`[ ] Tomo conocimiento de C-4`
 
 ---
 
@@ -550,6 +590,7 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-10 (c):** R-B12 queda Media / Alto, aceptado con R-L11-B «sin respaldo».
 - **DL-15:** queda el hueco H-3 (un archivo Básico puede cortar en horas), aceptado de forma expresa.
 - **DL-16:** la bitácora sigue como fuente de la última verificación y hay que construir la escritura periódica (opción (b) o (c)).
+- **DL-17:** queda RA-01: DL-14 no acota de verdad lo firmado con una llave Básica comprometida.
 
 ---
 
