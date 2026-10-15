@@ -14,7 +14,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
       - las precisiones de ADR y ADR-83 y ADR-84 en Aceptado, para que B los registre;
       - la hoja de PUB-06 (PB-1 a PB-7), para firma;
       - el dictamen sobre el bloqueo de los usuarios contenidos, con BL-03 (`gsf` con política) corregido en las dos instancias.
-  - **12834:** precisiÃ³n firmada por el propietario; correcciÃ³n en el **#48** (`808cbe0a`), suite 3122 correctas. #46, #45 y #47 rebasados sobre `ce33b2a8` tras la uniÃ³n del #42 (tambiÃ©n se unieron el #44 y el DEMO de B).
+  - **12834:** precisión firmada por el propietario; corrección en el **#48** (`808cbe0a`), suite 3122 correctas. #46, #45 y #47 rebasados sobre `ce33b2a8` tras la unión del #42 (también se unieron el #44 y el DEMO de B).
   - **Espera a B o a una firma:**
     - el instalador del DEMO con `GPOS.Migracion sistema`, por definir si lo hace A o B;
     - los nombres `gpos_srv_*`;
