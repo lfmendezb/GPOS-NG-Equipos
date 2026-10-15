@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-14: licencia firmada en el lote 2 de RG-14 (v2.1)
+# Hoja de firma DL-01 a DL-15: licencia firmada en el lote 2 de RG-14 (v2.2)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.1 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2.2 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -10,11 +10,14 @@
 | 1 | 2026-10-14 | Primera versión: DL-01 a DL-13. DL-10 a DL-13 «pendientes del dictamen de seguridad» |
 | 2 | 2026-10-14 | Incorpora el dictamen del auditor-seguridad (`[SEG]`, sección 9: Rechazado en v1 por SEG-L2-01, 02 y 03).<br>- Agrega DL-14 (tope de 200 días).<br>- DL-05 y DL-13 pasan a obligatorias.<br>- Condiciones nuevas en DL-01, DL-02, DL-03, DL-07, DL-10, DL-11 y DL-12.<br>- FY-15-B y R-L11-B reescritos.<br>- Anexos A y B, y sección 6 de discrepancias |
 | **2.1** | 2026-10-14 | Incorpora la **lectura de diferencias del auditor** (`[SEG]`, «Lectura de diferencias v2», D.1 a D.7): **Aprobado con observaciones**.<br>- **E-1** (anexo A y DL-13) agrega **SEG-L2-25**: la cuenta diaria no es `sysadmin` de ninguna instancia SQL local ni pertenece a grupos con efecto de administrador; `dbcreator` para pruebas; un inicio de sesión nominal aparte para lo que exija `sysadmin`; `s1` no se genera hasta que devops lo verifique.<br>- **Anexo B:** SEG-L2-18 como quedó en el blueprint v2 (identidad por SHA-256 del contenido), SEG-L2-24 (Baja) y los verbos provisionales (D.2).<br>- **Fuentes:** citan el blueprint v2.<br>- **DL-10 unificada con el blueprint v2:** (a) `s1r` en TPM; (b) YubiKeys en Básico. Recoge la condición del auditor de usar dispositivos distintos para Básico y para la ceremonia.<br>- **Sección 6:** D-1 cerrada de acuerdo; D-2 con la condición del auditor; D-3 con su respuesta; D-4 aceptada.<br>- **Carga del desarrollador I** con las cifras del blueprint v2 (24,1 dp con el recorte 1 anticipado; 26,1 dp sin él); el **recorte 1 queda como recomendación explícita** |
+| **2.2** | 2026-10-14 | Incorpora el blueprint v2.2 (validación del PR #31, L1a-3 «Motor de estados») y el inventario O-6.<br>- **Agrega DL-15** (H-3, Media): un archivo sin firma Avanzada respeta el mínimo de la transición al acortar un `vence`.<br>- **DL-03** recoge la precisión P-3 / SEG-PR31-01: S-03 escribe la fila «del RNC licenciado al actual», conservando `RncAnterior` y `CambiadoUtc`; la fila solo vale contra la licencia aceptada antes del cambio.<br>- **Inventario O-6:** la PC A no cumple E-1 (con SEG-L2-25), E-5, E-10 ni E-13. Recomienda DL-10 (b) y que el propietario **confirme cuál es el equipo principal**.<br>- Cargas actualizadas: L ≈ 25,05 dp; I ≈ 24,25 dp con el recorte 1 (26,25 dp sin él) |
 
 **Fuentes (solo lectura)**
-- `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2** (arquitecto-software).
+- `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.2** (arquitecto-software).
 - `[DAT]` = `Solucion GPOS NG\datos-t3-12-rg14-2026-10-14.md` v2: D-01 a D-11 y L-01 firmadas; D-04 (ii) sin firma.
 - `[SEG]` = `Solucion GPOS NG\revision-seguridad-blueprint-licencia-lote2-2026-10-14.md` (auditor-seguridad): secciones 4, 6 y 9, y «Lectura de diferencias v2» (D.1 a D.7).
+- `[VAL]` = `Solucion GPOS NG\validacion-l1a-3-motor-estados-2026-10-14.md` (validación del PR #31, H-3), con la revisión del auditor `revision-seguridad-pr31-motor-estados-2026-10-14.md` (SEG-PR31-01 a 07).
+- `[O6]` = `Solucion GPOS NG\inventario-o6-equipo-a-2026-10-14.md` (devops, PC A `DevLab00`).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -68,6 +71,7 @@ Ya **no** exige AP-01 ni AP-05.
 | DL-12 | Fecha de compra y **revisión de la aceptación a más tardar el 2027-03-31** | **Aprobar con la condición** | USD 352 (ya presupuestados) | 2026-10-30 |
 | DL-13 | Cuenta diaria sin privilegios de administrador (tampoco `sysadmin` en SQL) y E-1 a E-15 | **Aprobar, obligatoria antes de AI-09** (muy recomendada si se elige DL-10 (b)) | 0,75 dp de devops | **Antes de generar `s1`** |
 | **DL-14** | Una licencia Básica vence como máximo 200 días después de emitida | **Aprobar** | 0,35 dp | 2026-11-06 |
+| **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **Aprobar** | ≈ 0,1 dp | 2026-11-06 |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -77,9 +81,11 @@ Ya **no** exige AP-01 ni AP-05.
 
 | Desarrollador | Centro | Peor caso (+35 %) | Capacidad |
 |---|---|---|---|
-| L (licencia) | 24,3 dp | 32,8 dp | 34,4 dp |
-| I (identidades), **con el recorte 1 anticipado** | **24,1 dp** | 32,5 dp | 34,4 dp |
-| I (identidades), sin el recorte 1 | 26,1 dp | **35,2 dp: se pasa en unos 0,8 dp** | 34,4 dp |
+| L (licencia) | ≈ 25,05 dp | ≈ 33,8 dp | 34,4 dp |
+| I (identidades), **con el recorte 1 anticipado** | **≈ 24,25 dp** | ≈ 32,7 dp | 34,4 dp |
+| I (identidades), sin el recorte 1 | ≈ 26,25 dp | **≈ 35,4 dp: se pasa en unos 1,0 dp** | 34,4 dp |
+
+*(v2.2: la validación del PR #31 suma unos 0,75 dp a L y 0,05 dp a I, más 0,1 dp si se firma DL-15. Con +35 %, **L queda con solo unos 0,6 dp de margen**: el orquestador lo vigila en H-2.)*
 
 **Recomendación explícita: adelantar desde ya el recorte 1.** El tablero, el CSV de pagos y la subida a Drive del emisor pasan a enero. No requiere firma. Su costo funcional es bajo: el tablero de reemisión solo hace falta para AP-05, que no tiene fecha, y hasta enero la lista sale de una consulta sobre el registro, que ya marca el nivel. La licencia completa suma unos 61,7 dp entre todos los roles, unos USD 18 500 a 24 700.
 
@@ -140,6 +146,9 @@ Ya **no** exige AP-01 ni AP-05.
 - S-03 (cambiar el RNC) y S-02 (legitimar cuentas) **no se publican hasta que esté unida la fase A de ADR-81**;
 - mientras tanto, se usan los verbos provisionales `GPOS.Migracion empresa --cambiar-rnc` y `sellos --legitimar` en el servidor, con motivo y evento crítico (anexo B; `[SEG]` D.2, aceptado);
 - S-03 y el verbo son idempotentes, y el cambio solo cuenta cuando el RNC de la empresa ya es el nuevo.
+- **Precisión del blueprint v2.2 (P-3, SEG-PR31-01), dentro de lo firmado:**
+  - la fila `CambiosRnc` solo da transición frente a **la licencia que ya estaba aceptada cuando se hizo el cambio**, y nunca si la entrada trae un corte con firma Avanzada;
+  - S-03 escribe la fila **«del RNC licenciado al actual»**: si la empresa figura en la licencia vigente con otro RNC y ya existe su fila con `RncAnterior` igual al de esa entrada, un nuevo cambio **conserva `RncAnterior` y `CambiadoUtc`** y solo reemplaza `RncNuevo` y el usuario. Así, una cadena A→B→C no deja la empresa `Invalida` ni reinicia el plazo de 30 días (precisión de ADR-59 del 2026-10-08).
 
 | Opción | Consecuencia |
 |---|---|
@@ -340,6 +349,28 @@ Ya **no** exige AP-01 ni AP-05.
 
 ---
 
+### DL-15 · Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas (nueva)
+
+**Qué se decide.** La regla firmada (CW-02) dice que, sin firma Avanzada, no hay corte inmediato: una revocación anticipada pasa por una gracia de al menos 72 h. Pero hoy el motor solo abre la transición si el `vence` nuevo trae una gracia que **ya terminó** ([LIC] 4.1.1). Hay un hueco: un archivo Básico con un `vence` cuya gracia termina **justo después** de la aceptación deja a la empresa operando en ese momento y la corta pocas horas después. Así se rodea CW-02 (H-3 de `[VAL]`, severidad Media). Importa sobre todo si `s1` se compromete o si GSF emite por error un `vence` equivocado.
+
+La propuesta (`[BP2]` 13.1):
+- cuando la empresa tenía derecho con la licencia anterior y el tope nuevo es anterior a `mín(fin de la gracia previa, SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h)))`, el tope efectivo pasa a ser ese mínimo;
+- la empresa queda en `EnGracia(Transicion)` desde el tope nuevo.
+
+**Recomendación: Aprobar.** Cierra el hueco a bajo costo y es coherente con lo que ya firmaste en CW-02. GSF sigue pudiendo corregir un `vence` equivocado.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Mínimo de la transición también al acortar (recomendada)** | Un archivo Básico nunca corta antes de unas 72 h y de un corte. Un acortamiento legítimo (fin de contrato) tarda lo mismo que cualquier revocación en Básico (R-B15, Baja / Bajo) |
+| (b) Sin firma Avanzada, nunca acortar por debajo del fin previo | Más estricta, pero GSF no podría corregir un `vence` erróneo mientras dure el Básico. *Descartada en `[BP2]`* |
+| (c) Mantener el texto literal | El motor sigue como hoy (ya construido así en el PR #31); queda el hueco H-3 |
+
+**Costo:** ≈ 0,1 dp (L1a-3). Hasta la firma, el motor aplica el texto literal. Precisa ADR-59, punto 4.
+
+`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+
+---
+
 ## 4. Pendientes que no son DL: lo que se necesita del propietario
 
 ### 4.1 CI-7 / AI-07 · Validación legal de las tres excepciones (antes del 2026-11-16)
@@ -413,9 +444,10 @@ Encargarlo con AI-07, al mismo asesor.
 
 | Qué | Cuándo |
 |---|---|
-| **Inventario de O-6 con devops**: tareas que exigen administrador, `sysadmin` de SQL local y grupos con efecto de administrador. Quitar `sysadmin` a la cuenta diaria y crear el inicio de sesión nominal aparte | **Antes de AI-09** |
-| **AI-09** (generar `s1` con acta E-1 a E-15) | Después del inventario; plan S6-S7 de `[BP2]` 11.3 |
-| Elegir DL-10 (a) o (b); en (a), identificar un segundo equipo que no sea de desarrollo | Antes del 2026-11-20 |
+| **Equipo principal: confirmar cuál es.** `[O6]` revisó la PC A (`DevLab00`): **no cumple E-1** (la cuenta diaria está en `Administradores`, no hay una cuenta administradora aparte, UAC en el nivel 5 y la cuenta es `sysadmin` en `.\SQLEXPRESS`, en `.` y en LocalDB), **ni E-5** (AnyDesk activo), **ni E-10** (BitLocker sin PIN, [I]) **ni E-13** (arranque seguro deshabilitado, `w32time` sin sincronizar). Recomienda **no generar `s1` en la PC A**. Además, según la memoria del proyecto, la PC A es de soporte (sin UPS, de 2016) y el equipo que coordina es el B. **Hace falta que confirmes cuál es el equipo principal** | **Antes de AI-09** |
+| **AI-09** (generar la llave Básica con acta E-1 a E-15) | Con DL-10 (b), en las YubiKeys. Con `s1` en TPM: **repetir O-6 en el equipo principal confirmado** antes de generarla |
+| Elegir DL-10 (a) o (b). `[O6]` también **recomienda (b)** | Antes del 2026-11-20 |
+| Endurecer la PC A de todos modos (E-1: cuenta estándar, `dbcreator`, un inicio de sesión SQL nominal aparte con permisos mínimos, quitar AnyDesk) | Recomendado por `[O6]` como buena práctica, no como paso previo a AI-09: unos 0,75 dp y de 5 a 15 min por semana |
 | Custodia de los certificados de H-17 v2 (Q-22) | Antes del 2026-11-02 |
 | `contained database authentication` en la PC A | Antes de PA-12 |
 | Quién registra ADR-82 en `master` | Antes de unir el lote 1 |
@@ -430,7 +462,7 @@ Encargarlo con AI-07, al mismo asesor.
 | O-2 | Si se usa DL-09, contradice la precisión Q-17 de ADR-62 | Baja | Se registra como precisión si se usa |
 | ~~O-3~~ | *Pasó a DL-14* | — | — |
 | **O-5** | **Calendario.** Sin el recorte 1, el desarrollador I se pasa en unos 0,8 dp en el peor caso (`[SEG]` D.6.5) | Media | **Adelantar el recorte 1** (DL-07 (a)). El orquestador vigila H-2 |
-| **O-6** | **El equipo principal es de desarrollo.** E-1 con SEG-L2-25 cambia la forma de trabajar: sin `sysadmin` permanente en SQL, y con elevación por operación | Media | Inventario de devops antes de AI-09. Si no es viable: DL-10 (b) o firmar en otro equipo |
+| **O-6** | **Resultado del inventario (`[O6]`):** la PC A no cumple E-1, E-5, E-10 ni E-13, y no está confirmado que sea el equipo principal. E-1 sería viable allí (no hay Hyper-V, Docker ni WSL; `dbcreator` y `dbo` cubren el desarrollo), pero aun así no es un buen emisor | Media | **Que confirmes el equipo principal y elijas DL-10 (b)**, como recomiendan `[O6]` y esta hoja. Si eliges `s1` en TPM, se repite O-6 en el equipo elegido antes de AI-09. Pendientes para el auditor: LocalDB (excepción o borrado) y validar el inicio de sesión nominal `lm_dba` con permisos mínimos |
 | O-7 | `[BP2]` todavía tiene que agregar SEG-L2-24 (§5.2, §9.2), la precisión de E-1 (§10.6) y, según tu elección, unificar la serie de DL-10 (b) | Baja | Arquitecto-software (`[SEG]` D.6) |
 | O-8 | ADR-126: las fuentes NTP del emisor van en su configuración; las llaves y la caducidad, en los programas | Baja | En ADR-84 |
 
@@ -468,6 +500,7 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-03:** hay que redactar otra prueba de NV-07;
 - **DL-07:** otro reparto, o el emisor pasa a enero;
 - **DL-10 (c):** R-B12 queda Media / Alto, aceptado con R-L11-B «sin respaldo».
+- **DL-15:** queda el hueco H-3 (un archivo Básico puede cortar en horas), aceptado de forma expresa.
 
 ---
 

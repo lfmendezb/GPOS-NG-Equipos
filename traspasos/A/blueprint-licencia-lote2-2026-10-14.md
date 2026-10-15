@@ -1,7 +1,7 @@
 # [Blueprint Técnico] Licencia firmada en el lote 2 de RG-14: cierre de AI-01, sello de habilitación, piezas construibles, calendario hasta el corte, ceremonia sin hardware y licencias de pago en nivel Básico
 
 - **Fecha:** 2026-10-14. **Autor:** arquitecto-software, equipo A.
-- **Versión: 2.1.** La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
+- **Versión: 2.2.** La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
 - **Estado del documento:** diseño. Las decisiones nuevas de este documento quedan **Pendientes de firma** (sección 13). Nada de lo que aquí se describe existe en el código, salvo lo que el desarrollador L lleva construido de L1a-1 (sección 14). La hoja de firma la rehace aparte el arquitecto-maestro; la sección 13 solo dice qué tiene que constar en ella.
 - **Entradas:**
   - RG-14 firmado el 2026-10-14: D-01 a D-11, D-04 precisada y **L-01** (la licencia firmada de ADR-58 a 66 entra en el lote 2). Fuente: `datos-t3-12-rg14-2026-10-14.md` v2 (`[DAT]`).
@@ -66,6 +66,22 @@
 | D.6 punto 5 | Baja | La carga de I sube 0,1 dp (D.2): **26,2 dp sin recorte y 24,2 con el recorte 1 anticipado**; total ≈ 61,8 dp en el corte. Lo concilia el orquestador con la hoja | 0, 11.2, 11.4 | — |
 
 **Impacto en L1a-1 de la v2.1:** un cambio aditivo opcional (L1-9: `NivelFirma` en `CargaLicenciaDto`). La lógica del verificador sigue sin cambiar.
+
+### Registro de cambios v2.2 (validación del PR #31, L1a-3 «Motor de estados», con la revisión del auditor `[SEG-PR31]`)
+
+Dictamen: `validacion-l1a-3-motor-estados-2026-10-14.md`. Revisión del auditor: `revision-seguridad-pr31-motor-estados-2026-10-14.md`. Todo son precisiones de ADR-59 y ADR-61 dentro de lo firmado, salvo DL-15, que queda **Pendiente de firma**.
+
+| # | Precisión | Secciones | Pieza y costo |
+|---|---|---|---|
+| P-1 | Los tipos del motor van en `EstadosLicencia.cs`, junto a `MotorEstados.cs` | 7 | 0 |
+| P-2 | **NV-02 en cadena:** el derecho previo y el fin de la gracia previa se calculan con el propio motor sobre la cadena de licencias anteriores, comprobando que esté en orden (SEG-PR31-05). Si la empresa ya estaba en transición, la conserva sin alargarla | 6.1.1 (4) | L1a-3 +0,32; L1a-4 +0,05 (L) |
+| P-3 | **NV-07:** la fila `CambiosRnc` solo da transición con la licencia que ya estaba aceptada cuando se hizo el cambio, y nunca si la entrada trae un corte con firma Avanzada (SEG-PR31-01). **S-03 escribe la fila «del RNC licenciado al actual»**, así que A→B→C no deja la empresa `Invalida` | 6.1.1 (5), **5.1 (S-03)** | L1a-3 +0,1 (L); RN +0,05 (I), dentro de DL-03 |
+| P-4 | Toda gracia termina en un corte, también las especiales (ADR-59, punto 2) | 6.1.1 (3) | L1a-3 +0,1 |
+| P-5 | `TopeGraciaUtc` refleja las gracias especiales y es null en `SoloConsulta` (SEG-PR31-02); `Licencia.Gracias` agrega `HoraCorte` | 6.1.1 (8) | L1a-3 +0,05 |
+| P-6 | Parámetros acotados con falla restrictiva; `t = máx(aceptación, emitida)`; última verificación ≤ ahora; RNC canónico de 9 u 11 dígitos; guarda de pureza ampliada (SEG-PR31-03, 04, 06 y 07) | 6.1.1 (1, 2, 6, 10 y 11) | L1a-3 +0,1 |
+| **DL-15 (nueva)** | Un `vence` acortado por un archivo sin firma Avanzada propia respeta el mínimo de la transición (H-3) | 13.1 | ≈ 0,1 dp si se firma |
+
+**Efecto en la carga:** L suma ≈ 0,75 dp (de 24,3 a ≈ 25,05) e I suma 0,05 dp. Cabe en el margen de 11.4; lo concilia el orquestador.
 
 ---
 
@@ -252,7 +268,7 @@ Los añadidos de la v2 van marcados con **(v2)** y el hallazgo de `[SEG]` que lo
 |---|---|---|---|---|
 | **L1a-1 Contratos y verificador** | Los DTO y códigos de 5.2; el proyecto `GPOS.Criptografia` (PR pequeño, unido **en los primeros 3 días** porque H-17 v2 se monta encima); `VerificadorJws` con 3.1.1 puntos 1 a 6 y 9; `RecursoLlavesGsf` (en las pruebas solo la llave de software; la de desarrollo solo en `Debug`); vectores negativos. **(v2)** Cambios de contratos de la sección 14; vectores de firma maleada y de `r`/`s` con ceros a la izquierda (SEG-L2-18, SEG-L2-19); fábrica pública de `ConjuntoLlaves` desde los bytes de `LlavesGsf.json` para el emisor | — | **Sí** (en construcción) | 4,1 |
 | **L1a-2 Reglas de aceptación** | INV-1 a INV-11, `nivel` y piso con D-2, `autNivel` con `instalaciones` (Q-17), CW-02, NV-05, NV-06 y techo de 48 h, todo como funciones puras sobre (archivo, licencia vigente, recurso de llaves, hora de referencia). **(v2)** **DL-14:** tope de vigencia de los archivos sin firma Avanzada propia (9.2, regla 5, y 10.5) | L1a-1 | **Sí** | 4,25 |
-| **L1a-3 Motor de estados** | Estados y motivos de gracia, NV-01, NV-02, NV-07 (con la fila MAC de C-06 como dato de entrada), NV-08, ilegible, entorno y transición. **Puro**, probado con fechas fijas. **(v2)** NV-07 solo da por vigente un cambio de RNC cuando el RNC de la empresa es igual a `RncNuevo` (SEG-L2-16) | L1a-1 | **Sí** | 2,5 |
+| **L1a-3 Motor de estados** | Estados y motivos de gracia, NV-01, NV-02, NV-07 (con la fila MAC de C-06 como dato de entrada), NV-08, ilegible, entorno y transición. **Puro**, probado con fechas fijas. **(v2)** NV-07 solo da por vigente un cambio de RNC cuando el RNC de la empresa es igual a `RncNuevo` (SEG-L2-16). **(v2.2)** Reglas de 6.1.1: NV-02 en cadena; la fila de RNC solo vale con la licencia que regía cuando se hizo el cambio; las gracias terminan en un corte; `TopeGraciaUtc` incluye las especiales; parámetros acotados (validación del PR #31 y `[SEG-PR31]`) | L1a-1 | **Sí** | 2,5 (+0,7 en v2.2) |
 | **L1a-4 Persistencia y arranque** | `SqlLicenciaSistema` (C-11), repositorio, almacén de disco con DACL (C-03), arranque con la mayor `sec` (LV-21), sellos `.acept` (INV-7), `sec` máxima efectiva, filas con MAC, refresco de 60 s, importador (20 por hora), huella (C-07), `InstalacionId` (C-08), solicitud L-06, carga manual L-03 de punta a punta en Amplio. **(v2)** «Ya aceptado» por SHA-256 del contenido (SEG-L2-18); `sec`, `lid` y SHA-256 vigentes en la solicitud (SEG-L2-09); la API no arranca en Amplio con una licencia `Produccion` o `Beta` (SEG-L2-05) | L1a-2 y L1a-3. DDL de `[DAT]` 6.3. `IBitacoraSeguridad` (C-05) | Sí, con Amplio | 2,85 |
 | **L1b Aplicación** | `UseLicencia` al final del *pipeline* (C-02); clasificación de unas 270 rutas con la lista aprobada; reutilizar `SoloConsulta` (C-09); segunda barrera en la toma; L-01 a L-09; encabezado; avisos y correo; excepciones legales; prueba de arquitectura «sin interruptores» (QA-L06 y QA-L17 sobre Release); H-16 con `ICorroboracionHora` alimentada por `emitida`; `IEstadoLicencia.CupoUsuarios` hacia el sello; retiro de `UsuariosAutorizados` (LV-17). **(v2)** L-08 solo para el SUPER (SEG-L2-15) | L1a-4. **Toma nueva unida** (ola 3, H-04). **AI-07** antes de clasificar. Ramas de las olas unidas | **No**: desde el 2026-11-16 | 9,6 |
 | **SL Sello y padrón** | Secciones 2.3 y 2.4; SH-2 a SH-4, SH-6 y SH-7; rutas S-01, S-02 y S-04; `--cuentas-iniciales` y sellado inicial. **(v2)** Cupo desde el padrón, padrón por diferencias con el nivel en cada entrada (SEG-L2-01, +0,25); S-04 y `sellos --purgar` (+0,1); sin creación ni sellado en Release (SEG-L2-05, +0,25); **DL-05 obligatoria** con `FactorAlta` (SEG-L2-06, +0,75); copia en disco (SEG-L2-07, +0,25); orden sello→contraseña (SEG-L2-17, +0,1); caché global (SEG-L2-20, +0,15) | `IEstadoLicencia` (la interfaz basta, con un sustituto que lee el cupo heredado hasta L1b). S1 de `[DAT]`. H-17 v2 para el sellado desde `GPOS.Migracion` en Estricto. Carpeta de C-03 (L1a-4; un sustituto hasta entonces) | Sí, en Amplio | 4,35 |
@@ -310,7 +326,7 @@ Todas responden con `ProblemDetails` y `codigo`. La empresa sale del token, salv
 | **L-09** | `/api/super/licencia` | POST | → 410 `LICENCIA_RUTA_RETIRADA` durante una versión | — | 410 | SUPER | — |
 | **S-01** | `/api/super/usuarios/sin-sello` | GET | → `CuentaSinSelloDto[]` | — | 401, 403 | SUPER. `Consulta` | Instalación. **(v2)** Incluye las entradas del padrón sin fila (`FilaAusente`) |
 | **S-02** | `/api/super/usuarios/{codigo}/legitimar` | POST | `LegitimarCuentaRequest { Motivo, CodigoSegundoFactor }` → `UsuarioDto` | Motivo de 10 a 200 caracteres; la cuenta existe y no tiene sello válido; cupo (en la misma transacción serializable, contado desde el padrón) | 404; 409 `USUARIO_CON_SELLO`; 409 `LICENCIA_CUPO_AGOTADO`; 422 `MOTIVO_REQUERIDO`; 403 `SEGUNDO_FACTOR` (ADR-81) | SUPER con segundo factor. `Operativa` | Instalación; evento `CuentaLegitimada`. **(v2) No se publica hasta unir la fase A de ADR-81** (SEG-L2-12) |
-| **S-03** | `/api/super/empresas/{codigo}/rnc` | PUT | `CambiarRncRequest { Rnc, Motivo, CodigoSegundoFactor }` → `EmpresaRncDto` | RNC de 9 u 11 dígitos con dígito verificador; motivo de 10 a 200 caracteres | 404; 409 `RNC_SIN_CAMBIO`; 422 `RNC_INVALIDO`; 403 `SEGUNDO_FACTOR` | SUPER con segundo factor. **`Esencial`**: es la salida de `Invalida` (`[LIC]` 4.2) | Empresa de la ruta. Escribe primero la fila MAC en `GPOS_SYSDATA` y después el RNC en la base de la empresa. **(v2, SEG-L2-16) Idempotente:** si ya existe la fila `CambiosRnc` con el mismo `RncNuevo` y la base de la empresa no lo tiene, repetir completa la segunda escritura sin fila nueva (no responde `RNC_SIN_CAMBIO` en ese caso). El motor (L1a-3) solo da por vigente el cambio cuando el RNC de la empresa es igual a `RncNuevo`. **(v2) No se publica hasta unir la fase A de ADR-81** (SEG-L2-12) |
+| **S-03** | `/api/super/empresas/{codigo}/rnc` | PUT | `CambiarRncRequest { Rnc, Motivo, CodigoSegundoFactor }` → `EmpresaRncDto` | RNC de 9 u 11 dígitos con dígito verificador; motivo de 10 a 200 caracteres | 404; 409 `RNC_SIN_CAMBIO`; 422 `RNC_INVALIDO`; 403 `SEGUNDO_FACTOR` | SUPER con segundo factor. **`Esencial`**: es la salida de `Invalida` (`[LIC]` 4.2) | Empresa de la ruta. Escribe primero la fila MAC en `GPOS_SYSDATA` y después el RNC en la base de la empresa. **(v2, SEG-L2-16) Idempotente:** si ya existe la fila `CambiosRnc` con el mismo `RncNuevo` y la base de la empresa no lo tiene, repetir completa la segunda escritura sin fila nueva (no responde `RNC_SIN_CAMBIO` en ese caso). El motor (L1a-3) solo da por vigente el cambio cuando el RNC de la empresa es igual a `RncNuevo`. **(v2.2) Contenido de la fila (una por empresa):** si la empresa figura en la licencia vigente con un RNC distinto del que tiene y ya existe su fila con `RncAnterior` igual al RNC de esa entrada, el nuevo cambio **conserva `RncAnterior` y `CambiadoUtc`** y solo reemplaza `RncNuevo` y el usuario. En cualquier otro caso, `RncAnterior` es el RNC actual de la empresa y `CambiadoUtc`, la hora protegida. Así la fila siempre va «del RNC licenciado al actual»: A→B→C no deja la empresa `Invalida` ni renueva la transición (6.1.1, regla 5). El verbo `--cambiar-rnc` sigue la misma regla. **(v2) No se publica hasta unir la fase A de ADR-81** (SEG-L2-12) |
 | **S-04 (v2)** | `/api/super/usuarios/padron/{codigo}/purgar` | POST | `PurgarEntradaPadronRequest { Motivo, CodigoSegundoFactor }` → 204 | Motivo de 10 a 200 caracteres; la entrada existe en el padrón y **la fila de la cuenta no existe** | 404 `PADRON_SIN_ENTRADA`; 409 `USUARIO_CON_FILA` (si la fila existe, se inhabilita por la vía normal); 422 `MOTIVO_REQUERIDO`; 403 `SEGUNDO_FACTOR` | SUPER con segundo factor. `Operativa` | Instalación; evento `PadronEntradaPurgada` (SEG-L2-01). No se publica hasta unir la fase A de ADR-81 |
 | — | Configuración de la empresa (ADMIN) | existente | Si el RNC cambia → 409 `RNC_SOLO_SUPER` | — | — | — | DL-03 |
 
@@ -415,6 +431,71 @@ public interface IAlmacenLicenciaDisco { /* C-03: Entrada, Procesados, Rechazado
 public interface IBitacoraSeguridad { Task RegistrarAsync(EventoSeguridad e, CancellationToken ct); }   // C-05; en la misma transacción si la hay
 ```
 
+### 6.1.1 Motor de estados (L1a-3; v2.2, validación del PR #31 y `[SEG-PR31]`)
+
+El motor es **puro**: no lee la base, el disco ni el reloj. Las funciones están en `MotorEstados.cs` y los tipos de entrada y salida, en `EstadosLicencia.cs`. Todas las horas son UTC; la hora de RD es UTC−4, sin horario de verano. El código debe cumplir estas reglas (la lista numerada de correcciones del PR está en el dictamen de validación):
+
+1. **Calendario.** `vence` es el último día pagado. Los estados cambian en el corte (`horaCorte`, hora de RD) de estos días:
+   - `PorVencer`: desde `Corte(vence − avisoDias + 1)`, es decir, durante los `avisoDias` días que terminan en `vence`, incluido.
+   - `EnGracia(Vencimiento)`: desde `Corte(vence + 1)`, que es el fin de la vigencia.
+   - `SoloConsulta`: desde `Corte(vence + graciaDias + 1)`.
+   - `Vigente`: solo si `ahora < mín(inicio de PorVencer, fin de vigencia)`.
+2. **Hora de evaluación** = máx(`IRelojProtegido.Ahora()`, `emitida` de la vigente).
+   - `RelojAnteriorAEmitida` recibe el **reloj del sistema** (`TimeProvider`), que le pasa L1b.
+   - Si ese reloj está más de 24 h antes de `emitida`, se registra `RelojInconsistente`, sin bloquear nada.
+3. **Toda gracia termina en un corte** (ADR-59, punto 2; Q-09).
+   - En las gracias especiales, `Hasta = SiguienteCorte(desde + duración, horaCorte)`.
+   - `horaCorte` sale de la vigente. En `Ilegible` sale de `Licencia.Gracias` y, si falta, es 06:00.
+   - Después se aplican los topes (NV-01 y, en `LlaveRetirada`, el fin de la vigencia), que también son cortes.
+   - En `Ilegible`, `desde = mín(última verificación, ahora)`.
+4. **NV-02 en cadena.**
+   - `SituacionLicencia.Anteriores` trae las licencias aceptadas antes de la vigente, en orden descendente de `sec`. L1a-4 entrega al menos 24.
+   - La lista se corta en el primer elemento que no tenga una `sec` menor y una aceptación no posterior a las del elemento anterior. Más allá del corte no hay derecho previo.
+   - Sean `t = máx(AceptadaUtc, emitida)` de la vigente y `E(t)` la empresa como era en `t`. Se calcula `r = Evaluar(E(t), Vigente = Anteriores[0], Anteriores = resto, sin gracias especiales ni ilegible, hora t)`.
+   - La empresa **tenía derecho** si y solo si `r.Opera`. El **fin de la gracia previa** es `r.TopeGraciaUtc`.
+   - Si la vigente deja a la empresa sin operar en `t`:
+     - **(a)** si `r.Motivo == Transicion`, no se abre otra transición: la empresa sigue en `EnGracia(Transicion)` hasta `r.TopeGraciaUtc`, sin alargarlo;
+     - **(b)** si no, se abre una transición hasta `máx(r.TopeGraciaUtc, SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h)))`, con los parámetros de la vigente.
+   - Con `corte: "inmediato"` y firma Avanzada propia no se aplica ni (a) ni (b). Sin esa firma, se registra `CorteIgnorado` (CW-02) y se aplica (a) o (b).
+   - Una entrada duplicada en la vigente no abre transición.
+5. **NV-07.** La fila `CambiosRnc` da transición solo si se cumplen todas estas condiciones:
+   - `RncAnterior` es el RNC de la entrada;
+   - `RncNuevo` es el RNC actual de la empresa (SEG-L2-16);
+   - la gracia de la entrada no había vencido en `CambiadoUtc`;
+   - **la licencia evaluada se aceptó antes del cambio (`AceptadaUtc ≤ CambiadoUtc`)**;
+   - **la entrada no trae un corte inmediato con firma Avanzada propia**.
+
+   Fin = `máx(fin de la gracia por vencimiento de la entrada, SiguienteCorte(mín(CambiadoUtc, emitida + 7 d) + máx(graciaDias, 72 h)))`. Así, cambiar el RNC no acorta el período pagado, y el ancla impide alargarlo.
+
+   Si una licencia aceptada después del cambio conserva el RNC anterior, la fila no cuenta: rige 4 (a) y, al terminar, la empresa queda `Invalida`.
+
+   Se descarta la variante `Emitida < CambiadoUtc`, porque 4 (a) ya cubre el archivo que estaba en tránsito durante el cambio.
+6. **Comparaciones.**
+   - **Código de empresa:** comparación ordinal, sin distinguir mayúsculas. Un duplicado falla cerrado, y L1a-2 lo rechaza.
+   - **RNC:** se quitan solo los espacios y los guiones. Si no quedan 9 u 11 dígitos ASCII, no coincide.
+7. **NV-08.** El fin de `LlaveRetirada` es el menor de su `Hasta`, el tope de NV-01 y `Corte(vence + 1)` de la entrada.
+8. **`TopeGraciaUtc` y `Licencia.Gracias`.**
+   - `TopeGraciaUtc` es el fin de la gracia a la que la empresa tiene derecho. Durante una gracia especial, es el fin de esa gracia. Es null si la empresa no opera, incluido `SoloConsulta` por una gracia especial.
+   - La fila (su JSON lo define el arquitecto de datos) lleva:
+     - `UltimaVerificacionUtc`, de la instalación: la marca más restrictiva;
+     - `HoraCorte`;
+     - `FinGraciaPorEmpresa`: código → `TopeGraciaUtc`, guardado tal cual (null incluido).
+   - Las marcas de inicio de entorno y de retiro son de la instalación (esto precisa `[DAT]` 6.3) y las consume L1a-4.
+9. **`CambioRncSuper`** = (`RncAnterior`, `RncNuevo`, `CambiadoUtc`). Hay una fila por empresa, con el contenido que fija S-03 v2.2.
+10. **Parámetros.** El motor comprueba los rangos de `[LIC]` 3.2:
+    - `graciaDias`, de 0 a 30;
+    - `avisoDias`, de 1 a 60;
+    - `horaCorte`, con el formato `HH:mm`;
+    - `vence` y `emitida`, años de 2000 a 2100 [I].
+
+    Si no se cumplen, el resultado es `NoLicenciada` (y, como licencia anterior, no da derecho previo), sin lanzar excepción. L1b trata cualquier excepción del motor como «no opera».
+11. **Pureza.** La prueba de arquitectura prohíbe, además de lo que ya prohíbe:
+    - `TimeZoneInfo`;
+    - `ToLocalTime` y `ToUniversalTime`;
+    - `CultureInfo.CurrentCulture` y `CurrentUICulture`;
+    - cualquier tipo `GPOS.*` fuera de `GPOS.Contracts`, `GPOS.Core.Sistema.Licencia` y `HoraEmpresa.DesfaseUtc`.
+
+
 ### 6.2 Reloj (cierre de H-16, C-04)
 
 ```csharp
@@ -486,7 +567,7 @@ src/GPOS.Criptografia/                         (proyecto nuevo, la excepción de
     Llaves/RecursoLlavesGsf.cs, LlavesGsf.json (recurso incrustado; las de prueba NO van aquí)
     Anillo/CifradorAnillo.cs, DecoradorAnilloConforme.cs, RecuperacionAnclada.cs   (H-17 v2)
 src/GPOS.Contracts/Licencia/                   FormatoLicencia.cs, LicenciaDtos.cs, CodigosLicencia.cs
-src/GPOS.Core/Sistema/Licencia/                ReglasAceptacion.cs, MotorEstados.cs, EstadoLicenciaService.cs, RepositorioLicencias.cs,
+src/GPOS.Core/Sistema/Licencia/                ReglasAceptacion.cs, MotorEstados.cs, EstadosLicencia.cs (v2.2), EstadoLicenciaService.cs, RepositorioLicencias.cs,
                                                AlmacenLicenciaDisco.cs, HuellaEntorno.cs, SolicitudLicencia.cs, ImportadorCarpetaEntrada.cs,
                                                TrabajoAvisosLicencia.cs, FilasProtegidas.cs
 src/GPOS.Core/Sistema/Usuarios/                SellosHabilitacion.cs, PadronSellos.cs
@@ -896,6 +977,7 @@ La hoja de firma la rehace el arquitecto-maestro. Esta tabla dice qué recomiend
 | **DL-12** | Fecha de compra de las YubiKeys y de la ceremonia (R-B14) | **Fijarla** | **Y fecha de revisión de la aceptación, como máximo 2027-03-31.** Al llegar sin ceremonia, la aceptación vence y se vuelve a firmar con la estimación de ese momento (sin detener la emisión) | USD 352, ya presupuestados |
 | **DL-13** | Cuenta diaria del propietario estándar y cuenta administradora aparte en el equipo emisor | **Sí, obligatoria** (v1: recomendada). Con DL-10 (b), **muy recomendada** | **Previa a AI-09** (la generación de `s1`), no solo a la primera licencia de pago, con las condiciones E-1 a E-15 (10.6). **(v2.1)** E-1 incluye SEG-L2-25: sin `sysadmin` en SQL local (`dbcreator` para pruebas; inicio de sesión nominal aparte para lo demás) ni grupos con efecto de administrador, verificado por devops en el inventario de O-6 antes de AI-09. Con DL-13 sola el riesgo sigue Medio-Alto; baja a Medio con el conjunto de 10.5 | USD 0; 0,75 dp de devops |
 | **DL-14 (nueva)** | **Tope de vigencia de las licencias sin firma Avanzada propia:** cada `vence` ≤ `emitida` + 200 días; si no, 422 `LICENCIA_VIGENCIA_BASICA`. El emisor Básico emite a los clientes anuales archivos semestrales. Precisa ADR-62 e INV-1 | **Sí** | Se verifica en la API (reglas de aceptación, L1a-2) y en el emisor. Es condición de la primera licencia de pago y del texto adaptado de AP-04 | 0,25 dp (L1a-2) + 0,1 dp (EM) + 0,1 dp (QA) |
+| **DL-15 (nueva, v2.2)** | **Un `vence` acortado sin firma Avanzada propia respeta el mínimo de la transición.** Caso: al aceptar la vigente, la empresa tenía derecho con la anterior y sigue operando, pero su tope nuevo es anterior a `mín(fin de la gracia previa, SiguienteCorte(mín(t, emitida + 7 d) + máx(graciaDias, 72 h)))`. Entonces el tope efectivo pasa a ser ese mínimo, con `EnGracia(Transicion)` desde el tope nuevo. Hoy un archivo Básico puede cortar en horas con un `vence` cuya gracia termina justo después de la aceptación, lo que rodea CW-02 (H-3 de la validación del PR #31). Precisa ADR-59, punto 4 | **Sí** | Hasta la firma, el motor aplica el texto literal («un `vence` cuya gracia ya terminó»). *Alternativa descartada:* sin firma Avanzada, no acortar nunca por debajo del fin previo. Es coherente con la omisión, pero GSF no podría corregir un `vence` erróneo mientras dure el nivel Básico | ≈ 0,1 dp (L1a-3) |
 
 ### 13.2 Condiciones ya firmadas que siguen abiertas
 
@@ -962,7 +1044,7 @@ Contrastado, solo lectura, con la copia de trabajo `GPOS-NG-lic` (cambios sin co
 
 ### Cierre
 - Estado: Completado. Versión 2.1 del blueprint: la v2 respondió los 23 hallazgos de `[SEG]` (21 aceptados, 2 con ajuste, ninguno rechazado) y el auditor le dio «Aprobado con observaciones» en la lectura de diferencias; la v2.1 incorpora esas observaciones (SEG-L2-24, SEG-L2-25, D.2 y D.4). DL-01 a DL-14 siguen Pendientes de firma (DL-06, retirada).
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.1, mismo archivo).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.2, mismo archivo; agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
 - Supuestos: los catorce de la sección «Supuestos» (10 a 14, nuevos desde la v2).
 - Decisiones candidatas a ADR:
   - **ADR-83 · Sello de habilitación de cuentas con padrón protegido como fuente del cupo** (DL-01 con (a) y (b), DL-02 con la regla de Release, DL-05 obligatoria con el estado del factor; SH-1 a SH-8). Precisa ADR-58 (punto 9), ADR-36 (R-3), ADR-68 y SEC-07. *Descartadas:* limitar por antigüedad en exceso de cupo, las revocaciones en la bitácora, reconstruir el padrón desde las filas, sellar los permisos granulares y usar el `SelloSeguridad` en el sello.
