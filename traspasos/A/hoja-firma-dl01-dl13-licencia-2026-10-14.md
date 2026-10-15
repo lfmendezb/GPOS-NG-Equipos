@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-19: licencia firmada en el lote 2 de RG-14 (v2.7)
+# Hoja de firma DL-01 a DL-20: licencia firmada en el lote 2 de RG-14 (v2.8)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.7 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 (v2.8: 2026-10-15) · **Versión:** 2.8 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -16,6 +16,7 @@
 | **2.5** | 2026-10-14 | **Registra la firma del propietario de DL-07 (a), con el recorte 1, y DL-08 (a)** (sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firma-dl07-dl08.md`). Sin otros cambios |
 | **2.6** | 2026-10-14 | **Registra la segunda firma del propietario:** DL-14 (a), DL-17 (a), DL-13 (a) y DL-10 (a); aprobados CI-7 / AI-07, AP-06 y AP-02 (falta el nombre del custodio); ADR-82 lo prepara B (aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firmas-dl14-dl17-dl13-dl10-y-adr82.md`). Sin otros cambios |
 | **2.7** | 2026-10-14 | Agrega **DL-18** (PA-02) y **DL-19** (PA-01), que salen de la revisión de seguridad del PR #33 y de la validación de L1a-4 (persistencia), correcciones 7 y 9, con el blueprint v2.6. La validación las numeraba DL-17 y DL-18, pero DL-17 ya está firmada; el arquitecto-software las renumera. El resto de la hoja no cambia |
+| **2.8** | 2026-10-15 | Agrega **DL-20** (AN-01, revisión de seguridad del PR #34, H-17 v2): firma de cada llave del anillo de Data Protection. El resto de la hoja no cambia |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -26,6 +27,7 @@
 - `[VDL]` = `Solucion GPOS NG\validacion-datos-l1a4-2026-10-14.md` (validación del modelo de datos de L1a-4).
 - `[VAL2]` = `Solucion GPOS NG\validacion-l1a-2-reglas-aceptacion-2026-10-14.md` (validación del PR #32, L1a-2); `[RA]` = `Solucion GPOS NG\revision-seguridad-pr32-reglas-aceptacion-2026-10-14.md` (auditor-seguridad, RA-01 a RA-06).
 - `[VAL4]` = `Solucion GPOS NG\validacion-l1a-4-persistencia-2026-10-14.md` (validación de L1a-4, correcciones 6 a 9); `[PA]` = `Solucion GPOS NG\revision-seguridad-pr33-persistencia-2026-10-14.md` (auditor-seguridad, PA-01 a PA-08).
+- `[AN]` = `Solucion GPOS NG\revision-seguridad-pr34-anillo-2026-10-15.md` (auditor-seguridad, PR #34, H-17 v2: AN-01 a AN-04).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -84,6 +86,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **FIRMADA 2026-10-14: (a)** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
 | **DL-18** | Nunca rige una licencia más vieja que la última atestiguada con MAC | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 7 de L1a-4 |
 | **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
+| **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor | **Aprobar** | ≈ 0,4 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -479,6 +482,41 @@ Precisa el orden de recuperación firmado en `[LIC]` 4.1.2, que decía primero e
 
 ---
 
+### DL-20 · Cada llave del anillo de Data Protection va firmada (nueva)
+
+**Qué se decide.** El anillo de Data Protection (H-17 v2) protege todo lo que GPOS NG guarda cifrado o con MAC: el ancla, las filas con MAC de la licencia (`Gracias`, `SecMax`, `PisoNivelFirma`), el reloj protegido H-16 y los secretos. Hoy las llaves del anillo tienen **confidencialidad pero no autenticidad** (AN-01, Media, de diseño). Quien pueda escribir en la carpeta del anillo crea, con las dos llaves públicas (que son legibles por definición), una llave «conforme» que pasa a ser la predeterminada. Pueden hacerlo:
+- la identidad de la API, por ejemplo por un error al escribir adjuntos o exportaciones;
+- un respaldo manipulado que se restaura;
+- un usuario local, si la DACL falla (AN-03).
+
+Desde ese momento puede **falsificar cualquier valor protegido** y **descifrar los secretos nuevos**. El código cumple el texto firmado (CV-05 solo contempla llaves sin proteger o con otro descifrador): el hueco es de diseño.
+
+**Escalón 1, sin firma, se construye ya** (no cambia nada firmado):
+- descartar las llaves cuya recuperación no sea la anclada o cuyo principal no esté admitido;
+- lista de llaves heredadas con MAC;
+- DACL protegida de la carpeta.
+
+**Escalón 2, esta decisión:**
+- cada llave nueva lleva una **firma RSA-PSS-SHA256 con la privada del certificado del servidor**, sobre su id, sus fechas y su sobre;
+- el anillo **descarta toda llave que no verifique**.
+
+Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
+
+**Recomendación: Aprobar**, antes del perfil Avanzado o de la primera licencia de pago, lo que llegue antes. Sin esta firma, los MAC que protegen la licencia y el reloj dependen solo de la DACL de una carpeta.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Firma RSA-PSS-SHA256 de cada llave (recomendada)** | Cierra AN-01 y AN-04 frente a la identidad de la API, un respaldo manipulado y un usuario local. **No** protege frente a un administrador ni a código que corra como la API (pueden usar la privada del servidor): eso es inevitable y es el residual de CP-4. Requiere que el **certificado del servidor admita `digitalSignature`** (devops) |
+| (b) Solo la DACL de la carpeta (ADR-77) | **Descartada por el auditor:** no cubre la identidad de la API ni la restauración de un respaldo, y la DACL hoy no está garantizada (AN-03) |
+| (c) Lista de ids de llaves en una tabla de solo inserción | **Descartada:** ata cada lectura de Data Protection a SQL; una caída de la base dejaría a la API sin anillo |
+| (d) Un HMAC de las llaves | **Descartada:** no hay ningún secreto fuera del propio anillo, así que sería circular |
+
+**Costo:** ≈ 0,4 dp (desarrollador I, CR) más el certificado del servidor con uso `digitalSignature` (devops, dentro de la custodia de Q-22). Precisa H-17 v2 y CV-05 (`[PSF]` 4C.3).
+
+`[ ] Aprobar (a)`   `[ ] (b)`
+
+---
+
 ### 3.1 Confirmaciones (precisiones dentro de lo firmado)
 
 **C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
@@ -633,7 +671,7 @@ Encargarlo con AI-07, al mismo asesor.
 | Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
 | Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
 | ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
-| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
@@ -653,6 +691,7 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-17:** queda RA-01: DL-14 no acota de verdad lo firmado con una llave Básica comprometida.
 - **DL-18:** queda PA-02: con las credenciales de la API se puede volver en silencio a una licencia anterior.
 - **DL-19:** queda PA-01: un clon que niega la lectura de la huella opera sin límite; solo hay aviso diario.
+- **DL-20:** queda AN-01: quien escribe en la carpeta del anillo puede falsificar los valores protegidos; solo el escalón 1 y la DACL.
 
 ---
 
