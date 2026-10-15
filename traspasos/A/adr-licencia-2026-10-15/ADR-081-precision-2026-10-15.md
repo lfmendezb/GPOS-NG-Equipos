@@ -2,7 +2,7 @@
 
 **Para quien registra (B), no se copia al ADR.**
 - **No estaba en el encargo:** la hoja dice que DL-04 «es una precisión de ADR-81 (punto 12) y de ADR-60 (punto 8)».
-- **Salvedad:** DL-04 está firmada **según la interpretación de B** (no figuraba por nombre en la lista que vio el propietario). Conviene registrarla cuando B confirme que el propietario no la corrigió; si la corrige, se descarta.
+- **Firma:** DL-04 (a), confirmada por el propietario el 2026-10-15 en la sesión de A («Si, lo confirmo.»). Se puede registrar.
 - **Dónde va:** al final de `docs/adr/ADR-081.md`.
 - **ADR-60, punto 8:** no preparo un texto aparte. El punto 8 nombra `BitacoraSistema` solo para la evidencia del detector de integridad del agente de actualización (L4), que no está en la entrega 1. Si B quiere una nota en ADR-60, basta esta frase: «Mientras no exista `BitacoraSistema`, la evidencia del detector de integridad del punto 8 va a `BitacoraSeguridad` (DL-04, precisión de ADR-81 del 2026-10-15)». Es mi lectura [I], no un texto que haya visto el propietario.
 - **Fuente:** hoja DL-01 a DL-22 v2.13 (`traspasos/A/hoja-firma-dl01-dl13-licencia-2026-10-14.md`), DL-04 y sección 7.

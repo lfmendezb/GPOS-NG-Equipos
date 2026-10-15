@@ -2,7 +2,7 @@
 
 **Para quien registra (B), no se copia al ADR.**
 - **Dónde va:** al final de `docs/adr/ADR-059.md`, después de la precisión del 2026-10-08 de los puntos 2 y 4 (PL-07 y plazo de NV-07). El texto firmado de arriba no se toca.
-- **Qué recoge:** lo pedido (punto 2 por C-1, punto 6 por C-5 y NV-07 del punto 4 por DL-03 con P-3) y, porque salen de la misma firma y precisan el mismo ADR: **DL-15** y NV-02 en cadena (punto 4), **DL-16** (punto 3), **DL-04** (punto 8, con la salvedad de la interpretación de B) y las precisiones técnicas P del blueprint v2.2 y v2.3 que tocan este ADR. Cada bloque es independiente.
+- **Qué recoge:** lo pedido (punto 2 por C-1, punto 6 por C-5 y NV-07 del punto 4 por DL-03 con P-3) y, porque salen de la misma firma y precisan el mismo ADR: **DL-15** y NV-02 en cadena (punto 4), **DL-16** (punto 3), **DL-04** (punto 8) y las precisiones técnicas P del blueprint v2.2 y v2.3 que tocan este ADR. Cada bloque es independiente.
 - **Fuente:** hoja DL-01 a DL-22 **v2.13**, `traspasos/A/hoja-firma-dl01-dl13-licencia-2026-10-14.md` del área común, secciones 3, 3.1 y 7; blueprint de la licencia del lote 2, `traspasos/A/blueprint-licencia-lote2-2026-10-14.md`, registros de cambios v2.2 y v2.3 y sección 6.1.1.
 - **Fila del índice (`README.md`, fila 59), texto que se agrega:** «precisiones del 2026-10-15 (tercera firma de la hoja de licencia): toda gracia termina en el corte siguiente (C-1, punto 2); fuentes de la última verificación sin la bitácora (DL-16, punto 3); un `vence` acortado sin firma Avanzada respeta el mínimo de la transición y NV-02 en cadena (DL-15, punto 4); NV-07 con la fila con MAC `CambiosRnc` de la ruta del SUPER (DL-03 y P-3, punto 4); cuatro rutas `Esencial` más en solo consulta (C-5, punto 6); eventos en `BitacoraSeguridad` (DL-04, punto 8)».
 - **Observación para el arquitecto-software (Baja, no bloquea el registro):** el fin de la transición por cambio de RNC de la regla 5 de la sección 6.1.1 del blueprint (`máx(fin de la gracia por vencimiento, SiguienteCorte(…))`) debería quedar acotado por el plazo de 30 días firmado el 2026-10-08 (PA-5, `mín(evento + 30 días, fin de la gracia por vencimiento)`). No lo verifiqué en el código del PR #31; conviene confirmarlo antes de unir RN.
@@ -37,11 +37,11 @@
 >
 >    Ninguna de las cuatro sirve para seguir vendiendo con la licencia vencida. Inhabilitar una cuenta ya estaba en el punto 6 («suspender y dar de baja membresías»).
 >
-> 7. **Punto 8, bitácora (DL-04 (a); registrada como firmada según la interpretación de B, ver la nota).** `BitacoraSistema` no existe en el código. Las acciones de la licencia y del sello se registran en `GPOS_SYSDATA.dbo.BitacoraSeguridad` ([ADR-81](ADR-081.md), punto 12: solo inserción y 2 años de retención), con **una sola DDL** del arquitecto de datos, aplicada por `GPOS.Migracion sistema`. Cuando exista `BitacoraSistema`, se unen.
+> 7. **Punto 8, bitácora (DL-04 (a)).** `BitacoraSistema` no existe en el código. Las acciones de la licencia y del sello se registran en `GPOS_SYSDATA.dbo.BitacoraSeguridad` ([ADR-81](ADR-081.md), punto 12: solo inserción y 2 años de retención), con **una sola DDL** del arquitecto de datos, aplicada por `GPOS.Migracion sistema`. Cuando exista `BitacoraSistema`, se unen.
 >
 > 8. **Precisiones técnicas dentro de lo firmado (P-6 del blueprint v2.2; SEG-PR31-03, 04, 06 y 07).** Los parámetros de la licencia se comprueban con los rangos de `[LIC]` 3.2 y, si no se cumplen, el resultado es `NoLicenciada`, sin excepción (falla restrictiva); `t = máx(aceptación, emitida)`; la última verificación nunca es posterior a la hora actual; el RNC se compara en forma canónica de 9 u 11 dígitos.
 >
-> *Nota sobre DL-04:* DL-04 no figuraba por nombre en la lista que vio el propietario. B la registró como firmada (a) porque la respuesta fue «DL-01, 02, 03, 05 y las demás» y la hoja la tenía pendiente con la recomendación «Aprobar», y se lo indicó al propietario en el mismo turno. Si el propietario la corrige, se retira el apartado 7.
+> *Nota sobre DL-04:* B la registró primero por interpretación. El propietario la confirmó el 2026-10-15 en la sesión de A: «Si, lo confirmo.»
 >
 > **Decidido, no implementado:** L1a-3 (motor de estados) construye los apartados 1, 3, 4, 5 y 8; L1a-4, el 2; RN (desarrollador de identidades), el 5; L1b-2, el 6.
 >
