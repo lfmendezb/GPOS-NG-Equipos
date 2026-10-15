@@ -47,3 +47,43 @@ Las marcas todavía no tienen efecto: el *middleware* `UseLicencia` llega en L1b
   - **desarrollador-backend (L):** puntos 1 a 3 en L1b-2; 4 y 5 como seguimiento.
   - **especialista-pos:** confirmar con AI-07 que suspender y dar de baja membresías no cambian saldos ni cobros pendientes.
 - Próximo paso recomendado: unir #35 y llevar los puntos 1 a 3 a L1b-2.
+
+---
+
+## Adenda: revisión del auditor (`revision-seguridad-pr35-l1b-1-2026-10-15.md`)
+
+### LB-02 (Media, diseño): elijo la opción (a)
+
+Elijo la opción (a), que es también la que recomienda el auditor. **Texto exacto:**
+- `ICorroboracionHora.Corroborar` con la fuente `emitida` **solo se llama con una licencia vigente que tenga firma Avanzada propia** (`LicenciaAceptada.FirmaAvanzadaPropia`, la misma definición de INV-5 y CW-02).
+- Con una licencia solo Básica, también con la de un regreso temporal con `autNivel`, **no hay corroboración por `emitida`**.
+- La cabecera `Date` que obtiene el agente (L4, `agente-date`) sigue corroborando siempre.
+- La hora de evaluación de la licencia, máx(hora protegida, `emitida`), no cambia: es otro valor (`[LIC]` 4.1.3).
+- **Prueba de QA:** con la llave básica y el reloj del sistema adelantado, cargar tres licencias con una `emitida` que crece 47 h cada vez. La tercera tiene que dar `LICENCIA_FECHA_FUTURA`, y la hora protegida no se mueve con ninguna de las tres.
+
+**Por qué (a) y no (b) ni (c):**
+- (a) cierra el ciclo con una sola condición, en el punto donde se llama a la corroboración, y no agrega estado al reloj.
+- (b) obliga a llevar dos horas protegidas: una para INV-6 y otra para lo demás, con su persistencia y su recálculo al arrancar (LV-05). Es más superficie para el mismo efecto.
+- (c) es más compleja de razonar y de probar.
+
+**Costo operativo de (a):** mientras no haya llaves Avanzadas (todo el corte), un salto del reloj de más de 48 h no se corrobora hasta que exista el agente (L4). Es la falla del lado seguro que ya describe el blueprint en 6.4. El estado de la licencia no se ve afectado, porque su evaluación ya usa `emitida`.
+
+**¿Cambia algo firmado?** **Sí.** H-16 v2.1 (firmada) nombra `emitida` de la licencia vigente como hora confiable sin distinguir el nivel de la firma; esto la restringe. DL-17 **no** cambia: se mantiene tal cual, y esta decisión impide justamente que se la rodee.
+- Va a la hoja del propietario como **DL-21**, Pendiente de firma.
+- Hasta la firma, el cableado de L1b-2 se construye con la restricción y se marca «PENDIENTE DE LA FIRMA DE DL-21». Antes de la ceremonia equivale a no corroborar con `emitida`. Si el propietario no firma, se vuelve al texto literal.
+
+**¿Bloquea?** No bloquea #35, que no cablea la corroboración. **Es condición del PR de L1b que la cablea.**
+
+### LB-06 (Informativa)
+
+- **`POST /api/admin/numeracion/espejo/sincronizar`: confirmado que no consume números.** E12 solo sube los contadores del espejo `_CNumeracion` y nunca escribe `num.Serie` (`NumeracionService.cs:283-296` [V]). Es `Esencial` y solo para el SUPER.
+- **Límites de peticiones: hay que corregirlos (secundario).**
+  - `POST /api/admin/respaldos` (`AdminEndpoints.cs:125`) no tiene `RequireRateLimiting`, ni en la ruta ni en el grupo `/api/admin` [V].
+  - `POST /api/notificaciones/documento` (`NotificacionesEndpoints.cs:23`) tampoco, ni en la ruta ni en el grupo `/api/notificaciones` [V].
+  - No comprobé si existe un limitador global [I].
+
+  **Texto exacto:**
+  - respaldos: `.RequireRateLimiting(...)` con un límite propio de 1 cada 10 minutos por empresa, más un solo respaldo a la vez (409 si hay otro en curso);
+  - notificaciones/documento: `.RequireRateLimiting(LimitesPeticiones.Reportes)`, además de aceptar solo documentos emitidos (condición del punto 2).
+
+  No bloquea #35. Se hace antes de activar el middleware (L1b-2), porque desde entonces estas dos rutas quedan abiertas también en solo consulta.

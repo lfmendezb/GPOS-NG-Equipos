@@ -1,7 +1,7 @@
 # [Blueprint Técnico] Licencia firmada en el lote 2 de RG-14: cierre de AI-01, sello de habilitación, piezas construibles, calendario hasta el corte, ceremonia sin hardware y licencias de pago en nivel Básico
 
 - **Fecha:** 2026-10-14. **Autor:** arquitecto-software, equipo A.
-- **Versión: 2.7.** La v2.7 (2026-10-14) extiende a la carga la regla de las fuentes verificables (registro de cambios v2.7). La v2.6 (2026-10-14) incorpora PA-01 y PA-02 de la revisión de seguridad del PR #33 (registro de cambios v2.6). La v2.5 (2026-10-14) incorpora la validación del PR #33 (L1a-4; registro de cambios v2.5). La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
+- **Versión: 2.9.** La v2.9 (2026-10-15) restringe la corroboración de la hora por `emitida` (LB-02, DL-21; registro de cambios v2.9). La v2.8 (2026-10-15) recoge las decisiones de la primera parte del emisor (EM; registro de cambios v2.8). La v2.7 (2026-10-14) extiende a la carga la regla de las fuentes verificables (registro de cambios v2.7). La v2.6 (2026-10-14) incorpora PA-01 y PA-02 de la revisión de seguridad del PR #33 (registro de cambios v2.6). La v2.5 (2026-10-14) incorpora la validación del PR #33 (L1a-4; registro de cambios v2.5). La v2.4 (2026-10-14) incorpora la validación del PR #32 (L1a-2; registro de cambios v2.4). La v2.3 (2026-10-14) incorpora la validación del modelo de datos de L1a-4 (registro de cambios v2.3). La v2.2 (2026-10-14) precisa el motor de estados (L1a-3) tras validar el PR #31 junto con la revisión del auditor (registro de cambios v2.2). La v2 incorporó el dictamen del auditor-seguridad sobre la v1 (`revision-seguridad-blueprint-licencia-lote2-2026-10-14.md`, en adelante **`[SEG]`**), que la v1 recibió como **Rechazado** por SEG-L2-01, SEG-L2-02 y SEG-L2-03. **La v2.1 incorpora la «Lectura de diferencias v2» del mismo informe (`[SEG-D]`), que dio a la v2 «Aprobado con observaciones»** (registro de cambios v2.1). La v1 ya incorporaba las tres precisiones del propietario del 2026-10-14 listadas en «Entradas».
 - **Estado del documento:** diseño. Las decisiones nuevas de este documento quedan **Pendientes de firma** (sección 13). Nada de lo que aquí se describe existe en el código, salvo lo que el desarrollador L lleva construido de L1a-1 (sección 14). La hoja de firma la rehace aparte el arquitecto-maestro; la sección 13 solo dice qué tiene que constar en ella.
 - **Entradas:**
   - RG-14 firmado el 2026-10-14: D-01 a D-11, D-04 precisada y **L-01** (la licencia firmada de ADR-58 a 66 entra en el lote 2). Fuente: `datos-t3-12-rg14-2026-10-14.md` v2 (`[DAT]`).
@@ -134,6 +134,23 @@ Texto exacto para el desarrollador: correcciones 6 a 9 de `validacion-l1a-4-pers
 | # | Precisión | Secciones | Pieza y costo |
 |---|---|---|---|
 | P-1 | En la aceptación, la `sec` máxima efectiva y el perfil vigente salen **solo de fuentes que verifican**: las filas de `Licencias` cuyo JWS verifica (fila a fila, como en la regla 14), más la fila con MAC `Licencia.SecMax` y el archivo `secmax`. Una fila sin firma válida no mueve la `sec` máxima ni fija el perfil. Precisa la sección 4.3 de los datos de L1a-4. No cambia nada firmado | 6.1.1 (14) | L1a-4, ya hecho |
+
+### Registro de cambios v2.8 (emisor EM, primera parte; `GSF.EmisorLicencias` @ `b16db5d`)
+
+| # | Decisión del desarrollador | Dictamen | Secciones |
+|---|---|---|---|
+| D-1 | En Release no se emiten licencias `Desarrollo`: la verificación posterior obligatoria (regla 6, con `DesdeRecurso` y NV-05) rechaza los `kid` de desarrollo. Se emiten con el emisor compilado en Debug | **Confirmada, y más segura que la regla 1 original:** el emisor Release no lleva el proveedor de software (cierra R-B7 en el emisor). **Precisión:** el emisor Debug con `gsf-lic-dev` solo se ejecuta en equipos de desarrollo, **nunca** en la cuenta `gsf-firma` ni en el equipo emisor | 9.2 (1) |
+| D-3 | La regla 4 exige que el reloj local esté a ≤ 1 min de NTP (`RELOJ_DESVIADO`) | **Confirmada:** es la letra de la regla 4 («el desvío de 1 minuto como máximo»). E-13 (`w32time`) es la medida del equipo que lo hace posible | 9.2 (4) |
+| D-5 | El emisor rechaza `nivelMin: "avanzado"` y `perfilMin` sin firma Avanzada, y exige que el RNC coincida con la solicitud | **Confirmada, con precisiones.** (a) En Básico (también en un regreso temporal con `s2`), el emisor **no escribe** `nivelMin` ni `perfilMin`: la API los ignoraría (D-2) y generarían `PisoHeredado`. El arrastre del catálogo de `[PSF]` 4A.5, paso 3, aplica solo a las emisiones con firma Avanzada, incluida la cofirma `s1`+`a1`. (b) RNC: si la solicitud trae un RNC distinto del catálogo, o lo trae vacío, la emisión se detiene y el catálogo solo se actualiza con una confirmación propia con motivo, que queda en el registro encadenado (es el caso normal tras S-03). Nunca se emite con el RNC del catálogo contra el de la solicitud (R-L8) | 9.2 (10) |
+| — | GPOS-NG enlazado como **submódulo fijado** (`externo/GPOS-NG`) para `GPOS.Criptografia` y los archivos de `GPOS.Contracts/Licencia` | **Confirmada.** Cumple «archivo enlazado y ensamblado del verificador, sin `GPOS.Core`» (3) y hace reproducible la compilación (SEG-L2-08). **Condiciones:** (1) el submódulo se fija a un commit **ya unido** cuyo `LlavesGsf.json` sea el de la Release publicada vigente; (2) cada subida de commit va en un commit propio con el motivo; (3) el acta de compilación reproducible anota los dos commits. **Candidata a precisión de ADR-84** (Maestro) | 3, 7 |
+
+### Registro de cambios v2.9 (LB-02 y LB-06 de `revision-seguridad-pr35-l1b-1-2026-10-15.md`)
+
+| # | Precisión | Secciones | Pieza y costo |
+|---|---|---|---|
+| P-1 | **La corroboración por `emitida` solo vale con firma Avanzada propia** (LB-02, opción (a)). Con una licencia solo Básica no se corrobora; la cabecera `Date` del agente sigue corroborando siempre. Cierra el ciclo «adelantar el reloj, cargar una licencia, corroborar» que deslizaba el techo de INV-6 (DL-17) y el tope de DL-14. **Restringe H-16 v2.1, que está firmada → DL-21**. DL-17 no cambia | 6.2, 13.1 | L1b +0,05 |
+| P-2 | `POST /api/admin/respaldos` (1 cada 10 min por empresa, uno a la vez) y `POST /api/notificaciones/documento` (`LimitesPeticiones.Reportes`) llevan límite de peticiones antes de activar el middleware. `espejo/sincronizar` no consume números [V] | 5.3 | L1b +0,05 |
+| — | *Descartadas para LB-02:* (b) una hora protegida aparte para INV-6, que añade un segundo valor persistido y su recálculo; (c) corroboración condicionada a la hora previa, más compleja | — | — |
 
 ---
 
@@ -610,6 +627,8 @@ public interface ICorroboracionHora
 }
 ```
 
+**(v2.9, LB-02, pendiente de DL-21)** Con la fuente `emitida`, `Corroborar` solo se llama si la licencia vigente tiene **firma Avanzada propia** (INV-5). Con una licencia solo Básica no hay corroboración por `emitida`. `agente-date` corrobora siempre. La hora de evaluación de la licencia, máx(hora protegida, `emitida`), no cambia.
+
 ### 6.3 Sello y padrón (desarrollador de identidades; v2)
 
 ```csharp
@@ -683,6 +702,7 @@ src/GPOS.Web/Components/Pages/Admin/Licencia.razor  (sustituye a LicenciaUsuario
 tests/GPOS.Tests/Criptografia/   tests/GPOS.Tests/Licencia/   tests/GPOS.Tests/Usuarios/Sellos/   (sin proyectos de prueba nuevos)
 
 Repositorio privado GSF.EmisorLicencias (fuera de GPOS-NG.slnx):
+    externo/GPOS-NG  (v2.8: submódulo fijado a un commit unido con el LlavesGsf.json publicado; cada subida en un commit propio)
     src/Emisor/ Proveedores/{ProveedorTpm, ProveedorYubiKeyPiv, ProveedorSoftware}.cs, Registro/, Ntp/, Catalogo/
     ceremonia/ Ceremonia.ps1, Comun.ps1, Acta.md.plantilla, ListaAceptacion.md, raices/yubico-piv-root.pem
 ```
@@ -734,7 +754,7 @@ public interface IConfirmacionCustodio { bool Confirmar(ResumenFirma resumen /* 
 
 ### 9.2 Reglas del emisor que impiden emitir licencias indebidas
 
-1. **Release del emisor:** el proveedor de software solo se puede cargar para `anillo: "Desarrollo"`. Con otro anillo, el emisor no arranca la emisión: `PROVEEDOR_NO_ADMITIDO`.
+1. **Release del emisor:** el proveedor de software solo se puede cargar para `anillo: "Desarrollo"`. Con otro anillo, el emisor no arranca la emisión: `PROVEEDOR_NO_ADMITIDO`. **(v2.8, D-1)** En la práctica, el emisor Release **no incluye** el proveedor de software ni emite `Desarrollo`, porque la verificación posterior de la regla 6 rechaza los `kid` de desarrollo. Las licencias `Desarrollo` se emiten con el emisor en Debug, solo en equipos de desarrollo y nunca en la cuenta `gsf-firma`.
 2. **Nivel Básico (TPM), con la precisión firmada (b):** firma todos los anillos admitidos en Release (`Produccion`, `Beta` y `Demostracion`), **también las licencias de pago**.
    - El registro marca cada emisión con su nivel.
    - El tablero lista los clientes de pago con licencia vigente Básica: es la lista de reemisión de AP-05. *(Con el recorte 1 anticipado, el tablero pasa a enero; hasta entonces la lista sale de una consulta sobre el registro, que ya marca el nivel.)*
@@ -757,6 +777,10 @@ public interface IConfirmacionCustodio { bool Confirmar(ResumenFirma resumen /* 
 7. **(v2) *Handle* por firma (SEG-L2-10):** el proveedor TPM abre y cierra el *handle* de la llave en cada firma, para que la autorización no quede en caché. El ensayo comprueba que **dos firmas seguidas piden el PIN dos veces**.
 8. **(v2) Comparación con el registro (SEG-L2-09):** en cada emisión o renovación, el emisor lee `SecVigente`, `LidVigente` y `Sha256ContenidoVigente` de la solicitud (L-06) y los compara con su registro para esa instalación. Si la `sec` o el `lid` no están en el registro, o el SHA-256 no coincide, **detiene la emisión** con la alerta «licencia no emitida por GSF en esta instalación» (`LICENCIA_NO_EMITIDA_POR_GSF`, código del emisor) y el caso pasa al procedimiento de compromiso de AP-03. El soporte de GSF hace la misma comparación con L-04 en cada visita.
 9. **(v2) Cofirma de transición (SEG-L2-22, recomendado para DL-11):** en la reemisión posterior a la ceremonia, el archivo lleva dos firmas, `s1` y `a1` (serialización general). Lo aceptan los binarios antiguos y los nuevos, y los 45 días de DL-11 dejan de ser críticos para quien actualiza tarde. El verificador ya admite varias firmas (`VerificadorJwsLimites.FirmasMaximas = 8` [V, `GPOS-NG-lic`, sin confirmar]). **El archivo cofirmado tiene que cumplir también DL-14**: en los binarios antiguos `a1` es un `kid` desconocido que se ignora, así que el archivo cuenta como Básico. Costo: 0,25 dp en EM después de la ceremonia. **(v2.1, SEG-L2-24)** Si alguien quita `a1` y carga antes la copia, el original cofirmado se procesa igual por la excepción de nivel superior (5.2) y el piso sube.
+
+10. **(v2.8, D-5)** **Campos y RNC.**
+    - En Básico (incluido el regreso temporal con `s2`), el emisor no escribe `nivelMin` ni `perfilMin`; el arrastre del catálogo solo aplica con firma Avanzada.
+    - El RNC de cada empresa tiene que coincidir con el de la solicitud (L-06). Si difiere o viene vacío, la emisión se detiene. El catálogo se actualiza solo con una confirmación propia con motivo, que queda en el registro encadenado.
 
 ### 9.3 Garantías en la API (ya firmadas, solo se recuerdan)
 
@@ -1084,6 +1108,7 @@ La hoja de firma la rehace el arquitecto-maestro. Esta tabla dice qué recomiend
 | **DL-16 (nueva, v2.3)** | **Fuentes de la última verificación correcta:** la fila `Licencia.Gracias` y el archivo `estado` del disco (la más antigua). La bitácora sigue siendo fuente de las marcas de inicio de entorno y de retiro, pero no de esta. Precisa ADR-59, punto 3, y `[LIC]` 4.1.2, que la nombran entre las fuentes | **Sí** | Adelantar la marca exige el anillo en las dos fuentes. Con menos frecuencia de escritura, la bitácora solo acortaría la gracia de 72 h sin que haya un ataque. *Alternativa descartada:* un evento `LicenciaVerificada` cada 15 minutos en `BitacoraSeguridad` (unas 35 000 filas al año [I]) | 0 |
 | **DL-18 (nueva, v2.6)** | **Sin regreso silencioso a una licencia anterior:** la instalación nunca se rige por una `sec` menor que la máxima atestiguada con MAC. El orden es: la fila de esa `sec` que verifica; después, la copia del disco con su SHA-256; si no, `Ilegible`. Precisa `[LIC]` 4.1.2, que firmaba buscar primero en el historial y después en el disco (PA-02) | **Sí** | Las filas sin MAC no disparan `Ilegible`. *Descartado:* `Ilegible` ante cualquier fila de `sec` mayor que no verifica (denegación de servicio con las credenciales de la API) | ≈ 0,1 dp (L1a-4) |
 | **DL-19 (nueva, v2.6)** | **Lectura de la huella fallida de forma prolongada:** sin ninguna lectura correcta durante más de `máx(graciaDias, 72 h)` con una vigente, se trata como un entorno distinto, con la primera detección al inicio de las fallas. Precisa `[LIC]` 3.3.1 («un error no cuenta como cambio de entorno»; PA-01) | **Sí** | Sin DL-19, una instalación clonada a la que se le niega a la API la lectura opera sin gracia de entorno mientras dure la negación (agrava el residual K-LV-06). *Alternativa:* solo alertar, que es lo que rige hasta la firma | ≈ 0,1 dp (L1a-4) |
+| **DL-21 (nueva, v2.9)** | **Corroboración de la hora solo con licencias de firma Avanzada propia:** `emitida` corrobora la hora más alta del sitio solo si el archivo trae firma Avanzada propia; la cabecera `Date` del agente, siempre. Precisa H-16 v2.1 (fuentes de hora confiable). Cierra LB-02: con `s1` y la administración del servidor ya no se puede deslizar el techo de INV-6 (DL-17) ni el tope de DL-14 | **Sí** | Hasta la firma, L1b-2 se construye con la restricción, marcada «PENDIENTE DE FIRMA». Antes de la ceremonia equivale a no corroborar con `emitida`, la falla del lado seguro de 6.4. *Alternativas descartadas:* hora protegida aparte para INV-6; corroboración condicionada a la hora previa | ≈ 0,05 dp (L1b) |
 
 ### 13.2 Condiciones ya firmadas que siguen abiertas
 
@@ -1150,7 +1175,7 @@ Contrastado, solo lectura, con la copia de trabajo `GPOS-NG-lic` (cambios sin co
 
 ### Cierre
 - Estado: Completado. Versión 2.1 del blueprint: la v2 respondió los 23 hallazgos de `[SEG]` (21 aceptados, 2 con ajuste, ninguno rechazado) y el auditor le dio «Aprobado con observaciones» en la lectura de diferencias; la v2.1 incorpora esas observaciones (SEG-L2-24, SEG-L2-25, D.2 y D.4). DL-01 a DL-14 siguen Pendientes de firma (DL-06, retirada).
-- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.7, mismo archivo; la v2.7 agrega el registro de cambios v2.7 y una línea en la regla 14; la v2.6 agrega el registro de cambios v2.6, las reglas 14 y 15 de 6.1.1 y DL-18 y DL-19; la v2.5 agrega el registro de cambios v2.5 y la ubicación de 7; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` (v2.9, mismo archivo; la v2.9 agrega el registro de cambios v2.9, la nota de 6.2 y DL-21; la v2.8 agrega el registro de cambios v2.8, las precisiones de 9.2 (1) y (10) y el submódulo en 7; la v2.7 agrega el registro de cambios v2.7 y una línea en la regla 14; la v2.6 agrega el registro de cambios v2.6, las reglas 14 y 15 de 6.1.1 y DL-18 y DL-19; la v2.5 agrega el registro de cambios v2.5 y la ubicación de 7; la v2.4 agrega el registro de cambios v2.4, la sección 6.1.2 y `VerificarCompacto` en 6.1; la v2.3 agrega el registro de cambios v2.3, las reglas 12 y 13 de 6.1.1 y DL-16; la v2.2 agrega el registro de cambios v2.2, la sección 6.1.1, la fila de S-03 en 5.1 y DL-15).
 - Supuestos: los catorce de la sección «Supuestos» (10 a 14, nuevos desde la v2).
 - Decisiones candidatas a ADR:
   - **ADR-83 · Sello de habilitación de cuentas con padrón protegido como fuente del cupo** (DL-01 con (a) y (b), DL-02 con la regla de Release, DL-05 obligatoria con el estado del factor; SH-1 a SH-8). Precisa ADR-58 (punto 9), ADR-36 (R-3), ADR-68 y SEC-07. *Descartadas:* limitar por antigüedad en exceso de cupo, las revocaciones en la bitácora, reconstruir el padrón desde las filas, sellar los permisos granulares y usar el `SelloSeguridad` en el sello.

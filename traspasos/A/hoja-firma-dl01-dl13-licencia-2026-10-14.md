@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-20: licencia firmada en el lote 2 de RG-14 (v2.8)
+# Hoja de firma DL-01 a DL-21: licencia firmada en el lote 2 de RG-14 (v2.9)
 
-**Fecha:** 2026-10-14 (v2.8: 2026-10-15) · **Versión:** 2.8 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 (v2.8 y v2.9: 2026-10-15) · **Versión:** 2.9 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -17,6 +17,7 @@
 | **2.6** | 2026-10-14 | **Registra la segunda firma del propietario:** DL-14 (a), DL-17 (a), DL-13 (a) y DL-10 (a); aprobados CI-7 / AI-07, AP-06 y AP-02 (falta el nombre del custodio); ADR-82 lo prepara B (aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firmas-dl14-dl17-dl13-dl10-y-adr82.md`). Sin otros cambios |
 | **2.7** | 2026-10-14 | Agrega **DL-18** (PA-02) y **DL-19** (PA-01), que salen de la revisión de seguridad del PR #33 y de la validación de L1a-4 (persistencia), correcciones 7 y 9, con el blueprint v2.6. La validación las numeraba DL-17 y DL-18, pero DL-17 ya está firmada; el arquitecto-software las renumera. El resto de la hoja no cambia |
 | **2.8** | 2026-10-15 | Agrega **DL-20** (AN-01, revisión de seguridad del PR #34, H-17 v2): firma de cada llave del anillo de Data Protection. El resto de la hoja no cambia |
+| **2.9** | 2026-10-15 | Agrega **DL-21** (LB-02, revisión de seguridad del PR #35, L1b-1; validación de L1b-1 y blueprint v2.9 §6.2 y §13.1): la hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada propia. El resto de la hoja no cambia |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -28,6 +29,7 @@
 - `[VAL2]` = `Solucion GPOS NG\validacion-l1a-2-reglas-aceptacion-2026-10-14.md` (validación del PR #32, L1a-2); `[RA]` = `Solucion GPOS NG\revision-seguridad-pr32-reglas-aceptacion-2026-10-14.md` (auditor-seguridad, RA-01 a RA-06).
 - `[VAL4]` = `Solucion GPOS NG\validacion-l1a-4-persistencia-2026-10-14.md` (validación de L1a-4, correcciones 6 a 9); `[PA]` = `Solucion GPOS NG\revision-seguridad-pr33-persistencia-2026-10-14.md` (auditor-seguridad, PA-01 a PA-08).
 - `[AN]` = `Solucion GPOS NG\revision-seguridad-pr34-anillo-2026-10-15.md` (auditor-seguridad, PR #34, H-17 v2: AN-01 a AN-04).
+- `[LB]` = `Solucion GPOS NG\revision-seguridad-pr35-l1b-1-2026-10-15.md` (auditor-seguridad, LB-01 y LB-02); `[VALB]` = `Solucion GPOS NG\validacion-l1b-1-2026-10-15.md` (validación de L1b-1, con la adenda de la decisión del arquitecto).
 - `[HOJA]` = `GPOS NG\docs\decisiones\2026-10-05-hoja-firma-seguridad.md` (FY-15, CP-4, CP-5 y R-L11 / R-F11).
 - ADR-38, 44, 58 a 63, 68 y 81 (`GPOS NG\docs\adr`); ADR-126 (`master`).
 
@@ -87,6 +89,7 @@ Ya **no** exige AP-01 ni AP-05.
 | **DL-18** | Nunca rige una licencia más vieja que la última atestiguada con MAC | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 7 de L1a-4 |
 | **DL-19** | Sin ninguna lectura correcta de la huella durante más de máx(`graciaDias`, 72 h), cuenta como entorno distinto | **Aprobar** | ≈ 0,1 dp | Antes de unir la corrección 9 de L1a-4 |
 | **DL-20** | Cada llave del anillo de Data Protection va firmada por el servidor | **Aprobar** | ≈ 0,4 dp + devops | Antes del perfil Avanzado o de la primera licencia de pago |
+| **DL-21** | La hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada | **Aprobar** (conviene firmarla junto con DL-18 y DL-19) | 0 (sin costo de desarrollo; ver la consecuencia) | Antes de unir el cableado de L1b-2 |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -517,6 +520,29 @@ Cierra también AN-04 (reutilizar el sobre de una llave retirada con otro id).
 
 ---
 
+### DL-21 · La hora protegida solo se corrobora con una licencia de firma Avanzada (nueva)
+
+**Qué se decide.** El reloj protegido (H-16 v2.1, firmado) puede **avanzar** su hora alta cuando una fuente confiable lo corrobora. H-16 nombra como fuente la `emitida` de la licencia vigente, sin distinguir el nivel de la firma. El auditor (LB-02, Media, de diseño) mostró que eso **vuelve a abrir el techo deslizante que cerró DL-17**, ahora a través del reloj: con `s1` y la administración del servidor, cargas sucesivas con una `emitida` 47 h adelantada mueven la hora protegida, y con ella el techo de INV-6 y el tope de 200 días de DL-14. La propuesta es la opción (a) del auditor y del arquitecto:
+- la corroboración por `emitida` **solo vale si la licencia vigente tiene firma Avanzada propia** (la misma definición de INV-5 y CW-02);
+- con una licencia solo Básica, incluida una de regreso temporal con `autNivel`, **no se corrobora por `emitida`**;
+- la cabecera `Date` que obtenga el agente (L4) **sigue corroborando siempre**;
+- la hora de evaluación del estado, máx(hora protegida, `emitida`), no cambia, y DL-17 tampoco.
+
+**Recomendación: Aprobar.** Conviene firmarla **junto con DL-18 y DL-19**: las tres cierran formas de manipular la licencia por la vía de la persistencia y del reloj, y sin DL-21, DL-17 se puede rodear.
+
+| Opción | Consecuencia |
+|---|---|
+| **(a) Corroborar con `emitida` solo con firma Avanzada propia (recomendada)** | Cierra LB-02 con una sola condición y sin estado nuevo en el reloj. **Costo operativo:** durante todo el corte no hay llaves Avanzadas, así que un salto del reloj de más de 48 h no se corrobora hasta que exista el agente (L4). Es la falla del lado seguro que ya describe el blueprint (6.4) y no afecta el estado de la licencia, que se evalúa con `emitida` |
+| (b) Llevar una segunda hora protegida, sin avances corroborados, solo para INV-6 | **Descartada:** dos horas con su persistencia y su recálculo al arrancar; más superficie para el mismo efecto |
+| (c) Una variante con reglas por nivel y por fuente | **Descartada:** más compleja de razonar y de probar |
+| (d) Mantener el texto de H-16 | Queda LB-02: DL-17 y DL-14 se pueden rodear con `s1` y la administración del servidor |
+
+**Costo:** sin desarrollo adicional (es una condición en el punto de la llamada), más la prueba de QA: tres cargas Básicas con `emitida` +47 h cada una; la tercera da `LICENCIA_FECHA_FUTURA` y la hora protegida no se mueve. Precisa H-16 v2.1. Hasta la firma, L1b-2 se construye con la restricción y se marca «PENDIENTE DE LA FIRMA DE DL-21». Si no se firma, se vuelve al texto literal.
+
+`[ ] Aprobar (a)`   `[ ] (d)`
+
+---
+
 ### 3.1 Confirmaciones (precisiones dentro de lo firmado)
 
 **C-1 · Regla 3 de la §6.1.1 de `[BP2]`: las gracias especiales e `Ilegible` terminan en el corte siguiente.** Toda gracia termina en la hora de corte de la empresa, también las especiales y la de licencia ilegible. Eso les suma **hasta 24 h** sobre las 72 h de ADR-59, siempre dentro del tope por empresa (NV-01). El auditor (revisión del PR #31) pidió que constara como firmada.
@@ -671,7 +697,7 @@ Encargarlo con AI-07, al mismo asesor.
 | Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
 | Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
 | ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
-| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
@@ -692,6 +718,7 @@ Encargarlo con AI-07, al mismo asesor.
 - **DL-18:** queda PA-02: con las credenciales de la API se puede volver en silencio a una licencia anterior.
 - **DL-19:** queda PA-01: un clon que niega la lectura de la huella opera sin límite; solo hay aviso diario.
 - **DL-20:** queda AN-01: quien escribe en la carpeta del anillo puede falsificar los valores protegidos; solo el escalón 1 y la DACL.
+- **DL-21:** queda LB-02: con `s1` y la administración del servidor, la corroboración por `emitida` rodea DL-17 y DL-14; se vuelve al texto literal de H-16.
 
 ---
 
