@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-21: licencia firmada en el lote 2 de RG-14 (v2.10)
+# Hoja de firma DL-01 a DL-21: licencia firmada en el lote 2 de RG-14 (v2.11)
 
-**Fecha:** 2026-10-14 (v2.8 a v2.10: 2026-10-15) · **Versión:** 2.10 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 (v2.8 a v2.11: 2026-10-15) · **Versión:** 2.11 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -19,6 +19,7 @@
 | **2.8** | 2026-10-15 | Agrega **DL-20** (AN-01, revisión de seguridad del PR #34, H-17 v2): firma de cada llave del anillo de Data Protection. El resto de la hoja no cambia |
 | **2.9** | 2026-10-15 | Agrega **DL-21** (LB-02, revisión de seguridad del PR #35, L1b-1; validación de L1b-1 y blueprint v2.9 §6.2 y §13.1): la hora protegida solo se corrobora con la `emitida` de una licencia con firma Avanzada propia. El resto de la hoja no cambia |
 | **2.10** | 2026-10-15 | Precisión de **DL-20**: la firma de las llaves cubre también el anillo de GPOS.Web (PR #37, AW-01, Baja). El costo sube de ≈ 0,4 a ≈ 0,5 dp, y devops necesita también el certificado de la Web con uso `digitalSignature`. El resto de la hoja no cambia |
+| **2.11** | 2026-10-15 | Agrega la confirmación **C-5** (sección 3.1), pedida por B antes de activar `UseLicencia` (L1b-2): respaldos, cerrar sesiones, resolver el reloj y sincronizar el espejo de numeración son `Esencial` además del punto 6 de ADR-59. El resto de la hoja no cambia |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -578,6 +579,23 @@ Además, `[VDL]` corrige la regla 12 de la §6.1.1 (NV-08 en la cadena): una lic
 
 `[ ] Tomo conocimiento de C-4`
 
+**C-5 · Operaciones esenciales además del punto 6 de ADR-59 (pedida por B antes de activar `UseLicencia`, L1b-2).** El PR #35 marca como `Esencial` cuatro rutas que no figuran de forma literal en ADR-59, punto 6. `Esencial` quiere decir que siguen permitidas cuando la empresa está en solo consulta. Inhabilitar una cuenta (membresías) ya está en el punto 6. Texto para confirmar:
+
+> *«Además de lo del punto 6 de ADR-59, siempre están permitidas (`Esencial`) en solo consulta: respaldos, cerrar las sesiones de una cuenta, resolver el reloj y sincronizar el espejo de numeración.»*
+
+| # | Ruta | Por qué es esencial | Por qué no rodea la licencia |
+|---|---|---|---|
+| 1 | `POST /api/admin/respaldos` | Conservar la información del cliente (ADR-59, punto 7; lo confirmó el arquitecto) | No crea ni cambia datos de negocio. Límite de 1 cada 10 min por empresa y uno a la vez |
+| 2 | Forzar un nuevo inicio de sesión o cerrar las sesiones de una cuenta | Seguridad: cortar una sesión robada o de un empleado que se va | Solo quita acceso; no crea ni cambia datos de negocio |
+| 3 | Resolver el reloj (H-16) | Sin resolver el reloj, la instalación puede quedar sin poder operar ni evaluar bien la licencia | Es mantenimiento técnico del reloj protegido; no crea ni cambia datos de negocio |
+| 4 | Sincronizar el espejo de numeración | Mantener coherentes las secuencias fiscales | **No consume números** (confirmado); no emite comprobantes |
+
+**Recomendación: confirmar.** Ninguna de las cuatro crea ni cambia datos de negocio ni toma números de comprobante, así que no sirve para seguir vendiendo con la licencia vencida.
+**Si se rechaza:** las cuatro pasan a `Operativa` y quedan bloqueadas en solo consulta. Un cliente vencido **no podría respaldar su información**, ni resolver un problema del reloj, ni cortar sesiones. Lo primero choca con el punto 7 de ADR-59 (conservar la información).
+**Fuentes:** `validacion-l1b-1-2026-10-15.md` y la validación de B del 2026-10-15 (`GPOS-NG-Equipos/avisos/B-a-A/2026-10-15-validacion-pr32-a-pr37.md`). Es una precisión de ADR-59, punto 6.
+
+`[ ] Confirmo C-5`   `[ ] Rechazo C-5 (las cuatro quedan bloqueadas en solo consulta)`
+
 ---
 
 ## 4. Pendientes que no son DL: lo que se necesita del propietario
@@ -700,7 +718,7 @@ Encargarlo con AI-07, al mismo asesor.
 | Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
 | Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
 | ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
-| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
+| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, DL-18, DL-19, DL-20, DL-21, C-1 (regla 3), C-5, las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
