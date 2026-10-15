@@ -41,7 +41,9 @@ Esto corrige la advertencia NU1903/NU1902 que apareció al compilar la integraci
   - `GPOS.Reportes.Tests` (sin filtro, porque se tocó GPOS.Reportes): **432/432**.
 
 ## Riesgos y pendientes
-- **El runtime compartido también hay que parchearlo.** Esta rama corrige los paquetes NuGet, pero las CVE son de .NET. En los equipos que ejecutan la API y los servicios hay que instalar el runtime de .NET 10 y ASP.NET Core que salió con el parche (10.0.13 o posterior). Esto no se verificó; lo decide el propietario.
+- **Runtime compartido:** las CVE son de .NET, así que además de los paquetes hay que tener el runtime parcheado.
+  - **En LFMB ya está actualizado** (el propietario lo informó el 2026-10-14 y se comprobó con `dotnet --list-runtimes`): Microsoft.NETCore.App, Microsoft.AspNetCore.App y WindowsDesktop **10.0.13**, y la línea 9.0 en **9.0.21**.
+  - **Sin comprobar:** la PC A y los equipos que ejecutan la API y los servicios en el cliente. Cada uno necesita 10.0.13 o posterior.
 - Al fijar estas versiones, la actualización ya no sigue sola a MimeKit ni a SqlClient. Cuando esos paquetes pidan una versión de Pkcs mayor, NuGet avisará con NU1605 (bajada de versión) y habrá que subir o quitar esta línea.
 - No se ejecutó la suite completa sin filtro, ni GPOS.UI.MAUI para Android: en LFMB faltan los workloads.
 - **No está unida.** La une el coordinador en `feature/modelo-ng`.
