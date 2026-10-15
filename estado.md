@@ -174,7 +174,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - decidir si la laptop sigue como equipo de prueba del DEMO;
   - decidir qué pasa con el rango de ADR 130 a 159 (congelado).
 - **Firmas abiertas:**
-  - la hoja de la licencia DL-01 a DL-14 (DL-07 y DL-08 antes del 16-oct);
+  - la hoja de la licencia v2.4: DL-07 (a) y DL-08 (a) **firmados el 2026-10-14**; faltan DL-01 a DL-05, DL-09 a DL-17 (DL-14 junto con DL-17; DL-13 antes de `s1`), la regla 3 y P-1 a P-6;
   - los 2 supuestos de #24;
   - las 2 preguntas de #26;
   - quién prepara ADR-82.
