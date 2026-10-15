@@ -63,6 +63,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-15, tarde:** unidos #40, #41, #39, #34 y #37 (`7898beeb`); #38 a `b/prep-27oct`; #42 rechazado (interruptor de UseLicencia, Estricto sin InstalacionId, Web sin migrar, DL-02). **Cambio de sesión de B:** traspaso `traspasos/B/2026-10-15-traspaso-B-cambio-de-sesion.md`.
 - **2026-10-15:** unidos a `feature/modelo-ng` #24, #26, #21, #28 (`bc15304d`) y #36, #32, #33, #35 (`30b4d5b3`). Mvp 22/22 en las dos instancias; suite oficial sin fallas propias (PA30/PA40 fallan en LFMB por el modo «solo Windows»). #34 y #37 esperan los 3072 bits de H-17 v2. T6: criterios 1 y 2 en verde, faltan 2 corridas por lado (dispersión). Aviso `2026-10-15-unidos-24-26-21-28-36-32-33-35`.
 - **2026-10-14/15, preparación del 27-oct (PQ-3):** `b/prep-27oct` (`cc4694d`, en GitHub) = punta + #24/#26/#21/#28 (pendiente) + T1 de ADR-118/119 (`20261015010000_NegativosTresNiveles`) + ola 3b tramo 1 (`20261015020000_Ola3bTransferencias`). Un solo guion.
   - **Corregido en la unión:** la migración de la 3b borraba la regla de H-4 en `CK_Autorizacion_Motivo` (Alto). También se ajustaron las pruebas de los conteos de numeración por el tipo TI.
