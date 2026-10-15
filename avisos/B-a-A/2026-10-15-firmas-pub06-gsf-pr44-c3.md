@@ -27,3 +27,7 @@ Actualiza su sección 7 con este registro.
 
 ## Para B (devops)
 Actualizar la lista de publicación Release (`docs/operaciones/2026-10-15-lista-publicacion-release.md`) con M3 y M5 firmados, y hacer `Instalar-Demo.ps1` con `GPOS.Migracion sistema` (#44).
+
+## Agregado (más tarde, el mismo día)
+- **P-4 del blueprint v2.5:** «Punto 5 La P-4 del blueprint v2.5 Aprobado». Registrada en ADR-83, punto 3, en `master` (`c01a4332`).
+- **`gsf` en LFMB:** el propietario ejecutó `ALTER LOGIN [gsf] WITH CHECK_POLICY = ON` en `.\SQLEXPRESS`. B lo comprobó: `is_policy_checked = 1`. **Falta la PC A**, con su instancia: que lo ejecute el propietario allí.
