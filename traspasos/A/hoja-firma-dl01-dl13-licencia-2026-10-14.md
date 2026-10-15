@@ -1,6 +1,6 @@
-# Hoja de firma DL-01 a DL-17: licencia firmada en el lote 2 de RG-14 (v2.5)
+# Hoja de firma DL-01 a DL-17: licencia firmada en el lote 2 de RG-14 (v2.6)
 
-**Fecha:** 2026-10-14 · **Versión:** 2.5 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
+**Fecha:** 2026-10-14 · **Versión:** 2.6 · **Preparada por:** Arquitecto Maestro (equipo A) · **Decide y firma:** el propietario (Leonardo Méndez)
 **Estado: Pendiente de firma.** Esta hoja no firma nada. Cada casilla la marca el propietario.
 
 ## Registro de cambios
@@ -14,6 +14,7 @@
 | **2.3** | 2026-10-14 | Incorpora el blueprint v2.3 (validación del modelo de datos de L1a-4, `[VDL]`).<br>- **Agrega DL-16:** la bitácora deja de ser fuente de `UltimaVerificacionUtc`.<br>- **Sección 3.1 nueva («Confirmaciones»):** la regla 3 de la §6.1.1, que el auditor pidió confirmar con firma, y las precisiones de `[DAT]` 6.3 que `[VDL]` confirmó (información, sin decisión) |
 | **2.4** | 2026-10-14 | Incorpora el blueprint v2.4 (validación del PR #32, L1a-2 «Reglas de aceptación») y la revisión del auditor `[RA]`.<br>- **Agrega DL-17** (RA-01, Media): el techo de 48 h de INV-6 se mide solo sobre el reloj protegido.<br>- **Sección 3.1:** agrega **C-3** (RA-06: fechas civiles en hora de RD para DL-14 y `aceptarHasta`) y **C-4** (RA-04: procedimiento de GSF ante una sospecha sobre el emisor) |
 | **2.5** | 2026-10-14 | **Registra la firma del propietario de DL-07 (a), con el recorte 1, y DL-08 (a)** (sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firma-dl07-dl08.md`). Sin otros cambios |
+| **2.6** | 2026-10-14 | **Registra la segunda firma del propietario:** DL-14 (a), DL-17 (a), DL-13 (a) y DL-10 (a); aprobados CI-7 / AI-07, AP-06 y AP-02 (falta el nombre del custodio); ADR-82 lo prepara B (aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firmas-dl14-dl17-dl13-dl10-y-adr82.md`). Sin otros cambios |
 
 **Fuentes (solo lectura)**
 - `[BP2]` = `Solucion GPOS NG\blueprint-licencia-lote2-2026-10-14.md` **v2.4** (arquitecto-software).
@@ -71,14 +72,14 @@ Ya **no** exige AP-01 ni AP-05.
 | DL-07 | Reparto entre los dos desarrolladores, con revisión de código del emisor | **FIRMADA 2026-10-14: (a) con el recorte 1** | 0 + revisión | **2026-10-16** |
 | DL-08 | La licencia queda construida para el corte | **FIRMADA 2026-10-14: (a)** | 0 | 2026-10-16 |
 | DL-09 | Recorte de `autNivel` si hay atraso | **Autorizar con disparador** | −1,75 dp si se usa | 2026-11-13 |
-| DL-10 | Respaldo de `s1` frente a la pérdida: (a) `s1r` en TPM o (b) YubiKeys en Básico | **Aprobar (b)** si aceptas el gasto y cambiar el «TPM» de F-2; si no, (a) | (a) 0,5 dp · (b) ≈ USD 110 (no FIPS) o ≈ USD 176 (FIPS), a tu elección | 2026-11-20 |
+| DL-10 | Respaldo de `s1` frente a la pérdida: (a) `s1r` en TPM o (b) YubiKeys en Básico | **FIRMADA 2026-10-14: (a)** `s1r` en TPM de otro equipo | (a) 0,5 dp · (b) ≈ USD 110 (no FIPS) o ≈ USD 176 (FIPS), a tu elección | 2026-11-20 |
 | DL-11 | La caducidad de `s1` la fija la versión con YubiKeys; cofirma en la transición | **Aprobar** | Incluido | 2026-12-01 |
 | DL-12 | Fecha de compra y **revisión de la aceptación a más tardar el 2027-03-31** | **Aprobar con la condición** | USD 352 (ya presupuestados) | 2026-10-30 |
-| DL-13 | Cuenta diaria sin privilegios de administrador (tampoco `sysadmin` en SQL) y E-1 a E-15 | **Aprobar, obligatoria antes de AI-09** (muy recomendada si se elige DL-10 (b)) | 0,75 dp de devops | **Antes de generar `s1`** |
-| **DL-14** | Una licencia Básica vence como máximo 200 días después de emitida | **Aprobar** | 0,35 dp | 2026-11-06 |
+| DL-13 | Cuenta diaria sin privilegios de administrador (tampoco `sysadmin` en SQL) y E-1 a E-15 | **FIRMADA 2026-10-14: (a)**, obligatoria antes de AI-09 | 0,75 dp de devops | **Antes de generar `s1`** |
+| **DL-14** | Una licencia Básica vence como máximo 200 días después de emitida | **FIRMADA 2026-10-14: (a)** 200 días | 0,35 dp | 2026-11-06 |
 | **DL-15** | Un `vence` acortado sin firma Avanzada no puede cortar a una empresa en horas | **Aprobar** | ≈ 0,1 dp | 2026-11-06 |
 | **DL-16** | La bitácora deja de ser fuente de la «última verificación correcta» | **Aprobar** | 0 | 2026-11-06 |
-| **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **Aprobar** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
+| **DL-17** | El techo de 48 h para las fechas de una licencia nueva se mide solo con el reloj protegido | **FIRMADA 2026-10-14: (a)** | ≈ 0,05 dp | Antes de dar por cerrado DL-14 (2026-11-06) |
 
 *DL-06 está retirada: la sustituye F-2.*
 
@@ -270,7 +271,7 @@ Ya **no** exige AP-01 ni AP-05.
 **Recomendación: (b)**, con la serie que elijas, si aceptas el gasto y el cambio del «TPM» de F-2: es la opción más segura y no exige un segundo equipo. **Si no, (a).**
 **Plazo:** antes del 2026-11-20. En (a), `s1r` se genera con acta antes del 2026-11-27.
 
-`[ ] (a)`   `[ ] (b)`, serie: `[ ] no FIPS (≈ USD 110)` `[ ] FIPS (≈ USD 176)`   `[ ] (c) sin respaldo`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-14** (sección 7): `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con la cuenta deshabilitada salvo en la prueba trimestral y en una emergencia, y el PIN custodiado por otra persona o en un sobre precintado.
 
 ---
 
@@ -333,7 +334,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 0 en dinero; unos 0,75 dp de devops, con el inventario.
 
-`[ ] Aprobar (a)`   `[ ] (a') con DL-10 (b)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-14** (sección 7): obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.
 
 ---
 
@@ -352,7 +353,7 @@ Ya **no** exige AP-01 ni AP-05.
 
 **Costo:** 0,35 dp. Precisa ADR-62 e INV-1. Va en ADR-84. **Para que el tope sea real hace falta DL-17** (RA-01): sin ella, cada carga aceptada adelanta la referencia 48 h. La fecha de `emitida` se toma en hora de RD (C-3).
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-14** (sección 7): tope de 200 días.
 
 ---
 
@@ -422,7 +423,7 @@ DL-14 queda anulado en la práctica.
 
 **Costo:** ≈ 0,05 dp (L1a-2) y un vector de QA de cargas sucesivas con `emitida` creciente. **Cambia el texto firmado de INV-6** (precisión de ADR-62, punto 7, y de `[LIC]` 4.1.3). Según `[RA]`, hay que resolverlo antes de dar por cerrado DL-14 y antes de usar L1 en producción.
 
-`[ ] Aprobar (a)`   `[ ] (b)`   `[ ] (c)`
+`[x] (a)`, **FIRMADA por el propietario el 2026-10-14** (sección 7): techo de 48 h solo sobre la hora protegida, para todos los archivos.
 
 ---
 
@@ -576,6 +577,11 @@ Encargarlo con AI-07, al mismo asesor.
 | Fecha | 2026-10-14 |
 | Respuesta literal | «Firmo DL-07 y DL-08 Fijando a los dos desarrolladores en paralelo». Precisión respondida: DL-07 en la variante «(a) con recorte 1» |
 | Firmadas | **DL-07 (a) con el recorte 1** (con sus tres condiciones) y **DL-08 (a)** (hitos H-1 10-23, H-2 11-06, H-3 11-13, código completo 12-04 y corte 12-15). **Las demás DL, C-1, C-3 y AP-04 siguen Pendientes de firma** |
+| **Segunda firma** (2026-10-14, sesión de B; aviso `GPOS-NG-Equipos/avisos/B-a-A/2026-10-14-firmas-dl14-dl17-dl13-dl10-y-adr82.md`) | **Respuestas literales:**<br>- DL-14 y DL-17: «DL-14 junto con DL-17 (nueva) APROBADO».<br>- DL-13 y DL-10: «DL-13 (cuenta diaria sin privilegios de administrador) y DL-10 (respaldo de s1) APROBADO Según recomendacion». Al preguntarle B, el propietario eligió **DL-10 (a)**.<br>- Pendientes: «Encargar al asesor legal CI-7/AI-07 y AP-06; designar el custodio suplente (AP-02) APROBADO».<br>- ADR-82: «Equipo B, A tiene bastante según parece» |
+| Firmadas en la segunda firma | - **DL-14 (a):** tope de 200 días para todo archivo sin firma Avanzada propia.<br>- **DL-17 (a):** el techo de 48 h de INV-6 se mide solo sobre la hora protegida, para todos los archivos.<br>- **DL-13 (a):** obligatoria antes de AI-09, con E-1 a E-15 y SEG-L2-25.<br>- **DL-10 (a):** `s1r` en el TPM de otro equipo que no sea de desarrollo ni ejecute agentes, con las condiciones de la opción (a) y la firma de prueba trimestral |
+| Aprobados (pendientes que no son DL) | - Encargar al asesor legal **CI-7 / AI-07** (antes del 2026-11-16) y **AP-06**.<br>- Designar el custodio suplente **AP-02**: **el nombre está pendiente**; va en el acta, no en este documento |
+| ADR | - **ADR-82** lo prepara el equipo B.<br>- B ya registró en `master` la precisión de ADR-62, punto 7 (`83d69aa`), y la de ADR-61 (`1e9b651`) |
+| Siguen Pendientes de firma | DL-01 a DL-05, DL-09, DL-11, DL-12, DL-15, DL-16, C-1 (regla 3), las precisiones P del blueprint y las aceptaciones de AP-04 (FY-15-B, R-L11-B, CP-4 y CP-5). C-3 y C-4, sin cambios |
 | Dictamen de seguridad | **Aprobado con observaciones** (`[SEG]`, lectura de diferencias v2, D.7) |
 
 **Si firmas según la recomendación:**
