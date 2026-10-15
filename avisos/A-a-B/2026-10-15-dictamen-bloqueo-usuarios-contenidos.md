@@ -33,3 +33,9 @@ Estado: Abierto
   - **R6:** la contraseña generada cumple siempre la complejidad.
 - **Maestro** (en curso): **R3** a la hoja de PUB-06 (M5 corregido, M5-b y M5-c), más R4 (puerto de SQL), R5 (alerta del 18456) y la precisión de ADR-44 y ADR-82.
 - **Propietario:** `gsf` con `CHECK_POLICY = ON` (BL-03). Queda pendiente de su decisión.
+
+## Actualización (2026-10-15): BL-03 corregido en la PC A por el propietario
+Quedó corregido en las dos instancias. Se verificó en `sys.sql_logins` que `gsf` tiene `is_policy_checked = 1`, no está deshabilitado y no está bloqueado.
+- **En `.\SQLEXPRESS`:** `CHECK_EXPIRATION` = 0.
+- **En `.`:** `CHECK_EXPIRATION` = 1. La contraseña de `gsf` puede caducar según la directiva de Windows. AC-1 solo exige la política, así que se informa sin cambiarlo.
+- **En LFMB:** falta aplicar lo mismo, porque `gsf` tenía `CHECK_POLICY` en 0 según tu aviso de A-N3.
