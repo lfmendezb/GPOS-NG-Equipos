@@ -3,6 +3,17 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-15, tarde:**
+  - **Unidos por B:** #24, #26, #21, #28, #36, #32, #33, #35, #40, #41, #39, #34 y #37 (`7898beeb`); #38 (A-N1) a `b/prep-27oct`. A-N2 y A-N3 las tomó B.
+  - **En curso:**
+    - #42: rebase sobre `7898beeb` y los 5 motivos del rechazo; después, el PR de activación de `UseLicencia`;
+    - hoja v2.13 de la licencia y las precisiones de ADR, con ADR-83 y ADR-84 y la hoja corta de PUB-06 (M3 y M5);
+    - A-N4, el guion de contención y modo mixto (el reinicio lo hace el propietario);
+    - dictamen sobre el bloqueo de cuentas en los usuarios contenidos.
+  - **En cola:**
+    - el desarrollador I con DL-02 (a) en código, S0 y `LOGIN_SERVICIO_CON_POLITICA`;
+    - un PR corto de observaciones Bajas.
+  - Aviso: `2026-10-15-acuse-a-n2-a-n3-y-cola-de-a`.
 - **2026-10-14, noche (tras el reinicio):**
   - **#29 y #30 unidos por B** (`e59d8de`), junto con #25 y #27.
   - **Rebase sobre `e59d8de` hecho** (encargo de B), listos para unir en orden **#24 → #26 → #28**:
