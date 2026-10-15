@@ -49,3 +49,16 @@
   - **devops:** el punto 1.
   - **B:** unir #24, #26, #21 y #28 en ese orden.
 - Próximo paso recomendado: unir #24 y abrir el PR de S-2 antes de cerrar H-11.
+
+---
+
+## Adenda: diseño de S-2 (`datos-h11-s2-reconciliacion-fork-2026-10-15.md`)
+
+1. **Orden: se acepta `ORDER BY Id DESC`, que sustituye a mi remedio por `SolicitadoUtc`.** El `IDENTITY` de `GPOS_SYSDATA` no depende del reloj ni empata dentro de un mismo segundo. Si se restaura `GPOS_SYSDATA`, sus filas retroceden junto con el `Id`, así que el orden sigue siendo coherente.
+2. **R-S2-3: se cierra ya, no se acepta como residual.** La clave incluye `DetectadaEn` de `sync.Reconciliacion`:
+   - columna `DetectadaEn datetime2(7) NOT NULL` en `dbo.RespaldoPosterior`, con un valor por omisión fijo para las filas existentes;
+   - índice único `(EmpresaCodigo, ReconciliacionId, ForkActual, DetectadaEn, BaseDatos)`;
+   - `EncolarRespaldo` y las consultas por reconciliación filtran también por ella.
+
+   El dato ya existe en la base de la empresa, así que no hace falta migración de empresa. Cuesta unos 0,1 dp y cierra la copia por *detach/attach* y la instantánea revertida.
+3. **Diseño aceptado con esa adición.** Se construye en un PR propio en cuanto B una #24, #26 y #28. No bloquea esas uniones.
