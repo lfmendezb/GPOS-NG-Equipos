@@ -1,6 +1,6 @@
 # Hoja de firma: diseño de la vertical Corporativa (entrega 3)
 
-[Decisión preparada por el Arquitecto Maestro (equipo A)] · 2026-10-15 · **Estado: Pendiente de firma** · Sin commit · No toqué código, configuración ni bases.
+[Decisión preparada por el Arquitecto Maestro (equipo A)] · 2026-10-15 · **Estado: Firmada el 2026-10-15 (D-01 a D-28 en la opciÃ³n (a), con D-02 precisado; H-04 abierta)** · Sin commit · No toqué código, configuración ni bases.
 
 **Qué se firma:** el **diseño** de la vertical Corporativa, que se construye en la entrega 3. El requerimiento ya está firmado: H-01 a H-03 y H-05 a H-11, F-1 a F-5, PF-1, PF-3 y PF-4. **H-04 sigue abierta** y esta hoja no la decide. Esta hoja junta en **una sola lista** (D-01 a D-28) las 15 decisiones de datos (FD), las 18 de software (SW) y las 9 preguntas de UX (UQ), y les incorpora las remediaciones del auditor-seguridad.
 
@@ -119,7 +119,7 @@
 
 **Recomendación: (a).** **Costo:** 0,25 sp en lugar de 0,2, es decir +0,05 sobre lo estimado; la comparación del autorizante suma 0,05 sp más (inferido). El conteo físico cuesta 0 sp en el sistema y algunas horas al mes de la empresa cliente. **Riesgo residual:** Bajo, con la condición PM-07.
 
-- [ ] (a) SW-09 v2 · [ ] (b) SW-09 original · [ ] (c) Solo procedimental
+- [x] (a) SW-09 v2 · [ ] (b) SW-09 original · [ ] (c) Solo procedimental
 
 ---
 
@@ -147,7 +147,7 @@
 
 **Recomendación: (a), con la gracia de 3 minutos de SW-06.** **Costo:** 0,1 sp (inferido). **Alternativa de SW-06 descartada:** revalidar siempre al emitir, que rechaza en la caja un plato ya servido por un cobro con tarjeta de 30 segundos.
 
-- [ ] (a) SW-02 v2 y SW-06 precisado · [ ] (b) SW-02 original · [ ] (c) Tabla de identificaciones
+- [x] (a) SW-02 v2 y SW-06 precisado · [ ] (b) SW-02 original · [ ] (c) Tabla de identificaciones
 
 > **Precisión del propietario a D-02 (2026-10-15, sesión de A), literal:** «No. Mas simple. Obligar a ingresar el carnet cada vez que haya de realizar un consumo. La empresa exige que se debe utilizar el carnet por cada consumo nuevo por tanto no se debe acomodar al cajero pero si aplicar el mandato de la empresa en todo momento.»
 >
@@ -183,7 +183,7 @@
 
 **Recomendación: (a).** **Costo:** 0,05 sp el tipo `SIN_CARNE` y su disparador (dentro de los 0,05 de D-01, punto 4). El estado sin foto va en D-05. La búsqueda acotada cuesta 0.
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -212,7 +212,7 @@
 
 **Recomendación: (a).** **Costo:** 0 sp, porque es especificación. Si T1 tiene que adelantar el núcleo de ADR-67, son unas +0,3 sp que salen de la ola 3b (inferido).
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -259,7 +259,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,15 sp en el sistema (columnas en M1, vía sin foto, impresión de AC-02; inferido). El aviso y las cláusulas los redacta el abogado del cliente: es un costo legal del cliente, que no estimo.
 
-- [ ] (a) Consentimiento obligatorio con registro, aviso, vía sin foto y cláusulas · [ ] (b) Solo la casilla · [ ] (c) Sin consentimiento
+- [x] (a) Consentimiento obligatorio con registro, aviso, vía sin foto y cláusulas · [ ] (b) Solo la casilla · [ ] (c) Sin consentimiento
 
 ---
 
@@ -286,7 +286,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,15 sp y 0 USD (inferido).
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -330,7 +330,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,1 sp la custodia y 0,05 sp los umbrales de RC-05 (inferido). La rotación por compromiso cuesta 0, porque es más simple que la migración perezosa.
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -351,7 +351,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,05 sp (inferido).
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -374,7 +374,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0 sp la regla del servido (dentro de T6) y 0,05 sp el control posterior al Z (inferido, compartido con D-10).
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -395,7 +395,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,05 sp el talonario (ya en T10) y el cruce de horas dentro de los 0,05 de D-09. Para la empresa cliente: más trabajo de RR. HH. en los días de corte.
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -417,7 +417,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,1 sp (inferido). Puede necesitar un cambio pequeño en `GPOS.AgenteImpresion` para devolver el estado; [BP] 2.3 decía «sin cambios». Lo confirma el arquitecto-software.
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -444,7 +444,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 - T12 (camino B), +0,5 sp, solo si H-04 = S-1;
 - S-2 suma su propio diseño de la marca N:1, sin estimar.
 
-- [ ] (a) · [ ] (b) · [ ] (c) · [ ] (d)
+- [x] (a) · [ ] (b) · [ ] (c) · [ ] (d)
 
 ---
 
@@ -463,7 +463,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** dentro de T1 y T2 (2,0 sp).
 
-- [ ] (a) · [ ] (b) · [ ] (c) · [ ] (d)
+- [x] (a) · [ ] (b) · [ ] (c) · [ ] (d)
 
 ---
 
@@ -486,7 +486,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 **Recomendación: (a).** **Costo:** 0,2 sp, dentro de T5.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -509,7 +509,7 @@ Las medidas de (a) se eligieron para que sirvan con cualquiera de las dos respue
 
 La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -529,7 +529,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** dentro del motor (T3, 1,05 sp), con +0,05 sp por el grupo principal.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-17 · Cobertura y franjas (FD-05, FD-07)
 
@@ -544,7 +544,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** 0.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-18 · Bolsa sin proceso de cierre (FD-13)
 
@@ -557,7 +557,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** dentro de T3.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-19 · El Z: «cada peso cuenta una vez» (SW-12)
 
@@ -570,7 +570,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** 0,15 sp en T8. Precisa ADR-112 (sección 8).
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-20 · Corte de nómina (SW-14)
 
@@ -586,7 +586,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** dentro de T7; la neutralización cuesta menos de 0,05 sp.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-21 · «No es la persona» desde la caja (UQ-1)
 
@@ -599,7 +599,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** El contrato no cambia con (b). **Costo:** 0.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-22 · Back-office solo en la Web en la fase 1 (SW-13)
 
@@ -612,7 +612,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** −0,5 sp frente a (b).
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-23 · Reportes y minimización (FD-14)
 
@@ -629,7 +629,7 @@ La sincronización entera (T11) son 0,4 sp, que ya estaban en [BP].
 
 **Recomendación: (a).** **Costo:** menos de 0,05 sp, dentro de T9.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -650,7 +650,7 @@ F-5 deja el cupo como opción configurable. **Criterio:** minimización de datos
 
 **Recomendación: (a).** El dato se guarda siempre. **Costo:** 0.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-25 · Precios sin flujo de propuestas del tercero (SW-10)
 
@@ -661,7 +661,7 @@ F-5 deja el cupo como opción configurable. **Criterio:** minimización de datos
 
 **Recomendación: (a).** Se agrega si un cliente lo pide. **Costo:** 0.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-26 · Firma de nómina en el ticket y orden de los medios (UQ-4, UQ-5)
 
@@ -672,7 +672,7 @@ F-5 deja el cupo como opción configurable. **Criterio:** minimización de datos
 
 **Recomendación: (a).** **Costo:** 0.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-27 · «No usar mi bolsa» (UQ-8)
 
@@ -683,7 +683,7 @@ F-5 deja el cupo como opción configurable. **Criterio:** minimización de datos
 
 **Recomendación: (a).** **Costo:** 0.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 #### D-28 · Carga de la foto: tope de píxeles y biblioteca (SEG-CORP-19)
 
@@ -694,7 +694,7 @@ F-5 deja el cupo como opción configurable. **Criterio:** minimización de datos
 
 **Recomendación: (a).** **Costo:** menos de 0,05 sp y 0 USD.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -966,3 +966,18 @@ Firma: ________________ (propietario) · Fecha: ________
 **Aprobado con observaciones.** Las 12 filas de la matriz de la §4 están conformes y no falta ninguna remediación.
 - **O-1, aplicada:** PM-02 acepta también el núcleo de ADR-67 construido en T1, con su prueba de custodia en verde.
 - **O-2, condicional:** solo aplica si en D-01 se elige la alternativa mínima, sin el punto 3. En ese caso el procedimiento nombra a la persona de la empresa que confirma el borrador de merma del reverso «servido». Con la recomendación (a) no aplica.
+
+---
+
+## Registro de firma (2026-10-15, sesión de A)
+
+**Respuesta literal del propietario:** «Firmo D-01 a D-28 de la hoja del diseño de la vertical Corporativa según la recomendación (todo en (a)), con D-02 precisado: carné obligatorio en cada consumo nuevo. H-04 sigue abierta.»
+
+- **Firmadas en (a):** D-01 a D-28, incluidas SW-02 v2 y SW-09 v2. D-02 lleva la precisión del propietario: carné en cada consumo nuevo, la lectura vale mientras el consumo está abierto y no hay límite de consumos por día.
+- **Seguridad:** el auditor la aprobó con observaciones. O-1 está aplicada en PM-02; O-2 no aplica con D-01 (a).
+- **Siguen abiertas:**
+  - H-04;
+  - las condiciones PM-01 a PM-10, antes del primer cliente;
+  - las dependencias DB-1 a DB-8, con B.
+- **Precisiones de ADR que salen de esta firma,** para que B las registre: ADR-45, ADR-67 punto 9, ADR-68, ADR-85, ADR-87 (diseño de la costura, sin la opción), ADR-88 y ADR-112.
+- **Construcción:** en la entrega 3, en el tramo siguiente a 3c.
