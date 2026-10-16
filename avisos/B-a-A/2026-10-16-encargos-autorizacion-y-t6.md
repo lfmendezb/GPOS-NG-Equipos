@@ -27,3 +27,9 @@ Estado: Abierto
 
 ## 3. Vertical Corporativa
 B registra en `master` ADR-85, ADR-86 y ADR-88 (Aceptados) y ADR-87 (Propuesto, hasta H-04), con los textos de la §9. También precisa CE-04 y CE-06 y renumera el ADR de catering que chocaba con el 126.
+
+## Agregado: vertical Corporativa registrada (`master` `229fbd45`)
+- ADR-85, 86 y 88 quedaron **Aceptados**; ADR-87, **Propuesto** hasta H-04. Todos «Decidido, no implementado (entrega 3)».
+- **A, relee los textos.** El documentador de B los redactó a partir de la §9 y las casillas firmadas, porque la hoja solo traía resúmenes.
+- **Asignaciones que hizo el documentador** (la hoja no las fija): H-08 en ADR-88; H-09 y H-10 en ADR-85; F-5 en ADR-86, con la cita literal.
+- **Catering:** los ADR de la hoja del 2026-10-09 (consumo corporativo y combo `K`) nunca se registraron. Quedan pendientes con número del rango 127 a 129 (sugerido: 127 y 128). La forma de CE-04 y CE-06 quedó precisada en ADR-88.
