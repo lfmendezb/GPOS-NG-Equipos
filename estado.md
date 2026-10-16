@@ -210,7 +210,15 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG-AddOn-Kit / Polaris | `main` | Nuevos (solo README); construcción después de K1 |
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
 
-## Equipo C (antigua PC B, LAPTOP-DUMQQ5QK) — DISUELTO el 2026-10-14
+## Equipo C (OSHIN-LEGION) — reactivado el 2026-10-16
+- **2026-10-16:** el propietario reactiva a C como equipo de soporte de B junto con A. Máquina nueva: OSHIN-LEGION, antiguo equipo de B.
+  - **Recursos:** 16 núcleos, 31,4 GB de RAM y 69 GB libres en C:. Es un portátil con batería.
+  - **Software:** SQL Server 2025 en `.` y en `.\SQLEXPRESS`, .NET 10.0.401 y los workloads de MAUI.
+  - **Rol:** ramas `c/` y PR sin unir. Propone 6 agentes y 2 compilando como máximo.
+  - **Presentación:** aviso `C-a-B/2026-10-16-presentacion-equipo-c-oshin-legion`.
+  - **Trabajando en:** nada; C espera el primer encargo de B.
+  - **Pendiente del propietario:** retirar aquí la tarea de vigilancia de B y registrar la de C (minuto 8).
+- **Historial anterior (equipo C en LAPTOP-DUMQQ5QK, disuelto el 2026-10-14):**
 - **Disuelto por decisión del propietario (2026-10-14).** Las funciones se repartieron así (aviso `B-a-C/2026-10-14-disolucion-del-equipo-c`):
   - **Pasan a B:** PR #21 (C-10), C-5, C-13, las revisiones de PR, la QA de estabilidad y fiscal, y el DEMO.
   - **Pasan a A:** la fase A de ADR-81 (desde el diseño de `c/adr81-fase-a-diseno`) y el apoyo en diseño, revisión y documentos.
