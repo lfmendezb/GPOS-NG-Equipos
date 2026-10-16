@@ -256,3 +256,68 @@ Descrito en el punto 2 de los límites.
 ### Cierre de la relectura
 - Estado: Aprobado con observaciones (S10 Media, recomendada antes de unir; S09, S11 y S12 Bajas). S01 sigue Pendiente de firma.
 - Entregas: desarrollador de identidades → S10 (y S09 y S11 en el mismo lote si es barato); arquitecto-maestro → S01 sin cambios.
+
+---
+
+## Revisión de d3a65288 (DL-22 b+, 2026-10-16)
+
+- **Objeto:** `git diff cd480ddd d3a65288` en `GPOS-NG-dl22b`, rama `a/dl22-bmas` (7 archivos, +458 / −60). Revisado contra la precisión del punto 1 firmada «(b+)» (`precision-dl22-punto1-2026-10-16.md`, secciones 3 y 5). Solo lectura: no compilé ni ejecuté pruebas; lo medido (ventanas de 3 s y 15 s, PA-30 sin 500) es lo que declaran las pruebas, sin reproducir.
+- **Dictamen técnico (recomendación, C2): Aprobado con observaciones.** La construcción sigue el orden firmado: comprobación cada 1 s en la API, contraseña aleatoria a los 3 s, `DENY` a los 15 s, `KILL` al plazo contado desde el `DENY`, `--urgente` sin espera y tiempos fijos. No hay hallazgos Críticos, Altos ni Medios. Hay seis Bajas (S13 a S18). Conviene corregir **S13 y S14 antes del PR** (unos 0,04 dp en total), porque tocan justo el caso que motivó (b+): una interrupción que deja la credencial anterior con su contraseña conocida.
+
+### Estado de los hallazgos anteriores
+
+| ID | Estado | Comprobación en d3a65288 |
+|---|---|---|
+| S01 | **Cerrado en el código; falta la medición** | La marca `Transicion=Defecto` desaparece de PA-30, que ahora mide además las dos ventanas (`tests/GPOS.Tests/ModeloNg/Rg14Lote2Tests.cs`, `PA30_dos_rotaciones_normales_bajo_carga_sin_ningun_500`). Queda cerrado cuando la suite oficial lo pase en la PC A. |
+| S02, S03, S04, S05, S06, S08 | Siguen cerrados | Sin cambios en esas rutas, salvo el parámetro `guardadoEn` de `RetirarAsync`. |
+| S07 | No aplica | Solo aplicaba a (b). |
+| S09 | Sigue cerrado | `CerrarSesionesVerificadasAsync` (`src/GPOS.Migracion/CredencialApp.cs:375`). |
+| S10, S11 | Siguen cerrados | El retiro pendiente se completa y la rotación sigue en la misma ejecución, en los dos modos (`CredencialApp.cs:187-191`). |
+| S12 | Sigue cerrado | `VERIFICADOR_SIN_SESIONES` es hallazgo en las bases de empresa (`VerificacionPrivilegios.cs:42`, `:185`). |
+
+### Respuesta a los puntos que pidió mirar el desarrollador
+
+1. **`GPOS_APP_CONNECT_EN_ROTACION` (`VerificacionPrivilegios.cs:145-153`).**
+   - Para silenciar el aviso de forma periódica hay que alterar `gpos_app_a` o `gpos_app_b` (`ALTER USER`, es decir, `ALTER ANY USER` o ser `db_owner`). Quien tiene ese permiso ya puede dar `CONNECT` y cambiar contraseñas a su gusto: **no es una escalada**, y S4 no es un control contra un administrador malicioso.
+   - El punto débil es otro (S13): la condición usa el `MAX(modify_date)` de **las dos** generaciones. La generación nueva acaba de cambiar (`CrearUsuarioAsync` le pone contraseña), así que una interrupción **antes de los 3 s**, con la anterior todavía con su contraseña conocida y con `CONNECT`, sale como aviso durante 6 min. Cualquier `ALTER USER` sobre la vigente, por descuido, renueva esos 6 min.
+   - **`--estricto`:** que siga siendo aviso dentro de los 6 min, como dice el texto firmado, pero medido con el `modify_date` de la propia anterior (ver S13).
+2. **El `catch (Exception)` de la relectura (`src/GPOS.Core/Sistema/EmpresasService.cs:84`, `:96`).**
+   - **No alarga la validez de la credencial anterior.** El retiro (contraseña a los 3 s, `DENY` a los 15 s) lo hace el servidor y no depende de la caché de la API. Una API que se quede con la cadena vieja solo recibe el 18456; después `Olvidar` y la relectura en frío (`EmpresasService.cs:111-114`) la sacan del grupo. Forzar a la API a quedarse con una cadena retirada solo produce indisponibilidad: no hay acceso de más.
+   - Lo que sí oculta: la caída de GPOS_SYSDATA y, sobre todo, una cifrada que no se descifra (otro anillo de claves en otro proceso o nodo). Ese error es de configuración y se convertirá en 500 a los 3 s. No queda registrado (S16).
+   - Lo que está bien: `Comprobada` se actualiza también al fallar, así que hay como máximo un intento por segundo, por empresa y por proceso, sin tormenta. La cancelación no se traga.
+3. **Relectura dentro de la petición.**
+   - **Concurrencia:** correcta. `CompareExchange` sobre `Releyendo` (`EmpresasService.cs:49`) permite una sola relectura por entrada. `Valor` es `volatile` y se sustituye entero. La carrera con `Olvidar` (actualiza una entrada ya retirada) es inofensiva.
+   - **Aislamiento entre tenants:** correcto. La clave es (cadena de GPOS_SYSDATA, código en mayúsculas). La relectura abre la misma cadena del sistema (`:78`) y filtra por `Codigo = @c`, parametrizado con `NVarChar(30)`, que coincide con `HasMaxLength(30)` (`src/GPOS.Core/Data/Sistema/SistemaDbContext.cs:29`). Un código más largo nunca llega a tener entrada, porque la lectura en frío no lo encuentra.
+   - **Negación de servicio:** es menor y no la puede provocar un cliente (S17). No conviene sacar la relectura de la petición: que la primera petición tras más de 1 s vea la cadena nueva **antes** de usarla es lo que garantiza el orden frente al cambio de contraseña a los 3 s.
+4. **Cambio de contraseña de la anterior (`CredencialApp.cs:305-332`).**
+   - **Escape:** correcto. `ClavesSql.Generar` produce Base64url de 32 bytes (43 caracteres, alfabeto `A-Z a-z 0-9 - _`), por debajo del límite de 128 de `QUOTENAME` y sin comillas. Como defensa en profundidad, falta una guarda ante un `@sql` nulo (S15).
+   - **Secretos:** la contraseña no se guarda, no se muestra y no va en el mensaje (solo `ex.Number`). Inferido, sin verificar: SQL Server enmascara en las trazas los lotes que contienen `PASSWORD`, igual que en `CrearUsuarioAsync`.
+   - **1205:** cada reintento genera otra contraseña. El paso es idempotente.
+   - **Interrupción:** antes de los 3 s, la anterior queda con su contraseña y `CONNECT`, y `RetiroPendienteAsync` la detecta por el `CONNECT`. Es el riesgo aceptado en la firma. Entre los 3 s y los 15 s, la contraseña ya es desconocida y el pendiente se completa igual. Sugerencia sin ID, más allá de lo firmado: ante la cancelación durante las esperas, aplicar contraseña y `DENY` con `CancellationToken.None` antes de salir. Cerraría la ventana de los 3 s a cambio de algún 500, unos 0,02 dp.
+   - **Hueco (S14):** en la rotación normal, si el cambio de contraseña falla, ya no se intenta el `DENY`.
+5. **`--urgente` y el retiro pendiente:** correcto. El orden es `DENY`, comprobación de `SinConnect`, contraseña y `KILL` sin espera (`CredencialApp.cs:276-290`). Cada paso que falla lanza un error: `SinNegar`, la excepción de `DescartarClaveAsync`, falta de permiso para el `KILL` o el tope. El retiro pendiente con `--urgente` usa el mismo camino y después rota.
+6. **Tiempos fijos:** correcto. Son `const int` en `CadenaConexion.cs:39-52` (1, 3 y 15 s). `RotacionApp` no expone nada para cambiarlos. `--plazo` está limitado a 2-6. `TopeKill` es `static readonly`. `PlazoPruebas` solo existe en Debug y afecta solo al plazo del `KILL`. La prueba `DL22_bmas_los_tiempos_de_la_rotacion_son_los_firmados` fija los valores.
+
+### Hallazgos nuevos
+
+| ID | Severidad | Título | Evidencia | Remediación | Costo [I] |
+|---|---|---|---|---|---|
+| DL22-S13 | Baja | S4 mide la rotación con el `modify_date` de cualquiera de las dos generaciones: una interrupción antes de los 3 s queda como aviso 6 min | `src/GPOS.Migracion/VerificacionPrivilegios.cs:145-153` (`MAX(q.modify_date)` sobre `gpos_app_a` y `gpos_app_b`) | Usar el `modify_date` de la propia fila (`p.modify_date`): la anterior solo es «reciente» si se le cambió la contraseña (a los 3 s) en los últimos 6 min. En los primeros 3 s de una rotación sana sale un hallazgo, un falso positivo hacia el lado seguro, como ya se aceptó en S05. Variante más estricta, que B debe aprobar porque va más allá de la letra firmada: hallazgo siempre que la anterior conserve `CONNECT` y su `modify_date` sea anterior al de la vigente (su contraseña no se cambió después de la rotación). | 0,02 dp |
+| DL22-S14 | Baja | En la rotación normal, si falla el cambio de contraseña no se intenta el `DENY` | `CredencialApp.cs:272` (`DescartarClaveAsync` lanza antes de `NegarConnectAsync`, `:276-286`) | Si `DescartarClaveAsync` falla, intentar igual el `DENY` (sin esperar a los 15 s) y lanzar después un error que diga qué se logró. La anterior queda al menos sin `CONNECT`. | 0,02 dp |
+| DL22-S15 | Baja | `EXEC (@sql)` con `@sql` nulo no hace nada y se informa «contraseña sustituida» | `CredencialApp.cs:313-320` | Hoy no se alcanza (43 caracteres). Agregar `IF @sql IS NULL THROW 51610, …` antes del `EXEC`, aquí y en `CredencialesLectura.CrearUsuarioAsync` (`src/GPOS.Migracion/Lectura/CredencialesLectura.cs:214-220`). | 0,01 dp |
+| DL22-S16 | Baja | La relectura que falla (GPOS_SYSDATA o descifrado) no deja rastro | `EmpresasService.cs:84-88`, `:96` | Registrar una advertencia limitada (una por minuto, por empresa y por proceso) con el código de empresa, el tipo de excepción y `SqlException.Number`, **nunca** la cadena ni la cifrada. El fallo de descifrado, como error: indica otro anillo de claves y acabará en 500 a los 3 s de la próxima rotación. | 0,03 dp |
+| DL22-S17 | Baja | Con GPOS_SYSDATA lenta, la petición que relee espera el `Connect Timeout` de la cadena del sistema más 5 s | `EmpresasService.cs:78-80` | Mantener la relectura dentro de la petición (garantiza el orden), pero con `Connect Timeout` de 2-3 s y `CommandTimeout` de 2 s solo para esa conexión. Afecta a una petición por empresa y proceso en cada ciclo, y un cliente no la puede provocar. | 0,01 dp |
+| DL22-S18 | Baja (sospecha) | La relectura no mira `Inhabilitado`: otro proceso sigue sirviendo la cadena de una empresa inhabilitada | `EmpresasService.cs:80` frente a la lectura en frío, que filtra `!x.Inhabilitado`; `GuardarAsync` solo limpia la caché del proceso que guarda | Viene de antes de (b+) (la caché era permanente); ahora cerrarlo cuesta casi nada: leer también `Inhabilitado` y, si vale 1, `Olvidar`. No verifiqué si el inicio de sesión u otra puerta ya rechaza la empresa inhabilitada; si lo hace, queda como mejora. | 0,02 dp |
+
+### Controles nuevos que están bien
+
+- La relectura usa su propia conexión, una consulta parametrizada y la misma GPOS_SYSDATA de la clave. Si la cifrada no cambió, no descifra nada.
+- `LimpiarGrupos(anterior)` solo se llama si la cadena cambió de verdad.
+- La contraseña de descarte se genera en cada intento y no sale del proceso. Los mensajes de error no la incluyen.
+- `Stopwatch` monótono para las esperas y `TickCount64` para la vigencia: no dependen del reloj de pared.
+- Las pruebas cubren la relectura en 1 s, GPOS_SYSDATA caída, los tiempos firmados y las ventanas de PA-30. El hallazgo pasado el tiempo solo se prueba en Debug.
+
+### Cierre de la revisión de d3a65288
+- Estado: Aprobado con observaciones. Sin hallazgos Críticos, Altos ni Medios; S13 a S18 Bajas. Se recomienda corregir S13 y S14 antes del PR; S15 a S17 en el mismo lote si es barato (unos 0,05 dp); S18 tras confirmar si hay otra puerta.
+- Supuestos: las ventanas de 3 s y 15 s y la ausencia de 500 son mediciones de las pruebas, no reproducidas; el enmascaramiento de `PASSWORD` en las trazas es inferido; que `DENY` no mueve `modify_date` lo afirma el código y no lo verifiqué.
+- Entregas: desarrollador de identidades → S13 y S14 antes del PR, S15 a S17 en el mismo lote; QA → correr PA-30 en la suite oficial para cerrar S01; arquitecto-maestro (B) → decidir si se adopta la variante estricta de S13, que va más allá del texto firmado.
