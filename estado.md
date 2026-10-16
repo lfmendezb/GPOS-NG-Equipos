@@ -8,12 +8,14 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - Suite oficial: 3117 correctas; solo fallan las 5 del 12834 y 3 por carga simultánea, que pasan solas.
     - Aviso `2026-10-16-pr49-seg-corp-08`.
   - **Hallazgo SC08-01 y SC08-03:** la eliminación de renglones del POS no queda autorizada en el servidor. Defecto previo; espera tu decisión.
-  - **En curso:** DL-22 (`a/dl22-rotacion` @ `367128f0`, sin push).
-    - Puntos 1 a 6 hechos. Suite oficial: 3117 correctas; solo fallan las 5 del 12834.
-    - Seguridad: «Aprobado con observaciones». El desarrollador corrige S02 a S06 y S08 antes del PR.
+  - **Corte de luz (tarde):** al volver, todo en orden (git íntegro, bases ONLINE en las dos instancias, sin procesos huérfanos). La corrección S09 a S12 de DL-22 estaba completa sin commit; se recuperó.
+  - **PR #52 (DL-22 a, salvo el punto 7):** `a/dl22-rotacion` @ `cd480ddd`. Unir **después del #48**.
+    - Seguridad: S02 a S06 y S08 cerradas; relectura S09 a S12 corregida. S01 espera la firma.
+    - Con el #48: RG-14/DL-22 28/28; suite oficial 3119 correctas, 8 fallidas (`EsquemaPendienteAccesoTests`; sola falla 1, también sin DL-22: previa).
+    - Aviso `2026-10-16-dl22-relectura-s09-s12`.
     - **Punto 7 (PA-30 «ningún 500»):** no se puede cumplir con el `DENY` inmediato firmado. En SQL 2019, el `DENY CONNECT` rompe las sesiones abiertas con el error 916.
     - **Precisión para firma:** opciones (a), (b) y (b+). El arquitecto y el auditor recomiendan (b+). Hoja en `traspasos/A/precision-dl22-punto1-2026-10-16.md`.
-  - **Esperan tu validación:** #43, #45, #46, #47, #48 y #49.
+  - **Esperan tu validación:** #43, #45, #46, #47, #48, #49 y #52.
 - **2026-10-15, noche:**
   - **Vertical Corporativa:** diseño firmado (D-01 a D-28).
     - H-04 sigue abierta: el propietario envió las preguntas al contador.

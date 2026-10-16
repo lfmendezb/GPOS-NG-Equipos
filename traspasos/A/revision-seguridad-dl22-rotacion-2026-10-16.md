@@ -197,3 +197,62 @@ Así la ventana de credencial queda en cero, la de sesiones en unos 15 s, y los 
 - Decisiones candidatas a ADR: precisión del punto 1 de ADR-82 (DL-22): opción A, B o B+ (recomendada B o B+), con las condiciones de la sección 8.
 - Entregas a otros agentes: arquitecto-maestro → preparar la precisión del punto 1 y de PA-30 con las opciones A, B y B+ para la firma del propietario; desarrollador de identidades → corregir S02 y S03 en `a/dl22-rotacion` antes de unir, y después S04 a S07; qa-automatizado → con la opción firmada, PA-30 debe medir también la ventana de credencial y de sesiones, además de los 500.
 - Próximo paso recomendado: corregir S02 y S03 en la rama y llevar al arquitecto-maestro la decisión entre A, B y B+ para la firma.
+
+---
+
+## Relectura d6b5b5ea (2026-10-16)
+
+- **Objeto:** `git diff 367128f0 d6b5b5ea` (6 archivos, +294 / −57). Solo lectura: sin compilar ni ejecutar pruebas.
+- **Dictamen de la relectura (recomendación técnica, C2): Aprobado con observaciones.** S03, S04, S05, S06 y S08 quedan cerrados. S02 queda cerrado en el camino directo, pero la corrección de S03 y S04 abre una vía nueva por la que `--urgente` puede terminar **sin rotar** (S10, Media); conviene corregirla antes de unir. S07 no aplica mientras siga el diseño actual. S01 sigue pendiente de la firma.
+
+### Estado de cada hallazgo
+
+| ID | Estado | Evidencia en d6b5b5ea | Comentario |
+|---|---|---|---|
+| S02 | **Cerrado** (con S10 aparte) | `CredencialApp.cs`: `RetirarAsync` → `CerrarSesionesAsync` con plazo cero en `--urgente`; bucle hasta que no quede ninguna sesión; `throw` si `sinPermiso > 0`; permisos exigidos antes de rotar | `--urgente` ya no termina con código 0 si no puede ver o cerrar las sesiones. |
+| S03 | **Cerrado** | `ExigirPermisosRetiroAsync` antes de `CrearUsuarioAsync`, con `VIEW SERVER STATE` (o `PERFORMANCE STATE`) y `ALTER ANY CONNECTION`; `RetiroPendienteAsync` completa el retiro sin rotar | Detalle menor: si se pasó `--login-respaldo`, el bloque de `gpos_respaldo_srv` corre **antes** de la comprobación, así que «No se cambió nada» no es exacto en ese caso. Ese bloque es idempotente y ajeno a la rotación: Baja, opcional mover la comprobación arriba. |
+| S04 | **Cerrado** | `SinNegar(...)` cuando se agotan los 1205 en el DENY; `ReintentarInterbloqueoAsync` en `SinConnectAsync`, `SesionesAsync` y `CerrarSesionesAsync` | Repetir el KILL es idempotente (6106 se ignora). Ver S09 sobre la reutilización del número de sesión. |
+| S05 | **Cerrado con límites aceptables** | `VerificacionPrivilegios.cs`: `GPOS_APP_SESION_VENCIDA` (hallazgo) por `login_time` > 6 min; `VERIFICADOR_SIN_SESIONES` (aviso) | Ver la valoración de los límites más abajo. |
+| S06 | **Cerrado** | `TopeKill` = 2 min, comprobado antes de cada vuelta del KILL, con error explícito; con `--todas`, `Program.cs` atrapa el error por empresa y sigue con las demás | No tiene prueba automática; ver los límites. |
+| S07 | No aplica | — | Solo cobra sentido si se firma B o B+. |
+| S08 | **Cerrado** | `OpcionesComando.cs` (lista blanca por comando, `--login` global), llamado desde `Argumentos.Leer`; pruebas en `Rg14Lote2Tests.cs:429-443` | Los comandos fuera de la lista siguen con «Comando desconocido». Comprobé, sin ser exhaustivo, que las opciones que lee `Program.cs` (`credencial-app`, `aprovisionar`, `crear`, `sistema`, `login-servicio`) están en la lista. Los comandos de lectura no los recorrí: si falta alguna opción, el riesgo es funcional, no de seguridad. |
+
+### Valoración de los límites que declara el desarrollador
+
+1. **S05: falso hallazgo si `verificar --estricto` corre durante el plazo y hay una sesión de más de 6 min. Aceptable.** El error va hacia el lado seguro: avisa de más, no de menos. La ventana dura como mucho el plazo (2 a 6 min), y esas sesiones ya no ejecutan sentencias (916). Sugerencia sin bloqueo: que el texto de `GPOS_APP_SESION_VENCIDA` diga «si `credencial-app` está en curso, espere a que termine antes de repetirlo». Si dos `credencial-app` corren a la vez, el segundo encuentra el retiro pendiente y hace KILL antes; no es peligroso, solo se adelanta el corte.
+2. **`VERIFICADOR_SIN_SESIONES` sale también en GPOS_SYSDATA. Aceptable.** Es solo un aviso: hace ruido pero no afecta a `--estricto`. Observación aparte (S12, Baja): como es un aviso, un `verificar --estricto` ejecutado sin `VIEW SERVER STATE` aprueba sin haber podido ver las sesiones vencidas. Sugerencia: en `--estricto`, tratarlo como hallazgo solo en las bases de empresa, lo que de paso elimina el ruido en GPOS_SYSDATA, o documentar que el paso M8 de publicación se ejecuta con la identidad del técnico.
+3. **S06 sin prueba automática del tope. Aceptable.** La lógica es mínima (un `Stopwatch` y una comparación) y reproducir en una prueba una transacción que tarde más de 2 min en deshacerse es caro. Sugerencia sin bloqueo: un tope configurable solo en Debug, como `PlazoPruebas`, y una prueba que lo fuerce con una sesión retenida.
+
+### Hallazgos nuevos
+
+#### DL22-S10 · Media · `--urgente` con un retiro pendiente termina sin rotar la credencial vigente
+
+- **Riesgo:** ante una sospecha de compromiso, el operador ejecuta `credencial-app --urgente`. Si quedó un retiro pendiente de una rotación anterior (la otra generación con CONNECT o con sesiones), `AplicarAsync` completa ese retiro y **devuelve sin rotar**: la generación vigente, que es la sospechosa, sigue válida. La salida dice «Para rotar, repita credencial-app» y el código es 0. Las correcciones de S03 a S05 hacen que ese estado intermedio sea ahora explícito y algo más frecuente.
+- **Evidencia:** `src/GPOS.Migracion/CredencialApp.cs`, bloque nuevo después de `var usuario = …` (`if (rotar && await RetiroPendienteAsync(...)) { … return new ResultadoCredencialApp(empresa, Prefijo + vigente, false, acciones); }`), sin distinguir `rotacion.Urgente`.
+- **Remediación (unos 0,03 dp, inferido):** con `--urgente`, completar el retiro pendiente (KILL de las sesiones de esa generación) y **seguir con la rotación** en la misma ejecución. `CrearUsuarioAsync` ya cambia la contraseña y vuelve a dar CONNECT a esa generación, después se guarda la cadena y se aplica DENY más KILL a la vigente. Si se prefiere no hacerlo en una sola ejecución, como mínimo que `--urgente` falle con código distinto de 0 y un mensaje que diga que la vigente **no** se rotó.
+
+#### DL22-S11 · Baja · La rotación normal con retiro pendiente sale con código 0 sin rotar
+
+- **Riesgo:** un `credencial-app` programado (rotación periódica) que encuentra un retiro pendiente informa éxito sin haber rotado. Si se repite, la siguiente ejecución sí rota, pero la herramienta que lo lanza no lo distingue.
+- **Remediación:** devolver un código de salida propio (por ejemplo, «completado sin rotar») o seguir con la rotación también en el modo normal, como en S10.
+
+#### DL22-S09 · Baja · Riesgo de que el KILL alcance a otra sesión por la reutilización del número (anterior a d6b5b5ea, no lo vi en la primera revisión)
+
+- **Riesgo:** entre leer `session_id` en `sys.dm_exec_sessions` y ejecutar `KILL n`, la sesión puede terminar y SQL Server puede dar el mismo número a otra conexión: otra empresa de la misma instancia, la generación nueva u otra aplicación. El bucle cada 500 ms y los reintentos 1205 amplían un poco esa ventana. El impacto es de disponibilidad, porque se cortaría una petición o transacción ajena, y puede cruzar tenants en una instancia compartida. La probabilidad es baja.
+- **Evidencia:** `src/GPOS.Migracion/Lectura/CredencialesLectura.cs:316-331` (`KILL` con el número leído antes, sin volver a comprobarlo).
+- **Remediación (unos 0,02 dp):** armar por cada número un lote que vuelva a comprobar justo antes: `IF EXISTS (SELECT 1 FROM sys.dm_exec_sessions WHERE session_id = <n> AND login_name = @u AND authenticating_database_id = DB_ID()) KILL <n>`. El número sigue siendo un `smallint` formateado con la cultura invariante, y `@u` pasa como parámetro. La ventana se reduce a microsegundos. Si además se compara `login_time`, la carrera queda prácticamente cerrada.
+
+#### DL22-S12 · Baja · `VERIFICADOR_SIN_SESIONES` es solo un aviso en `--estricto`
+
+Descrito en el punto 2 de los límites.
+
+### Controles nuevos que están bien
+
+- `@vidaSesion` va como parámetro `int`, sin SQL dinámico. La variante con otra antigüedad solo existe en `#if DEBUG` (`VerificacionPrivilegios.cs`, sobrecarga de `VerificarBaseAsync`).
+- `RetiroPendienteAsync` usa `@u` como parámetro y el mismo filtro de alcance que el KILL (`authenticating_database_id = DB_ID()`, `<> @@SPID`).
+- Los mensajes siguen sin incluir la contraseña ni la cadena.
+- El parser sigue rechazando `--clave` y `--password` antes de aplicar la lista blanca.
+
+### Cierre de la relectura
+- Estado: Aprobado con observaciones (S10 Media, recomendada antes de unir; S09, S11 y S12 Bajas). S01 sigue Pendiente de firma.
+- Entregas: desarrollador de identidades → S10 (y S09 y S11 en el mismo lote si es barato); arquitecto-maestro → S01 sin cambios.
