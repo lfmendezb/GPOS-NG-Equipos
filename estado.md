@@ -7,7 +7,13 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - **PR #49 (SEG-CORP-08):** entregado en `f02cc777`, con seguridad «Aprobado con observaciones».
     - Suite oficial: 3117 correctas; solo fallan las 5 del 12834 y 3 por carga simultánea, que pasan solas.
     - Aviso `2026-10-16-pr49-seg-corp-08`.
-  - **Hallazgo SC08-01 y SC08-03:** la eliminación de renglones del POS no queda autorizada en el servidor. Defecto previo; espera tu decisión.
+  - **PR #55 (DL-22 b+, punto 7 cumplido):** `a/dl22-bmas` @ `afbfdb29`, apilado sobre el #52. Orden de unión: **#48 → #52 → #55**.
+    - PA-30: 8 corridas, 0 peticiones fallidas.
+    - RG-14/DL-22: 23/23.
+    - Seguridad «Aprobado con observaciones»; S13 a S17 corregidas.
+    - Espera la suite de C. Para B: decidir S18 y `--urgente` sin KILL.
+    - Aviso `2026-10-16-pr55-dl22-bmas`.
+  - **Firmas del propietario en la sesión de A (2026-10-16):** DL-22 (b+), la precisión de ADR-68 completa (SC08-01/03: 1a, 1-bis, 2i, 3, R-2 y 4a) y PD-1 (a) de ADR-86. C las registra en `c/adr-precisiones-2026-10-16` y construye SC08.
   - **Corte de luz (tarde):** al volver, todo en orden (git íntegro, bases ONLINE en las dos instancias, sin procesos huérfanos). La corrección S09 a S12 de DL-22 estaba completa sin commit; se recuperó.
   - **PR #52 (DL-22 a, salvo el punto 7):** `a/dl22-rotacion` @ `cd480ddd`. Unir **después del #48**.
     - Seguridad: S02 a S06 y S08 cerradas; relectura S09 a S12 corregida. S01 espera la firma.
@@ -15,14 +21,14 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - Aviso `2026-10-16-dl22-relectura-s09-s12`.
     - **Punto 7 (PA-30 «ningún 500»):** no se puede cumplir con el `DENY` inmediato firmado. En SQL 2019, el `DENY CONNECT` rompe las sesiones abiertas con el error 916.
     - **Precisión firmada (b+)** por el propietario en la sesión de A: «Firmo (b+)». A la construye en `a/dl22-bmas`, apilada sobre el #52. B la registra en ADR-82. Aviso `2026-10-16-firma-dl22-bmas`.
-  - **SC08-01/03:** el propietario decidió que se hacen después de DL-22. A prepara la precisión de ADR-68 para la firma.
   - **Delegado a C por el propietario:**
     - la construcción de SC08-01/03, después de la firma;
     - H-V4-01/02;
     - las suites oficiales de los PR de A.
 
     Aviso `2026-10-16-delegacion-a-c`.
-  - **Esperan tu validación:** #43, #45, #46, #47, #48, #49 y #52.
+  - **Esperan tu validación:** #43, #45, #46, #47, #48, #49, #52 y #55.
+  - **A sin tareas en curso:** espera validaciones, la suite de C o un encargo nuevo.
 - **2026-10-15, noche:**
   - **Vertical Corporativa:** diseño firmado (D-01 a D-28).
     - H-04 sigue abierta: el propietario envió las preguntas al contador.
