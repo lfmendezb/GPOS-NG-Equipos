@@ -1,7 +1,7 @@
 # Precisión de ADR-68: eliminación de renglones del POS (SC08-01 y SC08-03)
 
 ```
-[Decisión preparada por el Arquitecto Maestro, equipo A]   Estado: Propuesto · Pendiente de firma
+[Decisión preparada por el Arquitecto Maestro, equipo A]   Estado: Firmada 1a, 1-bis, 2i y 3 (2026-10-16) · Casilla 4 pendiente (v2.1)
 Fecha: 2026-10-16
 Origen: decisión del propietario (sesión de A, 2026-10-16): «Sí, tómalo después de DL-22»
 Cierra: P-11 de la hoja de cierre de la ola 3 (ADR-68), en lo que toca a la eliminación de renglones
@@ -74,12 +74,29 @@ Hoy, «Nueva venta» con renglones no pide nada ni deja rastro (H-10). Sin esto,
 - El servidor deja una línea en `audit.Bitacora` con el cajero, la caja, el número de renglones, el importe y el autorizante. No hay documento al que atarla.
 - Costo: 0,1 a 0,15 sp [I].
 
-## 5. Texto de la precisión para ADR-68 (si se firma lo recomendado: 1a, 2i y 3 sí)
+## 4-bis. Respuestas del propietario (v2, 2026-10-16, sesión de A)
 
-> **Precisión del 2026-10-16 (SC08-01 y SC08-03 de la revisión de seguridad de SEG-CORP-08; firmada por Leonardo Méndez, propietario, el AAAA-MM-DD).** Cierra P-11 de la hoja de cierre de la ola 3 en lo que toca a la eliminación de renglones del POS.
+| Pregunta | Respuesta literal | Efecto |
+|---|---|---|
+| R-1. En BP2, ¿descartar una venta en curso pedía autorización? | «BP2 nunca despego por tanto nunca controlo ese detalle» | No hay costumbre que proteger. La casilla 3 se decide por el riesgo: se mantiene la recomendación «Sí, en la misma tanda». |
+| R-2. Bajar la cantidad de un renglón ya escaneado, ¿se trata igual que eliminar? | «Si entiendo que debe tener el mismo tratamiento que eliminar, para garantizar la trazabilidad de los cambios» | **Una reducción de cantidad es una eliminación parcial.** Viaja en `Eliminaciones` con la cantidad quitada, se valida y se registra igual (`ELIMINA_RENGLON`, con la cantidad y el importe de la parte quitada). Subir la cantidad no pide nada. La configuración «Puede cambiar la cantidad» sigue decidiendo si el cajero puede editar la cantidad. +0,05 a 0,1 sp [I]. |
+| R-3. ¿Se mantienen las dos exenciones o se unifican? | «Si ambas tienen el mismo alcance entonces es mejor unificar todo bajo un mismo criterio. Si tienen contextos diferentes entonces se mantienen.» | Ver la casilla 4. |
+
+**Alcance de las dos exenciones (verificado para R-3):** **es el mismo.** Las dos dejan al cajero eliminar renglones del POS sin autorización: `PuntoVenta.razor:497` las trata igual (`Config.EliminarArticulos || Tiene(Permisos.EliminarRenglonPos)`) [V].
+- Solo cambia dónde se administran. El privilegio `eliminarrenglon` (`Permisos.cs:135`, grupo «Especiales») va por **perfil**. La configuración `EliminarArticulos` (`ConfigPos.razor:101`, «Puede eliminar renglones sin autorización de un supervisor»; columna `EliminarRenglones`) va por **usuario**, y la heredó el puente de BP2 (`PuenteCfg.cs:140`).
+- **Recomendación: unificar en el privilegio `eliminarrenglon`.**
+  - Es parte del modelo de seguridad: perfiles, auditoría de cambios de privilegios y segregación de funciones.
+  - Es lo que el servidor puede comprobar en la sesión.
+  - La configuración POS se queda en lo operativo: caja, moneda, descuento y cantidad.
+- **Cómo:** el interruptor sale de Configuración de POS y la columna queda sin uso, o se retira en una migración. Como hoy no hay producción ni datos que conservar (BP2 nunca salió a producción), no hace falta trasladar valores. Si un usuario necesita la exención, se le da por un perfil. +0,05 sp [I].
+
+## 5. Texto de la precisión para ADR-68 (si se firma lo recomendado: 1a, 2i, 3 sí y 4a)
+
+> **Precisión del 2026-10-16 (SC08-01 y SC08-03 de la revisión de seguridad de SEG-CORP-08; firmada por Leonardo Méndez, propietario, el 2026-10-16: «Sobre las recomendaciones: 1, 1-bis, 2 y 3. Aprobado según la recomendación»; R-1 a R-3 respondidas el mismo día).** Cierra P-11 de la hoja de cierre de la ola 3 en lo que toca a la eliminación de renglones del POS.
 > 1. **La venta lleva sus eliminaciones.** Toda eliminación de un renglón del POS viaja en la venta (`VentaPos.Eliminaciones`) con el artículo, la unidad, la cantidad, el precio y el importe. Si no hay privilegio propio, lleva también el bloque `Autorizacion { Usuario, Clave, Motivo }`.
 > 2. **Validación y registro.** El servidor separa la contraseña antes de la huella de idempotencia y la valida con el validador común (opción Punto de venta, formas A y B, SEG-CORP-08 y el punto 8 de ADR-81). Dentro de la transacción de la venta, registra cada eliminación en `doc.Autorizacion` con el tipo `ELIMINA_RENGLON` (quién autorizó, cuándo, artículo, cantidad e importe en `Valor`) y deja su línea en la bitácora del documento. Si falta una autorización o no vale, se rechaza la venta completa con 422 `AUTORIZACION_INVALIDA`. La contraseña no se guarda ni se registra.
-> 3. **Privilegio propio.** Quien tiene `eliminarrenglon` o la configuración POS `EliminarArticulos` elimina sin pedir autorización ni motivo. La eliminación se registra igual, con él como autorizante y la marca «privilegio propio»; el servidor comprueba el privilegio en la sesión.
+> 1-bis. **Reducir la cantidad es eliminar en parte.** Bajar la cantidad de un renglón ya escaneado sigue la misma regla y queda registrado igual, con la cantidad y el importe quitados. Subir la cantidad no pide nada (respuesta del propietario R-2).
+> 3. **Privilegio propio, un solo criterio.** La exención es solo el privilegio `eliminarrenglon`, que se asigna por perfil. La configuración POS `EliminarArticulos`, heredada de BP2 y de igual alcance, se retira (R-3). Quien tiene el privilegio elimina sin pedir autorización ni motivo. La eliminación se registra igual, con él como autorizante y la marca «privilegio propio»; el servidor comprueba el privilegio en la sesión.
 > 4. **Quién autoriza.** Autoriza a otros el ADMIN de la empresa (nunca el SUPER) o quien tenga «Punto de venta · Autorizar». `eliminarrenglon` solo exime a su titular. `POST /api/pos/autorizar` queda como verificación previa del diálogo y usa la misma regla del validador común.
 > 5. **Descartar la venta en curso** con renglones exige la misma regla y deja una línea en `audit.Bitacora` (cajero, caja, renglones, importe y autorizante).
 > 6. **Límite declarado.** El servidor valida las eliminaciones que la venta declara. Un diario de escaneo en el servidor queda fuera de alcance. Las ventas en espera, si se construyen, no guardarán contraseñas.
@@ -97,10 +114,13 @@ Hoy, «Nueva venta» con renglones no pide nada ni deja rastro (H-10). Sin esto,
 
 | Casilla | Opciones | Firma |
 |---|---|---|
-| **1. Eliminación de renglones (SC08-01)** | ☐ **a) La venta lleva sus eliminaciones; el servidor las valida y las guarda como `ELIMINA_RENGLON`** (recomendada, 0,35-0,5 sp) · ☐ b) Ficha de un solo uso (0,6-0,9 sp) · ☐ c) Solo la bitácora al autorizar (0,1-0,15 sp) · ☐ d) Ninguna: acepto el riesgo | |
-| **1-bis. Privilegio propio** | ☐ **Se registra igual, sin motivo** (recomendada) · ☐ No se registra | |
-| **2. Quién autoriza (SC08-03)** | ☐ **i) ADMIN o «Punto de venta · Autorizar»; `eliminarrenglon` solo exime** (recomendada) · ☐ ii) ADMIN o `eliminarrenglon`, como propone el auditor | |
-| **3. Descartar la venta en curso** | ☐ **Sí, en la misma tanda** (recomendada, +0,1-0,15 sp) · ☐ En otra etapa · ☐ No | |
+| **1. Eliminación de renglones (SC08-01)** | ☑ **a) La venta lleva sus eliminaciones; el servidor las valida y las guarda como `ELIMINA_RENGLON`** (recomendada, 0,35-0,5 sp) · ☐ b) Ficha de un solo uso (0,6-0,9 sp) · ☐ c) Solo la bitácora al autorizar (0,1-0,15 sp) · ☐ d) Ninguna: acepto el riesgo | |
+| **1-bis. Privilegio propio** | ☑ **Se registra igual, sin motivo** (recomendada) · ☐ No se registra | |
+| **2. Quién autoriza (SC08-03)** | ☑ **i) ADMIN o «Punto de venta · Autorizar»; `eliminarrenglon` solo exime** (recomendada) · ☐ ii) ADMIN o `eliminarrenglon`, como propone el auditor | |
+| **3. Descartar la venta en curso** | ☑ **Sí, en la misma tanda** (recomendada, +0,1-0,15 sp) · ☐ En otra etapa · ☐ No | |
+| **4. Exenciones (R-3)** | ☐ **a) Unificar en el privilegio `eliminarrenglon` y retirar `EliminarArticulos` de la configuración POS** (recomendada, +0,05 sp) · ☐ b) Mantener las dos | |
+
+Reducir la cantidad (R-2) ya quedó decidido por el propietario, así que no lleva casilla. Total con lo recomendado: unas 0,6 a 0,85 sp [I].
 
 **Si se firma:** B registra la precisión del punto 5 en ADR-68 (en `master`) y **C** la construye (encargo del propietario del 2026-10-16, aviso `A-a-B/2026-10-16-delegacion-a-c`) en una rama `c/` sobre el #49 o tras su unión. **Si se rechaza:** P-11 sigue abierto y R-6 queda en residual Medio, aceptado.
 
