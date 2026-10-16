@@ -243,9 +243,15 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
       - La única falla es anterior al blueprint: `EsquemaPendienteAccesoTests`.
       - PA-14 y PF-12 están marcadas `Medicion`.
       - Siguiente: T-g, el inicio de sesión en dos pasos.
-    - **SC08-01/03** (`c/sc08-eliminar-renglones`, sobre el #49): diseño hecho y construcción en curso. El cambio de unidad espera una firma.
-    - **H-V4-01/02** (`c/h-v4-01-02`): en curso.
-    - **En cola:** la suite oficial de #52 + #48, que se corre sola.
+    - **SC08-01/03** (`c/sc08-eliminar-renglones` @ `25142236`, con push, sobre el #49): construido.
+      - Pruebas: servidor 465/465 y 223/223 en las clases afectadas; Web 664/664; MAUI 570/570.
+      - Cambio de unidad: queda como hoy (decisión del propietario).
+      - Ahora: **revisión de seguridad**; después, el PR.
+    - **#54 (H-V4-01):** abierto. H-V4-02 espera P-81A-17.
+    - **Suites oficiales de A:**
+      - #52 + #48: hecha (3122/5/18, ninguna falla atribuible).
+      - #55 + #48: en curso, con PA-30 repetida 5 veces.
+    - **ADR-81:** en curso T-g a T-i.
 - **Historial anterior (equipo C en LAPTOP-DUMQQ5QK, disuelto el 2026-10-14):**
 - **Disuelto por decisión del propietario (2026-10-14).** Las funciones se repartieron así (aviso `B-a-C/2026-10-14-disolucion-del-equipo-c`):
   - **Pasan a B:** PR #21 (C-10), C-5, C-13, las revisiones de PR, la QA de estabilidad y fiscal, y el DEMO.
