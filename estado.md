@@ -231,10 +231,15 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - **C-T1:** el blueprint v4 de la fase A de ADR-81.
       - Hallazgos H-V4-01 y H-V4-02 para A.
       - P-81A-15 a 17 esperan la firma del propietario.
-  - **Trabajando en:** la fase A de ADR-81 en `c/adr81-fase-a`, sin PR hasta completar.
-    - **Hechas:** T-a y T-b (`9b5436c1`). SegundoFactor: 35 correctas; las clases relacionadas: 475 correctas; ninguna falla.
-    - **En curso:** T-c a T-f.
-    - **Unión:** después de T1, T2 y T4 de ADR-118/119.
+  - **Entregado después:** **#53** contra `master`, con las precisiones del 2026-10-16 (ADR-68 SC08, ADR-82 DL-22 b+, PD-1 de ADR-86 y la relectura de ADR-85 a 88). Lo une B.
+  - **Trabajando en:**
+    - **Fase A de ADR-81** (`c/adr81-fase-a` @ `df721803`, con push y sin PR): T-a a T-f hechas.
+      - La única falla es anterior al blueprint: `EsquemaPendienteAccesoTests`.
+      - PA-14 y PF-12 están marcadas `Medicion`.
+      - Siguiente: T-g, el inicio de sesión en dos pasos.
+    - **SC08-01/03** (`c/sc08-eliminar-renglones`, sobre el #49): diseño hecho y construcción en curso. El cambio de unidad espera una firma.
+    - **H-V4-01/02** (`c/h-v4-01-02`): en curso.
+    - **En cola:** la suite oficial de #52 + #48, que se corre sola.
 - **Historial anterior (equipo C en LAPTOP-DUMQQ5QK, disuelto el 2026-10-14):**
 - **Disuelto por decisión del propietario (2026-10-14).** Las funciones se repartieron así (aviso `B-a-C/2026-10-14-disolucion-del-equipo-c`):
   - **Pasan a B:** PR #21 (C-10), C-5, C-13, las revisiones de PR, la QA de estabilidad y fiscal, y el DEMO.
