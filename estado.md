@@ -218,11 +218,16 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - **Software:** SQL Server 2025 en `.` y en `.\SQLEXPRESS`, .NET 10.0.401 y los workloads de MAUI.
   - **Rol:** ramas `c/` y PR sin unir. Propone 6 agentes y 2 compilando como máximo.
   - **Presentación:** aviso `C-a-B/2026-10-16-presentacion-equipo-c-oshin-legion`.
-  - **Trabajando en** (decisión del propietario: C toma lo que A no ha iniciado; aviso `C-a-B/2026-10-16-c-toma-pendientes-de-a`). Las tres ramas salen de `ce33b2a8`, sin push:
-    - **C-T1:** la fase A de ADR-81, con el rediseño v4 y las tandas, en `c/adr81-fase-a`;
-    - **C-T2:** los ajustes del #41, en `c/h11-s2-ajustes`;
-    - **C-T3:** CP170, en `c/cp170`.
-  - **Pendiente del propietario:** retirar aquí la tarea de vigilancia de B y registrar la de C (minuto 8).
+  - **Entregado (decisión del propietario: C toma lo que A no ha iniciado; aviso `C-a-B/2026-10-16-c-toma-pendientes-de-a`):**
+    - **#50 (C-T3):** CP170 estable.
+    - **#51 (C-T2):** los ajustes del #41. Cruza archivos con el #52 de A; C lo rebasa cuando se una el #52.
+    - **C-T1:** el blueprint v4 de la fase A de ADR-81.
+      - Hallazgos H-V4-01 y H-V4-02 para A.
+      - P-81A-15 a 17 esperan la firma del propietario.
+  - **Trabajando en:** la fase A de ADR-81 en `c/adr81-fase-a`, sin PR hasta completar.
+    - **Hechas:** T-a y T-b (`9b5436c1`). SegundoFactor: 35 correctas; las clases relacionadas: 475 correctas; ninguna falla.
+    - **En curso:** T-c a T-f.
+    - **Unión:** después de T1, T2 y T4 de ADR-118/119.
 - **Historial anterior (equipo C en LAPTOP-DUMQQ5QK, disuelto el 2026-10-14):**
 - **Disuelto por decisión del propietario (2026-10-14).** Las funciones se repartieron así (aviso `B-a-C/2026-10-14-disolucion-del-equipo-c`):
   - **Pasan a B:** PR #21 (C-10), C-5, C-13, las revisiones de PR, la QA de estabilidad y fiscal, y el DEMO.
