@@ -132,7 +132,7 @@ La Facturación Ágil (ventana de la Estándar) no se toca.
 - Un artículo con franja **no se vende fuera de ella**: el servidor lo bloquea. Ya no rige [POS] B-6 («fuera de la franja se paga con la bolsa o con dinero propio») para esos artículos, y el ejemplo E-7 de [POS] cambia: el plato fuerte a las 16:00 se rechaza.
 - Los artículos del almuerzo y de la cena son artículos con franja.
 
-**Precisión breve para confirmar (PF-1):** propongo que la franja se fije **al leer el carné**, para no castigar a quien hacía fila al cierre, con una **tolerancia de 0 minutos por omisión**, configurable hasta 15 por sede ([POS] proponía 5). Para el visitante, sin carné, cuenta la hora en que se agrega la línea. [ ] Confirmo · [ ] Otra: ____
+**PF-1, respondida por el propietario (2026-10-15):** «La franja de tiempo se fija por artículo, el carnet solo se utiliza para validar la identidad del empleado que consume.» Por eso la franja es un atributo del artículo y se comprueba con la hora del servidor al agregar cada artículo al consumo, para el empleado y para el visitante por igual. El carné no fija ni extiende la franja. Tolerancia: 0 minutos (no se pidió ninguna). [x] Respondida
 
 ### 3.2 F-2 · Artículos al 50 %
 
@@ -150,7 +150,7 @@ La Facturación Ágil (ventana de la Estándar) no se toca.
 
 **Efecto:** coincide con [POS] A-B3 y [CONT] D-06. El día 1 la bolsa **vuelve a su monto asignado** (no se le suma al sobrante); lo no usado se pierde, nunca se paga en dinero y no se traspasa.
 
-**Precisión breve para confirmar (PF-3):** leo «se renueva» como «vuelve al monto asignado», no como «se suma». [ ] Confirmo · [ ] Otra: ____
+**PF-3, confirmada por el propietario (2026-10-15):** «Correcto. Si la bolsa es de RD$300.00 y solo se consumió un total de RD$250.00, al llegar el nuevo corte mensual, la bolsa vuelve a su valor inicial de RD$300.00.» [x] Confirmo
 
 ### 3.4 F-4 · Cómo paga el empleado su parte
 
@@ -163,7 +163,7 @@ La Facturación Ágil (ventana de la Estándar) no se toca.
 - El límite legal del descuento salarial (Código de Trabajo, art. 201, fuente secundaria de [CONT]) va al contador en CF-1.
 - **No resuelve el punto fiscal:** cobrar por nómina sigue siendo una contraprestación del empleado ([CONT] S-4). Ver la sección 5.
 
-**Precisión breve para confirmar (PF-4):** el cupo de nómina lo fija la empresa por categoría, con excepción por comensal; sin cupo configurado, la nómina no se ofrece. [ ] Confirmo · [ ] Otra: ____
+**PF-4, pendiente:** el propietario pidió más contexto sobre «cupo de nómina» (2026-10-15). La explicación está en la sesión de A. Queda abierta hasta su respuesta. [ ] Confirmo · [ ] Otra: ____
 
 ### 3.5 Orden de aplicación revisado (sustituye [POS] 2.4)
 
