@@ -90,3 +90,22 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
 - **Causa probable:** en horario diurno, otra carga en el equipo (uso, actualizaciones u otros procesos no `dotnet`) o inestabilidad eléctrica antes del corte.
 - **Decisión:** no se usa para el criterio. **Repetir de noche**, con la máquina sola y con la luz estable.
 - **Mejora pendiente del guion:** registrar la carga total de CPU y los procesos principales al empezar cada corrida, no solo los `dotnet`.
+
+## Tercera tanda, tercer intento (2026-10-16, 12:10 a 15:08): limpia
+- **Condiciones:** carga de CPU entre el 2 % y el 9 % antes de cada corrida (WMI, procesos más activos sin carga), conectada, sin cortes, sin otros `dotnet`. Salidas en `GPOS-B-prep27\TestResults\T6-r3-20261016-1210\`.
+- **Commits:** base `fb32b26b`; candidato `3b04495f`. El candidato solo cambia frente a `3988078c` en el arreglo de UF-05 y en las pruebas. Se combina con la segunda tanda: 5 corridas por lado.
+
+| Métrica (p95, ms) | Base (2.ª tanda + 3.ª) | Mediana base | Candidato (2.ª + 3.ª) | Mediana cand. | Razón |
+|---|---|---|---|---|---|
+| **N6-02, 20 renglones sin lote** | 81,3 / 84,7 / 80,3 + 78,7 / 101,3 | 81,3 | 92,4 / 79,6 / 96,0 + 102,3 / 95,4 | **95,4** | **1,173** |
+| **T-57 sin compras (principal)** | 24,9 / 21,9 / 24,5 + 28,7 / 25,7 | 24,9 | 24,7 / 23,9 / 24,4 + 23,3 / 24,4 | 24,4 | **0,980** |
+| T-57 con compras | 41,2 / 38,4 / 38,2 + 40,4 / 39,9 | 39,9 | 44,4 / 39,5 / 40,4 + 52,7 / 42,5 | 42,5 | 1,065 |
+| T-57 compra de 20 líneas | 852,9 / 1.000,1 / 850,4 + 842,5 / 888,6 | 852,9 | 939,2 / 860,6 / 819,9 + 799,8 / 903,0 | 860,6 | 1,009 |
+| T-57 meta 5b | 1.207,8 / 1.180,2 / 1.244,3 + 1.093,6 / 1.076,5 | 1.180,2 | 1.744,7 / 1.336,7 / 1.509,0 + 1.483,2 / 1.862,9 | 1.509,0 | 1,279 |
+
+## Veredicto de T6 con 5 corridas por lado
+- **T-28** (3 corridas, dentro de la dispersión) y **T-57 sin compras: cumplen.** T-28 queda en 1,046 y T-57 sin compras en 0,980.
+- **N6-02: NO CUMPLE, confirmado (1,173).** La venta POS de 20 renglones con T1 cuesta alrededor de un 17 % más en el p95.
+- **T-57 con compras: 1,065**, por encima de 1,05. Es la métrica secundaria.
+- **Meta 5b:** cumple el tope de 2.000 ms, pero el candidato sube un 28 % y su peor corrida llega a 1.862,9 ms. Riesgo alto de pasar el tope.
+- **Siguiente paso** (decisión del propietario del 16-oct: «Repetir y perfilar»): perfilar el costo por renglón de T1 en la venta POS (comandos de existencia, política de negativos y `LotesDocumento`) y la subida de la compra con fecha anterior (5b), y proponer la corrección antes de la unión del 27-oct.
