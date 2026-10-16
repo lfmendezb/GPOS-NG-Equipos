@@ -3,6 +3,12 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-16, tarde (revisión de B `2026-10-16-revision-pr43-a-pr55`):**
+  - **#55:** error 51616 renumerado a 51617 (`32a594ae`). Pruebas dirigidas 22/23; la que falla es el 12834 conocido sin el #48.
+  - **#47:** rebasado directamente sobre el #46 (`38c4e88e`), con base del PR `a/reimpresion-post`. Pruebas dirigidas 632/0/1.
+  - **Después del 27-oct:** regenerar la marca del #48.
+  - **Bajas del #52 y el #55** (S18, `--urgente`, `ComprobarAsync`): esperan la decisión de B.
+  - Aviso `2026-10-16-revision-b-55-y-47-hechos`.
 - **2026-10-16:**
   - **PR #49 (SEG-CORP-08):** entregado en `f02cc777`, con seguridad «Aprobado con observaciones».
     - Suite oficial: 3117 correctas; solo fallan las 5 del 12834 y 3 por carga simultánea, que pasan solas.
