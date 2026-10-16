@@ -1,7 +1,7 @@
 # Hoja de firma: precisiones de la vía (a′) que pide la revisión de seguridad (ADR-81, punto 7; ADR-62; ADR-59, punto 6)
 
 **Preparada por:** Arquitecto Maestro (equipo C) · **Fecha:** 2026-10-16 · **Decide y firma:** el propietario (Leonardo Méndez)
-**Estado:** **Pendiente de firma**
+**Estado:** **Firmada por el propietario el 2026-10-16** (sesión de C): «Firmo PA-01 (a), PA-02 (a), PA-03 (a), PA-04 (a) y PA-05 (a) según la recomendación: acepto el riesgo residual Medio R-3 con la condición de REQ-E-01 a REQ-E-11 y el procedimiento ante filtración.»
 **Ubicación:** fuera de los repositorios, a propósito. Si se firma, el documentador-tecnico la registra en `master` (ver la sección 3).
 
 **Fuentes (solo lectura):**
@@ -55,7 +55,7 @@ T-j2 pasa de ≈ 1,0 sp a **≈ 1,3 sp** en el núcleo (±30 %, inferido por el 
 - (b) Desafío, y al confirmar se abre la sesión normal con `ClaveYFactor` por el mismo emisor de `/login/factor`. Riesgo equivalente (SEG-AP-01), pero agrega un camino de emisión que hay que probar; ahorra un inicio de sesión que se hace pocas veces al año.
 - (c) *Descartada:* mantener O-3 (JWT sin `otp` con lista blanca). Es la superficie que el auditor señala como frágil.
 
-☐ **(a) Desafío de recuperación, sin JWT y sin sesión al confirmar (recomendada)**
+☒ **(a) Desafío de recuperación, sin JWT y sin sesión al confirmar (recomendada)**
 ☐ (b) Desafío de recuperación y sesión normal al confirmar
 ☐ (c) Mantener O-3 como está firmado (no recomendado)
 
@@ -85,7 +85,7 @@ T-j2 pasa de ≈ 1,0 sp a **≈ 1,3 sp** en el núcleo (±30 %, inferido por el 
 - (b) Solo `typ` por uso, sin `aud`. Ahorra ≈ 0,02 sp; pierde la defensa en profundidad si un día dos `typ` comparten lector.
 - (c) *Descartada:* admitir `crit` en el verificador.
 
-☐ **(a) `typ` y `aud` por uso, lectores cerrados y prueba en matriz (recomendada)**
+☒ **(a) `typ` y `aud` por uso, lectores cerrados y prueba en matriz (recomendada)**
 ☐ (b) Solo `typ` por uso
 ☐ (c) Admitir `crit` (no recomendado)
 
@@ -113,7 +113,7 @@ T-j2 pasa de ≈ 1,0 sp a **≈ 1,3 sp** en el núcleo (±30 %, inferido por el 
 - **(a) Función `aut` propia (recomendada).**
 - (b) *Descartada por el auditor:* reutilizar `lic` exigiendo siempre `avanzado`. Más barata en el emisor, pero contradice el punto 2 de ADR-62 y ata la recuperación al custodio de la YubiKey de licencias.
 
-☐ **(a) Función de llave `aut` propia, con piso por perfil (recomendada)**
+☒ **(a) Función de llave `aut` propia, con piso por perfil (recomendada)**
 ☐ (b) Reutilizar `lic` con nivel `avanzado` (no recomendado)
 
 ---
@@ -131,7 +131,7 @@ T-j2 pasa de ≈ 1,0 sp a **≈ 1,3 sp** en el núcleo (±30 %, inferido por el 
 - **Por qué se justifica:** 6 veces menos ventana de exposición, costo 0.
 - **Cómo se migra:** no aplica.
 
-☐ **(a) Tope de 4 h, 2 h por omisión en el emisor (recomendada)**
+☒ **(a) Tope de 4 h, 2 h por omisión en el emisor (recomendada)**
 ☐ (b) Mantener el tope de 24 h, con 2 h por omisión en el emisor
 ☐ (c) Mantener 24 h sin valor por omisión en el emisor
 
@@ -156,7 +156,7 @@ T-j2 pasa de ≈ 1,0 sp a **≈ 1,3 sp** en el núcleo (±30 %, inferido por el 
 **Texto de la aceptación (si se marca):**
 > *«Acepto por escrito que, con la vía (a′), quien obtenga una autorización de recuperación vigente y la contraseña de un SUPER puede tomar la cuenta SUPER completa. Riesgo residual: Medio. Lo acepto con la condición de que GSF cumpla REQ-E-01 a REQ-E-11 antes de publicar la vía, y sabiendo que no hay revocación: ante una filtración sospechada rige el procedimiento escrito de GSF (uso inmediato por el SUPER legítimo, o vías (a) o (b)).»*
 
-☐ **(a) Acepto el riesgo residual Medio R-3 con la condición de REQ-E-01 a 11 y el procedimiento ante filtración (recomendada)**
+☒ **(a) Acepto el riesgo residual Medio R-3 con la condición de REQ-E-01 a 11 y el procedimiento ante filtración (recomendada)**
 ☐ (b) No lo acepto: (a′) no se publica y queda solo la vía (b) en el caso extremo (la construcción de T-j2 se detiene)
 
 ---
@@ -197,7 +197,7 @@ Si no quiere el tope de 4 h:
 - Las citas de código son de `origin/c/adr81-fase-a`. Verifiqué `VerificadorJws.cs:41-44` y `:260` y `LlaveGsf.cs:22-31`; las demás vienen del informe del auditor.
 
 ### Cierre
-- Estado: Completado (hoja Pendiente de firma; recomendación: Aprobar con observaciones)
+- Estado: Firmada el 2026-10-16: PA-01 a PA-05 en (a)
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\C\hoja-firma-via-a-prima-precisiones-2026-10-16.md`
 - Supuestos: los de la sección anterior
 - Decisiones candidatas a ADR: precisiones de ADR-81 (punto 7, O-2 y O-3), ADR-62 (punto 2, función `aut`) y ADR-59 (punto 6, rutas anónimas sin clase)
