@@ -676,3 +676,13 @@ Los textos completos se redactan para `master` al firmar; los registra el coordi
 Con F-1 a F-4 y PF-1, PF-3 y PF-4, también firmadas.
 - **ADR-85, 86 y 88** pasan a Aceptado.
 - **ADR-87** (punto fiscal) queda en Propuesto, con la costura aceptada, hasta H-04.
+
+## Requisito agregado por el propietario (2026-10-15, después de la firma)
+
+**F-5, literal:** «En la pantalla al cajero debe presentarle cuanto le resta del consumo del subsidio por empleado. Y en el ticket de impresión también debe indicar cuanto le resta después de cada consumo.»
+
+**Efecto en el diseño:**
+- La pantalla del cajero muestra el saldo vigente de la bolsa al validar el carné y lo actualiza con cada línea.
+- El ticket interno imprime el saldo restante después del consumo. El saldo de antes y el de después se guardan como instantánea inmutable, y la reimpresión muestra lo mismo que se imprimió.
+- El reverso imprime su propio saldo resultante.
+- La pantalla y el ticket pueden mostrar también el estado del almuerzo o la cena de la franja y el cupo de nómina restante. Queda como opción configurable, que propondrá el diseño.
