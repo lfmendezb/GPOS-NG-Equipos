@@ -4,12 +4,16 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
 - **2026-10-16:**
-  - **En curso:** DL-22, la rotación de la credencial de la API sin `KILL` inmediato.
-    - Rama `a/dl22-rotacion`, desde `ce33b2a8`.
-    - La construye el desarrollador de identidades.
-    - Corrige la intermitente PA-30.
-    - Aviso `2026-10-16-a-toma-dl22`.
-  - **Esperan tu validación:** #43, #45, #46, #47 y #48.
+  - **PR #49 (SEG-CORP-08):** entregado en `f02cc777`, con seguridad «Aprobado con observaciones».
+    - Suite oficial: 3117 correctas; solo fallan las 5 del 12834 y 3 por carga simultánea, que pasan solas.
+    - Aviso `2026-10-16-pr49-seg-corp-08`.
+  - **Hallazgo SC08-01 y SC08-03:** la eliminación de renglones del POS no queda autorizada en el servidor. Defecto previo; espera tu decisión.
+  - **En curso:** DL-22 (`a/dl22-rotacion` @ `367128f0`, sin push).
+    - Puntos 1 a 6 hechos. Suite oficial: 3117 correctas; solo fallan las 5 del 12834.
+    - Seguridad: «Aprobado con observaciones». El desarrollador corrige S02 a S06 y S08 antes del PR.
+    - **Punto 7 (PA-30 «ningún 500»):** no se puede cumplir con el `DENY` inmediato firmado. En SQL 2019, el `DENY CONNECT` rompe las sesiones abiertas con el error 916.
+    - **Precisión para firma:** opciones (a), (b) y (b+). El arquitecto y el auditor recomiendan (b+). Hoja en `traspasos/A/precision-dl22-punto1-2026-10-16.md`.
+  - **Esperan tu validación:** #43, #45, #46, #47, #48 y #49.
 - **2026-10-15, noche:**
   - **Vertical Corporativa:** diseño firmado (D-01 a D-28).
     - H-04 sigue abierta: el propietario envió las preguntas al contador.
