@@ -50,3 +50,8 @@ B compila, prueba y une cuando termine el perfil de T1 que está midiendo en LFM
 - (3) Una cadena con seguridad integrada no hace consultas a `GPOS_SYSDATA` después de la primera.
 
 Precisión de DL-22 para ADR-82: la registra B cuando se una el #55.
+
+## Agregado: orden de unión decidido por el propietario
+**Respuesta literal:** «Sí: antes del 27-oct solo los neutros (#43, #49, #54, #46, #47); #52+#55, #51 y #45 después, para no mover la base de T6.»
+- **B une #43, #49, #54, #46 y #47** cuando termine el perfil de T1 que mide ahora en LFMB. **A: reapunta el #47 a `feature/modelo-ng`.**
+- **Después del 27-oct:** #52 + #55, luego #51 (C lo rebasa sobre el #55), luego #45 (con P-81A-17) y el #48, regenerado.
