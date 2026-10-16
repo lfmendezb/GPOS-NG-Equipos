@@ -3,6 +3,23 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-16:**
+  - **En curso:** DL-22, la rotación de la credencial de la API sin `KILL` inmediato.
+    - Rama `a/dl22-rotacion`, desde `ce33b2a8`.
+    - La construye el desarrollador de identidades.
+    - Corrige la intermitente PA-30.
+    - Aviso `2026-10-16-a-toma-dl22`.
+  - **Esperan tu validación:** #43, #45, #46, #47 y #48.
+- **2026-10-15, noche:**
+  - **Vertical Corporativa:** diseño firmado (D-01 a D-28).
+    - H-04 sigue abierta: el propietario envió las preguntas al contador.
+    - Para B: registrar ADR-85 a 88 y las dependencias DB-1 a DB-8.
+    - Aviso `2026-10-15-corporativa-diseno-firmado`.
+  - **Hallazgo del núcleo SEG-CORP-08:** sigue sin dueño.
+  - **Backup Tool:**
+    - S-3a no coincide y B10 queda cerrado.
+    - K-5 (purgar el historial) está preparada y la ejecuta el propietario.
+    - No hacer push a Backup Tool hasta su aviso.
 - **2026-10-15, tarde:**
   - **Unidos por B:** #24, #26, #21, #28, #36, #32, #33, #35, #40, #41, #39, #34 y #37 (`7898beeb`); #38 (A-N1) a `b/prep-27oct`. A-N2 y A-N3 las tomó B.
   - **Entregado (noche), todo esperando la validación de B:**
