@@ -22,3 +22,15 @@ Estado: Abierto (solo información)
 - **Qué decide:** la política de negativos se resuelve una vez por documento en la preparación y llega por parámetro al `UPDATE` condicional. Causa medida: el perfil `traspasos/B/2026-10-16-perfil-t1-renglon.md`.
 - **B lo construye en `b/prep-27oct`** junto con dos mejoras aprobadas sin firma: `FORCESEEK` en `KardexCosto` (meta 5b) y `UnidadesArticulos` sin `IN (OPENJSON)`.
 - **Después:** T6 de noche con la base y el candidato nuevos.
+
+## Agregado: R-02 construida (`b/prep-27oct` @ `b2c1cdd7`)
+- **`a1519c66`, R-02:**
+  - la política de negativos se lee una vez por documento en `PrepararAsync`, en el mismo viaje que los almacenes (`AlmacenesYPoliticas`);
+  - llega por parámetro (`@permite`, `@origen`) a `AplicarExistencia` y `AplicarExistenciaLote`;
+  - siguen siendo los dos únicos escritores (P-12).
+- **`KardexCosto`:** `doc.Documento WITH (FORCESEEK)`.
+- **`UnidadesArticulos`:** `DISTINCT` + `CROSS APPLY`, de 2.126 a 111 µs de CPU por ejecución.
+- **Pruebas nuevas:** `NegativosPoliticaPreparacionTests`, con una lectura de la política por venta de 20 renglones medida por DMV, y `N1_24`.
+- **`b2c1cdd7`:** trae la punta `e80f4654`. Compila, sin cambios del modelo; negativos, lote, planes, arquitectura, autorización, reimpresión, contrato, migraciones y Mvp dan 595/0/3.
+- **Riesgo Bajo (sin decidir):** el camino rápido del POS pasa de 3 a 5 parámetros por artículo. Una venta de más de unos 380 artículos **distintos** superaría el límite de 2.100 parámetros de SQL Server (antes, unos 650). Lo decide el arquitecto de software (tope de renglones o respaldo) después del 27-oct.
+- **Siguiente:** T6 de noche. Base `e80f4654`, candidato `b2c1cdd7`.
