@@ -1,7 +1,7 @@
 # Hoja de firma: recuperación del SUPER que perdió el teléfono, antes del comando en el servidor (precisión de ADR-81, punto 7)
 
 **Preparada por:** Arquitecto Maestro (equipo C) · **Fecha:** 2026-10-16 · **Decide y firma:** el propietario (Leonardo Méndez)
-**Estado:** Pendiente de firma
+**Estado:** Firmada por el propietario el 2026-10-16 (sesión de C): «Firmo R-COR-01 (D), R-COR-02, R-COR-03 y R-COR-04 según la recomendación.»
 **Pedido de origen (propietario, 2026-10-16, literal):** «Sobre el reestablecimiento del SUPER por perdida del teléfono. Es posible agregar un mecanismo mas antes de utilizar el comando. La posibilidad de que el sistema pueda enviar un correo para reestablecer el acceso del SUPER temporalmente con el objetivo de volver a reestablecer el factor ?»
 **Ubicación:** fuera de los repositorios, a propósito. Si se firma, el equipo de documentación la registra como precisión de ADR-81 en `master`.
 
@@ -271,23 +271,23 @@ En los dos casos, ±30 %. La fase A sigue en ≈ 7,8 sp (blueprint v4, línea 52
 ## 6. Casillas de firma
 
 **R-COR-01. ¿Se agrega una vía de recuperación del SUPER antes del comando en el servidor?**
-☐ **(D) Sí, con una autorización firmada por GSF ingresada en la Web (recomendada)**
+☒ **(D) Sí, con una autorización firmada por GSF ingresada en la Web (recomendada)**
 ☐ (B) Sí, con un correo que envía el sistema, solo en Básica, con espera de 24 h y las condiciones de 2.2
 ☐ (C) Sí, como B más la aprobación de otro SUPER o de un código de GSF
 ☐ (A) No; solo se mejora la guía
 
 **R-COR-02. Orden de las vías del punto 7 de ADR-81** (solo si se marca D, B o C)
-☐ Códigos de respaldo → (a) otro SUPER → (a′) vía nueva → (b) comando **(recomendado)**
+☒ Códigos de respaldo → (a) otro SUPER → (a′) vía nueva → (b) comando **(recomendado)**
 ☐ Otro orden: ____________
 
 **R-COR-03. Guía y prevención (opción A como complemento)**
-☐ Sí: dos dispositivos en el alta, códigos de respaldo fuera del teléfono y aviso P-81A-07 en la portada **(recomendado)**
+☒ Sí: dos dispositivos en el alta, códigos de respaldo fuera del teléfono y aviso P-81A-07 en la portada **(recomendado)**
 ☐ No
 
 **R-COR-04. Formato único de las autorizaciones de GSF** para (b+), el punto 11 y (a′) (solo con D)
-☐ Sí **(recomendado)** ☐ No
+☒ Sí **(recomendado)** ☐ No
 
-**R-COR-05. Solo si se marca B o C: aceptación escrita del riesgo R-3** (buzón y contraseña comprometidos sin que nadie cancele en 24 h)
+**R-COR-05 (no aplica: se firmó D). Solo si se marca B o C: aceptación escrita del riesgo R-3** (buzón y contraseña comprometidos sin que nadie cancele en 24 h)
 ☐ Acepto el riesgo residual R-3 ☐ No lo acepto (entonces no se construye B ni C)
 
 **Número de ADR:** no hace falta uno nuevo. Es una precisión de ADR-81 (punto 7, punto 12 y las alternativas descartadas) y de ADR-59 (punto 6, clase `Esencial` de la ruta restringida). Con B o C, también de ADR-83 (puntos 1 y 6) y de ADR-64.
@@ -329,7 +329,7 @@ Si prefiere el correo del sistema:
 - Numeración de ASVS 4.0.3. Las equivalencias con 5.0 no están verificadas.
 
 ### Cierre
-- Estado: Completado (hoja preparada; pendiente de firma del propietario)
+- Estado: Firmada el 2026-10-16 (R-COR-01 (D), R-COR-02, R-COR-03 y R-COR-04)
 - Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\GPOS-C-hoja-recuperacion-correo-super.md`
 - Supuestos: los de la sección anterior
 - Decisiones candidatas a ADR: precisión de ADR-81, punto 7 (vía a′), punto 12 (eventos) y alternativas descartadas (nota); precisión de ADR-59, punto 6 (clase `Esencial`); con B o C, también de ADR-83 (sello con la dirección) y de ADR-64 (vía excluida en Avanzada)
