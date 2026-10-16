@@ -1,6 +1,6 @@
 # Precisión del punto 1 de DL-22 (a): la API deja el grupo viejo antes de tocar la credencial anterior
 
-**Fecha:** 2026-10-16 (v2: integra la opinión del auditor de seguridad y la variante B+) · **Equipo:** A (arquitecto de software) · **Estado:** **Propuesto, pendiente de firma del propietario**
+**Fecha:** 2026-10-16 (v2: integra la opinión del auditor de seguridad y la variante B+) · **Equipo:** A (arquitecto de software) · **Estado:** **Firmada (b+) por el propietario el 2026-10-16 en la sesión de A** (v2.1)
 
 **Precisa:** el punto 1 y el «Riesgo aceptado» de la precisión del 2026-10-15 del punto 3 de ADR-82 (DL-22 (a), plazo de 2 min), en `traspasos/A/adr-licencia-2026-10-15/ADR-082-precisiones-2026-10-15.md`. Hoja de firma DL-01 a DL-22 v2.13 (`traspasos/A/hoja-firma-dl01-dl13-licencia-2026-10-14.md`, DL-22).
 
@@ -14,6 +14,7 @@
 |---|---|
 | 1 | Opciones (a) y (b) del desarrollador; recomendación (a) |
 | 2 | Agrega (b+) del auditor. Compara las tres opciones en exposición de la credencial, exposición de las sesiones, costo, qué rompe y comportamiento ante una interrupción. Separa la recomendación de cada especialista. Incorpora las condiciones del auditor (tope fijo de la espera, caché con caducidad, `--urgente` sin espera, S05) y S02 y S03 como condición para unir. **La recomendación final pasa a (b+), precisada** |
+| 2.1 | **Firma del propietario: (b+)** (2026-10-16, sesión de A, «Firmo (b+)»). Sin otros cambios |
 
 ---
 
@@ -115,7 +116,7 @@ El precio de (b+) frente a (a) es poco: una lectura de GPOS_SYSDATA por segundo 
 
 ## 5. Texto de la precisión, listo para registrar (si se firma (b+))
 
-> **Precisión del 2026-10-16 del punto 1 de la precisión del 2026-10-15 del punto 3 (DL-22 (a)): la API deja el grupo de conexiones de la generación anterior antes de que esta pierda el acceso.** Firmada por Leonardo Méndez, propietario, el `<fecha>`: «`<respuesta literal>`».
+> **Precisión del 2026-10-16 del punto 1 de la precisión del 2026-10-15 del punto 3 (DL-22 (a)): la API deja el grupo de conexiones de la generación anterior antes de que esta pierda el acceso.** Firmada por Leonardo Méndez, propietario, el 2026-10-16, en la sesión de A: «Firmo (b+)».
 >
 > La construcción de DL-22 (a) verificó en SQL Server 2019, con un usuario contenido, que:
 > - `DENY CONNECT` hace fallar con el 916 cada lote siguiente de las sesiones abiertas;
@@ -158,7 +159,7 @@ El precio de (b+) frente a (a) es poco: una lectura de GPOS_SYSDATA por segundo 
 | (b) | Contraseña en el acto; `DENY` y `KILL` a los 2 min; sondeo en cada apertura | ≈ 0 s | 2 min | ≈ 0,4-0,5 dp + latencia permanente |
 | **(b+) (recomendada por el arquitecto; el auditor la propone)** | Caché de 1 s; contraseña a los 3 s; `DENY` a los 15 s; `KILL` a los 2 min | ≈ 3 s | ≈ 15 s | ≈ 0,35-0,4 dp |
 
-`[ ] (a)` · `[ ] (b)` · `[ ] (b+)` · `[ ] Ninguna: se mantiene el orden firmado y PA-30 «ningún 500» sigue en Defecto`
+`[ ] (a)` · `[ ] (b)` · `[x] (b+)` — firmada por el propietario el 2026-10-16 en la sesión de A: «Firmo (b+)» · `[ ] Ninguna: se mantiene el orden firmado y PA-30 «ningún 500» sigue en Defecto`
 
 ## 7. ¿Se puede unir ya el PR actual (puntos 1-6 y PA-30 de sesiones)?
 
