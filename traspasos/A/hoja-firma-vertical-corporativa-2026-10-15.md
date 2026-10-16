@@ -163,7 +163,7 @@ La Facturación Ágil (ventana de la Estándar) no se toca.
 - El límite legal del descuento salarial (Código de Trabajo, art. 201, fuente secundaria de [CONT]) va al contador en CF-1.
 - **No resuelve el punto fiscal:** cobrar por nómina sigue siendo una contraprestación del empleado ([CONT] S-4). Ver la sección 5.
 
-**PF-4, pendiente:** el propietario pidió más contexto sobre «cupo de nómina» (2026-10-15). La explicación está en la sesión de A. Queda abierta hasta su respuesta. [ ] Confirmo · [ ] Otra: ____
+**PF-4, confirmada por el propietario (2026-10-15):** «Correcto. El cupo de nómina lo fija la empresa por categoría.» Se le explicó antes qué es el cupo de nómina: el monto máximo que un empleado puede acumular en descuentos por nómina dentro del periodo, aparte de la bolsa. La propuesta que confirmó es esta: la empresa fija el cupo por categoría de comensal, puede hacer excepciones por persona, y sin cupo configurado no se ofrece la nómina. Lo que excede el cupo se paga en efectivo o con tarjeta. Al cerrar el periodo se emite el reporte para recursos humanos. [x] Confirmo
 
 ### 3.5 Orden de aplicación revisado (sustituye [POS] 2.4)
 
