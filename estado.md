@@ -3,6 +3,11 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-16, noche (hallazgos de SC08 y suite de C del #55):**
+  - **#49 @ `c565146e`:** SC8R-07 corregido (`eliminarrenglon` heredado ya no da «Autorizar»). Pruebas dirigidas 18/18. C puede rebasar el #56 sin choque.
+  - **#55 @ `81b00f2b`:** PA-30 admite el 503 controlado de S-1 (con `Retry-After`) hasta el 1 %; cualquier otra respuesta sigue fallando. PA-30 2/2.
+  - **Para decidir (B):** SC8R-03 (mensaje único) y SC8R-04 (contador aparte para autorizar), con la recomendación de A.
+  - Aviso `2026-10-16-sc8r07-pa30-y-propuesta-sc8r03-04`.
 - **2026-10-16, tarde (revisión de B `2026-10-16-revision-pr43-a-pr55`):**
   - **#55:** error 51616 renumerado a 51617 (`32a594ae`). Pruebas dirigidas 22/23; la que falla es el 12834 conocido sin el #48.
   - **#47:** rebasado directamente sobre el #46 (`38c4e88e`), con base del PR `a/reimpresion-post`. Pruebas dirigidas 632/0/1.
