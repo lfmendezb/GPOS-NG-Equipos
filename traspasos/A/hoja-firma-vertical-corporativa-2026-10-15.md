@@ -1,6 +1,6 @@
 # Hoja de firma: vertical Corporativa (cafetería o comedor interno)
 
-[Decisión preparada por el Arquitecto Maestro (equipo A)] · 2026-10-15 · **Estado: Pendiente de firma** (salvo F-1 a F-4, que el propietario ya respondió y se registran como firmadas)
+[Decisión preparada por el Arquitecto Maestro (equipo A)] · 2026-10-15 · **Estado: Firmada el 2026-10-15 (H-01 a H-03 y H-05 a H-11 en la opción (a); H-04 abierta hasta la respuesta del contador a CF-1)** (salvo F-1 a F-4, que el propietario ya respondió y se registran como firmadas)
 
 **Qué se decide:** cómo atiende GPOS NG a una empresa que tiene su propia cafetería o comedor para empleados, ejecutivos y personal de servicio, administrado por un tercero, con consumos internos sin NCF, subsidios y control por empleado. También se decide cómo encaja esto con la hoja de catering y ejecutivos firmada el 2026-10-09.
 
@@ -228,7 +228,7 @@ El total del dinero del empleado no depende del orden de las líneas (= total �
 
 **Costo:** (a) está dentro de la estimación base. (b) en la Estándar necesita la factura de varios consumos en el núcleo, que [CE] CE-06 (c) señaló como obstáculo: unas 1,0 a 1,5 sp más (inferido), en la fase 2.
 
-- [ ] (a) Administración por cuenta de la empresa · precios: el tercero propone y la empresa aprueba
+- [x] (a) Administración por cuenta de la empresa · precios: el tercero propone y la empresa aprueba
 - [ ] (b) Concesión
 - [ ] Otra: ____
 
@@ -249,7 +249,7 @@ El total del dinero del empleado no depende del orden de las líneas (= total �
 
 **Costo:** (a) y (b) ahorran unas 1,2 sp entre las dos verticales (inferido). (c) cuesta unas 1,2 sp más.
 
-- [ ] (a) Capacidad común; `CORPORATIVA` y `CARGO_EMPRESA`
+- [x] (a) Capacidad común; `CORPORATIVA` y `CARGO_EMPRESA`
 - [ ] (b) Capacidad común; `CORPORATIVO` se mantiene y la vertical usa el código ____
 - [ ] (c) Separadas
 - [ ] (d) Un módulo con modelo de operación
@@ -274,7 +274,7 @@ El total del dinero del empleado no depende del orden de las líneas (= total �
 
 **Costo:** 1,0 sp el ticket y 0,4 sp el reverso (inferido, [POS] sección 14).
 
-- [ ] (a) Ticket interno con serie propia y reverso interno
+- [x] (a) Ticket interno con serie propia y reverso interno
 - [ ] Otra: ____
 
 ---
@@ -298,7 +298,7 @@ El total del dinero del empleado no depende del orden de las líneas (= total �
 - [ ] S-1 · E32 automático por la porción pagada
 - [ ] S-2 · E32 global diario, sujeto a la autorización de la DGII (CC-12); S-1 mientras tanto
 - [ ] S-6 · Sin dinero del empleado
-- [ ] Decido después de CF-1, antes del primer cliente; mientras tanto se construye la costura
+- [x] Decido después de CF-1, antes del primer cliente; mientras tanto se construye la costura
 
 ---
 
@@ -317,7 +317,7 @@ El total del dinero del empleado no depende del orden de las líneas (= total �
 
 **Costo:** (a) está dentro del motor (1,6 sp). (d) suma ≈ 1,0 sp en la fase 2 si [CE] CE-02 ya está construido (inferido).
 
-- [ ] (a) Composición por grupos; (d) en la fase 2
+- [x] (a) Composición por grupos; (d) en la fase 2
 - [ ] (b) · [ ] (c) · [ ] (d) ya en la fase 1
 
 ---
@@ -336,7 +336,7 @@ El doble turno se resuelve por **categoría** (las franjas al 100 % de cada cate
 
 **Recomendación: (a).** **Costo:** 0 en (a) y (c); ≈ 0,1 sp en (b).
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -351,7 +351,7 @@ El doble turno se resuelve por **categoría** (las franjas al 100 % de cada cate
 
 **Recomendación: (a).** **Costo:** ≈ 0,05 sp.
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -369,7 +369,7 @@ El doble turno se resuelve por **categoría** (las franjas al 100 % de cada cate
 
 **Recomendación: (a).** **Costo:** 0,8 sp (inferido). Para el cliente: un lector de USD 20 a 150 por caja (inferido).
 
-- [ ] (a) · [ ] (c) · [ ] Otra: ____
+- [x] (a) · [ ] (c) · [ ] Otra: ____
 
 ---
 
@@ -384,7 +384,7 @@ El doble turno se resuelve por **categoría** (las franjas al 100 % de cada cate
 
 **Recomendación: (a).** **Costo:** 0,2 sp los perfiles, 0,3 sp los bloques del Z y RC-06 dentro de los 0,9 sp de reportes (inferido).
 
-- [ ] (a) · [ ] (b)
+- [x] (a) · [ ] (b)
 
 ---
 
@@ -400,7 +400,7 @@ El doble turno se resuelve por **categoría** (las franjas al 100 % de cada cate
 
 **Recomendación: (a).** **Costo:** ≈ 0,2 sp para la digitación por lote, que **no estaba** en la estimación de [POS] (inferido). Para el cliente: un nodo de USD 500 a 1.000 por sede grande.
 
-- [ ] (a) · [ ] (b) · [ ] (c)
+- [x] (a) · [ ] (b) · [ ] (c)
 
 ---
 
@@ -416,7 +416,7 @@ El doble turno se resuelve por **categoría** (las franjas al 100 % de cada cate
 
 **Recomendación: (a).** **Costo:** sección 8.
 
-- [ ] (a) · [ ] (c) · [ ] Otra: ____
+- [x] (a) · [ ] (c) · [ ] Otra: ____
 
 ---
 
@@ -652,3 +652,27 @@ Los textos completos se redactan para `master` al firmar; los registra el coordi
 - Decisiones candidatas a ADR: ADR-85, 86, 87 y 88 (Propuesto); precisiones de CE-04 y CE-06 de la hoja del 2026-10-09
 - Entregas a otros agentes: especialista-contable → CF-1 y CC-06 a CC-13 a la adenda; arquitecto-datos, arquitecto-software, disenador-ux-ui y auditor-seguridad → sección 8.2, tras la firma; documentador-tecnico (vía B) → registrar ADR-85 a 88 y renumerar los ADR de [CE] (el 126 está ocupado)
 - Próximo paso recomendado: que el propietario firme H-01, H-02 y la casilla de H-04, y que se envíe la sección 7 al contador
+
+---
+
+## Registro de firma (2026-10-15, sesión de A)
+
+**Respuesta literal del propietario:** «Firmo H-01 a H-03 y H-05 a H-11 según la recomendación. H-04 queda abierta hasta la respuesta del contador.»
+
+| Punto | Resultado |
+|---|---|
+| H-01 | (a) Administración por cuenta de la empresa |
+| H-02 | (a) Capacidad común; `CORPORATIVA` y `CARGO_EMPRESA`. Precisa la forma de CE-04 y CE-06 de la hoja de catering |
+| H-03 | (a) Ticket interno con serie propia y reverso interno |
+| **H-04** | **Abierta:** se decide después de CF-1 y antes del primer cliente. Mientras tanto se construye la costura fiscal |
+| H-05 | (a) Composición por grupos; (d) en la fase 2 |
+| H-06 | (a) 100 % una vez por franja y día |
+| H-07 | (a) Bolsa proporcional al alta |
+| H-08 | (a) Carné con identificador opaco y foto desde el servidor |
+| H-09 | (a) Perfiles del tercero sin acceso a beneficios ni precios |
+| H-10 | (a) Nodo recomendado en las sedes grandes y contingencia en papel |
+| H-11 | (a) Nada en la entrega 1; entrega 3 |
+
+Con F-1 a F-4 y PF-1, PF-3 y PF-4, también firmadas.
+- **ADR-85, 86 y 88** pasan a Aceptado.
+- **ADR-87** (punto fiscal) queda en Propuesto, con la costura aceptada, hasta H-04.
