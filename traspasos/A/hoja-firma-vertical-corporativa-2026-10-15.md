@@ -686,3 +686,8 @@ Con F-1 a F-4 y PF-1, PF-3 y PF-4, también firmadas.
 - El ticket interno imprime el saldo restante después del consumo. El saldo de antes y el de después se guardan como instantánea inmutable, y la reimpresión muestra lo mismo que se imprimió.
 - El reverso imprime su propio saldo resultante.
 - La pantalla y el ticket pueden mostrar también el estado del almuerzo o la cena de la franja y el cupo de nómina restante. Queda como opción configurable, que propondrá el diseño.
+
+## Nota sobre H-04 (2026-10-15, sesión de A)
+- **Postura del propietario para CF-1:** «Basta con el ticket interno». Es la opción P-0.
+- **Envío:** el propietario confirmó que enviará al contador de la empresa **todas** las preguntas de la §7, incluida CF-1. Agregará la de UQ-4: si el ticket interno debe llevar la firma del empleado para respaldar el descuento por nómina.
+- **Estado de H-04:** sigue abierta hasta la respuesta del contador. Con esa respuesta se registra la opción. Si es P-0, se archiva el criterio del contador como respaldo.
