@@ -149,6 +149,16 @@
 
 - [ ] (a) SW-02 v2 y SW-06 precisado · [ ] (b) SW-02 original · [ ] (c) Tabla de identificaciones
 
+> **Precisión del propietario a D-02 (2026-10-15, sesión de A), literal:** «No. Mas simple. Obligar a ingresar el carnet cada vez que haya de realizar un consumo. La empresa exige que se debe utilizar el carnet por cada consumo nuevo por tanto no se debe acomodar al cajero pero si aplicar el mandato de la empresa en todo momento.»
+>
+> **Efecto en SW-02 v2:**
+> - **Un carné por cada consumo nuevo,** siempre. No existe «agregar al último consumo» ni ninguna reutilización de una lectura anterior, aunque sea del mismo empleado y en la misma caja.
+> - **La lectura vale para todo el consumo abierto.** El empleado agrega o quita artículos libremente hasta emitir. La identificación no vence a mitad de un consumo en curso: la vida de 10 minutos del punto 2 se sustituye por «mientras el consumo esté abierto».
+> - **Consumo abandonado:** un consumo sin emitir que quede inactivo se cancela solo, y continuar exige pasar el carné de nuevo. El plazo de inactividad lo propone el diseño; es un detalle técnico, no una comodidad para el cajero.
+> - **Al emitir, la identificación queda usada** (punto 3, índice único): el siguiente consumo exige el carné.
+> - **No hay límite de consumos por día.** Solo aplican los topes firmados: la bolsa, las franjas, el almuerzo y la cena una vez por franja, y el cupo de nómina.
+> - **Sin cambio:** el auditor aceptó «un solo uso por ticket». La precisión lo hace más estricto, no más débil.
+
 ---
 
 #### D-03 · Identificación sin carné: tope, autorización registrada y vía sin foto (SW-17, UQ-2) — seguridad
