@@ -1,6 +1,6 @@
 # Hoja de firma: diseño de la vertical Corporativa (entrega 3)
 
-[Decisión preparada por el Arquitecto Maestro (equipo A)] · 2026-10-15 · **Estado: Firmada el 2026-10-15 (D-01 a D-28 en la opciÃ³n (a), con D-02 precisado; H-04 abierta)** · Sin commit · No toqué código, configuración ni bases.
+[Decisión preparada por el Arquitecto Maestro (equipo A)] · 2026-10-15 · **Estado: Firmada el 2026-10-15 (D-01 a D-28 en la opción (a), con D-02 precisado; H-04 abierta)** · Sin commit · No toqué código, configuración ni bases.
 
 **Qué se firma:** el **diseño** de la vertical Corporativa, que se construye en la entrega 3. El requerimiento ya está firmado: H-01 a H-03 y H-05 a H-11, F-1 a F-5, PF-1, PF-3 y PF-4. **H-04 sigue abierta** y esta hoja no la decide. Esta hoja junta en **una sola lista** (D-01 a D-28) las 15 decisiones de datos (FD), las 18 de software (SW) y las 9 preguntas de UX (UQ), y les incorpora las remediaciones del auditor-seguridad.
 
