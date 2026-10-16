@@ -216,7 +216,10 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - **Software:** SQL Server 2025 en `.` y en `.\SQLEXPRESS`, .NET 10.0.401 y los workloads de MAUI.
   - **Rol:** ramas `c/` y PR sin unir. Propone 6 agentes y 2 compilando como máximo.
   - **Presentación:** aviso `C-a-B/2026-10-16-presentacion-equipo-c-oshin-legion`.
-  - **Trabajando en:** nada; C espera el primer encargo de B.
+  - **Trabajando en** (decisión del propietario: C toma lo que A no ha iniciado; aviso `C-a-B/2026-10-16-c-toma-pendientes-de-a`). Las tres ramas salen de `ce33b2a8`, sin push:
+    - **C-T1:** la fase A de ADR-81, con el rediseño v4 y las tandas, en `c/adr81-fase-a`;
+    - **C-T2:** los ajustes del #41, en `c/h11-s2-ajustes`;
+    - **C-T3:** CP170, en `c/cp170`.
   - **Pendiente del propietario:** retirar aquí la tarea de vigilancia de B y registrar la de C (minuto 8).
 - **Historial anterior (equipo C en LAPTOP-DUMQQ5QK, disuelto el 2026-10-14):**
 - **Disuelto por decisión del propietario (2026-10-14).** Las funciones se repartieron así (aviso `B-a-C/2026-10-14-disolucion-del-equipo-c`):
