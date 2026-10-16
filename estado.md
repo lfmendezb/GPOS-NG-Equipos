@@ -14,7 +14,14 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
     - Con el #48: RG-14/DL-22 28/28; suite oficial 3119 correctas, 8 fallidas (`EsquemaPendienteAccesoTests`; sola falla 1, también sin DL-22: previa).
     - Aviso `2026-10-16-dl22-relectura-s09-s12`.
     - **Punto 7 (PA-30 «ningún 500»):** no se puede cumplir con el `DENY` inmediato firmado. En SQL 2019, el `DENY CONNECT` rompe las sesiones abiertas con el error 916.
-    - **Precisión para firma:** opciones (a), (b) y (b+). El arquitecto y el auditor recomiendan (b+). Hoja en `traspasos/A/precision-dl22-punto1-2026-10-16.md`.
+    - **Precisión firmada (b+)** por el propietario en la sesión de A: «Firmo (b+)». A la construye en `a/dl22-bmas`, apilada sobre el #52. B la registra en ADR-82. Aviso `2026-10-16-firma-dl22-bmas`.
+  - **SC08-01/03:** el propietario decidió que se hacen después de DL-22. A prepara la precisión de ADR-68 para la firma.
+  - **Delegado a C por el propietario:**
+    - la construcción de SC08-01/03, después de la firma;
+    - H-V4-01/02;
+    - las suites oficiales de los PR de A.
+
+    Aviso `2026-10-16-delegacion-a-c`.
   - **Esperan tu validación:** #43, #45, #46, #47, #48, #49 y #52.
 - **2026-10-15, noche:**
   - **Vertical Corporativa:** diseño firmado (D-01 a D-28).
