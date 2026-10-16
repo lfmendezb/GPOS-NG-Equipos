@@ -3,6 +3,10 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-16, noche (decisiones del propietario sobre el #55 y orden de unión):**
+  - **#55 @ `27ca3e2c`:** S18, `KILL` con `--urgente` y `ComprobarAsync` solo para `gpos_app_*`, con una prueba por punto. PA-30 3 de 3 (0 fallidas). La falla de `EsquemaPendienteAcceso` es previa (también sobre `81b00f2b`).
+  - **#47:** base cambiada a `feature/modelo-ng` (unir #46 → #47).
+  - Aviso `2026-10-16-pr55-tres-puntos-y-pr47-reapuntado`.
 - **2026-10-16, noche (hallazgos de SC08 y suite de C del #55):**
   - **#49 @ `c565146e`:** SC8R-07 corregido (`eliminarrenglon` heredado ya no da «Autorizar»). Pruebas dirigidas 18/18. C puede rebasar el #56 sin choque.
   - **#55 @ `81b00f2b`:** PA-30 admite el 503 controlado de S-1 (con `Retry-After`) hasta el 1 %; cualquier otra respuesta sigue fallando. PA-30 2/2.
