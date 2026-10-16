@@ -472,3 +472,60 @@ Sobre el punto que dejó abierto la hoja (H-08 y la Ley 172-13): **la foto no es
   - especialista-contable o asesor legal del cliente → confirmar la Ley 172-13 (artículos, excepción laboral y vigencia en 2026), el aviso y las cláusulas de encargado;
   - qa-automatizado → CA-09 ampliado, prueba de dependencias de CA-13 y simulacro de restauración con supresiones.
 - Próximo paso recomendado: que el Maestro incorpore la sección 6.1 a la hoja de firma de SW-01 a SW-18 y FD-01 a FD-15, y que este auditor confirme solo esas diferencias.
+
+---
+
+## Confirmación sobre la hoja única (2026-10-15)
+
+**Documento confirmado:** `traspasos/A/hoja-firma-diseno-corporativa-2026-10-15.md` (**[HU]**), sección 4 (matriz), D-01 a D-28, sección 5 (C-T1, C-T1b, C-T11 y PM-01 a PM-10), sección 6.1 (DB-8) y sección 7. Revisé **solo las diferencias** frente a mi sección 6, sin una ronda completa nueva. No toqué la hoja.
+
+### Veredicto por fila de la matriz ([HU] 4)
+
+| Prioridad | Hallazgo | Dónde quedó | Veredicto | Nota |
+|---|---|---|---|---|
+| 1 | SEG-CORP-02 | D-01, puntos 1, 2, 3 y 6 | **Conforme** | Están la invariante en el alta, la edición y el token, la lista de permitidos en `EfectivosAsync` con falla cerrada para los privilegios futuros, el inventario de la empresa y CA-09 con un privilegio inventado. El punto 5 («un externo no autoriza a un usuario de la empresa») va más allá de lo que pedí y lo apoyo |
+| 2 | SEG-CORP-07 | D-02, puntos 1 a 8 | **Conforme** | Un propósito por tipo más el campo `tipo` y un `Id` de 128 bits; `IdentificacionUid` con un índice único filtrado, legal según RG-14 D-04 (a); las mismas líneas con `motivo = LINEAS`; `ValidadaEn` desde la primera validación; idempotencia limitada a usuario, caja y empresa; tokens atados al `sid` y, el de cotización, a la jornada |
+| 3 | SEG-CORP-08 | D-01, punto 4; D-03, puntos 2 y 5 | **Conforme** | La comparación normalizada rechaza aunque `PorCredencial = true`; `SIN_CARNE` con un disparador que exige un autorizante distinto de quien confirmó y del creador; la señal de una contraseña aprendida en RC-05. La nota de la sección 7 para B describe bien el defecto del núcleo |
+| 4 | SEG-CORP-10 | D-09 | **Conforme** | Con `Servido = 1` no se llena `ReversoDocumentoId`, y lo comprueba el disparador |
+| 5 | SEG-CORP-15 | D-08 | **Conforme** | `DENY UPDATE, DELETE` en `corp.Consumo` y `corp.Reverso`, la instantánea antes del `INSERT` y el cuadre diario en el sitio dueño |
+| 6 | SEG-CORP-09 | D-11 | **Conforme** | Un solo reintento como original y solo con la falla informada por el agente; la alerta del 2 %. El posible cambio en `GPOS.AgenteImpresion` está bien señalado |
+| 7 | SEG-CORP-11 | D-09 y D-10 | **Conforme** | Un reverso de otro día o posterior al Z solo lo autoriza la empresa; el cruce de horas del lote, con `Excepcion = 1` y sin rechazo; la firma del comensal en el vale |
+| 8 | SEG-CORP-05, 16 y 20 | D-04, D-07 (punto 2) y D-12 | **Conforme** | La AAD con la empresa, el comensal, la versión y la etiqueta, una DEK por escritura y la comprobación de la versión al servir; rotación solo por compromiso, sin escribir desde la lectura, y el disparador por versión; la referencia escrita en el motivo del modo fiscal |
+| §6.2 | SEG-CORP-05, 06 y 03 | C-T1, C-T1b; D-07, punto 1; D-05 | **Conforme** | Ver la observación O-1 |
+| §6.3 | SEG-CORP-13, 14 y 04 | D-15; D-06, punto 2; C-T11 | **Conforme** | La precisión de ADR-67, punto 9, como puerta firmada de T11 |
+| §6.4 | SEG-CORP-01, 03, 04, 12, 13, 02 y 20 | PM-01 a PM-10 | **Conforme** | PM-01 recoge la comprobación por dato (1 empresa habilitada) y la pérdida de la condición si se agrega otra. Cada condición tiene su evidencia |
+| Bajas | SEG-CORP-17, 18 y 19 | D-03, D-04, D-20, D-23, D-24 y D-28 | **Conforme** | EC-03, la búsqueda acotada, RC-01 por día y franja, el aviso del motivo libre, la prueba de CA-13, el cupo no impreso por omisión, la neutralización CSV con la huella visible y SkiaSharp con un tope de píxeles |
+
+**Costo:** el agregado de [HU] 4 (1,0 a 1,3 sp) coincide con mi estimación.
+
+### Observaciones que no bloquean (Bajas)
+
+- **O-1 · PM-02 frente a C-T1.** C-T1 admite construir el núcleo de ADR-67 dentro de T1, pero la evidencia de PM-02 solo acepta el estado «implementado» de ADR-67 en `master`. Si DB-8 se resuelve en T1, PM-02 debería aceptar también la prueba de custodia de T1 en verde y la revisión de seguridad de ese código. Es una corrección de redacción para el Maestro.
+- **O-2 · Alternativa mínima de D-01 ([HU] 10).** «D-01 sin el punto 3, con PM-10 reforzada» la acepto: la lista de permitidos ya deja fuera los ajustes y las mermas del tercero. Pero entonces el borrador de merma del reverso «servido» tiene que tener un confirmador de la empresa nombrado en el procedimiento. Si no, ese borrador queda sin dueño.
+
+### Recomendación final
+
+**Aprobado con observaciones** (O-1 y O-2, Bajas). Con esto el informe deja de estar en Rechazado:
+- SEG-CORP-02 queda resuelto en el diseño con D-01;
+- SEG-CORP-01 queda como requisito obligatorio y comprobable de la puesta en marcha (PM-01).
+
+Lo que sigue abierto es de la puesta en marcha, no del diseño:
+- PM-01 a PM-10;
+- la confirmación legal de la Ley 172-13 (PM-05);
+- H-04.
+
+D-01 a D-28 siguen **Pendientes de firma** del propietario. Esta es una recomendación técnica (C2).
+
+**Resumen breve de la confirmación:**
+- las 12 filas de la matriz quedaron como las pedí;
+- las dos Altas quedan cerradas: SEG-CORP-02 en el diseño con D-01, y SEG-CORP-01 como la puerta PM-01;
+- quedan dos observaciones Bajas de redacción: PM-02 frente a C-T1, y el confirmador de la merma en la alternativa mínima de D-01;
+- veredicto: Aprobado con observaciones.
+
+### Cierre (confirmación)
+- Estado: Aprobado con observaciones.
+- Artefactos: este informe, con esta sección agregada (sin commit).
+- Supuestos: ninguno nuevo.
+- Decisiones candidatas a ADR: sin cambios frente a [HU] 8.
+- Entregas a otros agentes: Arquitecto Maestro → ajustar la evidencia de PM-02 (O-1) y nombrar el confirmador de la merma en la alternativa mínima de D-01 (O-2).
+- Próximo paso recomendado: que el propietario firme D-01 a D-28.

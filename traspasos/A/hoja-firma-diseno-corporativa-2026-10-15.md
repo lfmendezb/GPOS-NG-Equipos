@@ -733,7 +733,7 @@ Ninguna se da por cumplida con una declaración: cada una tiene su evidencia.
 | # | Condición | Evidencia que la cumple | Responsable |
 |---|---|---|---|
 | **PM-01** | **DB-7:** el acceso multiempresa v1 (membresía validada en cada petición, ADR-36) **o** una instalación con **una sola empresa habilitada** y sin empresas de prueba ni de demostración (SEG-CORP-01, Alta) | O la prueba de membresía de la v1 aprobada por QA, o la consulta a `GPOS_SYSDATA` que devuelve **1** empresa habilitada, anexada al acta de puesta en marcha. Si después se agrega una empresa sin la v1, la condición se pierde y hay que volver a comprobarla | A (v1) o devops (instalación dedicada) |
-| **PM-02** | **DB-8: ADR-67 implementado** (no solo decidido): el estado de implementación de ADR-67 en `master` dice «implementado» en el bloque 3b-A | El ADR-67 de `master`, con su estado; la prueba de custodia en verde | B |
+| **PM-02** | **DB-8: ADR-67 implementado** (no solo decidido): el estado de implementación de ADR-67 en `master` dice «implementado» en el bloque 3b-A, **o** el núcleo construido en T1 (C-T1) con su prueba de custodia en verde (observación O-1 del auditor) | El ADR-67 de `master`, con su estado; la prueba de custodia en verde | B |
 | **PM-03** | **H-04 decidida** por el propietario, y el modo fiscal de la empresa (`corp.Parametros.ModoFiscalPorcion`) **coincide con la firma**, con su referencia en el motivo. Con P-0, el riesgo Alto aceptado por escrito en ADR-87 | La firma de H-04; la consulta del valor y su historia temporal; el motivo con la referencia | Propietario; SUPER |
 | **PM-04** | **La respuesta del contador** a CF-1 (y a CC-06, CC-07, CC-10 a CC-13 y UQ-4), recibida y archivada | El documento del contador, citado en la decisión de H-04 | Especialista-contable → propietario |
 | **PM-05** | **La revisión legal:** el asesor del cliente confirma la Ley 172-13 (artículos, excepción laboral y **vigencia en 2026**); el aviso informativo, versionado y publicado; las cláusulas de encargado firmadas con el tercero y con GSF; los consentimientos firmados de quienes tienen foto | El dictamen legal; el aviso con su versión en AC-05; los contratos; un muestreo de los consentimientos contra `ConsentimientoFotoEn` | Asesor legal del cliente; empresa cliente |
@@ -949,3 +949,10 @@ Firma: ________________ (propietario) · Fecha: ________
   - B → la sección 7, DB-1 a DB-8 y el registro de la sección 8;
   - orquestador → el tramo en la entrega 3, después de 3c.
 - Próximo paso recomendado: que el propietario firme D-01 a D-28 y que el auditor confirme solo la sección 4.
+
+---
+
+## Confirmación del auditor (2026-10-15)
+**Aprobado con observaciones.** Las 12 filas de la matriz de la §4 están conformes y no falta ninguna remediación.
+- **O-1, aplicada:** PM-02 acepta también el núcleo de ADR-67 construido en T1, con su prueba de custodia en verde.
+- **O-2, condicional:** solo aplica si en D-01 se elige la alternativa mínima, sin el punto 3. En ese caso el procedimiento nombra a la persona de la empresa que confirma el borrador de merma del reverso «servido». Con la recomendación (a) no aplica.
