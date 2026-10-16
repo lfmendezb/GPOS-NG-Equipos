@@ -981,3 +981,17 @@ Firma: ________________ (propietario) · Fecha: ________
   - las dependencias DB-1 a DB-8, con B.
 - **Precisiones de ADR que salen de esta firma,** para que B las registre: ADR-45, ADR-67 punto 9, ADR-68, ADR-85, ADR-87 (diseño de la costura, sin la opción), ADR-88 y ADR-112.
 - **Construcción:** en la entrega 3, en el tramo siguiente a 3c.
+
+---
+
+## Precisión del propietario posterior a la firma (2026-10-15): F-6, cobertura en porcentaje o en monto
+
+**Literal:** «el monto del 50% del subsidio puede no ser también un monto directo aplicado como subsidio no siempre será un valor porcentual.»
+
+**Efecto en D-17 (cobertura y franjas) y en FD-05:**
+- **Dos tipos de cobertura.** La cobertura de la bolsa por artículo puede ser un **porcentaje** (0 %, 50 %, 100 % u otro) o un **monto fijo** en pesos. Por ejemplo, la empresa cubre RD$50 de un artículo de RD$120 y el empleado paga RD$70.
+- **Tope del monto:** un monto fijo nunca cubre más que el precio de la línea. Si el precio baja por debajo del monto, la cobertura se limita al precio.
+- **El monto se aplica por unidad,** multiplicado por la cantidad. El monto de la cobertura y el precio quedan congelados en la línea del ticket.
+- **Con la bolsa:** igual que el porcentaje, el monto fijo se descuenta de la bolsa (F-2). Si la bolsa no alcanza, la diferencia la paga el empleado.
+- **Modelo:** `corp.Cobertura` lleva un tipo (`PCT` o `MONTO`) y un valor, con restricciones `PCT` entre 0 y 100 y `MONTO` ≥ 0. El reparto de la línea sigue sumando el total (FD-06).
+- **Costo:** unas 0,1 sp (inferido). No cambia la seguridad ni las condiciones de puesta en marcha.
