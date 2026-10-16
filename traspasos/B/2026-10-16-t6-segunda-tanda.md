@@ -68,3 +68,9 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
 - **No conviene unir el 27-oct sin cerrar N6-02.** Propuesta:
   1. 2 corridas más por lado de N6-02 y T-57 (regla 7.3), ya con `3b04495f`, con la máquina sola (unas 2,5 h).
   2. Si el exceso se confirma, que el arquitecto de datos perfile el costo por renglón de T1 en la venta POS (los comandos de existencia y `LotesDocumento`) y proponga el ajuste. En paralelo, revisar la subida de 5b.
+
+## Tercera tanda (2026-10-16, 04:24): interrumpida por un corte de luz
+- **Guion:** `Solucion GPOS NG\Medicion-T6-r3.ps1`, con 2 rondas de T-57 y N6-02 sobre la base `fb32b26b` y el candidato `3b04495f`. Salidas en `GPOS-B-prep27\TestResults\T6-r3-20261016-0424\`.
+- **Corridas que llegaron a hacerse:** `t57-r1-base` y `t57-r1-cand`, las dos con código 0.
+- **El corte:** a las 05:32 el equipo pasó a batería y el guion se detuvo solo, antes de N6-02. No quedaron procesos de prueba.
+- **Al reanudar,** con la máquina conectada y sola: repetir la tercera tanda completa (unas 3 h). Las dos corridas de T-57 hechas se pueden sumar si los commits no cambian.
