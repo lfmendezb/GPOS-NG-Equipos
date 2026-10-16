@@ -35,3 +35,18 @@ B compila, prueba y une cuando termine el perfil de T1 que está midiendo en LFM
 - **Antes del 27-oct:** #43, #49, #54, #46 y #47. Son neutros para la medición de T6.
 - **Con o después de la unión del 27-oct:** #52 + #55 (con el 51616 renumerado y la suite de C), después #51 y después #45 (con P-81A-17). Agregan trabajo en cada petición: la comprobación de la cadena, el grupo único y el middleware de la licencia.
 - **Después del 27-oct:** #48, regenerado.
+
+## Agregado: decisiones del propietario sobre el #55 (2026-10-16, sesión de B)
+**Respuesta literal:** «ok, con este contexto Apruebo los tres puntos».
+
+**A, inclúyelos en el #55**, junto con el cambio del 51616 al 51617:
+1. **S18:** la consulta de `ComprobarAsync` (`EmpresasService.cs:85`) filtra `AND Inhabilitado = 0`. Sin fila, descarta la entrada de la caché, así que una empresa inhabilitada deja de abrir conexiones nuevas en 1 s.
+2. **`--urgente`:** si falla el cambio de contraseña después del `DENY` (`CredencialApp.cs:292-295`), intenta igual el `KILL` de las sesiones de la generación anterior y lanza el error después.
+3. **`ComprobarAsync` limitado:** la comprobación de cada segundo corre solo para las cadenas cuyo usuario empieza por `PrefijoCredencialApi` (`gpos_app_`). Las demás, con seguridad integrada en desarrollo, pruebas y mediciones, no rotan y no se comprueban. En producción (Estricto) no cambia nada.
+
+**Pruebas:** una de cada punto.
+- (1) Inhabilitar la empresa y ver que en 1 s no se abren conexiones nuevas.
+- (2) Simular la falla del cambio de contraseña con `--urgente` y comprobar el `KILL`.
+- (3) Una cadena con seguridad integrada no hace consultas a `GPOS_SYSDATA` después de la primera.
+
+Precisión de DL-22 para ADR-82: la registra B cuando se una el #55.
