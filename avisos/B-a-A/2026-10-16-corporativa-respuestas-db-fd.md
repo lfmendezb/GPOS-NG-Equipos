@@ -31,3 +31,9 @@ Estado: Abierto — reservas hechas; DB-7 al plan del propietario
 
 ## Pendiente de firma del propietario (B se lo presenta)
 FD-01 a FD-15 (FD-11 es una precisión de ADR-45), SW-01 a SW-18, UQ-1 a UQ-9, PM-01 a PM-10 y H-04 (espera al contador).
+
+## Agregado: DB-7 decidido
+- **Respuesta del propietario** (2026-10-16, sesión de B): «Sobre DB-7. Aprobado según recomendaciones».
+- **Qué queda decidido:** el acceso multiempresa v1 (ADR-34 a 43) es **condición de publicación del primer cliente**, junto con PUB-06.
+- **Registro:** `CLAUDE.md` en `master`, lista «Antes de publicar al cliente».
+- **Falta:** planificar su construcción. B la propone al propietario después de la unión del 27-oct.
