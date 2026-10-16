@@ -74,3 +74,19 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
 - **Corridas que llegaron a hacerse:** `t57-r1-base` y `t57-r1-cand`, las dos con código 0.
 - **El corte:** a las 05:32 el equipo pasó a batería y el guion se detuvo solo, antes de N6-02. No quedaron procesos de prueba.
 - **Al reanudar,** con la máquina conectada y sola: repetir la tercera tanda completa (unas 3 h). Las dos corridas de T-57 hechas se pueden sumar si los commits no cambian.
+
+## Tercera tanda, segundo intento (2026-10-16, 08:28 a 11:25): descartada
+- **Corte:** se detuvo por otro paso a batería a las 11:25, antes de `n602-r2-cand`.
+- **Por qué se descarta entera:** las corridas hechas están degradadas frente a la noche, aunque las condiciones anotadas eran normales (CPU 3.201 MHz, conectada, sin otros `dotnet`):
+
+  | Corrida | T-57 sin compras | T-57 con compras | 5b | N6-02 |
+  |---|---|---|---|---|
+  | r1 base | 29,8 | 71,7 | 1.469 | 102,0 |
+  | r1 cand | 24,8 | 56,4 | 1.587 | 93,3 |
+  | r2 base | 137,5 | 121,6 | 1.678 | 154,7 |
+  | r2 cand | 81,8 | 86,0 | 2.896 | — |
+
+  La segunda tanda (noche) dio unos 24, unos 40, unos 1.200 a 1.500 y unos 80 a 95, respectivamente.
+- **Causa probable:** en horario diurno, otra carga en el equipo (uso, actualizaciones u otros procesos no `dotnet`) o inestabilidad eléctrica antes del corte.
+- **Decisión:** no se usa para el criterio. **Repetir de noche**, con la máquina sola y con la luz estable.
+- **Mejora pendiente del guion:** registrar la carga total de CPU y los procesos principales al empezar cada corrida, no solo los `dotnet`.
