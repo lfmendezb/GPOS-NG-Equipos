@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: ba9c53ea-5cf6-4307-bf2c-3f3a1f4b6f99
-  modified: 2026-10-17T18:26:11.054Z
+  modified: 2026-10-17T18:38:48.910Z
 ---
 
 **2026-10-17, sustituye la regla del 2026-10-04** («todos los agentes con Opus 5.5, pasar `model: "opus"` siempre»). El propietario aprobó «tal cual» una asignación por tipo de trabajo porque el uso se consumía demasiado rápido.
@@ -23,6 +23,7 @@ metadata:
 - desarrollador-backend se lanza con `model: "sonnet"` para lo mecánico: rebase, renombres, SQL idempotente ya diseñado, correcciones de una o dos líneas.
 - **Escalar a Opus** cualquier agente cuando la tarea toque el orden de bloqueos, NCF o e-CF, costos o kárdex, aislamiento entre empresas, criptografía o licencia, o cuando un agente con Sonnet falle dos veces en lo mismo. Integraciones: Opus para diseñar el contrato de un tercero nuevo. QA: Opus para analizar concurrencia o carga.
 - Fable 5.1 sigue reservado para la revisión general al cerrar las olas ([[fable-revision-general-tras-olas]]).
+- **Lo hace cumplir un hook** (aprobado por el propietario el 2026-10-17; se instala con `herramientas/Instalar-Hook-ModeloPorAgente.ps1`): `PreToolUse` sobre `Agent` en `~/.claude/settings.json`, script `~/.claude/hooks/modelo-por-agente.ps1`. Quita un `model` que suba sobre la definición salvo que el encargo traiga la línea `Escalado a Opus: <motivo>` (o `Escalado a Fable:`); deja pasar las bajadas; Explore siempre con haiku. Para escalar, escribir esa línea en el encargo.
 - Aviso publicado a A y C en el área común (`avisos/B-a-A/2026-10-17-modelos-por-agente.md`).
 
 Relacionado: [[firma-humana-arquitecto-maestro]], [[limite-agentes-pc-b]].

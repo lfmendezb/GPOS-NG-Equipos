@@ -13,7 +13,7 @@
 - [decision-modelo-datos-propio-pendiente](decision-modelo-datos-propio-pendiente.md) — 2026-10-03: propuesta de modelo propio (ADR-52) con hoja de firma MD-01 a MD-32 pendiente; no construir sobre el esquema BP2 hasta la firma
 - [respuestas-propietario-modelo-datos](respuestas-propietario-modelo-datos.md) — 2026-10-03: P-1 a P-11 respondidas: ITBIS 16 %, códigos inmutables, listas de precios, sin conexión por sucursal con sincronización central, recetas/mermas, ARS
 - [motor-sql-server-decidido](motor-sql-server-decidido.md) — 2026-10-04: se mantiene SQL Server tras evaluar PostgreSQL 18; reabrir solo con 3+ clientes grandes
-- [agentes-con-opus](agentes-con-opus.md) — 2026-10-17: modelo por agente (Opus riesgo/backend, Sonnet resto, Haiku orquestador/Explore); ya no se fuerza Opus
+- [agentes-con-opus](agentes-con-opus.md) — 2026-10-17: modelo por agente (Opus riesgo/backend, Sonnet resto, Haiku orquestador/Explore); lo impone un hook PreToolUse; escalar con «Escalado a Opus: motivo»
 - [un-solo-editor-por-repositorio](un-solo-editor-por-repositorio.md) — Incidente 2026-10-04: un solo agente por árbol; confirmar o apartar cambios del propietario antes de editar; rotar la clave heredada de Backup Tool
 - [nombres-bases-gpos](nombres-bases-gpos.md) — GPOS_SYSDATA y prefijo GPOS_ para empresas/sucursales/pruebas; nunca GPOST_ salvo variables de entorno; BP2 solo al citarlo
 - [eliminar-solo-sin-referencias](eliminar-solo-sin-referencias.md) — Eliminar solo sin referencias; si se transaccionó, inhabilitar; aplica también al SUPER (precisión ADR-08)
