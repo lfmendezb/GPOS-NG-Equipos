@@ -1,17 +1,14 @@
 ---
 name: limite-agentes-pc-b
-description: "Equipo nuevo de B (coordinador): hasta 6 agentes, máximo 2 compilando o probando a la vez (propietario, 2026-10-09)"
+description: "Equipo de B (coordinador, OSHIN-LEGION): hasta 8 agentes, máximo 3 compilando o probando; suite completa o carga SQL sola (propietario, 2026-10-10)"
 metadata:
-  node_type: memory
   type: feedback
-  originSessionId: 686e2e7b-d221-4745-a8a5-eeb40a6cf428
-  modified: 2026-10-09T23:11:17.610Z
 ---
 
-En el **equipo nuevo de B** (OSHIN-LEGION, 16 núcleos, 31 GB), el propietario aprobó el 2026-10-09 hasta **6 agentes a la vez**, con un **máximo de 2 compilando o corriendo pruebas** al mismo tiempo. Una tarea que exige mucho de SQL Server o de memoria (cargas, T-57, suite completa de GPOS.Tests) se ejecuta **sola**.
+En el **equipo de B** (OSHIN-LEGION, 16 núcleos, 31 GB), el propietario aprobó el **2026-10-10** («Aprobado según la recomendación») hasta **8 agentes a la vez**, con un **máximo de 3 compilando o corriendo pruebas parciales** al mismo tiempo, y **una sola suite completa de GPOS.Tests o carga SQL a la vez, y sola**.
 
-Sustituye la regla de la PC B vieja (7,8 GB): 4 agentes si solo uno compilaba, si no 2.
+Sustituye la regla del 2026-10-09 (6 agentes, 2 compilando) y la de la PC B vieja (7,8 GB).
 
-**Why:** la PC B vieja se quedaba sin memoria al compilar; el equipo nuevo tiene cuatro veces más RAM y pasó a ser el coordinador ([[siguiente-paso-pc-b]], [[dos-equipos-a-coordina]]).
+**Why:** cada compilación de la solución usa 2-3 GB; el cuello de botella real es la instancia SQL compartida: las pruebas de tiempo (`ImportacionTercerosTiempoTests`) fallan con la suite cargada y pasan solas.
 
-**How to apply:** antes de lanzar un agente, contar los que están en curso y cuántos compilan o prueban; no pasar de 6 ni de 2 compilando. Tampoco correr dos suites completas a la vez (CLAUDE.md). Relacionado: [[revisar-procesos-huerfanos]].
+**How to apply:** antes de lanzar un agente, contar los activos y cuántos compilan o prueban; no pasar de 8 ni de 3. Los agentes de diseño, revisión y documentos casi no cuentan para la carga. Relacionado: [[siguiente-paso-pc-b]], [[revisar-procesos-huerfanos]].

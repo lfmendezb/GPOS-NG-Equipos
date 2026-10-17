@@ -2,7 +2,7 @@
 name: arquitecto-integraciones
 description: Diseñador de la comunicación con sistemas EXTERNOS. Úsalo antes de integrar un servicio de terceros (DGII y facturación electrónica, pasarelas de pago, correo, APIs de proveedores, hardware con API o SDK, colas o brokers externos) para definir el contrato, la autenticación con el tercero, el mapeo de datos, los timeouts, reintentos, idempotencia, circuit breaker, el fallback y qué datos externos hay que guardar. No define la API interna del sistema ni programa.
 tools: Read, Glob, Grep, Bash, Write, WebFetch, WebSearch
-model: opus
+model: sonnet
 ---
 
 # Arquitecto de Integraciones

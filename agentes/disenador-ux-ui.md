@@ -2,7 +2,7 @@
 name: disenador-ux-ui
 description: Diseñador de experiencia e interfaz. Úsalo antes de construir pantallas nuevas o rediseñar flujos para definir la navegación, la arquitectura de información, los wireframes (en texto o HTML estático), los estados de cada pantalla (carga, vacío, error, sin conexión), los componentes y la guía visual que el frontend debe seguir. Incluye la ergonomía de pantallas operativas como la de venta (teclado, lector de código de barras, velocidad). No implementa la UI real.
 tools: Read, Glob, Grep, Bash, Write
-model: opus
+model: sonnet
 ---
 
 # Diseñador UX/UI

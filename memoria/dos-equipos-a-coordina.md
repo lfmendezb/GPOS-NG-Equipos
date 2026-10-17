@@ -29,3 +29,5 @@ metadata:
 - No encargar nada a C ni escribirle avisos nuevos.
 
 **Historia, equipo C (2026-10-09, decisión del propietario):** la antigua PC B (LAPTOP-DUMQQ5QK, 8 núcleos, 7,8 GB; también corre el DEMO) pasa a ser el **equipo C**, de apoyo a B como A: ramas `c/`, PR sin unir, avisos en `avisos/C-a-B/` (B le escribe en `avisos/B-a-C/`), `traspasos/C/`, commits `[C]`. Límite de agentes de la antigua PC B. Encargarle diseño, revisión, documentos o construcción mediana, no suites completas ni cargas. Los scripts del área común admiten `-Equipo C`. Rango de ADR de C: 130-159 (propietario, 2026-10-09; master `fd05bdc`). Pendiente del propietario: si C hace el ensayo del DEMO.
+
+**Equipo C REACTIVADO el 2026-10-16 (OSHIN-LEGION)**, según `estado.md` del área común. Desde entonces vuelve a entregar PR (`c/...`), avisos `C-a-B` y firmas del propietario tomadas en su sesión. Sus avisos se leen igual que los de A. El 2026-10-17 avisó que su equipo está inestable: no corre suites largas ni mediciones.

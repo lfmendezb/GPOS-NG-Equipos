@@ -13,7 +13,7 @@
 - [decision-modelo-datos-propio-pendiente](decision-modelo-datos-propio-pendiente.md) — 2026-10-03: propuesta de modelo propio (ADR-52) con hoja de firma MD-01 a MD-32 pendiente; no construir sobre el esquema BP2 hasta la firma
 - [respuestas-propietario-modelo-datos](respuestas-propietario-modelo-datos.md) — 2026-10-03: P-1 a P-11 respondidas: ITBIS 16 %, códigos inmutables, listas de precios, sin conexión por sucursal con sincronización central, recetas/mermas, ARS
 - [motor-sql-server-decidido](motor-sql-server-decidido.md) — 2026-10-04: se mantiene SQL Server tras evaluar PostgreSQL 18; reabrir solo con 3+ clientes grandes
-- [agentes-con-opus](agentes-con-opus.md) — Lanzar todos los subagentes del proyecto con model: opus (Opus 5.5) de forma explícita
+- [agentes-con-opus](agentes-con-opus.md) — 2026-10-17: modelo por agente (Opus riesgo/backend, Sonnet resto, Haiku orquestador/Explore); ya no se fuerza Opus
 - [un-solo-editor-por-repositorio](un-solo-editor-por-repositorio.md) — Incidente 2026-10-04: un solo agente por árbol; confirmar o apartar cambios del propietario antes de editar; rotar la clave heredada de Backup Tool
 - [nombres-bases-gpos](nombres-bases-gpos.md) — GPOS_SYSDATA y prefijo GPOS_ para empresas/sucursales/pruebas; nunca GPOST_ salvo variables de entorno; BP2 solo al citarlo
 - [eliminar-solo-sin-referencias](eliminar-solo-sin-referencias.md) — Eliminar solo sin referencias; si se transaccionó, inhabilitar; aplica también al SUPER (precisión ADR-08)
@@ -26,7 +26,7 @@
 - [avisar-cambio-de-sesion](avisar-cambio-de-sesion.md) — Avisar al propietario cuándo abrir sesión nueva, en un punto sin agentes activos y con nota de traspaso
 - [adjuntos-en-documentos](adjuntos-en-documentos.md) — Adjuntar archivos en mermas y en todos los documentos (salvo POS); nube del cliente en fase tardía
 - [responder-en-espanol](responder-en-espanol.md) — Responder siempre en español, también los avisos de avance
-- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — B coordina e integra, A apoya (ramas a/, no une); equipo C DISUELTO 2026-10-14 (funciones a A y B, ADR 130-159 congelado); área común GPOS-NG-Equipos
+- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — B coordina e integra, A apoya (ramas a/, no une); C disuelto el 14-oct y REACTIVADO el 16-oct (OSHIN-LEGION); área común GPOS-NG-Equipos
 - [sucursal-en-linea-sqlite-y-licencia](sucursal-en-linea-sqlite-y-licencia.md) — ADR-53: nodo elegible; SQLite local en sucursal en línea tras las olas; licencia por empresa por usuarios; SUPER siempre de la plataforma
 - [fable-revision-general-tras-olas](fable-revision-general-tras-olas.md) — Fable 5.1 solo para la revisión general al completar las olas; agentes con Opus
 - [ecf-conectores-enchufables](ecf-conectores-enchufables.md) — e-CF y ERP (AdmCloud, Alegra, IQ) como complementos que NUNCA tocan el núcleo de GPOS NG
@@ -37,8 +37,8 @@
 - [revisar-procesos-huerfanos](revisar-procesos-huerfanos.md) — Al revisar procesos, incluir bash/pwsh (bucles huérfanos de agentes), no solo dotnet
 - [estado-equipo-b](estado-equipo-b.md) — Cierre del equipo B 2026-10-07: ola 3b firmada y unida; Backup Tool N-01 construido; pendientes del propietario
 - [nombres-de-version-tabla-periodica](nombres-de-version-tabla-periodica.md) — «Argón» = etapa actual; desde 2026-10-09 se dice «GPOS Argón» (no renombrar código); cada hito, un elemento
-- [limite-agentes-pc-b](limite-agentes-pc-b.md) — Equipo nuevo de B: hasta 6 agentes, máximo 2 compilando o probando; lo pesado de SQL corre solo
-- [revision-area-comun-30-min](revision-area-comun-30-min.md) — Regla 8: revisar el área común cada 30 min (se probó 10 y el propietario lo revirtió); CronCreate + Revisar-AreaComun.ps1; atiende lo rutinario
+- [limite-agentes-pc-b](limite-agentes-pc-b.md) — Equipo de B: hasta 8 agentes, máximo 3 compilando o probando; suite completa o carga SQL sola (2026-10-10)
+- [revision-area-comun-30-min](revision-area-comun-30-min.md) — Regla 8: tarea de Windows cada 10 min + Monitor sobre novedades-B.md en la sesión (re-armar cada 30 min); sin CronCreate
 - [xml-firmado-responsabilidad-proveedor](xml-firmado-responsabilidad-proveedor.md) — El XML firmado del e-CF lo custodia IQ (DF-06 v4); GPOS guarda el JSON enviado con huella y sello
 - [Siguiente paso en la PC B](siguiente-paso-pc-b.md) — traspaso 2026-10-09: mudanza de B a un equipo de más capacidad (posible principal); ramas, firmas pendientes PR/RPV, P9 Polaris, esperas de A
 - [api-reportes-solo-lectura](api-reportes-solo-lectura.md) — API de reportes aparte, solo lectura sobre vistas rpt; persistencia en la API principal; igual para análisis (orientación 2026-10-07)
@@ -47,13 +47,22 @@
 - [archivado-por-periodos-express](archivado-por-periodos-express.md) — Edición SQL la elige el cliente; con Express, archivado por períodos elegidos por el cliente (capacidad general)
 - [prioridad-ventas-inventario](prioridad-ventas-inventario.md) — 2026-10-08: núcleo = POS operativo con sus verticales, ventas e inventario; lo demás se agrega por etapas
 - [reportes-fiscales-aplazados](reportes-fiscales-aplazados.md) — 2026-10-08: 606, 607, 608 y apoyos IT-1/IR-17 aplazados (los tiene el ERP); la emisión NCF/e-CF y el Z no se aplazan
-- [conector-polaris-preferido](conector-polaris-preferido.md) — Polaris EDI (e-CF firmado directo) posible preferido antes que IQ; diseño al haber lugar; ambientes 0-3
+- [conector-polaris-preferido](conector-polaris-preferido.md) — SUSTITUIDO 2026-10-10: conectores e-CF oficiales AdmCloud e IQS; Polaris tercera opción (ADR-124)
 - [agentes-sin-ventanas-ni-instalaciones](agentes-sin-ventanas-ni-instalaciones.md) — Incidente 2026-10-08: agentes no ejecutan MSI, servicios ni programas con ventanas en la PC del propietario
 - [filtro-suite-oficial](filtro-suite-oficial.md) — GPOS.Tests: --filter "Transicion!=Ola5&Transicion!=Defecto"
 - [kits-admcloud-prueba-alta-pendiente](kits-admcloud-prueba-alta-pendiente.md) — Kits AdmCloud: KD-01 a KD-08 aprobados (ImpactStock=false + ajuste diario; GPOS manda en receta; no crear kits en v1)
 - [corte-entrega1-mediados-diciembre](corte-entrega1-mediados-diciembre.md) — 2026-10-08: corte de la entrega 1 a mediados de diciembre; API de reportes aparte la consolida B; ADR-77 a 80 libres
-- [mvp-fecha-medicion](mvp-fecha-medicion.md) — MVP: 70 % (7 de 10) medido el 2026-11-01; desde 2026-10-10 cuentan 9 de 10 (F1-F9) tras la ola 5; falta F10; lista consolidada en MVP.md
+- [mvp-fecha-medicion](mvp-fecha-medicion.md) — MVP: meta 70 % (7 de 10), medición 2026-11-01; desde 2026-10-10 cuentan 9 de 10 (F1-F9); falta F10 (3b)
 - [librerias-publicas-antes-que-propias](librerias-publicas-antes-que-propias.md) — Librería libre muy usada antes que solución propia (XLSX: OpenXml en flujo; ClosedXML para importar)
 - [restaurante-catering-ejecutivos](restaurante-catering-ejecutivos.md) — Restaurante sin mesas: catering + ejecutivos (menú diario y corporativos a crédito por empleado); hoja firmada 2026-10-09 (tramo 3d)
 - [numero-al-final-del-guardado](numero-al-final-del-guardado.md) — Principio firmado: número/NCF como último paso del guardado + M-C (foto mensual de costo) + D-8; construcción en noviembre
+- [carpeta-paquetes-demo-onedrive](carpeta-paquetes-demo-onedrive.md) — Carpeta compartida de OneDrive para publicar los paquetes del DEMO (2026-10-10)
+- [ecf-exclusivo-15-nov-2026](ecf-exclusivo-15-nov-2026.md) — e-CF exclusivo desde el 15-nov-2026 (prórroga DGII aviso 06-26); conector e-CF requisito del primer cliente
+- [pausa-2026-10-10](pausa-2026-10-10.md) — Estado al pausar todo (2026-10-10 ~14:15): ramas sin unir, pendientes de firma y pasos al reanudar
+- [revision-demo-10b-rama](revision-demo-10b-rama.md) — Revisión del DEMO 10b: rama b/demo-revision-1 (aca9b04), puntos 1-3 hechos, sin unir; DatePicker sin Style
+- [valores-terceros-configurables](valores-terceros-configurables.md) — 2026-10-11: ningún valor de tercero en el código; VT-01..12 firmadas; ADR-126 por registrar; T1 desde el 14-oct
+- [medicion-oficial-14oct](medicion-oficial-14oct.md) — T-28/T-57 r2 del 14-oct en verde; topes +5 % para T1 (33,4 / 84,0 ms)
+- [respaldo-emergencia-2026-10-11](respaldo-emergencia-2026-10-11.md) — Equipo B se apaga solo: respaldos 11 y 14-oct en OneDrive GPOS ARGON; traspaso 2026-10-14-traspaso-B-apagados.md
 - [marcas-migraciones-orden-de-union](marcas-migraciones-orden-de-union.md) — Marcas de migraciones EF = orden de unión; la rama posterior regenera (B, 2026-10-14); orden #24→#26→#21→#28
+- [traspaso-b-2026-10-15](traspaso-b-2026-10-15.md) — Sustituido por el del 2026-10-17 (historia del 15 y 16-oct)
+- [traspaso-b-2026-10-17](traspaso-b-2026-10-17.md) — LEER PRIMERO: cambio de sesión de B (2026-10-17); T6 cuarta tanda por analizar; unión del 27-oct y orden de PR

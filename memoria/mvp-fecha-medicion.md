@@ -16,12 +16,10 @@ Contexto: el MVP se mide como «% de flujos de la lista funcionando de punta a p
 
 **How to apply:** planificar para que lo medible esté unido y verificado antes del 1-nov (en la práctica, el viernes 30-oct). Si la meta (60/70) o la lista aún no están confirmadas, confirmarlas antes de llevar la hoja a firma. Relacionado: [[prioridad-ventas-inventario]], [[dos-equipos-a-coordina]].
 
-**Confirmado por el propietario (2026-10-09):** meta **70 % (7 de 10)** y lista F1-F10 aprobadas; verificación de QA de F1 a F8 lanzada ese día. Falta la hoja de firma formal (B coordina).
+**Confirmado por el propietario (2026-10-09):** meta **70 % (7 de 10)** y lista F1-F10 aprobadas; verificación de QA de F1 a F8 lanzada ese día. Hoja de firma formal registrada el 2026-10-10: `docs/decisiones/2026-10-10-hoja-firma-mvp.md` en master.
 
 **Línea base del 2026-10-09 (QA, `feature/modelo-ng` `e3a1d2b`, pruebas `tests/GPOS.Tests/Mvp/`, `Categoria=Mvp`):** cuentan 6 de 10 (F1, F2, F4, F5, F6, F8). F3 espera D-MVP-02 (orden recibida y facturada duplica existencia; dirección aprobada: la factura de orden recibida no mueve existencia, solo CxP y ajuste de costo; criterio del especialista contable en curso). **F7 espera la reimpresión de facturas** (propietario: la del Z no basta; la construye A en la tanda de núcleo de caja). D-MVP-01 (cambio de clave solo exigido en la interfaz) encargado a A. RNC del encabezado de evidencia: opción (a), vista `rpt` en la base de la empresa (aprobada).
 
 **Avance del 2026-10-10:** PR #8 unido (F7) y D-MVP-02 unido (F3) en `feature/modelo-ng` `97fde26`: **cuentan 8 de 10** (F1-F8). Faltan F9 (reportes, ola 5) y F10 (transferencias, 3b), que no hacen falta para el 70 %.
 
-**Avance posterior del 2026-10-10:** la ola 5 quedó integrada en `feature/modelo-ng` `9fe5476`, incluida la prueba F9. El coordinador informa **9 de 10 (F1–F9)** y MVP + F9 + arquitectura 50/50; solo F10 (transferencias 3b, tramo 1 sin diferencias) sigue pendiente en esos informes. Esta actualización sustituye el estado anterior de 8/10; no representa una nueva corrida ni la aceptación final del 1-nov. Fuentes: `avisos/B-a-A/2026-10-10-ola5-unida.md` y `avisos/B-a-A/2026-10-10-ola3b-construye-b.md`.
-
-**Lista consolidada:** [Objetivos del MVP](../MVP.md), con F1–F10, resultados esperados, meta mínima 7/10, fecha de medición y evidencia del avance publicado.
+**2026-10-10 (tarde):** la ola 5 se unió a `feature/modelo-ng` (`9fe5476`) con la prueba F9 en verde: **cuentan 9 de 10** (falta F10, ola 3b tramo 1, prevista para el 29-oct).

@@ -32,7 +32,7 @@ Traspaso del equipo B del 2026-10-09. El propietario cambia la PC B por un equip
 | Repositorios aparte | `GPOS-NG-AddOn-Kit` (main), `GPOS-NG-AddOn-Polaris` (main, c990f1a), `GPOS-NG-AddOn-IQS*` | Kit alfa.5 en `gsf-local` (copiado en el paquete) |
 
 ## Pendiente del propietario
-- **Por firmar:** PR-01 a PR-18 (producción y merma de cocina) y RPV-01 a RPV-14 (reportes por vertical). Al firmar PR, registrar en ADR-113 la decisión (M)/(S) del 2026-10-09: el elaborado es artículo en AdmCloud; con manufactura usa `ProductionBuilds`, sin ella usa conduce más ajuste positivo.
+- **PR-01 a PR-18 y RPV-01 a RPV-14: FIRMADAS el 2026-10-09** («Todo según recomendación»; ADR-125 en master). Ya no están pendientes.
 - **Por ejecutar** (lo hace el propietario; el clasificador no deja al agente usar credenciales de la base): `herramientas\Consultar-ConduceAjusteAdmCloud.ps1`. Es de solo lectura y verifica el conduce sin factura, el pendiente de facturar y `DebitAccountID`.
 - **P9 de Polaris:** detenida por PQ-25. La guía «Inicio rápido» se siguió tal cual y falla. Para destrabarla, el propietario registra una empresa de pruebas en el portal de Polaris (ambiente 1). PQ-26 a PQ-30 esperan a Polaris.
 - **C-47 a C-50 para el contador:** falta saber si se agregan a la adenda (texto en el análisis de kits). Alta de kits por la API: aplazada y fuera de la v1 (KD-08).

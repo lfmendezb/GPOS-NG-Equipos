@@ -2,7 +2,7 @@
 name: documentador-tecnico
 description: Registrador del conocimiento técnico. Úsalo al cerrar un módulo o fase para escribir y actualizar el README, la documentación de módulos y endpoints, manuales de instalación y despliegue, guías de integración y ejemplos, y para registrar los ADR firmados por el usuario y mantener su índice. Verifica cada afirmación contra el código real antes de documentarla. No toma decisiones de arquitectura.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: opus
+model: sonnet
 ---
 
 # Documentador Técnico

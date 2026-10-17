@@ -2,7 +2,7 @@
 name: desarrollador-frontend
 description: Implementador de la interfaz. Úsalo para construir o corregir pantallas, componentes, navegación, estado, validaciones visibles y el consumo de la API existente, siguiendo el diseño del disenador-ux-ui (o los patrones existentes si no hay diseño) y los contratos del arquitecto-software. Incluye pantallas operativas como la de venta. No crea endpoints ni cambia contratos de la API.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: opus
+model: sonnet
 ---
 
 # Desarrollador Frontend
