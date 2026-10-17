@@ -132,3 +132,29 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
 - **Suite oficial del candidato (Debug):** 3150 correctas, 47 fallidas y 28 omitidas.
   - Las 45 de `DispositivosK1Tests` fallaron al abrir su conexión («No hay ningún proceso en el otro extremo de la canalización»), seguramente por el `KILL` inmediato de PA30 en paralelo. **Solas: 53/53**, incluida C-10.
   - Las otras dos son PA30 (DL-22 sin unir) y C-10 (intermitente).
+
+## Cuarta tanda (2026-10-17, 06:52 a 11:30) y veredicto con 5 corridas por lado
+- **Condiciones:** carga de CPU entre el 0 % y el 11 %, conectada, sin cortes. Base `e80f4654`; candidato `c01df683` (R-02 con el ajuste de `PoliticasArticulos`). Salidas en `GPOS-B-prep27\TestResults\T6-r4-20261017-0652\`.
+- **Corridas nuevas:**
+  - T-28: base 25,2 (281,4/s) y 26,2 (279,3/s); candidato 29,7 (273,0/s) y 25,1 (292,3/s).
+  - T-57 sin compras: base 23,7 y 23,3; candidato 23,6 y 23,7.
+  - Con compras: base 40,2 y 41,2; candidato 41,9 y 40,7.
+  - 5b: base 940,8 y 1.363,9; candidato 609,5 y 257,4.
+  - N6-02: base 85,7 y 88,9; candidato 62,8 y 107,0.
+
+| Métrica (p95, ms; 5 corridas por lado) | Mediana base | Mediana cand. | Razón | Veredicto |
+|---|---|---|---|---|
+| **N6-02, 20 renglones** | 88,9 | 84,0 | **0,945** | **Cumple** |
+| **T-57 sin compras** | 23,7 | 24,6 | **1,038** | **Cumple** |
+| T-57 con compras | 41,2 | 41,9 | 1,017 | Cumple |
+| T-57 meta 5b | 1.363,9 | 609,5 | 0,447 | Cumple, con mejora grande |
+| **T-28, 6 cajeros** | 24,5 | 27,2 | **1,110** | **NO CUMPLE** el criterio 2. Cumple frente a la oficial (≤ 32,8) |
+
+- **T-28 sigue bimodal en el candidato:** 22,1 / 25,1 / 27,2 / 28,5 / 29,7. Esta mañana la base también cayó en el modo intermedio (25,2 y 26,2). La causa sigue sin identificar; ver el perfil del 17-oct, §6.
+- **Hallazgo nuevo de 8.2 (6), Medio:** en `t28-r1-cand`, la comprobación de impuestos de `TR_Documento_Emision` (`IF EXISTS (SELECT 1 FROM ventas.VentaImpuesto vi OUTER APPLY …)`) hizo un **Clustered Index Scan de `ventas.VentaLineaImpuesto`** (0 KB). Pasó en 1 de 5 corridas.
+  - Es un plan inestable, como UF-05: pide un `FORCESEEK` o una reescritura en la misma migración `Uf05ForceSeek`, que todavía no está unida.
+  - Puede explicar parte de la cola de T-28 cuando aparece.
+- **Para la sesión nueva de B (decisión del propietario antes del 27-oct):**
+  1. Corregir el plan de la comprobación de impuestos.
+  2. Diagnosticar el modo lento de T-28 (muestras de `PAGELATCH`, `dotnet-counters`).
+  3. Volver a medir T-28 con 5 corridas por lado, o aceptar T-28 a 1,11 frente al control, con la oficial cumplida, por escrito.

@@ -40,7 +40,7 @@ En las 3 corridas del candidato, T-28 da Correcto (8.2 (6) cumple).
 **Cuarta tanda** (`Medicion-T6-r4.ps1`, lanzada el 2026-10-17 a las 06:52):
 - **Comparación:** base `e80f4654` frente a candidato `c01df683`. 2 rondas de T-57, T-28 y N6-02.
 - **Salidas:** `GPOS-B-prep27\TestResults\T6-r4-20261017-0652\`. La bitácora (`bitacora.txt`) registra la carga de CPU de cada corrida.
-- **Qué hacer con ella:**
+- **YA ANALIZADA (2026-10-17, 11:35): ver el final de `2026-10-16-t6-segunda-tanda.md`. N6-02, T-57 y 5b cumplen; T-28 da 1,110 y no cumple; hallazgo nuevo de 8.2 (6) en la comprobación de impuestos.** Lo que se pedía hacer:
   1. Juntar T-28 y T-57 con las 3 corridas de la tanda con R-02, para tener 5 por lado. El candidato solo cambió el ajuste de `PoliticasArticulos`, que es despreciable en T-28.
   2. Contar cuántas corridas caen en el «modo lento» de T-28 (unas 270 a 282 ventas/s y p95 de 27 a 29 ms) y cuántas en el rápido (unas 300 ventas/s y p95 de 23 a 24 ms).
   3. Confirmar que N6-02 sigue en verde con el ajuste.
