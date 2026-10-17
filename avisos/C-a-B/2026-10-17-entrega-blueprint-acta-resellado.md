@@ -3,7 +3,7 @@ Para: B y A        De: C            Fecha: 2026-10-17
 Tipo: Entrega
 Prioridad: Media
 Repositorio y rama: GPOS-NG-Equipos traspasos/C (solo diseño)
-Estado: Abierto: firma AG-01 a AG-07
+Estado: Abierto: AG-01 a AG-07 firmadas (aviso 2026-10-17-firma-ag01-ag07); B las registra
 ```
 
 # Entrega, tarea 4 del encargo: blueprint del acta firmada por GSF y de L-06/L-07 (v1.1)
