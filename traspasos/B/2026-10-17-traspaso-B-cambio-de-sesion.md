@@ -58,7 +58,10 @@ En las 3 corridas del candidato, T-28 da Correcto (8.2 (6) cumple).
   1. #52 + #55, DL-22. A tiene que renumerar el 51616 a 51617 y aplicar los tres puntos aprobados: S18, `KILL` con `--urgente` y `ComprobarAsync` limitado a `gpos_app_*`.
   2. #51, de C, rebasado sobre el #55, con las pruebas de carga.
   3. #45, activación de `UseLicencia`, cuando se firme P-81A-17.
-  4. #48, 12834: A lo regenera con una marca posterior a `Uf05ForceSeek`.
+  4. #48, 12834: A lo regenera con una marca posterior a `Uf05ForceSeek`. **El #60 (D-04, PA28) va con él.**
+  5. #63 (SL) → #67 (RN) → #57 (fase A de ADR-81, de C) → #58 (SEG-FA-06). SL va antes de la fase A porque tocan los mismos cinco archivos.
+  - **#59 (D-03) y #65 (EV-01):** son neutros y entran en cualquier hueco después del 27-oct.
+  - *Puntos 4 (el #60) y 5, y la línea de #59 y #65: firmados por el propietario el 2026-10-17 en la sesión de B: «Firmo el orden propuesto tras el 27-oct: #60 con el #48; #63 → #67 → #57 → #58; #59 y #65 en cualquier hueco.»*
 - **Cerrado:** #50 (CP170 duplicado; vale el de la preparación).
 - **Después:** `b/ola5-auditoria-r` con la migración regenerada, y P-B1 a P-B3 cuando se una el #48.
 

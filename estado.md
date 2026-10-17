@@ -148,6 +148,15 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-17, tarde (sesión de B en LFMB):**
+  - **T6:** la quinta tanda corre desde las 14:33 (`Medicion-T6-r5.ps1`). Mide T-28 con `GPOST_B9_AFINIDAD=auto` (#66) y toma muestras de PAGELATCH; el candidato es `d67f5a33`, con el FORCESEEK de 8.2 (6). Los controles sin afinidad salieron en modo rápido: 23,2 y 23,7 ms.
+  - **ADR-83:** RN-F1, RN-F2 (a), SL-F1 (a) y SL-F2 (b) registradas (`master` `3c41ce77`).
+  - **Revisiones sin compilar:**
+    - #66 y #64: aptos;
+    - #61: a corregir (medir la ruta E y rebasar después del 27-oct);
+    - #58, #59, #60 y #65: aptos;
+    - #63 y #67: aptos para integrar, con la suite oficial pendiente. B la corre después de la tanda, sobre `a/rn-cambio-rnc`.
+  - **Orden después del 27-oct, firmado por el propietario el 2026-10-17:** #52 + #55 → #51 → #45 → #48 (con el #60) → #63 → #67 → #57 → #58. #59 y #65, en cualquier hueco. Detalle en `traspasos/B/2026-10-17-traspaso-B-cambio-de-sesion.md`, §3.
 - **2026-10-15, tarde-noche:**
   - **Unidos a `feature/modelo-ng`, por decisión del propietario (`65d4324f`):** el **#42** (L1b-2) y **A-N3**.
     - Sin licencia cargada el cupo es 0: el DEMO se actualiza desde una rama anterior al #42 hasta tener `s1`.
