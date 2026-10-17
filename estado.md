@@ -3,6 +3,10 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-17, tarde (orden del propietario: SL y el emisor):**
+  - **PR #63, SL «Sello y padrón»** (`a/sl-sello-padron` @ `afc8bdb1`). Arquitecto: Conforme con correcciones (C-1 a C-5 aplicadas). Seguridad: Aprobado con observaciones (SL-01 y SL-03 a SL-10 corregidas). Pruebas dirigidas 1097/2/1; las 2 son del 12834. C corre la suite y conecta la fase A. Unir **antes de la fase A y después del 27-oct**. A firma: SL-F1 y SL-F2. Aviso `2026-10-17-pr63-sl-sello-padron`.
+  - **Emisor** `GSF.EmisorLicencias` @ `34fbb49`, solo local: `autNivel` con `VerificarCompacto`. Seguridad: Aprobado con observaciones; EV-02 a EV-06 corregidas. 94/94 en Debug y en Release. A firma: EV-03 (`desde`). Aviso `2026-10-17-emisor-verificarcompacto`.
+  - **Siguiente:** EV-01 y RN (cambio de RNC).
 - **2026-10-17, mañana:** **#59 @ `a1397a1d`:** la prueba D03 ya no depende de la carga. Los ayudantes de `MotorPrueba` repiten hasta obtener el error esperado (4060, -2 o 208), en lugar del 233 que da la memoria compartida bajo carga. Solo pruebas; 12/0/0 tres veces. C vuelve a correr la suite. Aviso `2026-10-17-d03-prueba-fragil-corregida`. **A sin tareas en curso:** lo demás espera a B (negativa (iii) de la vía (b), bajas S18/`--urgente`, uniones) o al 27-oct (marca del #48).
 - **2026-10-17, madrugada (lo de C para A en la fase A de ADR-81):**
   - **#59 D-03:** reintento único del anillo (`d7b6e1c3`; 12/0/0).
