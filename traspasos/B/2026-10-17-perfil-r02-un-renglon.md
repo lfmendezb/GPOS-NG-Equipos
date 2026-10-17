@@ -237,3 +237,11 @@ Ninguna. El ajuste es de forma de la consulta: cumple la precisión R-02 de ADR-
   - QA → T-28 con 5 corridas por lado, informando los modos, y N6-02 y T-57 tras el ajuste;
   - backend o rendimiento → diagnóstico del modo lento (sección 6).
 - Próximo paso recomendado: aplicar el ajuste de la sección 5 en `b/prep-27oct` antes de cerrar T6; después, T-28 con 5 corridas por lado.
+
+---
+**Registro del coordinador (2026-10-17):**
+- El ajuste de la sección 5 está aplicado en `b/prep-27oct` `c01df683`. La política tiene una búsqueda en `PK_Articulo` con 0 KB; la prueba usa un catálogo de 340 artículos y exige que no haya recorrido ni spool.
+- **Pruebas:** 532/0/5 en `.\SQLEXPRESS` (incluidas las 18 de `Mvp.TransferenciasTramo1Tests`) y 53/0/2 en `.`.
+- **ADR-118:** nota del registro en `master` sobre la forma de la consulta.
+- **Pendiente para el arquitecto de datos de B:** decidir la salvaguarda del nivel de compatibilidad ≥ 130 (`STRING_SPLIT`) en `GPOS.Migracion verificar` y en el aprovisionamiento.
+- **Esta noche:** `Medicion-T6-r4.ps1`, con 2 corridas más por lado de T-57, T-28 y N6-02 sobre `c01df683`.
