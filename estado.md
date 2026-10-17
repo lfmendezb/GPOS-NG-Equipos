@@ -3,6 +3,7 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-17, mañana:** **#59 @ `a1397a1d`:** la prueba D03 ya no depende de la carga. Los ayudantes de `MotorPrueba` repiten hasta obtener el error esperado (4060, -2 o 208), en lugar del 233 que da la memoria compartida bajo carga. Solo pruebas; 12/0/0 tres veces. C vuelve a correr la suite. Aviso `2026-10-17-d03-prueba-fragil-corregida`. **A sin tareas en curso:** lo demás espera a B (negativa (iii) de la vía (b), bajas S18/`--urgente`, uniones) o al 27-oct (marca del #48).
 - **2026-10-17, madrugada (lo de C para A en la fase A de ADR-81):**
   - **#59 D-03:** reintento único del anillo (`d7b6e1c3`; 12/0/0).
   - **#60 D-04:** PA28 con `InstanciaContenidos` (`b4a87f09`). En SQL 2019 sigue el 12834 hasta el #48.
