@@ -26,7 +26,7 @@ La suite oficial de cada PR la corre B en LFMB, o A.
     - en `ComandoSellos.Factor`.
   - **`UsuariosService.CambiarFactorAsync(codigo, escribirFactor)`** para el alta y la baja del factor. Toma el padrón primero, escribe el factor dentro de la misma transacción y vuelve a sellar.
   - **S-02 y S-04** (`SellosEndpoints.cs`) y **S-03** (`CambioRncEndpoints.cs`), mapeadas con `RequiereAutenticacionReciente()` y dadas de alta en `RutasLicenciaAprobadas.json`. Las pruebas de arquitectura `SellosEnLaApiTests` y `CambioRncEnLaApiTests` cambian a propósito.
-  - **Catálogo de eventos:** sumar `CUENTA_LEGITIMADA`, `PADRON_PURGADO`, `PADRON_RESELLADO`, `CUENTAS_FUERA_DE_PADRON`, `PADRON_DISCO_AUSENTE`, `CAMBIO_RNC_SUPER` y `CUENTA_CON_FACTOR`. Hay que alinear los nombres: en el catálogo de C están en PascalCase y SL los escribe en MAYÚSCULAS_CON_GUION.
+  - **Catálogo de eventos:** sumar `CUENTA_LEGITIMADA`, `PADRON_PURGADO`, `PADRON_RESELLADO`, `CUENTAS_FUERA_DE_PADRON`, `PADRON_DISCO_AUSENTE` y `CAMBIO_RNC_SUPER`. Hay que alinear los nombres: en el catálogo de C están en PascalCase y SL los escribe en MAYÚSCULAS_CON_GUION.
 - **Seguridad:** factor, sello y licencia. Corresponde «Escalado a Opus» para el desarrollador y la revisión del auditor.
 
 ## 2. Pantallas web de SL y RN (GPOS.Web y, si aplica, MAUI)
