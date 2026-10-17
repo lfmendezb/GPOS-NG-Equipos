@@ -274,3 +274,27 @@ Condiciones para avanzar:
 - Decisiones candidatas a ADR: Ninguna
 - Entregas a otros agentes: auditor-seguridad → revisión de la fase A y confirmación de las 5 rutas anónimas (D-01); desarrollador de C (T-e) → PA-14 (D-02); equipo A → D-03 (`AnilloLicenciaInstalacion`) y D-04 (`PA28`); documentador → O-1 (barra final de J2-1)
 - Próximo paso recomendado: revisión del auditor-seguridad y decisión del propietario sobre el umbral de PA-14; después, el push de `06b913c8`
+
+---
+
+## Actualización del 2026-10-17: D-02 (PA-14) cerrado
+
+**Origen:** el propietario decidió «Optimiza PA-14 primero».
+
+**Cambio (`4e5bc446`):** la lectura de validación de la sesión pasa de EF a ADO.NET directo, como dice MD-09.
+- Lee el mismo SQL y las mismas 9 columnas.
+- No usa caché, así que CS-2, CS-4 y CS-12 no cambian.
+- El esquema no cambia.
+
+**Causa:** el plan ya era un seek sobre la clave primaria. El tiempo de más estaba en que EF traducía y materializaba la consulta en el cliente.
+
+**Medición:** con la máquina sola, 5 corridas por compilación, 500 muestras por corrida.
+
+| Compilación | p95 antes (ms) | p95 después (ms) |
+|---|---|---|
+| Debug | 1,83 a 2,09 | 1,33 a 1,43 |
+| Release | 1,91 a 2,16 | 1,31 a 1,44 |
+
+- **PA-14 se cumple en las 10 corridas.** No hace falta el criterio de la mediana.
+- **Mediana (p50):** bajó entre un 25 y un 40 %.
+- **Máximos:** siguen entre 7 y 15 ms. Son picos aislados que no tocan el p95.
