@@ -313,3 +313,51 @@ Es una recomendación técnica: la decisión de unir y de publicar es del propie
 - Decisiones candidatas a ADR: Ninguna
 - Entregas a otros agentes: desarrollador de T-j2 → SEG-TJ2-01 a 06 y 08 (≈ 0,16 sp); qa-automatizado → SEG-TJ2-07 y las pruebas nuevas de SEG-TJ2-01, 02, 04, 05 y 06; auditor-seguridad → revisión de T-j2e y T-j2f (REQ-C-12, cliente); devops → que el PR de las llaves `aut` exija estas correcciones y la constancia de REQ-E (PA-05)
 - Próximo paso recomendado: unir T-j2a a T-j2d y corregir SEG-TJ2-01, 02, 04 y 05 antes de publicar las llaves `aut`
+
+---
+
+## 9. Verificación de correcciones (2026-10-16, diff `61dd46e8..2737ed20`)
+
+**Método:** solo lectura del diff de los commits `d59cd1e2`, `5432a244`, `50ad2f05`, `08f42ffe` y `2737ed20`. **No compilé ni ejecuté las pruebas.** Cuando digo que una prueba cubre algo, es porque leí su código, no porque la haya visto pasar.
+
+| Hallazgo | Commit | Estado | Evidencia |
+|---|---|---|---|
+| SEG-TJ2-01 (tiempo del 401) | `d59cd1e2` | **Cerrado** | `UsuariosService.ValidarAsync` calcula el hash ficticio con una cuenta inexistente, inhabilitada o sin contraseña (`UsuariosService.cs`, bloque nuevo tras `FirstOrDefaultAsync`). Cierra también SEG-AP-14 en `/login`, salvo el 423, que ya existía y es una respuesta distinta. La prueba `SEG_TJ2_01_…` usa el contador `HashesFicticios`, interno y solo de lectura |
+| SEG-TJ2-02 (tope de 3 en paralelo) | `d59cd1e2` | **Cerrado, con una observación** (SEG-TJ2-10) | El intento se toma de forma atómica **antes** de comprobar la contraseña: `ConsultasRecuperacionFactor.TomarIntento` (`UPDLOCK, HOLDLOCK`; si no hay fila, `INSERT` en P con 1; si la hay, `UPDATE … WHERE Estado = 'P' AND IntentosClave < 3 AND UsuarioCodigo = @u`). Después, `Quemar` hace P → Q con 3 intentos o más y exactamente una fila. La reserva P → R admite que el tercer intento sea el correcto. El resultado depende de que `@@ROWCOUNT` refleje el `UPDATE` aunque se dispare el disparador 52011. No lo comprobé contra el motor, pero la prueba secuencial de 3 intentos más 1 fallaría si no fuera así (inferido). Prueba nueva: `SEG_TJ2_02_diez_claves_erroneas_en_paralelo_solo_comprueban_3_y_queman_el_jti` |
+| SEG-TJ2-03 (`jti` en los rechazos) | `5432a244` | **Cerrado** | `VerificadorAutorizacionRecuperacion` construye la `AutorizacionRecuperacion` después de comprobar el `aud`, y los rechazos de los pasos 5 a 8 llevan su `Identidad` (`jti`, `kid`, nivel, huella, usuario, motivo). Los rechazos anteriores a la firma siguen sin identidad, como pide SEG-AP-11. Desaparece `UsuarioJws`, que volvía a leer el contenido |
+| SEG-TJ2-04 (disponibilidad en J2-2 y J2-3) | `50ad2f05` | **Cerrado** | `DisponibleAsync` se comprueba antes de leer el cuerpo en J2-2 y J2-3, y `LlaveVigenteAsync(d.Kid)` exige una llave `aut` activa, no retirada y con piso para el perfil actual (`RecuperacionFactorService.cs`, método nuevo; `RecuperacionFactorEndpoints.cs`, J2-2 y J2-3). Las rutas leen el cuerpo a mano después de la comprobación, y siguen con `LimiteCuerpo` |
+| SEG-TJ2-05 (J2-2 tras un reinicio) | `50ad2f05` | **Cerrado** | `DesafioRecuperacionVigenteAsync` exige en la base que el `jti` esté en R, que sea de la cuenta y que `SelloSeguridad` sea igual al del desafío. La confirmación renueva el sello, así que un desafío confirmado ya no entrega el secreto. El parámetro `Ansi(sello, 32)` coincide con la columna `varchar(32)` |
+| SEG-TJ2-06 (avisos solo para el SUPER) | `08f42ffe` | **Cerrado** | `AvisosAsync` solo agrega `Recuperaciones` si `EsSuperHabilitado` es verdadero según la base |
+| SEG-TJ2-08 (interbloqueo) | `50ad2f05` | **Cerrado** | Ante un 1205, J2-3 reintenta una vez; si se repite, responde 401 `DESAFIO_VENCIDO`. La transacción víctima se deshace entera, así que el `jti` sigue en R y no hay doble confirmación: la guarda R → C con exactamente una fila se mantiene |
+| SEG-TJ2C-02 (enlace solo para el SUPER) | `2737ed20` | **Cerrado** | `AuthEndpoints.OfrecerRecuperacionAsync`: `u.Nivel == SUPER && DisponibleAsync`. Con otro nivel, la disponibilidad ni se consulta. Prueba `SEG_TJ2C_02_…` |
+| SEG-TJ2C-03 (largo en el servidor web) | `2737ed20` | **Cerrado** | `VistaRecuperacionFactor.Pedido`, en la Web y en MAUI: rechaza más de 3000 caracteres tal como llegan, antes de recorrer el texto, y más de 2048 sin espacios, sin llamar a la API. Tiene pruebas en `GPOS.Web.Tests` y en las de MAUI |
+| SEG-TJ2-07 y 09 | — | Sin cambio | Informativos, no exigidos |
+
+### 9.1 Desvío declarado de SEG-TJ2-02: se devuelve el intento con CS-5 o con el factor bloqueados
+
+**Factor bloqueado (D-J2-04): no abre nada.** El intento se devuelve después de que la contraseña se comprobó y era **correcta**. No se gasta ninguna conjetura: quien llega a ese punto ya tiene el JWS y la contraseña, y la respuesta 423 no le enseña nada que no sepa.
+
+**Cuenta ya bloqueada por CS-5 al llegar: no abre nada.** `ValidarAsync` lanza la excepción antes de comprobar la contraseña, así que no se prueba ninguna y devolver el intento es lo correcto. `DevolverIntento` es una sentencia atómica con `IntentosClave > 0`: no puede bajar de 0 ni tocar un `jti` en R, C o Q.
+
+**Observación nueva: SEG-TJ2-10 (Informativo).**
+- **Qué pasa.** `ValidarAsync` lanza la misma `UsuarioBloqueadoException` cuando es **este** intento, con una contraseña errónea, el que alcanza el máximo de CS-5 y bloquea la cuenta (`UsuariosService.cs`, rama `if (bloquear) throw Bloqueado(...)`). En ese caso se probó una contraseña y el intento del `jti` igual se devuelve. Así, quien combina intentos en `/login` con intentos en la vía puede probar más de 3 contraseñas con el mismo JWS a lo largo de su vigencia: uno devuelto por cada ciclo de bloqueo de 15 minutos.
+- **Por qué es solo informativo.** El total de contraseñas probadas sigue acotado por CS-5 (5 cada 15 minutos), el mismo límite que ya tiene `/login` sin ningún JWS. Una contraseña acertada en `/login` ya se delata con el 202. El tope por `jti` es defensa en profundidad y no amplía nada que `/login` no permita ya.
+- **Remediación opcional (≈ 0,02 sp).** Devolver el intento solo si la cuenta ya estaba bloqueada al entrar. Por ejemplo, con una marca en la excepción que diga si el intento se contó, o leyendo `BloqueadoHasta` antes de `ValidarAsync`. Si no, contarlo y quemar el `jti` si llega a 3.
+
+### 9.2 Veredicto actualizado
+
+**Aprobado con observaciones** (recomendación técnica; la decisión es del propietario).
+
+- Los nueve hallazgos pedidos están **cerrados**: SEG-TJ2-01 a 06 y 08, y SEG-TJ2C-02 y 03.
+- REQ-C-09, 10 y 11 pasan de parciales a **cumplidos**.
+- En la parte de la API, REQ-C-12 queda **cumplido**. La parte del cliente está en el informe aparte del cliente.
+- Lo único abierto son informativos: SEG-TJ2-07, SEG-TJ2-09 y el nuevo SEG-TJ2-10, que no condiciona la unión ni la publicación.
+- La publicación de la vía en Release sigue condicionada por PA-05: las llaves `aut` en el recurso y la constancia de REQ-E-01 a 11.
+
+### Cierre (actualizado)
+- Estado: Aprobado con observaciones
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\GPOS-C-revision-seguridad-tj2-codigo.md` (se agregó la sección 9)
+- Supuestos: no se compiló ni se probó; que `@@ROWCOUNT` refleje el `UPDATE` con el disparador es inferido, y lo cubriría la prueba secuencial
+- Decisiones candidatas a ADR: Ninguna
+- Entregas a otros agentes: desarrollador de T-j2 → SEG-TJ2-10, opcional (≈ 0,02 sp); devops → condición de publicación PA-05 sin cambios
+- Próximo paso recomendado: unir T-j2 y dejar la publicación de la vía pendiente de PA-05
