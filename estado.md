@@ -256,6 +256,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | BackupService | `n01-bloqueo-subida-sin-llave` | QA Aprobado; contiene fp01; el propietario lo revisa antes de unir |
 
 ## Equipo C (OSHIN-LEGION) — reactivado el 2026-10-16
+- **2026-10-17, equipo inestable (aviso `C-a-B/2026-10-17-equipo-c-inestable`):** hubo un reinicio inesperado a las 10:45, sin pérdidas: las ramas están subidas y SQL está sano. Pero hay 23 pantallazos azules en 7 días, con códigos variados, y la causa probable es el hardware. Hasta resolverlo, aquí **no se corren suites largas, cargas ni mediciones**; C solo hace trabajo corto. Pendiente del propietario: diagnóstico de la memoria, BIOS y controladores, y volcados pequeños.
 - **2026-10-16:** el propietario reactiva a C como equipo de soporte de B junto con A. Máquina nueva: OSHIN-LEGION, antiguo equipo de B.
   - **Recursos:** 16 núcleos, 31,4 GB de RAM y 69 GB libres en C:. Es un portátil con batería.
   - **Software:** SQL Server 2025 en `.` y en `.\SQLEXPRESS`, .NET 10.0.401 y los workloads de MAUI.
