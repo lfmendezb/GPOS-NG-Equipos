@@ -109,3 +109,26 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
 - **T-57 con compras: 1,065**, por encima de 1,05. Es la métrica secundaria.
 - **Meta 5b:** cumple el tope de 2.000 ms, pero el candidato sube un 28 % y su peor corrida llega a 1.862,9 ms. Riesgo alto de pasar el tope.
 - **Siguiente paso** (decisión del propietario del 16-oct: «Repetir y perfilar»): perfilar el costo por renglón de T1 en la venta POS (comandos de existencia, política de negativos y `LotesDocumento`) y la subida de la compra con fecha anterior (5b), y proponer la corrección antes de la unión del 27-oct.
+
+## T6 con R-02 (2026-10-16 18:32 a 2026-10-17 01:59): base `e80f4654`, candidato `b2c1cdd7`
+- **Condiciones:** carga de CPU entre el 0 % y el 16 % antes de cada corrida; conectada; sin cortes. Salidas en `GPOS-B-prep27\TestResults\T6-r2-20261016-1832\`.
+- **El candidato** lleva R-02 (política leída una vez por documento), `KardexCosto` con `FORCESEEK` y `UnidadesArticulos` con `CROSS APPLY`, más T1, la 3b y A-N2 completo.
+
+| Métrica (p95, ms) | Base r1 / r2 / r3 | Mediana base | Candidato r1 / r2 / r3 | Mediana cand. | Razón |
+|---|---|---|---|---|---|
+| **N6-02, 20 renglones** | 102,7 / 84,0 / 100,6 | 100,6 | 93,7 / 70,3 / 84,0 | **84,0** | **0,835** |
+| **T-28, 6 cajeros** | 24,0 / 23,7 / 24,5 | 24,0 | 27,2 / 22,1 / 28,5 | **27,2** | **1,133** |
+| **T-57 sin compras** | 24,6 / 24,9 / 23,7 | 24,6 | 24,6 / 25,9 / 27,7 | **25,9** | **1,053** |
+| T-57 con compras | 38,2 / 43,9 / 41,5 | 41,5 | 64,8 / 40,0 / 44,1 | 44,1 | 1,063 |
+| T-57 compra de 20 líneas | 946,1 / 976,0 / 783,6 | 946,1 | 260,3 / 214,0 / 227,1 | 227,1 | 0,24 |
+| T-57 meta 5b | 1.650,4 / 1.218,2 / 1.483,7 | 1.483,7 | 914,0 / 336,5 / 970,8 | 914,0 | 0,62 |
+| N6-03, 1 renglón / 20 renglones con lote (informativa) | — | — | 26,0 / 84,2 | — | — |
+
+- **8.2 (6):** T-28 da **Correcto** en las 3 corridas del candidato (A-N2 completo). En la base falla, como se esperaba, porque no tiene A-N2. 8.2 (5): `TR_Documento_Emision` cuesta igual en los dos lados (0,29 a 0,32 ms por ejecución).
+- **N6-02: cumple con margen** (0,835). R-02 resolvió el costo por renglón.
+- **Compra de 20 líneas y 5b: mejoran mucho** (0,24 y 0,62) gracias al `FORCESEEK` de `KardexCosto`.
+- **T-28: 1,133, con dispersión alta en el candidato** (22,1 a 28,5, de −19 % a +5 % de su mediana). T-57 sin compras: 1,053. Los dos piden 2 corridas más por lado (regla 7.3) antes de concluir.
+  - **Hipótesis:** costo por venta de la lectura previa de la política (`PoliticasArticulos`, con `OPENJSON`, que concede 1.024 KB en SQL Server 2025 Express) en las ventas de 1 renglón. No está medida.
+- **Suite oficial del candidato (Debug):** 3150 correctas, 47 fallidas y 28 omitidas.
+  - Las 45 de `DispositivosK1Tests` fallaron al abrir su conexión («No hay ningún proceso en el otro extremo de la canalización»), seguramente por el `KILL` inmediato de PA30 en paralelo. **Solas: 53/53**, incluida C-10.
+  - Las otras dos son PA30 (DL-22 sin unir) y C-10 (intermitente).
