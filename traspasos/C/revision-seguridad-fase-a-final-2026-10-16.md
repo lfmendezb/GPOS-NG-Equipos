@@ -500,3 +500,18 @@ Ninguno condiciona la unión. Es una recomendación técnica: la decisión es de
   - frontend de C: SEG-FA-11 (opcional);
   - documentador: la nota de la guía de la vía (b) (SEG-FA-13).
 - Próximo paso recomendado: correr la suite oficial sobre `3b1fa070` y unir con el visto bueno de B al protocolo.
+
+---
+
+## Actualización del 2026-10-17: SEG-FA-06 reclasificado
+
+**Confirmación de A** (`avisos/A-a-B/2026-10-17-d03-d04-seg-fa-06`): hoy no hay ninguna ruta de producción que deje `PerfilMin = 'avanzada'`.
+- `ReglasAceptacion` solo toma `perfilMin` de una firma Avanzada propia.
+- `LlavesGsf.json` no trae llaves de licencia de nivel Avanzado.
+- Escribir la fila a mano ya está cubierto por RR-1.
+
+**Nueva clasificación de SEG-FA-06:** **no explotable hoy**. Lo cubre una prueba de arquitectura (`ViaBPerfilAvanzadaTests`, PR #58 de A, `045b136c`), que falla el día que el recurso de llaves traiga una llave de licencia de nivel Avanzado mientras la vía (b) no compruebe el perfil.
+
+**Pendiente:** decidir si la negativa de la vía (b) se construye junto con (b+), como recomienda A, o antes (unos 0,03 sp). Lo decide B con el propietario.
+
+**SEG-FA-10:** cerrado en el PR #45 de A (`330d5c71`). `/liberar` y `/desbloquear` son Esenciales.
