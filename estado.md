@@ -8,7 +8,13 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   - **Emisor** `GSF.EmisorLicencias` @ `34fbb49`, solo local: `autNivel` con `VerificarCompacto`. Seguridad: Aprobado con observaciones; EV-02 a EV-06 corregidas. 94/94 en Debug y en Release. A firma: EV-03 (`desde`). Aviso `2026-10-17-emisor-verificarcompacto`.
   - **PR #65, EV-01** (`7776c641`): modelo cerrado de la autorización en `FormatoLicencia`. 730/0/1; neutro para T6. Después de unirlo, A mueve el submódulo del emisor. Aviso `2026-10-17-pr65-ev01`.
   - **PR #67, RN «Cambio de RNC»** (`a/rn-cambio-rnc` @ `da474174`, apilado sobre el #63). Arquitecto: Conforme con correcciones (C-1 a C-3 aplicadas). Seguridad: Aprobado con observaciones (RN-01 a RN-05 corregidas). **RN-F2 (a) firmada por el propietario en la sesión de A** y aplicada (aviso `2026-10-17-firma-rn-f2`). 950/0/1. A firma: RN-F1. Aviso `2026-10-17-pr67-rn-cambio-rnc`.
-  - **A sin tareas en curso.** Esperan a B: uniones (#63 → #67; #65 neutro), firmas (SL-F1, SL-F2, RN-F1 y EV-03) y el remoto del emisor.
+- **2026-10-17, noche (retomado tras la pausa):**
+  - **Modelo por agente** instalado (14 definiciones) y **hook** instalado; el hook entra en vigor al reiniciar la sesión.
+  - **#59 @ `54749b4f`:** aviso `AnilloReintento` (4720) en el primer error de transporte (nota de B). 12/0/0.
+  - **PR #68, SL-F1 (a) + SL-F2 (b) + SLF-01** (`a/sl-resellar-candado` @ `130306c0`, apilado sobre el #67). Arquitecto: Conforme con correcciones (aplicadas). Seguridad: Aprobado con observaciones (SLF-01 a SLF-07 corregidas). 798/0/3. Aviso `2026-10-17-pr68-sl-f1-f2`.
+  - **Firmadas en la sesión de A:** RN-F1, SL-F1 (a), SL-F2 (b), SLF-01 y el acta firmada por GSF antes de la primera licencia de pago (aviso `2026-10-17-firma-slf01-acta-gsf`). Sigue pendiente EV-03.
+  - **Encargo a C** (orden del propietario): T-n sobre SL y RN, pantallas web, R-5 y diseño del acta firmada por GSF. Aviso `2026-10-17-encargo-para-c`.
+  - **A sin tareas en curso.** Esperan a B: uniones (#63 → #67 → #68 → #57; #59 y #65 en cualquier hueco), la suite oficial y el remoto del emisor.
 - **2026-10-17, mañana:** **#59 @ `a1397a1d`:** la prueba D03 ya no depende de la carga. Los ayudantes de `MotorPrueba` repiten hasta obtener el error esperado (4060, -2 o 208), en lugar del 233 que da la memoria compartida bajo carga. Solo pruebas; 12/0/0 tres veces. C vuelve a correr la suite. Aviso `2026-10-17-d03-prueba-fragil-corregida`. **A sin tareas en curso:** lo demás espera a B (negativa (iii) de la vía (b), bajas S18/`--urgente`, uniones) o al 27-oct (marca del #48).
 - **2026-10-17, madrugada (lo de C para A en la fase A de ADR-81):**
   - **#59 D-03:** reintento único del anillo (`d7b6e1c3`; 12/0/0).
