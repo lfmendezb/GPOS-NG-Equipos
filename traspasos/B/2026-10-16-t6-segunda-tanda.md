@@ -158,3 +158,62 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
   1. Corregir el plan de la comprobación de impuestos.
   2. Diagnosticar el modo lento de T-28 (muestras de `PAGELATCH`, `dotnet-counters`).
   3. Volver a medir T-28 con 5 corridas por lado, o aceptar T-28 a 1,11 frente al control, con la oficial cumplida, por escrito.
+
+## Cuarta tanda (2026-10-17, 06:52 a 11:29): base `e80f4654`, candidato `c01df683`
+- **Condiciones:** guion `Solucion GPOS NG\Medicion-T6-r4.ps1`, 2 rondas de T-57, T-28 y N6-02, intercaladas, 15 min de enfriamiento. Carga de CPU entre el 0 % y el 11 % antes de cada corrida; conectada, 3.201 MHz, sin cortes, sin otros `dotnet`. Horario diurno. Salidas en `GPOS-B-prep27\TestResults\T6-r4-20261017-0652\`.
+- **El candidato** solo cambia frente a `b2c1cdd7` en el ajuste de `PoliticasArticulos` (`STRING_SPLIT` + `TOP (1)` + `NO_PERFORMANCE_SPOOL`). Por eso T-28 y T-57 se juntan con la tanda con R-02: 5 corridas por lado.
+
+### Resultados (p95, ms; tanda con R-02 + cuarta tanda)
+| Métrica | Base | Mediana base | Candidato | Mediana cand. | Razón |
+|---|---|---|---|---|---|
+| **T-28, 6 cajeros** | 24,0 / 23,7 / 24,5 + 25,2 / 26,2 | 24,5 | 27,2 / 22,1 / 28,5 + 29,7 / 25,1 | **27,2** | **1,110** |
+| **T-57 sin compras** | 24,6 / 24,9 / 23,7 + 23,7 / 23,3 | 23,7 | 24,6 / 25,9 / 27,7 + 23,6 / 23,7 | **24,6** | **1,038** |
+| T-57 con compras | 38,2 / 43,9 / 41,5 + 40,2 / 41,2 | 41,2 | 64,8 / 40,0 / 44,1 + 41,9 / 40,7 | 41,9 | 1,017 |
+| T-57 compra de 20 líneas | 946,1 / 976,0 / 783,6 + 784,4 / 808,1 | 808,1 | 260,3 / 214,0 / 227,1 + 210,0 / 225,3 | 225,3 | 0,28 |
+| T-57 meta 5b | 1.650,4 / 1.218,2 / 1.483,7 + 940,8 / 1.363,9 | 1.363,9 | 914,0 / 336,5 / 970,8 + 609,5 / 257,4 | 609,5 | 0,45 |
+| **N6-02, cuarta tanda sola** | 85,7 / 88,9 | 87,3 | 62,8 / 107,0 | **84,9** | **0,972** |
+| N6-02, junto con la tanda con R-02 (referencia) | 102,7 / 84,0 / 100,6 + 85,7 / 88,9 | 88,9 | 93,7 / 70,3 / 84,0 + 62,8 / 107,0 | 84,0 | 0,945 |
+
+Errores en todas las corridas: 0; conciliaciones, números y NCF repetidos y existencias negativas: 0. Con 2 corridas por lado, la «mediana» de la cuarta tanda sola es el promedio de las dos.
+
+### Modo lento de T-28 (6 cajeros)
+| Corrida | Base: ventas/s, p95 | Candidato: ventas/s, p95 |
+|---|---|---|
+| R-02 r1 | 297,6 / 24,0 — rápido | 267,8 / 27,2 — **lento** |
+| R-02 r2 | 299,9 / 23,7 — rápido | 304,1 / 22,1 — rápido |
+| R-02 r3 | 294,6 / 24,5 — rápido | 280,5 / 28,5 — **lento** |
+| r4 r1 | 281,4 / 25,2 — intermedio | 273,0 / 29,7 — **lento** |
+| r4 r2 | 279,3 / 26,2 — intermedio | 292,3 / 25,1 — intermedio |
+
+- **Candidato:** 3 lentas, 1 rápida y 1 intermedia. **Base:** 3 rápidas (noche) y 2 intermedias (mañana del 17-oct).
+- **Lectura:** el ajuste de `PoliticasArticulos` no sacó al candidato del modo lento; cae en él igual que con R-02. La base también se degradó por la mañana (unas 280 ventas/s, p95 25 a 26), lo que apunta a un factor de horario o de sesión que afecta a los dos lados, pero sin llegar a 27 a 30 ms. Dentro de la cuarta tanda sola, la razón de T-28 es 1,066 (27,4 frente a 25,7).
+
+### Hallazgo: 8.2 (6) falló una vez en el candidato (`t28-r1-cand`)
+- **Síntoma:** T-28 `[FAIL]` en `r1-cand` por 8.2 (6): `RECORRE Clustered Index Scan ventas.VentaLineaImpuesto(PK_VentaLineaImpuesto)` en la sentencia `IF EXISTS (SELECT 1 FROM ventas.VentaImpuesto vi OUTER APPLY …` de `TR_Documento_Emision`, con `grant 0 KB`.
+- **Alcance:** la sentencia tuvo **6 ejecuciones** en esa corrida, y `ventas.VentaLineaImpuesto` quedó con **0 filas** tras la carga. Es un plan compilado sobre una tabla vacía; no explica el p95 (6 ejecuciones de unas 150.000). En `r2-cand` la misma sentencia hizo 9.375 ejecuciones con «solo búsquedas», y en las 3 corridas con R-02 dio Correcto: **4 de 5 corridas del candidato pasan 8.2 (6)**.
+- **Riesgo:** la prueba es intermitente por este plan. En producción, con filas en la tabla, el umbral de recompilación lo corrige solo, pero el criterio de T-28 puede volver a fallar el 27-oct.
+- **Propuesta (la decide el arquitecto de datos):** `WITH (FORCESEEK)` en el acceso a `ventas.VentaLineaImpuesto` de esa sentencia, en la misma migración `Uf05ForceSeek` (no unida), o que 8.2 (6) no cuente recorridos sobre tablas con 0 filas. La primera es más simple y no toca el criterio.
+
+### Criterios
+1. **Contra la medición firmada:** T-28 27,2 ≤ 32,8; T-57 sin compras 24,6 ≤ 31,6; con compras 41,9 ≤ 84,0. **Cumple.**
+2. **Control de atribución (≤ 1,05 con la mediana):**
+   - **T-28: 1,110. NO CUMPLE.**
+   - T-57 sin compras: 1,038. Cumple.
+   - T-57 con compras: 1,017. Cumple.
+3. **N6-02:** 0,972 en la cuarta tanda sola y 0,945 junto con la tanda con R-02. **Cumple** con el ajuste.
+4. **Dispersión (7.3):**
+   - T-28: salen los dos lados (candidato 22,1 a 29,7, de −19 % a +9 %; base 23,7 a 26,2, hasta +7 %).
+   - T-57 sin compras: el candidato sale por 27,7 (+13 %); la base por 24,9 (+5,1 %).
+   - N6-02: el candidato sale (62,8 y 107,0 frente a 84,9). `n602-r2-base` y `n602-r2-cand`, las últimas de la mañana, hicieron menos ventas (14.781 y 13.138 frente a unas 15.960), así que también hubo degradación de horario.
+5. **Compra de 20 líneas y meta 5b:** mejoran con claridad (0,28 y 0,45); la peor corrida del candidato en 5b es 970,8 ms, lejos de 2.000.
+6. **8.2 (6):** 4 de 5 corridas del candidato pasan; la que falla es por un plan sobre tabla vacía (ver el hallazgo).
+
+## Veredicto de T6 (2026-10-17)
+- **N6-02, T-57 (las dos), compra de 20 líneas y 5b: verdes.** R-02 y el ajuste de `PoliticasArticulos` resolvieron el costo por renglón; la compra mejora mucho.
+- **T-28: no cumple el control de atribución (1,110)**, aunque queda muy por debajo del tope de la medición firmada (27,2 frente a 32,8). El candidato cae en el modo lento en 3 de 5 corridas, y la causa sigue sin identificar. No es la lectura de la política: el ajuste no lo cambió.
+- **8.2 (6):** intermitente en el candidato por un plan sobre `ventas.VentaLineaImpuesto` vacía. Hay que cerrarlo antes de la unión para que la suite del 27-oct no falle por esto.
+- **Recomendación de B:** **T6 no queda verde todavía. No unir `b/prep-27oct` el 27-oct sin una de estas dos salidas, que decide el propietario:**
+  1. **Diagnosticar el modo lento** (propuesta del arquitecto de datos): muestras de `PAGELATCH` con `sys.dm_os_waiting_tasks` y `dotnet-counters` en una corrida lenta y una rápida del candidato, de noche, y en la misma tanda el `FORCESEEK` de 8.2 (6). Unas 3 a 4 h de máquina, más el análisis.
+  2. **Aceptar T-28 por el criterio 1** (tope firmado) y registrar el 1,110 del criterio 2 como riesgo aceptado, con el diagnóstico después de la unión. Sigue haciendo falta el arreglo de 8.2 (6).
+
+  B recomienda la salida 1: hay tiempo antes del 27-oct, y el criterio 2 existe para no unir una regresión sin causa conocida.
