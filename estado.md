@@ -3,6 +3,13 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-17, madrugada (lo de C para A en la fase A de ADR-81):**
+  - **#59 D-03:** reintento único del anillo (`d7b6e1c3`; 12/0/0).
+  - **#60 D-04:** PA28 con `InstanciaContenidos` (`b4a87f09`). En SQL 2019 sigue el 12834 hasta el #48.
+  - **#58 SEG-FA-06:** hoy no explotable; prueba de arquitectura (`045b136c`, apilado sobre `c/adr81-fase-a`; 55/0/0).
+  - SEG-FA-10 ya está en el #45.
+  - C corre las suites y PA28 en 2025. B decide la negativa (iii) de la vía (b).
+  - Aviso `2026-10-17-d03-d04-seg-fa-06`.
 - **2026-10-16, noche (firma de P-81A-16/17):** **#45 @ `330d5c71`:** `/liberar` y `/desbloquear` son Esencial, con alta en la lista aprobada (H-V4-02 cerrada para el #45); S-02 y S-04 sin `CodigoSegundoFactor`. 468 correctas. C no repite esas marcas en T-m. Aviso `2026-10-16-pr45-p81a16-17`.
 - **2026-10-16, noche (decisiones del propietario sobre el #55 y orden de unión):**
   - **#55 @ `27ca3e2c`:** S18, `KILL` con `--urgente` y `ComprobarAsync` solo para `gpos_app_*`, con una prueba por punto. PA-30 3 de 3 (0 fallidas). La falla de `EsquemaPendienteAcceso` es previa (también sobre `81b00f2b`).
