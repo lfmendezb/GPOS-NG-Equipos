@@ -423,3 +423,80 @@ Recomendación técnica: la decisión de unir es del propietario (C2).
   - diseñador UX: el texto de RR-2 en la tarjeta de 5.14;
   - Arquitecto Maestro: si `/perfiles` es sensible.
 - Próximo paso recomendado: corregir SEG-FA-02, SEG-FA-03 y SEG-FA-05 (unas pocas líneas) y unir; SEG-FA-01 y SEG-FA-04 en el primer lote después de la unión, antes de publicar.
+
+---
+
+## 11. Verificación de correcciones (`06b913c8..3b1fa070`)
+
+**Fecha:** 2026-10-16 · Revisión de solo lectura del diff: 27 archivos, de los que 8 son de pruebas con +286 líneas. No ejecuté pruebas.
+
+| ID | Commit | Corrección | Resultado |
+|---|---|---|---|
+| SEG-FA-02 | `54d300fa` | `.RequiereAutenticacionReciente()` en `POST /api/admin/usuarios/{codigo}/inhabilitar` (`AdminEndpoints.cs:283-285`) | **Cerrado** |
+| SEG-FA-03 | `d438cfb6` | `TopeHorasVigenciaSuper = 4`; `Validar` falla fuera de 1 a 4 (`OpcionesSesion.cs`) | **Cerrado** |
+| SEG-FA-01 | `d438cfb6` | Encabezado `X-GPOS-Automatica: 1` en el refresco del Tablero (Web y MAUI). La principal no anota actividad (`RevocacionSesiones.CuentaComoActividad`, `Program.cs:101-102`) y la introspección tampoco (`SolicitudIntrospeccion.Automatica`). El cliente no actualiza `UltimaActividadUtc` | **Cerrado** |
+| SEG-FA-04 | `c399b956` | `ComprobarSalida(Console.IsOutputRedirected)` devuelve salida 1 **antes** de leer la configuración, de pedir la confirmación y de abrir la transacción (`GPOS.Migracion/Program.cs:323-328`; `RestablecimientoFactor.cs:44-55`) | **Cerrado** |
+| SEG-FA-05 | `3b1fa070` | `LimiteCuerpo(4096)` en 5.2 y 5.3 (`AuthEndpoints.SegundoFactor.cs:43`, `:87`) | **Cerrado** |
+
+### 11.1 El encabezado `X-GPOS-Automatica` solo quita actividad — verificado
+
+- **Usos en `src`.** Aparece en cuatro sitios de código y en el cliente:
+  - `RevocacionSesiones.CuentaComoActividad`;
+  - el reenvío a la API de reportes (`ReenvioReportes.cs:111-113`);
+  - la autenticación de la API de reportes (`AutenticacionIntrospeccion.cs:47-49`);
+  - la constante de `ClaimsSesion`;
+  - en el cliente, `ApiClient` de la Web y de MAUI.
+- **Ningún uso decide el acceso.** En la principal, la comprobación va **después** de `MotivoInvalidoAsync` y de la marca de `FiltroFactor`, dentro de la rama del token válido (`Program.cs:97-102`). Solo decide si se llama a `AnotarActividadAsync`.
+- **En la introspección, solo salta la anotación.** `ValidadorTokenPrincipal.ValidarAsync(token, automatica, ct)` hace todas las comprobaciones (firma, revocación, `esquema-pendiente` y `cambiar_clave`) antes del `if (!automatica)`.
+- **No toca nada más:** ni la autorización, ni el limitador de peticiones, ni el candado, ni la autenticación reciente, ni `FiltroFactor`.
+- **Peor caso para un cliente que lo envía siempre:** su sesión nunca registra actividad y se cierra por inactividad a los 30 min (SUPER) o 120 min (resto), como mucho antes que sin el encabezado. Es fallo seguro: no alarga ninguna sesión ni afecta a otra cuenta, porque la anotación es del token propio.
+- **Lo que el navegador no puede hacer:** inyectarlo en las peticiones del servidor web, que las construye `ApiClient`.
+- **Valor estricto:** `EsAutomatica` exige `"1"`, sin distinguir otro texto (`ClaimsSesion.cs`). Cualquier otro valor cuenta como actividad, que es el comportamiento anterior.
+- **Alcance de la marca:**
+  - el `AsyncLocal<bool>` solo vale dentro del `using (Api.Automatica())` del refresco y se restaura al salir;
+  - si se escapara a otra petición, el efecto sería el mismo peor caso: menos actividad, nunca más acceso;
+  - el botón «Actualizar» y el cambio de período siguen contando como actividad.
+
+**Observaciones informativas, sin acción obligatoria:**
+- **SEG-FA-11 (Informativa):** si un sondeo automático recibe un 401 `factor` o `REAUTENTICAR`, `ManejadorSesion` puede abrir P6 sin que la persona haya hecho nada. Ya pasaba antes de la corrección: no es seguridad, es experiencia. Sugerencia: con la marca automática, no abrir el diálogo y devolver el 401 a la pantalla.
+- **SEG-FA-12 (Informativa):** la caché de `VerificadorIntrospeccion` reutiliza la respuesta de un sondeo automático para una petición real dentro de su vigencia (de segundos), y esa petición no anota actividad en la principal. El efecto, despreciable, es que se cuenta menos actividad: el lado seguro. Además, la petición del visor ya pasa antes por la principal por el reenvío, que la anota si no viene marcada.
+
+### 11.2 Cambio del protocolo de introspección (de B) — compatible
+
+- **Campo aditivo y opcional.** `SolicitudIntrospeccion(string Token, int Version = 1, bool Automatica = false)` (`ProtocoloIntrospeccion.cs:290`). La versión sigue en 1 y el servidor sigue exigiendo `Version == 1` (`ServidorIntrospeccion.cs:176`).
+- **Compatibilidad en los dos sentidos.** El serializador es `JsonSerializerDefaults.Web` (`ProtocoloIntrospeccion.cs:62`), sin `UnmappedMemberHandling.Disallow`:
+  - un cliente anterior no manda el campo, se toma `false` y todo cuenta como antes;
+  - un servidor anterior ignora el campo desconocido.
+
+  Por eso no hace falta subir la versión.
+- **Interfaces sin romper.** `IVerificadorToken` y `IValidadorTokenLocal` ganan la sobrecarga con una implementación por omisión que delega en la anterior.
+- **Sin efecto en la validez.** El campo no cambia la respuesta (`Valido`, `Motivo`, `Claims`), solo si se anota la actividad. El canal sigue con su ACL y la comprobación del dueño, así que solo lo envía la cuenta del servicio de la API de reportes.
+- **Pendiente:** como el protocolo es de B, B debe dar su visto bueno al unir. Se entrega a B.
+
+### 11.3 Notas sobre SEG-FA-04 y SEG-FA-05
+
+- **SEG-FA-04:** `Console.IsOutputRedirected` no detecta una pseudoconsola que captura la pantalla, como algunas herramientas de soporte remoto con ConPTY. Ese riesgo residual es de procedimiento, y la guía de la vía (b) debería decir «ejecútelo en una consola local o por RDP, sin herramientas que graben la sesión». Severidad Informativa (SEG-FA-13).
+- **SEG-FA-05:** `/login` sigue sin `LimiteCuerpo`. Es anterior a la fase A y queda como recomendación (Baja), sin condicionar la unión.
+
+### 11.4 Veredicto actualizado: **Aprobado con observaciones**
+
+- SEG-FA-01 a SEG-FA-05 están cerrados.
+- Ningún hallazgo Crítico, Alto ni Medio queda abierto.
+- Siguen abiertos:
+  - SEG-FA-06 (Baja, sospecha; confirmación de A sobre `PerfilMin`);
+  - los informativos SEG-FA-07 a 13;
+  - los riesgos residuales RR-1 (ADR-83 SL y PUB-06) y RR-2.
+
+Ninguno condiciona la unión. Es una recomendación técnica: la decisión es del propietario (C2).
+
+### Cierre (verificación)
+- Estado: Aprobado con observaciones
+- Artefactos: `C:\Users\lfmen\source\repos\Solucion GPOS NG\GPOS-C-revision-seguridad-fase-a-final.md` (sección 11 agregada)
+- Supuestos: verificación por lectura del diff, sin ejecutar pruebas; las 8 pruebas nuevas del diff no se corrieron en esta revisión.
+- Decisiones candidatas a ADR: ninguna.
+- Entregas a otros agentes:
+  - equipo B: visto bueno del campo `Automatica` del protocolo de introspección;
+  - equipo A: SEG-FA-06 y SEG-FA-10;
+  - frontend de C: SEG-FA-11 (opcional);
+  - documentador: la nota de la guía de la vía (b) (SEG-FA-13).
+- Próximo paso recomendado: correr la suite oficial sobre `3b1fa070` y unir con el visto bueno de B al protocolo.
