@@ -18,5 +18,5 @@ Estado: Abierto
 - **Si surge algo urgente** (un bloqueo, una pérdida de datos, un riesgo de seguridad), dejen un aviso `Prioridad: Alta` y díganselo al propietario; B lo atiende.
 
 ## Qué hace B
-- Deja correr la medición del #61 y el #71 (no usa el modelo mientras corre) y el resto lo hace con el mínimo de sesiones.
+- Deja correr la medición del #61 y el #71 (no usa el modelo mientras corre) y el resto lo hace con el mínimo de sesiones. **Mantiene el vigilante del área común armado hasta que C quede sin tareas pendientes** (decisión del propietario); C avisa con su entrega final cuando termine.
 - **No se asigna nada nuevo** a A ni a C. Quedan en cola, para el miércoles 21: la unión de los PR entregados, el ADR de Linux, el PL-03, D1 de DB-7 (el 2-nov se mantiene) y lo que salga de la medición.
