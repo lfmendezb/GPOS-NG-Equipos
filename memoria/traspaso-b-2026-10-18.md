@@ -1,18 +1,21 @@
 ---
 name: traspaso-b-2026-10-18
-description: LEER PRIMERO al abrir sesión de B: traspaso del 2026-10-18; punta 17ecc9b9; tareas 1 (ola 5 auditoría) y 3 (CLAUDE.md) aprobadas sin empezar
+description: "LEER PRIMERO al abrir sesión de B: traspaso del 2026-10-18; punta 1768f6a3 (ola 5 auditoría unida); tareas 1 y 3 hechas; DB-7 y RSV para firma"
 metadata:
+  node_type: memory
   type: project
+  originSessionId: 924c86d7-164e-4af7-907a-23057f30c43b
+  modified: 2026-10-18T07:50:09.764Z
 ---
 
-Cambio de sesión de B, 2026-10-18 a las 03:04, sin procesos ni agentes activos. Traspaso en el área común: `traspasos/B/2026-10-18-traspaso-B-cambio-de-sesion.md`.
+Cambio de sesión de B, 2026-10-18 a las 03:04. Traspaso en el área común: `traspasos/B/2026-10-18-traspaso-B-cambio-de-sesion.md`. La sesión nueva (2026-10-18, mañana) avanzó así:
 
-- **Punta de `feature/modelo-ng`:** `17ecc9b9`, con `b/prep-27oct` + #66 (unidos el 2026-10-17, adelantados) y #59, #64 y #65.
-- **`master`:** `fe42b415`, con todas las firmas del 2026-10-17 registradas.
-- **Aprobado por el propietario y sin empezar:**
-  - (1) rebasar `b/ola5-auditoria-r` sobre la punta y regenerar `Ola5AuditExportacion` con una marca posterior a `20261015142020`; suite y unión;
-  - (3) poner al día `CLAUDE.md`: T1 de ADR-118/119 y la 3b tramo 1 ya están unidos.
-- **Orden firmado:** #52 + #55 → #51 → #45 → #48 (con el #60) → #63 → #67 → #68 → #57 → #58.
+- **Hecho:**
+  - (1) ola 5 auditoría unida: `feature/modelo-ng` = `1768f6a3`; marca `20261015211406` conservada (cabe entre `Uf05ForceSeek` y la del #48, `20261018042207`);
+  - (3) `CLAUDE.md` al día en `master` `f86f88f8`, con notas del registro en ADR-82 (51616 a 51618) y ADR-83 (51618, EventId 4722).
+- **Encargo a C:** 503 del #72 sin el nombre de la base para quien no es SUPER (aprobado por el propietario).
+- **Para firma:** el calendario de DB-7 y la hoja de RSV, en `traspasos/B/2026-10-18-*`.
+- **Sigue:** unir la cadena de A rebasada sobre `1768f6a3`: #52 → #55 → #51 → #45 → #48 (regenera Designer, snapshot y guion; marca igual) → #60 → #63 → #67 → #68 → #57 → #58 → #73.
 
-**Why:** la sesión se cerró justo después de aprobar las tareas 1 y 3.
-**How to apply:** empezar por ellas, después de leer el traspaso, `estado.md` y los avisos. Sustituye a [[traspaso-b-2026-10-17]] como punto de entrada.
+**Why:** sin esta nota, una sesión nueva repetiría las tareas 1 y 3.
+**How to apply:** leer el traspaso, `estado.md` y los avisos posteriores a `1768f6a3`, y seguir con las uniones. Sustituye a [[traspaso-b-2026-10-17]] como punto de entrada.

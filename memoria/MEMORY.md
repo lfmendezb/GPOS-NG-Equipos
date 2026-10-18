@@ -66,4 +66,4 @@
 - [marcas-migraciones-orden-de-union](marcas-migraciones-orden-de-union.md) — Marcas de migraciones EF = orden de unión; la rama posterior regenera (B, 2026-10-14); orden #24→#26→#21→#28
 - [traspaso-b-2026-10-15](traspaso-b-2026-10-15.md) — Sustituido por el del 2026-10-17 (historia del 15 y 16-oct)
 - [traspaso-b-2026-10-17](traspaso-b-2026-10-17.md) — Sustituido por el del 2026-10-18 (historia del 17-oct: T6, hoja de B, unión adelantada)
-- [traspaso-b-2026-10-18](traspaso-b-2026-10-18.md) — LEER PRIMERO: cambio de sesión de B (2026-10-18); punta 17ecc9b9; tareas 1 (ola 5 auditoría) y 3 (CLAUDE.md) aprobadas sin empezar
+- [traspaso-b-2026-10-18](traspaso-b-2026-10-18.md) — LEER PRIMERO: B 2026-10-18; punta 1768f6a3 (ola 5 auditoría unida); tareas 1 y 3 hechas; sigue la cadena de uniones de A

@@ -168,6 +168,11 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-18, mañana (sesión nueva de B):**
+  - **Ola 5, auditoría UNIDA** (`feature/modelo-ng` = `1768f6a3`); marca `20261015211406` conservada; SQL de la evidencia a `Infraestructura/Motor` (CA-0.8). Suite oficial 3251/4/28, las 4 pasan solas; Web 699/0, Reportes 433/0, MAUI 602/0. Aviso `2026-10-18-unida-ola5-auditoria`. **El #48 regenera Designer, snapshot y guion sobre `1768f6a3`** (marca igual).
+  - **`master` `f86f88f8`:** `CLAUDE.md` al día (T1 de ADR-118/119, 3b tramo 1, T1 de ADR-126, RG-14 lotes, CB-01, SE-01/02, firmas del 17-oct); notas del registro en ADR-82 (51616 a 51618) y ADR-83 (51618 y EventId 4722).
+  - **Encargo a C** (aprobado por el propietario): 503 del #72 sin el nombre de la base para quien no es SUPER, rebase del #72 y reintento 1205/1222 en `verificar`. Aviso `B-a-C/2026-10-18-encargo-503-pr72`.
+  - **Para firma del propietario** (arquitecto maestro): `traspasos/B/2026-10-18-propuesta-calendario-db7.md` (DB7-01 a DB7-07) y `traspasos/B/2026-10-18-hoja-firma-rsv-anillo-sellos.md` (RSV-F1 a RSV-F5).
 - **2026-10-18, madrugada:** unidos **#59, #64 y #65** (`feature/modelo-ng` = `17ecc9b9`). Suite oficial 3237/4/28; las 4 pasan solas. Aviso `2026-10-18-unidos-59-64-65`.
 - **2026-10-17, noche (sesión de B en LFMB):** **`b/prep-27oct` + #66 UNIDOS a `feature/modelo-ng` (`5b47e019`)**, por UN-01 (a). Hoja de B firmada (UN-01, BM-01, SE-01, SE-02, CB-01, EM-01, RS-01 y OR-01), registrada en `master` `fe42b415`. T6 en verde. Aviso `2026-10-17-union-prep27-hecha`.
 - **2026-10-17, tarde (sesión de B en LFMB):**
@@ -331,6 +336,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Trabajando en:** nada; sin agentes activos, disponible. Entregado hoy: C-2 (H-11 Rechazado como publicable por C2-01; sin revertir la unión), C-8 (PR #19, unido), C-9 (PR #20, unido), C-10 (PR #21, no unir antes del 14-oct) y la fase A de ADR-81 en diseño cerrado (blueprint v3 y pantallas v2, P-81A-14 firmada). Siguiente posible: construir la fase A tras el segundo PR de H-11 (T1 antes, si B lo encarga). Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
 
 ## Pendientes del propietario
+- **Firmas preparadas el 2026-10-18:** el calendario de DB-7 (DB7-01 a DB7-07, objetivo de firma el 2026-10-20) y la hoja de RSV del anillo (RSV-F1 a RSV-F5). **EM-01 cumplida** por A el 2026-10-18 (`lfmendezb/GSF.EmisorLicencias`, privado).
 - **Equipo C disuelto (2026-10-14):**
   - retirar en LAPTOP-DUMQQ5QK la tarea programada de vigilancia;
   - decidir si la laptop sigue como equipo de prueba del DEMO;
