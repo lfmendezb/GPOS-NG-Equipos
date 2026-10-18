@@ -1,4 +1,4 @@
-[Decisión preparada por el Arquitecto Maestro (equipo C)]  Estado: **Pendiente de firma**
+[Decisión preparada por el Arquitecto Maestro (equipo C)]  Estado: **Firmada por el propietario el 2026-10-18** (todo según la recomendación, salvo PL-10, en la opción (b); ver el final de la sección 10)
 
 # Propuesta de ADR: GPOS NG en Linux con las mismas garantías que en Windows (servidor y agente de impresión)
 
@@ -656,7 +656,28 @@ Todas las cifras son *inferidas*.
 
 **Respuesta del propietario** (fecha, sesión y texto literal):
 
-> ____________________________________________________________
+> 2026-10-18, sesión de C (OSHIN-LEGION): «Firmo todo según recomendación. Haciendo una precisión sobre el punto PL-10 FIPS/Avanzada elijo la opción (b).»
+>
+> En la misma respuesta: «Ya tengo una impresora térmica que utilizo para pruebas de impresión, se puede configurar por red.» y «Utilizaría una maquina virtual, puesto que la idea es validar que todo corre bien y sin problemas en Linux a pesar de que el rendimiento no sea el mejor.»
+
+**Resultado:** PL-01 (a), PL-02 (a), PL-03 (a), PL-04 (a), PL-05 (a), PL-06 (a), PL-07 (a), PL-08 (a), PL-09 (a), **PL-10 (b)**, PL-11 (a), PL-12 (a), PL-13 (a), PL-14 (a) y PL-15 (a). En PL-03 queda abierto qué equipo hace LN (lo propone B).
+
+**Consecuencias de PL-10 (b) que B debe recoger al registrar (las prepara C; no cambian lo firmado):**
+1. **Cambia el bloque H del ADR.** Avanzada (FIPS) se ofrece en Linux desde la primera versión Linux, con las condiciones del punto 2 del bloque H: módulo OpenSSL validado FIPS 140-3 en modo FIPS, TPM 2.0 con C3, LUKS2 con C13, y el laboratorio y la revisión del auditor equivalentes a AP-09. Se quitan el punto 1 (Linux solo con Básica y la alerta diaria) y la alternativa descartada «Avanzada en Linux desde la primera versión». Sigue rigiendo que Avanzada no se puede seleccionar antes de la versión 1 del acceso multiempresa.
+2. **Relación con PL-04 (a)**, que dice «RHEL solo con Avanzada». Con PL-10 (b), la matriz tiene dos distribuciones desde el inicio: Ubuntu Server 24.04 LTS para Básica y una distribución con módulo FIPS validado para Avanzada.
+   - **Lectura literal:** RHEL 9 o 10, con paquetes `.rpm`. Suma 0,5 sp, como la opción (c) de PL-04.
+   - **Alternativa por verificar en LS1:** Ubuntu Pro FIPS. Mantiene una sola familia si su módulo para 24.04 tiene la validación CMVP vigente, lo que no está verificado.
+   - La elige el arquitecto en LS1, con el estado CMVP a la vista. Si cambia lo que ve el cliente o su costo, vuelve al propietario.
+3. **Riesgo que pasa a la ruta crítica:** que el proveedor `tpm2` de OpenSSL funcione con el modo FIPS (sección 7). La prueba de concepto de LS1 se hace en la distribución FIPS. Si falla, Avanzada en Linux se bloquea (falla cerrada, bloque A, punto 2) hasta resolverlo, y nunca se rebaja a Básica en silencio.
+4. **Costo:** de 0,5 a 0,8 sp más en LS, otros 0,5 sp si la distribución FIPS es RHEL, y el laboratorio de AP-09 en Linux. Total estimado: de 5,8 a 6,6 sp (*inferido*).
+5. **Precisión de ADR-64:** el punto 5 (la alerta diaria con `perfilMin = "avanzada"`) deja de ser la regla de Linux. En Linux rige lo mismo que en Windows.
+
+**Equipo de pruebas (datos del propietario):**
+- **Impresora:** el propietario ya tiene una impresora térmica de pruebas que se configura por red; no hace falta comprarla. En LA3 y LA4 se usa con CUPS por la red (`socket://<ip>:9100` o IPP). Para arm64, la Raspberry Pi se compra en LA4, si se mantiene arm64.
+- **Equipo Linux:** una máquina virtual, para validar el funcionamiento y no el rendimiento.
+  - Requisitos: TPM virtual 2.0 (para C1, C3 y C13 y para la prueba de concepto FIPS de LS1) y red en modo puente hacia la impresora. Mínimo *inferido*: 4 vCPU, 8 GB de RAM y 80 GB de disco.
+  - Las mediciones en la máquina virtual no son oficiales.
+  - La prepara el propietario, porque los agentes no instalan programas en su PC.
 
 ---
 
