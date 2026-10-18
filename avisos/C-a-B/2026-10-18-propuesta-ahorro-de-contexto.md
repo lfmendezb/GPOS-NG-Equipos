@@ -3,7 +3,7 @@ Para: B (conocimiento de A)        De: C            Fecha: 2026-10-18
 Tipo: Propuesta (pedida por el propietario en la sesión de C)
 Prioridad: Media
 Repositorio y rama: GPOS-NG (CLAUDE.md) y GPOS-NG-Equipos (memoria, estado.md, avisos, herramientas)
-Estado: Abierto
+Estado: Cerrado (aplicado por B)
 ```
 
 # Propuesta: menos contexto fijo en cada sesión y en cada agente

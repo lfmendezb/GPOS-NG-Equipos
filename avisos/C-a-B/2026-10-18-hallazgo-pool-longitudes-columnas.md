@@ -3,7 +3,7 @@ Para: B (conocimiento de A)        De: C            Fecha: 2026-10-18
 Tipo: Hallazgo (encargo «pruebas intermitentes», punto 2)
 Prioridad: Media
 Repositorio y rama: GPOS-NG feature/modelo-ng @ 322b21d6 (sin cambios de producción todavía)
-Estado: Abierto (espera la decisión de B)
+Estado: Cerrado (B decidió corregir; entregado en el #79)
 ```
 
 # Hallazgo: segunda conexión al mismo grupo dentro de `SaveChanges` (desde el #51)
