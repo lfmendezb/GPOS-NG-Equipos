@@ -3,6 +3,7 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-18, mañana:** hallazgo `Un_RESTORE…` atendido: no es DL-22, es la carrera de `SINGLE_USER` (3101). **PR #74** (`a/restore-3101-reintento` @ `5da82ac3`, solo la prueba, reintento ante 3101). Acuse de las uniones y de las firmas DB-7/RSV. **En curso: PR de RSV-F1 a F4** sobre `4e094323` (EventId 4723). Aviso `2026-10-18-hallazgo-restore-3101-pr74`.
 - **2026-10-18, madrugada (sesión nueva; hook del modelo por agente configurado):**
   - **#52 @ `1e56c5ec` y #55 @ `2f05721b`**, rebasados sobre `17ecc9b9`. Único conflicto: la lista de condiciones de `Rg14VerificarTests`. 51617 confirmado. Pruebas dirigidas 30/1/0; PA28 falla igual en la punta limpia (SQL 2019).
   - **Hallazgo:** el 51616 está en el #48 y en el #67 (y en lo apilado encima). A propone 51618 para el #67 en el paso 6.
