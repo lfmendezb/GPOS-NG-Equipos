@@ -164,3 +164,51 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
   - Tanda nocturna de T-28 con `GPOST_B9_AFINIDAD=auto` (#66 de C), en base y candidato, con muestras de `PAGELATCH`.
   - Motivo de la afinidad: C atribuye el modo lento a que los hilos del cliente comparten núcleos físicos con el Express, y con la ubicación controlada mide base y candidato iguales (0,991; `traspasos/C/2026-10-17-modo-lento-t28.md`).
   - La duplicada de esta sección, publicada en `503e93b`, se quita.
+
+## Quinta tanda (2026-10-17, 14:33 a 20:58): T-28 con `GPOST_B9_AFINIDAD=auto` y muestras de esperas
+- **Condiciones:** guion `Solucion GPOS NG\Medicion-T6-r5.ps1`. Carga de CPU entre el 0 % y el 7,3 % antes de cada corrida; conectada, sin cortes, sin otros `dotnet`. Horario de tarde. Salidas en `GPOS-B-prep27\TestResults\T6-r5-20261017-1433\`.
+- **Base:** `e80f4654`. **Candidato:** `d67f5a33` (c01df683 + `FORCESEEK` de la comprobación de impuestos CA-12, por 8.2 (6)). El #66 de C está aplicado sin confirmar en los dos lados.
+- **Afinidad:** `auto` fijó el cliente en `0xFF00` (CPU 8 a 15), y el Express quedó en las CPU 0 a 7.
+
+### T-28, 6 cajeros (p95, ms)
+| Corrida | Base: p95 · ventas/s · CPU de sentencias por venta | Candidato: p95 · ventas/s · CPU de sentencias por venta |
+|---|---|---|
+| Control, sin afinidad | 23,2 · 299,8 · 5,36 | 23,7 · 298,9 · 5,24 |
+| r1 | 27,0 · 284,9 · 5,46 | 22,6 · 307,1 · 5,28 |
+| r2 | 23,6 · 307,6 · 5,00 | 23,8 · 302,3 · 4,98 |
+| r3 | 24,1 · 301,3 · 5,10 | 24,2 · 299,7 · 4,95 |
+| r4 | 22,1 · 312,3 · 5,16 | 25,9 · 291,0 · 5,07 |
+| r5 | 22,7 · 310,5 · 5,12 | 23,1 · 304,2 · 5,10 |
+| **Mediana con afinidad (r1 a r5)** | **23,6** | **23,8** |
+
+- **Razón con afinidad: 1,008. Cumple** el criterio 2 (≤ 1,05). Con el control incluido (6 por lado) da 1,015.
+- **Frente a la oficial:** 23,8 ≤ 32,8. **Cumple.**
+- **CPU de sentencias por venta:** el candidato queda igual o por debajo de la base en las 6 parejas (4,95 a 5,28 ms, frente a 5,00 a 5,46). No hay costo de código atribuible.
+- **Dispersión:** una corrida por lado se separa de su mediana (base r1 +14 %, candidato r4 +9 %). Pasa en los dos lados y con la misma firma (menos ventas por segundo y más CPU del cliente por venta), así que es ruido simétrico, no del candidato.
+- **El modo lento no apareció esta vez en ningún lado**, tampoco en el control sin afinidad. Los datos son compatibles con la explicación de C, pero no la prueban en LFMB: falta una corrida lenta sin afinidad junto a otra rápida con afinidad. Para el criterio basta con que, controlando la ubicación, base y candidato salgan iguales.
+- **8.2 (6): Correcto en las 6 corridas del candidato**, con el `FORCESEEK` de CA-12. La base sigue fallando, como se esperaba, porque no tiene A-N2.
+
+### Muestras de esperas (cada 500 ms; unas 900 muestras por corrida de T-28)
+- **PAGELATCH:** entre 40 y 70 tareas en espera sumando todas las muestras de una corrida, es decir, unas 0,05 por muestra, iguales en los dos lados. Las páginas son de `doc.Documento` (índice agrupado), `sys.sysallocunits`, `ventas.Venta` y `inv.Movimiento`. **No hay un punto caliente de pestillos.**
+- **LCK_M_U** domina: unas 3,7 tareas en espera por muestra. Es la serialización por serie del diseño, con la base en 3.325 a 3.444 y el candidato en 3.413 a 3.580 (unos +3 %, dentro del ruido).
+- **WRITELOG:** unas 40 por corrida en los dos lados. Sin SOS ni errores de muestreo.
+
+### T-57 y N6-02 con afinidad (una corrida por lado)
+| Métrica (p95, ms) | Base | Candidato | Razón |
+|---|---|---|---|
+| T-57 sin compras | 23,7 | 21,8 | 0,92 |
+| T-57 con compras | 39,2 | 38,8 | 0,99 |
+| Compra de 20 líneas | 939,6 | 207,8 | 0,22 |
+| Meta 5b | 966,6 | 305,0 | 0,32 |
+| N6-02, 20 renglones | 73,9 | 84,2 | 1,139 |
+
+- **T-57: cumple con margen.**
+- **N6-02 en esta pareja: 1,139.** Sin embargo, el candidato gastó **menos** CPU de sentencias por venta (10,06 frente a 12,30 ms). Lo que subió fue la **señal**, la espera de CPU dentro del motor: 1,16 frente a 0,23 ms por venta. Es la firma de contención del planificador, no de costo de código.
+- **El criterio de N6-02 sigue cerrado en verde** con las 5 corridas por lado sin afinidad (0,945). Esta pareja es informativa; con la regla 7.3, 2 corridas más por lado con afinidad la confirmarían.
+
+## Veredicto de T6 (2026-10-17, noche)
+- **T-28: VERDE.** Con la ubicación del cliente controlada, la razón es 1,008 y la CPU de sentencias no sube. 8.2 (6) pasa en 6 de 6.
+- **T-57, compra de 20 líneas y 5b: verdes**, con mejoras grandes en la compra.
+- **N6-02: verde** por el criterio de 5 corridas. La única pareja con afinidad sale alta por espera de CPU en el motor, no por costo. Recomendación de B: 2 corridas más por lado con afinidad, unos 75 min, antes de unir.
+- **`b/prep-27oct` (`d67f5a33`) queda apto para la unión del 27-oct** según T6, sujeto a la suite oficial completa sobre el resultado de la unión.
+- **Para el banco:** desde ahora T-28, T-57 y N6-02 se miden con `GPOST_B9_AFINIDAD=auto` (#66), que se une junto con la preparación.
