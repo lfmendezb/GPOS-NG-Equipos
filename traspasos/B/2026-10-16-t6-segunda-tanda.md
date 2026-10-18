@@ -212,3 +212,30 @@ Errores en todas las corridas: 0. Interbloqueos del motor: 0.
 - **N6-02: verde** por el criterio de 5 corridas. La única pareja con afinidad sale alta por espera de CPU en el motor, no por costo. Recomendación de B: 2 corridas más por lado con afinidad, unos 75 min, antes de unir.
 - **`b/prep-27oct` (`d67f5a33`) queda apto para la unión del 27-oct** según T6, sujeto a la suite oficial completa sobre el resultado de la unión.
 - **Para el banco:** desde ahora T-28, T-57 y N6-02 se miden con `GPOST_B9_AFINIDAD=auto` (#66), que se une junto con la preparación.
+
+## Sexta tanda (2026-10-17, 21:43 a 22:58): N6-02 con afinidad, regla 7.3
+- **Condiciones:** guion `Solucion GPOS NG\Medicion-T6-r6.ps1`, mismos commits y el mismo #66 que en la quinta tanda. Carga de CPU entre el 2 % y el 8 %; conectada. Salidas en `GPOS-B-prep27\TestResults\T6-r6-20261017-2143\`.
+
+| N6-02 con afinidad (p95, ms) | Base | Candidato |
+|---|---|---|
+| Quinta tanda | 73,9 | 84,2 |
+| r1 | 98,5 | 69,7 |
+| r2 | 80,3 | 107,5 |
+| **Mediana (3 por lado)** | **80,3** | **84,2** |
+| CPU de sentencias por venta (ms) | 12,30 / 12,90 / 12,09 | 10,06 / 10,60 / 10,29 |
+| Señal, espera de CPU en el motor (ms por venta) | 0,23 / 0,42 / 0,42 | 1,16 / 0,58 / 1,05 |
+| LCK_M_U, total muestreado | 554 / 512 / 512 | 677 / 656 / 635 |
+
+- **Razón: 1,049. Cumple el criterio 3 (≤ 1,05), al límite.** Sin afinidad, con 5 corridas por lado, era 0,945. **N6-02 queda cerrado en verde.**
+- **Dispersión alta en los dos lados:** la base va de 73,9 a 98,5 y el candidato de 69,7 a 107,5. El p95 de N6-02 es ruidoso con 2 min de carga.
+- **Observación para el arquitecto de datos (no bloquea):** el candidato gasta un **16 % menos de CPU de sentencias** por venta, pero tiene un **25 % más de esperas `LCK_M_U`** y más señal. La venta de 20 renglones con T1 espera más bloqueos de actualización, aunque calcule menos. Es coherente con el `UPDATE` condicional de existencias por artículo de ADR-118 y con las líneas de política. Conviene revisarlo después del 27-oct, junto con LP-01 (límite de 2.100 parámetros), que toca la misma escritura.
+
+## Veredicto final de T6 (2026-10-17)
+**T6 en verde en todas las métricas:**
+- T-28: 1,008 con afinidad;
+- T-57: 0,92 sin compras y 0,99 con compras;
+- compra de 20 líneas: 0,22; meta 5b: 0,32;
+- N6-02: 1,049 con afinidad y 0,945 sin ella;
+- 8.2 (6): 6 de 6 en el candidato.
+
+**`b/prep-27oct` (`d67f5a33`) queda apto para la unión del 27-oct**, sujeto a la suite oficial completa sobre el resultado de la unión. El #66 se une con ella.
