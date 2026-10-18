@@ -18,3 +18,5 @@ Estado de B el 2026-10-18 (tarde). Detalle en `estado.md` del área común (secc
 
 **Why:** la sesión del 18-oct hizo mucho; sin esta nota, la siguiente repetiría o perdería trabajo.
 **How to apply:** leer esto, `estado.md` (B) y los avisos posteriores a `322b21d6`; trabajar con Sonnet 5.5 y esfuerzo medio, y sugerir Opus 5.5 para las uniones con conflicto y el análisis de la medición ([[sesiones-sonnet-medio-escalar-opus]]).
+
+**PAUSA hasta el miércoles 21 de octubre de 2026 (propietario, 2026-10-18):** la cuota de uso está al límite. No se asignan tareas nuevas a A ni a C; terminan lo asignado y esperan. En B, sin vigilantes de sesión; la medición del #61 y el #71 corre sola (`Medicion-61-71.ps1`, resultados en `GPOS-B-prep27\TestResults\M61-71-*`). El miércoles: comparar cifras, unir #61 y #71 (conflicto con SC08 ya resuelto en `b/medir-cand`), #75, #76, #77, #78, #79 y #80, registrar el ADR de Linux (PL-10 (a)) y D1 de DB-7 desde el 2-nov.

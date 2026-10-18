@@ -173,6 +173,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
 - **2026-10-18, mañana (sesión nueva de B):**
+  - **PAUSA hasta el miércoles 21 (cuota de uso al límite; propietario):** sin tareas nuevas para A ni para C; terminan lo asignado y esperan. B deja correr la medición del #61 y el #71 con el mínimo de sesiones. Aviso `2026-10-18-pausa-hasta-miercoles-21`.
   - **Contexto corto (regla 10):** `CLAUDE.md` 19,5 KB (−42 %), memoria −9 entradas, 539 avisos archivados, `estado.md` de B recortado; vigilante con escritura atómica; Publicar no pisa cambios de otros. **Sí** a la corrección de C de `LongitudesColumnas`, con condiciones. Aviso `2026-10-18-contexto-corto-y-longitudes-columnas`.
   - **Regla nueva del propietario:** las sesiones de A, B y C trabajan con Sonnet 5.5 y esfuerzo medio, y sugieren Opus 5.5 en una línea para las tareas de riesgo. Aviso `2026-10-18-sesiones-sonnet-medio-escalar-opus`; memoria `sesiones-sonnet-medio-escalar-opus`.
   - **Encargo a C** (aprobado por el propietario): T2 de ADR-126 en PR pequeños (objetivo antes del 2026-11-02) y estabilizar las pruebas intermitentes bajo carga. Aviso `B-a-C/2026-10-18-encargo-t2-adr126-y-pruebas-intermitentes`.
