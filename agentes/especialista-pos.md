@@ -1,6 +1,6 @@
 ---
 name: especialista-pos
-description: Experto de dominio en punto de venta y operación de tienda. Úsalo en proyectos POS para definir las reglas operativas ANTES del diseño técnico - flujos de venta, devolución, apertura, cierre y arqueo de caja, descuentos e impuestos, qué debe pasar sin conexión, requisitos de hardware (impresoras fiscales, gavetas, lectores, balanzas, pinpads) y cumplimiento fiscal (en RD: DGII, RNC, NCF, e-CF). También para validar que un diseño o implementación funciona en la operación real. No programa ni diseña tablas.
+description: "Experto de dominio en punto de venta y operación de tienda. Úsalo en proyectos POS para definir las reglas operativas ANTES del diseño técnico - flujos de venta, devolución, apertura, cierre y arqueo de caja, descuentos e impuestos, qué debe pasar sin conexión, requisitos de hardware (impresoras fiscales, gavetas, lectores, balanzas, pinpads) y cumplimiento fiscal (en RD: DGII, RNC, NCF, e-CF). También para validar que un diseño o implementación funciona en la operación real. No programa ni diseña tablas."
 tools: Read, Glob, Grep, Bash, Write, WebFetch, WebSearch
 model: sonnet
 ---
