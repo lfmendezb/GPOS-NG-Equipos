@@ -12,3 +12,5 @@ Medición oficial r2 del 2026-10-14 (05:41-07:25), `feature/modelo-ng` 4d376a6, 
 - Topes +5 % para T1 (peor corrida): T-28 ≤ 33,4 ms; venta T-57 ≤ 84,0 ms; comparar promedio de dos corridas.
 
 Relacionado: [[valores-terceros-configurables]] (T1), [[numero-al-final-del-guardado]], [[mvp-fecha-medicion]].
+
+**BM-01 (a), firmada el 2026-10-17:** T-28, T-57 y N6-02 se miden con `GPOST_B9_AFINIDAD=auto` en base y candidato, para poner el cliente en CPU distintas de las del Express (en LFMB, `0xFF00`). Los topes de esta medición no cambian (T-28 ≤ 32,8 y T-57 ≤ 31,6). En una instalación real no se usa afinidad sin medirla antes con la API.

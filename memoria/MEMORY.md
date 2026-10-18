@@ -13,7 +13,7 @@
 - [decision-modelo-datos-propio-pendiente](decision-modelo-datos-propio-pendiente.md) — 2026-10-03: propuesta de modelo propio (ADR-52) con hoja de firma MD-01 a MD-32 pendiente; no construir sobre el esquema BP2 hasta la firma
 - [respuestas-propietario-modelo-datos](respuestas-propietario-modelo-datos.md) — 2026-10-03: P-1 a P-11 respondidas: ITBIS 16 %, códigos inmutables, listas de precios, sin conexión por sucursal con sincronización central, recetas/mermas, ARS
 - [motor-sql-server-decidido](motor-sql-server-decidido.md) — 2026-10-04: se mantiene SQL Server tras evaluar PostgreSQL 18; reabrir solo con 3+ clientes grandes
-- [agentes-con-opus](agentes-con-opus.md) — 2026-10-17: modelo por agente (Opus riesgo/backend, Sonnet resto, Haiku orquestador/Explore); lo impone un hook PreToolUse; escalar con «Escalado a Opus: motivo»
+- [agentes-con-opus](agentes-con-opus.md) — 2026-10-17: modelo por agente (Opus riesgo/backend, Sonnet resto, Haiku orquestador/Explore); ya no se fuerza Opus
 - [un-solo-editor-por-repositorio](un-solo-editor-por-repositorio.md) — Incidente 2026-10-04: un solo agente por árbol; confirmar o apartar cambios del propietario antes de editar; rotar la clave heredada de Backup Tool
 - [nombres-bases-gpos](nombres-bases-gpos.md) — GPOS_SYSDATA y prefijo GPOS_ para empresas/sucursales/pruebas; nunca GPOST_ salvo variables de entorno; BP2 solo al citarlo
 - [eliminar-solo-sin-referencias](eliminar-solo-sin-referencias.md) — Eliminar solo sin referencias; si se transaccionó, inhabilitar; aplica también al SUPER (precisión ADR-08)
@@ -61,8 +61,9 @@
 - [pausa-2026-10-10](pausa-2026-10-10.md) — Estado al pausar todo (2026-10-10 ~14:15): ramas sin unir, pendientes de firma y pasos al reanudar
 - [revision-demo-10b-rama](revision-demo-10b-rama.md) — Revisión del DEMO 10b: rama b/demo-revision-1 (aca9b04), puntos 1-3 hechos, sin unir; DatePicker sin Style
 - [valores-terceros-configurables](valores-terceros-configurables.md) — 2026-10-11: ningún valor de tercero en el código; VT-01..12 firmadas; ADR-126 por registrar; T1 desde el 14-oct
-- [medicion-oficial-14oct](medicion-oficial-14oct.md) — T-28/T-57 r2 del 14-oct en verde; topes +5 % para T1 (33,4 / 84,0 ms)
+- [medicion-oficial-14oct](medicion-oficial-14oct.md) — T-28/T-57 del 14-oct en verde; topes para T1 (32,8 / 31,6 ms); banco con GPOST_B9_AFINIDAD=auto desde el 17-oct (BM-01)
 - [respaldo-emergencia-2026-10-11](respaldo-emergencia-2026-10-11.md) — Equipo B se apaga solo: respaldos 11 y 14-oct en OneDrive GPOS ARGON; traspaso 2026-10-14-traspaso-B-apagados.md
 - [marcas-migraciones-orden-de-union](marcas-migraciones-orden-de-union.md) — Marcas de migraciones EF = orden de unión; la rama posterior regenera (B, 2026-10-14); orden #24→#26→#21→#28
 - [traspaso-b-2026-10-15](traspaso-b-2026-10-15.md) — Sustituido por el del 2026-10-17 (historia del 15 y 16-oct)
-- [traspaso-b-2026-10-17](traspaso-b-2026-10-17.md) — LEER PRIMERO: cambio de sesión de B (2026-10-17); T6 cuarta tanda por analizar; unión del 27-oct y orden de PR
+- [traspaso-b-2026-10-17](traspaso-b-2026-10-17.md) — Sustituido por el del 2026-10-18 (historia del 17-oct: T6, hoja de B, unión adelantada)
+- [traspaso-b-2026-10-18](traspaso-b-2026-10-18.md) — LEER PRIMERO: cambio de sesión de B (2026-10-18); punta 17ecc9b9; tareas 1 (ola 5 auditoría) y 3 (CLAUDE.md) aprobadas sin empezar
