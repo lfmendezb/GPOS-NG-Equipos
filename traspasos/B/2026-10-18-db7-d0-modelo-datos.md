@@ -52,6 +52,7 @@
 | Sello solo de cuenta | **Dos niveles** | DB7-05 |
 | Invitaciones (Q4, Q11, Q12 y F2-A), cadena de hashes, P7-C, TRZ-07 y TRZ-10 | Fase 2 | DB7-01 y P-D0-05 de BP3 |
 | `AprobacionesFormato` (Q17) | Fuera de D0 | M-3 solo se verifica; R-12 en P-D0-03 de BP3 |
+| `Reportes` global (`ReportesService.cs:105-149`: cualquier ADMIN edita o borra cualquier definición) | **Reportes por empresa** (`Reportes.EmpresaCodigo`), sección 2.6 | SD0-01 (Alta, H-06); opción (a) de P-D0-08 |
 
 ---
 
@@ -82,6 +83,9 @@ BitacoraSeguridad (existente) + EmpresaActua, ActorNivel, Categoria, ValorAnteri
   (la columna Empresa existente = empresa AFECTADA; ver DX-6)
 CategoriasSeguridad, CatalogoEventosSeguridad            nuevas
 Configuracion: Licencia.PadronSellos en el formato v2; clave nueva Accesos.Modelo
+
+Reportes (existente) + EmpresaCodigo nvarchar(30) NULL → Empresas   (NULL = reporte del sistema; SD0-01, 2.6)
+ConversionReportes (**EmpresaCodigo, IdOriginal**, IdNuevo, ReglasActualizadasUtc)   nueva, solo la escribe el verbo (7.3)
 ```
 
 ### 2.2 `dbo.UsuariosEmpresas`
@@ -138,6 +142,49 @@ Configuracion: Licencia.PadronSellos en el formato v2; clave nueva Accesos.Model
 Las tablas `Perfiles`, `PerfilesPermisos`, `UsuariosPerfiles` y `UsuariosPermisos` **se borran en el verbo**, después de la prueba de equivalencia (DB7-02, sin convivencia).
 
 ---
+
+### 2.6 Reportes por empresa (SD0-01; opción (a) de P-D0-08)
+**Hecho verificado.** Hoy las definiciones de `dbo.Reportes` son globales:
+- `GuardarAsync` modifica cualquier `Id`, también un reporte del sistema;
+- `EliminarAsync` borra cualquiera que no sea del sistema y sus permisos `rpt:{id}` en todas partes (`4e094323:src/GPOS.Core/Servicios/ReportesService.cs:105-149`);
+- las rutas piden `RequiereAdmin`.
+
+Con el ADMIN por empresa, esto deja abierto H-06 (Alta).
+
+**Modelo (a).**
+
+| Pieza | Regla |
+|---|---|
+| `Reportes.EmpresaCodigo nvarchar(30) NULL` | FK a `Empresas` (NO ACTION). **NULL = reporte del sistema** (`DelSistema = 1`, lo mantienen la semilla o el SUPER). Con valor: reporte personalizado de esa empresa |
+| `CK_Reportes_Ambito` | `(DelSistema = 1 AND EmpresaCodigo IS NULL) OR (DelSistema = 0 AND EmpresaCodigo IS NOT NULL)`. Lo crea el verbo **después** de asignar las filas de hoy (7.3, paso 8 h) |
+| `ReportesColumnas` | Sin cambios: hereda el ámbito por `ReporteId` (FK CASCADE que ya existe) |
+| Lectura (ADMIN y USER) | `WHERE EmpresaCodigo = @empresa OR EmpresaCodigo IS NULL`, siempre con la empresa del token. Un `Id` de otra empresa responde 404 sin distinguir (PRV-07, QA-20) |
+| Escritura (ADMIN) | Solo filas con `EmpresaCodigo = @empresa`. Un reporte del sistema **no** lo modifica el ADMIN: lo **duplica** en su empresa (copia con `Codigo = NULL`, para que `ReportesSemilla.SembrarAsync` no lo tome por instalado, `ReportesSemilla.cs:364-369`) |
+| Escritura (SUPER) | Reportes del sistema y de cualquier empresa (`/api/super`) |
+| Semilla (`ReportesSemilla`) | Sin cambios de regla: solo toca `DelSistema = 1`, que ahora implica `EmpresaCodigo IS NULL`. Los reportes del sistema que el ADMIN modificó antes de la v1 se conservan como están (la semilla ya los respeta) y quedan del SUPER |
+| Permisos `rpt:{id}` | Se guardan por membresía y por perfil de empresa (2.3), así que un `rpt:{id}` solo vale en la empresa de la sesión. Al borrar un reporte, se borra `rpt:{id}` **solo** en `EmpresaCodigo` del reporte y se sube `VersionPrivilegios` de los miembros afectados (SD0-11) |
+| Índices | En `Reportes`, **ninguno nuevo**: son cientos de filas y la lectura por empresa recorre la tabla en menos de 1 ms (*inferido*). **Corrección de 4.4:** el borrado de `rpt:{id}` sí existe (`ReportesService.cs:131-135`), y justifica `IX_UsuariosEmpresasPermisos_Empresa_Opcion` |
+| `rptsis.Reporte` v2 | Agrega `EmpresaCodigo`. La API de reportes filtra `EmpresaCodigo = @empresa OR EmpresaCodigo IS NULL` con la empresa de la introspección. `rptsis.ReporteColumna` se lee unida a `rptsis.Reporte`. Es la misma versión mayor de `contrato-rptsis` |
+| Conversión del DEMO | 7.3, paso 3 b: cada reporte personalizado de hoy (`DelSistema = 0`) queda en la **primera** empresa habilitada (por `Prioridad`, `Codigo`), con su mismo `Id`. Así siguen valiendo sus permisos, sus reglas de notificación y la evidencia de `audit.Exportacion` (ADR-111). Se **copia** a las demás empresas con un `Id` nuevo, registrado en `ConversionReportes`; los permisos `rpt:{original}` y los `Detalle = "id:{original}"` de esas empresas se reasignan al `Id` nuevo |
+
+- **Reglas de notificación** (`NotificacionesReglas.ReporteId`, en la base de cada empresa, `EmpresaDbContext.cs:333`).
+  - No se pueden reasignar en la transacción de `GPOS_SYSDATA`: están en otra base.
+  - El verbo las reasigna **después** del commit, empresa por empresa, de forma idempotente con `ConversionReportes` (`ReglasActualizadasUtc`), y se puede repetir.
+  - Mientras tanto, la regla apunta a un reporte de otra empresa: la lectura por empresa responde 404 y la regla se suspende (Q7). **Falla cerrado.**
+- **Volumen:** cientos de reportes × N empresas en el DEMO; menos de 1 MB (*inferido*).
+- **Costo:** de 0,3 a 0,5 sp entre D1 y D5 (estimación del auditor).
+
+**Si el propietario elige (b)** (el diseñador solo para el SUPER en la v1):
+- **No hay cambio de datos:**
+  - sin `Reportes.EmpresaCodigo`;
+  - sin `ConversionReportes`;
+  - sin `CK_Reportes_Ambito`;
+  - sin el paso 3 b ni el 11 del verbo;
+  - `rptsis.Reporte` sin cambios.
+- `POST` y `DELETE /api/admin/reportes` pasan a `RequiereSuper`, en BP3.
+- Los permisos `rpt:{id}` siguen siendo por membresía (2.3): la visibilidad ya es por empresa, pero la **definición** es común a todas.
+- El índice `IX_UsuariosEmpresasPermisos_Empresa_Opcion` se mantiene igual, por el borrado del SUPER.
+- **Qué rompe:** el ADMIN deja de diseñar reportes hasta la fase 2.
 
 ## 3. Sello en dos niveles y padrón por (cuenta, empresa) (DB7-05; BP3 8.4)
 
@@ -223,14 +270,44 @@ EnExceso(E) ⇔ consumo(E) > cupo(E)
 | 6 | `UPDATE … SET Nivel = 'ADMIN'` en la membresía | Falla cerrado: la fila no coincide con el sello ni con `m.n` |
 | 7 | `UPDATE Usuarios SET Nivel = 'SUPER'` | No entra: no coincide con `S` (TN 7(d)) |
 | 8 | Reponer un padrón o una base anterior | Prevalece la versión mayor, la del disco (SEG-L2-07, SL-F1 (a)) |
+| 9 | **Reponer en la fila las columnas y el sello de antes de una baja o de un cambio de nivel**, cuando estaba `HABILITADA` (incluso como ADMIN) (SD0-03) | No entra (401 `credenciales`) y no consume. El sello descifra y coincide con la fila repuesta, pero el padrón **no** tiene `m(c,E)` (la baja salió del padrón, DX-5), o la tiene con otra huella u otro nivel. La definición de `Valido` de 3.6 exige la entrada con la misma huella, el mismo nivel y `st = H` |
 
 - **Contraejemplo de un solo nivel** (el motivo firmado en DB7-05): con el sello solo de cuenta y el consumo contado con las filas `HABILITADA`, el caso 2 suma consumo en E sin tocar ningún MAC.
 - **Residual:** quien tenga `sysadmin` y el anillo puede rehacer los sellos (CP-4, AP-04).
 
+**Residual sin sello (SD0-14; se acepta de forma expresa con la firma).** Quien tenga escritura en `GPOS_SYSDATA` cambia estas columnas sin rehacer ningún MAC. Ninguna amplía el cupo, sube el nivel ni da una membresía:
+
+| Columna | Efecto | Mitigación |
+|---|---|---|
+| `Usuarios.DebeCambiarClave` | Se salta el cambio forzado | El sello cubre la huella de la contraseña: no cambia cuál es |
+| `Usuarios.SesionesRevocadas`, `UsuariosEmpresas.SesionesRevocadas` | Vuelven a valer tokens revocados (hasta su vencimiento) | Opcional en `verificar`: avisar de una revocación anterior a la última registrada en la bitácora (`SESIONES_*_REVOCADAS`) |
+| `BloqueadoHasta`, `FallosVentana*` | Ayudan a probar contraseñas | Lo limita el contador (cuenta, IP) en memoria |
+| `Empresas.AdministradaPorSuper` | Cambia quién administra según MEM-06 | Es una marca, no da privilegio. V-4 la revisa |
+| Perfiles y excepciones | Permisos granulares | SEG-L2-04, ya aceptado (ADR-83, «Alcance») |
+
 ### 3.6 Verificación en cada petición (BP3 6.1 y 6.3)
 - Q1 lee las columnas y los dos sellos **en cada petición**, por ADO.NET, en un solo viaje.
-- El **resultado criptográficos** (`Unprotect` más la comparación con el padrón) se memoriza por `(SHA-256 de los bytes del sello, versión del padrón)`, con un máximo de 20 000 entradas y 5 minutos.
+- El **resultado criptográficos** (`Unprotect` más la comparación con el padrón) se memoriza por `(SHA-256 de los bytes del sello, versión del padrón, época del anillo)` (SD0-13; BP3 6.3). La época sube con toda revocación o reprotección del anillo (ADR-79), y así un sello protegido con una llave revocada deja de valer en el acto. Máximo de 20 000 entradas y 5 minutos.
 - La comparación del contenido con la fila se hace **siempre**. Esto coincide con BP3 6.1.
+- **`Valido` de la membresía (SD0-03): se cumplen todas estas condiciones; cualquier otro caso da `FueraDePadron` o `SelloInvalido` y 401 `credenciales`.**
+  1. El sello descifra con el propósito `GPOS.Membresias.Sello.v1` y el subpropósito `{c}|{E}`.
+  2. `c`, `e`, `n`, `st`, `r` y `s` del contenido son iguales a la fila.
+  3. Existe `m(c,E)` en el padrón verificado, con `h = SHA-256(bytes del sello)[0..12]`, el mismo `n` y `st = H`.
+  4. Existe `a(c)` y no es SUPER. El sello de cuenta es `Valido`, con su propia regla (`a(c).h` igual).
+- **`Valido` de la cuenta:** el sello descifra, sus campos coinciden y existe `a(c)` con la huella igual y `S` igual (como hoy, `RevocacionSesiones.cs:175`).
+- **Dónde se aplica:** la misma función la usan Q1 (paso g de BP3 6.1), Q2 (la lista de `identificar`), el autorizante (SD0-06) y Q9 y Q10 (el dominio).
+- **Consulta que lo comprueba.** Los datos salen de Q1 (conjunto 1: `SelloMembresia`, `Estado`, `Nivel`, `RestringirSucursal`, `SucursalDefault`) y del padrón vigente. El predicado de las condiciones 1 a 4 se evalúa en C#, porque el padrón está protegido y no se puede leer en SQL. Para `verificar` (V-1) y la prueba del caso 9 en D3:
+  ```sql
+  -- Candidatas: filas que dicen dar acceso. C# marca MEMBRESIA_SIN_SELLO cada una cuyo predicado 1 a 4 no se cumple.
+  SELECT ue.UsuarioCodigo, ue.EmpresaCodigo, ue.Nivel, ue.Estado, ue.RestringirSucursal, ue.SucursalDefault, ue.SelloMembresia
+    FROM dbo.UsuariosEmpresas ue
+   WHERE ue.Estado = 'HABILITADA';       -- recorrido de cientos de filas; solo en verificar
+  ```
+  **Prueba de D3 (caso 9):**
+  1. Guardar la fila y el sello de una membresía ADMIN `HABILITADA`.
+  2. Darla de baja por la API.
+  3. Reponer por SQL la fila y el sello guardados.
+  4. Comprobar que Q1 da 401 `credenciales`, que Q2 no lista la empresa, que el consumo no cambia y que V-1 la informa.
 - El padrón tiene su caché de 15 s, que `TrasConfirmar` vacía en la instancia que escribe (`4e094323:src/GPOS.Core/Sistema/Usuarios/PadronSellos.cs:316-321`). Fuera de la API, el padrón solo lo cambia el verbo de consola, que exige la API detenida (7.3), o un `sysadmin` (residual).
 
 ### 3.7 Orden de bloqueos en `GPOS_SYSDATA`
@@ -248,13 +325,17 @@ El orden único de `CLAUDE.md` es el de las bases de empresa, y DB-7 no toma nin
   - Son menos de 20 operaciones al día (*inferido*, DAT Q5).
   - *Alternativa descartada:* un orden por tabla. Aparece el ciclo X/S sobre `EmpresasPerfiles` entre Q6 y la FK de Q13.
 - El **inicio de sesión** no toma el padrón. Escribe `Usuarios` y, aparte, `UsuariosEmpresas.UltimoAcceso` y `INGRESO_EMPRESA` en sentencias propias.
+- **Q1 frente a las transacciones de administración (SD0-16, disponibilidad).**
+  - Los `Protect` (sellos y padrón) se calculan **antes** de tomar los bloqueos de las filas, con los campos nuevos. Así la transacción solo escribe, en unos milisegundos.
+  - D1 mide la espera de Q1 detrás de un alta.
+  - Si pasa de 200 ms, se evalúa `READ_COMMITTED_SNAPSHOT` en `GPOS_SYSDATA`: no cambia la decisión, porque la fila confirmada anterior también tiene su sello.
 - **Residual:** la regla de notificación suspendida (AIS-06) escribe en dos bases y no es atómica (R-8).
 
 ---
 
 ## 4. Restricciones, consultas e índices
 
-### 4.1 Restricciones y disparadores (franja reservada por BP3: 51619 a 51638)
+### 4.1 Restricciones y disparadores (franja usada: 51619 a 51625; siguiente libre: 51626)
 | Objeto | Regla | Error |
 |---|---|---|
 | `CK_UsuariosEmpresas_Nivel`, `_Estado`, `_Origen`, `_Version`, `_Sucursal` | Dominios; versión ≥ 1; la restricción exige sucursal | — |
@@ -363,6 +444,9 @@ UPDATE ue SET VersionPrivilegios = ue.VersionPrivilegios + 1, FechaModificacion 
 ```
 - **Plan:** `IX_UsuariosEmpresasPerfiles_Empresa_Perfil`.
 - **Criterio:** los miembros de B no cambian de versión.
+- **Alcance de Q6 (SD0-11):** toda escritura en `EmpresasPerfiles` (incluido `Inhabilitado`) y en `EmpresasPerfilesPermisos` sube la versión de los miembros de A que tienen ese perfil, en la misma transacción.
+  - Lo mismo hace todo paso de `GPOS.Migracion sistema` que cambie permisos de perfiles o de membresías, y el borrado de un reporte con sus `rpt:{id}` (2.6).
+  - Prueba de D1: inhabilitar un perfil revoca en la petición siguiente.
 
 **Q7.** Es Q1 con el autor de la regla (AIS-06).
 
@@ -489,7 +573,10 @@ SELECT ue.EmpresaCodigo, COUNT(*) AS ConsumoFilas
 | `PK_` y `UQ_CatalogoEventosSeguridad` | `(Evento)`, `(Evento, Categoria)` | FK, Q8-a, Q29 | Nulo |
 
 - **Sin índices filtrados** en la bitácora (D-J2-06 del #57).
-- **Sin índice de `rpt:{id}`:** no hallé que el código borre esos permisos (`git grep "rpt:"` en `ReportesService.cs`: ninguna coincidencia).
+- **Corrección:** sí hace falta un índice de `rpt:{id}`. El borrado existe (`ReportesService.cs:131-135`, con `Permisos.Reporte(id)`): mi búsqueda anterior por el literal `"rpt:"` no lo encontró. Se agrega `IX_UsuariosEmpresasPermisos_Empresa_Opcion (EmpresaCodigo, Opcion)`:
+  - lo justifica el borrado de los `rpt:{id}` de un reporte en su empresa (2.6);
+  - costo de escritura bajo, una entrada por excepción.
+  - `EmpresasPerfilesPermisos` no lo necesita: su PK empieza por la empresa.
 - **Sin índice para el cupo:** sale del padrón.
 
 ### 4.5 Volumen y costo
@@ -544,6 +631,21 @@ La bitácora sigue siendo de solo inserción (52001, y el `DENY` de RG-14 en `4e
 - La tarea diaria del #57 no cambia.
 
 ---
+
+### 5.6 Un evento fuera del catálogo no debe revertir el cambio ni el bloqueo (SD0-07)
+La FK se mantiene: ADR-37 pide un catálogo validado por el motor. Para que un desfase entre el código y la tabla no haga daño:
+
+1. **Comprobación al arrancar.** Antes de abrir el puerto, la API compara `GPOS.Contracts.EventosSeguridad.Todos` con `SELECT Evento FROM dbo.CatalogoEventosSeguridad`.
+   - Es una lectura de un centenar de filas, una vez.
+   - En **Release**, si falta alguno, la API no arranca: «Ejecute GPOS.Migracion sistema». En Debug y en Amplio, `sistema` aplica la DDL al arrancar y el `MERGE` lo resuelve.
+   - Registra el **EventId 4733** («falta un evento en el catálogo al arrancar en Release»), el número del blueprint (secciones 6.4 y 15), que es el dueño de los contratos.
+   - Cubre el caso real: el modo Estricto, con una versión nueva de la API y `sistema` sin ejecutar.
+2. **Rutas de fallo y de bloqueo:** la unión de esta lista con la de BP3 6.4: `CUENTA_BLOQUEADA`, `ACCESO_EMPRESA_DENEGADO`, `VINCULO_NO_ENCONTRADO`, `ALTA_NO_DISPONIBLE`, `USUARIO_SIN_SELLO`, `MEMBRESIA_SIN_SELLO` y los eventos de los intentos fallidos de `identificar`.
+   - Los contadores (`FallosVentana*`, `BloqueadoHasta`; Q18) se confirman en **su propia sentencia**, en autocommit.
+   - El evento se escribe **después**, en otra sentencia. Si el `INSERT` falla (FK u otro error), va al registro de la aplicación con el **EventId 4734** («el evento de bitácora no se pudo escribir»; BP3 6.4 y 15), y la respuesta no cambia: el mismo 401 o 404, sin oráculo.
+   - La regla de «misma transacción» (TRZ-01) queda **solo para los cambios de administración** (altas, privilegios, estados, conversión). En ellos, revertir es lo correcto.
+3. **Prueba de D5:** con un evento retirado de la tabla, el bloqueo se aplica igual, la respuesta es idéntica y queda la línea en el registro.
+4. *Alternativa descartada:* quitar la FK y validar solo en C#. No cumple el «validado por el motor» de ADR-37.
 
 ## 6. Persistencia de sincronización
 **No aplica:** los nodos de sucursal son de la entrega 2. Las cachés son las de 3.6 y de BP3 6.3. `VersionPrivilegios` es monótona (51619, 51620, `DENY DELETE`).
@@ -740,12 +842,30 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_BitacoraSeguridad_Empr
 --     AND b.MomentoUtc < DATEADD(day, -1, DATEADD(year, -ISNULL(ISNULL(c.RetencionAnios, k.RetencionAnios), 5), SYSUTCDATETIME()));
 --   y al final, como hoy, la limpieza de AcusesAvisoSeguridad.
 
+-- Reportes por empresa (SD0-01; solo con la opción (a) de P-D0-08)
+IF COL_LENGTH('dbo.Reportes', 'EmpresaCodigo') IS NULL ALTER TABLE dbo.Reportes ADD EmpresaCodigo nvarchar(30) NULL;
+IF OBJECT_ID(N'dbo.FK_Reportes_Empresas', N'F') IS NULL
+    EXEC (N'ALTER TABLE dbo.Reportes ADD CONSTRAINT FK_Reportes_Empresas FOREIGN KEY (EmpresaCodigo) REFERENCES dbo.Empresas (Codigo);');
+IF OBJECT_ID(N'dbo.ConversionReportes', N'U') IS NULL
+    CREATE TABLE dbo.ConversionReportes (
+        EmpresaCodigo nvarchar(30) NOT NULL CONSTRAINT FK_ConversionReportes_Empresas REFERENCES dbo.Empresas (Codigo),
+        IdOriginal int NOT NULL, IdNuevo int NOT NULL,
+        ReglasActualizadasUtc datetime2(0) NULL,
+        CONSTRAINT PK_ConversionReportes PRIMARY KEY (EmpresaCodigo, IdOriginal));
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_UsuariosEmpresasPermisos_Empresa_Opcion' AND object_id = OBJECT_ID(N'dbo.UsuariosEmpresasPermisos'))
+    CREATE INDEX IX_UsuariosEmpresasPermisos_Empresa_Opcion ON dbo.UsuariosEmpresasPermisos (EmpresaCodigo, Opcion);
+-- CK_Reportes_Ambito lo crea el verbo (7.3, paso 8 h), después de asignar las filas de hoy:
+--   ALTER TABLE dbo.Reportes ADD CONSTRAINT CK_Reportes_Ambito
+--     CHECK ((DelSistema = 1 AND EmpresaCodigo IS NULL) OR (DelSistema = 0 AND EmpresaCodigo IS NOT NULL));
+-- rptsis.Reporte v2: la vista de hoy (rptsis-vistas-sistema.sql:160-178) más la columna r.EmpresaCodigo.
+
 -- D7-P · permisos (después de S1)
 IF DATABASE_PRINCIPAL_ID(N'gpos_api') IS NOT NULL
 BEGIN
     DENY DELETE ON OBJECT::dbo.UsuariosEmpresas TO gpos_api;
     DENY INSERT, UPDATE, DELETE ON OBJECT::dbo.CatalogoEventosSeguridad TO gpos_api;
     DENY INSERT, UPDATE, DELETE ON OBJECT::dbo.CategoriasSeguridad TO gpos_api;
+    IF OBJECT_ID(N'dbo.ConversionReportes', N'U') IS NOT NULL DENY INSERT, UPDATE, DELETE ON OBJECT::dbo.ConversionReportes TO gpos_api;
 END;
 ```
 
@@ -794,12 +914,17 @@ IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_BitacoraSeguridad_Empresa'
 DROP TABLE IF EXISTS dbo.CatalogoEventosSeguridad, dbo.CategoriasSeguridad;
 DROP TABLE IF EXISTS dbo.UsuariosEmpresasPermisos, dbo.UsuariosEmpresasPerfiles, dbo.UsuariosEmpresas;   -- vacías antes de convertir
 DROP TABLE IF EXISTS dbo.EmpresasPerfilesPermisos, dbo.EmpresasPerfiles;
+-- Reportes por empresa (antes de convertir, todas las filas tienen EmpresaCodigo NULL)
+IF OBJECT_ID(N'dbo.CK_Reportes_Ambito', N'C') IS NOT NULL ALTER TABLE dbo.Reportes DROP CONSTRAINT CK_Reportes_Ambito;
+IF OBJECT_ID(N'dbo.FK_Reportes_Empresas', N'F') IS NOT NULL ALTER TABLE dbo.Reportes DROP CONSTRAINT FK_Reportes_Empresas;
+IF COL_LENGTH('dbo.Reportes', 'EmpresaCodigo') IS NOT NULL ALTER TABLE dbo.Reportes DROP COLUMN EmpresaCodigo;   -- rptsis v1 se repone después
+DROP TABLE IF EXISTS dbo.ConversionReportes;
 -- AdministradaPorSuper, SesionEmpresa y FallosVentana*: se conservan (la versión anterior las ignora).
 -- La purga y rptsis v1: las repone el `sistema` de la versión anterior (CREATE OR ALTER). La marca no baja (R-D14 de H-11).
 ```
 
 ### 7.3 Verbo `GPOS.Migracion accesos --convertir` (DB7-02; Q23)
-**Uso:** `accesos --convertir --motivo "<10 a 200>" --confirmar [--aceptar-exceso]`. En una instalación nueva, `sistema --cuentas-iniciales` escribe directamente el padrón v2 y la marca.
+**Uso:** `accesos --convertir --motivo "<10 a 200>" --confirmar [--instalacion-demo] [--aceptar-exceso --motivo-exceso "<10 a 200>"] [--solo-reglas]` (`--instalacion-demo` convierte en modo DEMO; sin él, modo mínimo: una membresía USER en `EmpresaDefault`, sin ningún ADMIN; precondición 9 y SD0-10). En una instalación nueva, `sistema --cuentas-iniciales` escribe directamente el padrón v2 y la marca.
 
 **Precondiciones**, comprobadas en la vista previa. Si alguna falla: 51622 y nada cambia.
 1. Sin la marca `Accesos.Modelo`. Si ya existe, informa «ya convertido» y sale con código 0.
@@ -810,6 +935,17 @@ DROP TABLE IF EXISTS dbo.EmpresasPerfilesPermisos, dbo.EmpresasPerfiles;
 6. Marca del esquema ≥ 6.
 7. Respaldo `COPY_ONLY` de `GPOS_SYSDATA` de menos de 60 minutos, o lo hace el verbo con `usp_RespaldoCopia` (ADR-82, D-05), junto con la copia del archivo `padron`.
 8. **Pasos únicos de `PermisosService` (E-SW-7):** antes del paso 2 y en la misma transacción, el verbo ejecuta sobre las tablas globales `MigrarModeloAnterior`, `MigrarReportesPorArea` y los `AgregarPermisos*` que falten según sus marcas de `Configuracion`. Así se convierte el estado final del modelo anterior; Q23 compara después de esos pasos. Con este paso, la precondición 5 se cumple sola: `MigrarModeloAnterior` asigna el nivel a las filas de `UsuariosPermisos` que lo tenían en NULL.
+9. **Instalación de desarrollo o DEMO (SD0-10).** El verbo no puede saber por sí mismo qué instalación es. Para no sellar como legítimo el sobreacceso de hoy (H-01 y H-02) fuera del DEMO:
+   - **Con `--instalacion-demo`**, en modo DEMO: la conversión de los pasos 2 a 4 (P-D0-07 de BP3).
+     - El indicador queda en `ACCESOS_CONVERTIDOS_INSTALACION` (`ValorNuevo.Modo = "DEMO"`), con la cuenta de Windows.
+     - Cuando exista la clasificación de empresas (Desarrollo, Beta, Producción, Demostración; pendiente), el modo DEMO solo corre si **todas** son Desarrollo o Demostración (51622).
+   - **Sin el indicador**, en modo mínimo:
+     - cada cuenta no SUPER recibe una sola membresía, en su `EmpresaDefault` si está habilitada, como `USER` y con su restricción de sucursal;
+     - ninguna membresía ADMIN, salvo `AdministradaPorSuper = 1` en todas las empresas habilitadas (MEM-06);
+     - perfiles y excepciones copiados solo en esa membresía.
+     - El verbo deja la lista de lo que **no** se convirtió (cuenta, empresa, nivel de hoy) en el informe de consola y en `ValorNuevo.Pendientes` (solo el número), para que el SUPER lo complete desde «Cuentas» después de revisarlo.
+     - Q23 compara contra ese conjunto esperado.
+   - **`--aceptar-exceso` exige `--motivo-exceso "<10 a 200>"`**, que queda en la misma fila.
 
 **Algoritmo:** una sola transacción `SERIALIZABLE` con `XACT_ABORT ON`, en el orden de 3.7.
 
@@ -818,14 +954,16 @@ DROP TABLE IF EXISTS dbo.EmpresasPerfilesPermisos, dbo.EmpresasPerfiles;
 | 0 | `TomarFilas` del padrón y de `Accesos.Modelo` (`UPDLOCK, HOLDLOCK`) |
 | 1 | `TABLOCKX, HOLDLOCK`, en orden: `Usuarios`, `UsuariosFactor`, `Empresas`, `Perfiles`, `PerfilesPermisos`, `UsuariosPerfiles`, `UsuariosPermisos` |
 | 2 | Perfiles por empresa: **todos** los perfiles globales, con el mismo código, en **cada** empresa habilitada, con sus permisos (P-D0-07 de BP3, tercera viñeta) |
-| 3 | Membresías (P-D0-07 de BP3): **sin** restricción, en todas las empresas habilitadas, con `SucursalDefault` solo en `EmpresaDefault`; **con** restricción, solo en `EmpresaDefault` y con la restricción, si está habilitada (si no, ninguna, y se informa). `Nivel` = el actual (`ADMIN` o `USER`); `Origen = 'CONVERSION'`; hijas copiadas de la cuenta |
+| 3 | Membresías (P-D0-07 de BP3): **sin** restricción, en todas las empresas habilitadas, con `SucursalDefault` solo en `EmpresaDefault`; **con** restricción, solo en `EmpresaDefault` y con la restricción, si está habilitada (si no, ninguna, y se informa). `Nivel` = el actual (`ADMIN` o `USER`); `Origen = 'CONVERSION'`; hijas copiadas de la cuenta. En modo mínimo, la regla de la precondición 9 |
+| 3 b | Reportes (opción (a) de P-D0-08; 2.6): cada reporte con `DelSistema = 0` toma `EmpresaCodigo` = la primera empresa habilitada (`Prioridad`, `Codigo`) y conserva su `Id`. Para cada una de las demás se inserta una copia con sus columnas, con `Codigo = NULL` y el `Detalle` `id:{original}` reasignado, y la pareja se registra en `ConversionReportes`. En las membresías y perfiles de esas empresas, `rpt:{original}` pasa a `rpt:{nuevo}`. En modo mínimo, el reporte va a la empresa de su autor si se conoce; si no, a la primera |
 | 4 | **Q23** (equivalencia E1 a E7). Una diferencia → 51621 y se revierte todo |
 | 5 | MEM-06: `AdministradaPorSuper = 1` en las empresas habilitadas sin ADMIN en el padrón nuevo |
 | 6 | Sellos y padrón v2 (C#, misma transacción). Detalle abajo |
 | 7 | Cupo por empresa. Detalle abajo |
-| 8 | Retiro: (a) `CREATE OR ALTER` de `rptsis` v2 **antes** de borrar (`rptsis.SesionUsuario` nombra las columnas: `:86-100`); (b) `Nivel` `ADMIN` → `USER`; (c) `CK_Usuarios_Nivel`; (d) si se firma **P-D0-04 de BP3**, `DebeCambiarClave = 1` en las cuentas que salen con alguna membresía ADMIN; (e) `DROP CONSTRAINT DF_Usuarios_RestringirSucursal` y `DROP COLUMN RestringirSucursal, SucursalDefault`; (f) `DROP TABLE UsuariosPerfiles, UsuariosPermisos, PerfilesPermisos, Perfiles`; (g) `DROP CONSTRAINT DF_Usuarios_IntentosFallidos` y `DROP COLUMN IntentosFallidos` (E-SW-4) |
+| 8 | Retiro: (a) `CREATE OR ALTER` de `rptsis` v2 **antes** de borrar (`rptsis.SesionUsuario` nombra las columnas: `:86-100`); (b) `Nivel` `ADMIN` → `USER`; (c) `CK_Usuarios_Nivel`; (d) si se firma **P-D0-04 de BP3**, `DebeCambiarClave = 1` en las cuentas que salen con alguna membresía ADMIN; (e) `DROP CONSTRAINT DF_Usuarios_RestringirSucursal` y `DROP COLUMN RestringirSucursal, SucursalDefault`; (f) `DROP TABLE UsuariosPerfiles, UsuariosPermisos, PerfilesPermisos, Perfiles`; (g) `DROP CONSTRAINT DF_Usuarios_IntentosFallidos` y `DROP COLUMN IntentosFallidos` (E-SW-4); (h) `CK_Reportes_Ambito` (2.6) |
 | 9 | Bitácora: `ACCESOS_CONVERTIDOS` por empresa (`MEMBRESIA`, con `Empresa`; `ValorNuevo = {"Membresias":n,"Admin":k,"Consumo":c,"Cupo":q,"EnExceso":b}`), sin nombrar otras empresas; `ACCESOS_CONVERTIDOS_INSTALACION` (`SISTEMA`, 5 años por excepción) con el motivo, la cuenta de Windows y el equipo; la marca `Accesos.Modelo = 'MEMBRESIA.v1'` |
-| 10 | `COMMIT`; después, el archivo `padron` de forma atómica |
+| 10 | `COMMIT`; después, el archivo `padron` de forma atómica. **Si no se puede escribir (SD0-10):** el verbo termina con un código distinto de 0 y lo dice. La base ya confirmó; la API, al leer, reescribe el disco desde la base (`RegistroPadronSellos`, ruta `ReescribirDisco`), y `verificar` y el arranque informan `PadronDiscoAusente` hasta entonces |
+| 11 | Reglas de notificación (2.6): por cada empresa con filas en `ConversionReportes`, `UPDATE NotificacionesReglas SET ReporteId = @nuevo WHERE ReporteId = @original` en su base. Después, `ReglasActualizadasUtc` en `GPOS_SYSDATA`. Es idempotente y se puede repetir con `accesos --convertir --solo-reglas`. Mientras no se aplique, la regla se suspende (falla cerrado). **Si el paso no termina** (una base de empresa no responde, por ejemplo), el verbo sale con un código distinto de 0 y nombra las empresas pendientes, y `GPOS.Migracion verificar` y el arranque informan las reglas pendientes (filas de `ConversionReportes` con `ReglasActualizadasUtc` NULL). **Nada se reactiva sin el paso:** las reglas suspendidas por esta causa solo vuelven a correr después de repetir `--solo-reglas` y de que su ADMIN las reactive |
 
 **Paso 6, sellos y padrón v2:**
 1. Cada cuenta con `Valido` en el padrón v1 recibe el sello de cuenta v2 y `a`. Si no es SUPER, también un sello de membresía y `m(st = H)` por cada membresía.
@@ -940,6 +1078,12 @@ Cada una indica la recomendación, qué rompe, a quién afecta, por qué y cómo
 - **Por qué:** concilia SUP-04 con ADR-35.
 - **Cómo se migra:** está en la proyección de Q8-a.
 
+**P-D0-08. Reportes por empresa (SD0-01; la presentan el auditor y BP3).** Lo que la pregunta supone en datos:
+- **(a) (recomendada):** 2.6, con `Reportes.EmpresaCodigo`, `CK_Reportes_Ambito`, `ConversionReportes`, el paso 3 b y el 11 del verbo, y `rptsis.Reporte` v2.
+  - **Qué rompe:** el ADMIN ya no modifica los reportes del sistema (los duplica) ni ve los personalizados de otras empresas. En el DEMO, cada reporte personalizado queda copiado en cada empresa.
+  - **Costo:** de 0,3 a 0,5 sp.
+- **(b):** sin cambio de datos. El diseñador queda solo para el SUPER hasta la fase 2.
+
 ---
 
 ## 12. Decisiones candidatas a ADR (precisiones; las prepara el Maestro)
@@ -974,6 +1118,25 @@ Cada una indica la recomendación, qué rompe, a quién afecta, por qué y cómo
 
 ---
 
+### Respuesta a la revisión de seguridad (2026-10-18)
+Informe: `traspasos/B/2026-10-18-db7-d0-revision-seguridad.md`. Aquí solo lo que toca a este documento; el arquitecto de software aplica lo suyo en BP3.
+
+| Hallazgo | Severidad | Qué cambié en DAT-D0 |
+|---|---|---|
+| SD0-01 | Alta | Nueva 2.6 (reportes por empresa, opción (a) de P-D0-08) y lo que cambia con (b). En 1.3, 2.1 y 7.2: DDL de `Reportes.EmpresaCodigo`, la FK, `ConversionReportes` y su `DENY`, `CK_Reportes_Ambito` en el verbo, y el reverso. `rptsis.Reporte` v2. Pasos 3 b, 8 h y 11 del verbo; P-D0-08 en la sección 11. **Corrección propia:** el borrado de `rpt:{id}` sí existe, y se agrega `IX_UsuariosEmpresasPermisos_Empresa_Opcion` (4.4) |
+| SD0-02 | Alta | No aplica a datos (R-12, en BP3) |
+| SD0-03 | Media | Caso 9 en 3.5. En 3.6, la definición de `Valido` de la membresía (padrón con la misma huella, el mismo nivel y `st = H`, y `a(c)`), dónde se aplica, la consulta de las candidatas y la prueba del caso 9 en D3 |
+| SD0-04 a SD0-06 y SD0-08 a SD0-09 | Media | No aplican a datos (BP3). Para SD0-04, el nivel de la política se obtiene del padrón (`m.n = A` con `st` H o S), sin consulta nueva |
+| SD0-07 | Media | Nueva 5.6: comprobación del catálogo al arrancar (Release), eventos de las rutas de fallo fuera de la sentencia del contador (con respaldo en el registro de la aplicación) y prueba de D5. La FK se mantiene |
+| SD0-10 | Media | Precondición 9 de 7.3: `--instalacion-demo` o modo mínimo (solo en `EmpresaDefault`, como USER, con la lista de pendientes para el SUPER); `--motivo-exceso`; el caso de fallo del archivo `padron` en el paso 10 |
+| SD0-11 | Baja | El alcance de Q6 abarca toda escritura en `EmpresasPerfiles*`, los pasos de `sistema` y el borrado de un reporte, con su prueba |
+| SD0-12 y SD0-15 | Baja | No aplican a datos |
+| SD0-13 | Baja | Sin cambio de datos: la «época del anillo» va en la llave de la memoria criptográfica (BP3 6.3). Los verbos de ADR-79 son los que la suben |
+| SD0-14 | Baja | Tabla «Residual sin sello» en 3.5, para aceptarlo con la firma |
+| SD0-16 | Baja | En 3.7: los `Protect` se calculan antes de tomar los bloqueos, D1 mide la espera y `READ_COMMITTED_SNAPSHOT` queda como opción con su criterio |
+| SD0-17 | Baja | Anotado. Si el propietario prefiere la (c), es una columna `Usuarios.ClaveCumpleAdmin bit NOT NULL DEFAULT 0`, que se fija al elegir la contraseña. Va en D7-A y en el reverso, sin otro cambio (unas 0,05 sp) |
+| SD0-18 | Baja | No aplica a datos (devops). El registro de `jti` consumidos sigue en memoria; no se persiste |
+
 ### Conciliación con el blueprint (2026-10-18)
 La sección 14 del blueprint v3 (`docs/arquitectura/2026-10-18-db7-blueprint-v3.md`, árbol de `master`) concilia este modelo:
 - **E-SW-4:** `IntentosFallidos` se retira. Cambian 2.5, 7.1 y el paso 8 (g) de 7.3.
@@ -992,16 +1155,17 @@ La sección 14 del blueprint v3 (`docs/arquitectura/2026-10-18-db7-blueprint-v3.
 | S-6 | **51619 estaba libre** (`git grep` en las 121 ramas de origin; solo aparece en la nota de ADR-82). Uso 51619 a 51625 dentro de la franja de BP3 |
 
 ### Cierre
-- Estado: Completado (modelo D0 alineado con BP3; P-D0-D01 a P-D0-D05 y DX-1 a DX-10, Pendientes de firma o de conciliación).
+- Estado: Completado (modelo D0 alineado con BP3, con la respuesta a la revisión de seguridad; P-D0-D01 a P-D0-D05 y P-D0-08, Pendientes de firma; el auditor confirma las correcciones).
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\B\2026-10-18-db7-d0-modelo-datos.md`
 - Supuestos: S-1 a S-6.
 - Decisiones candidatas a ADR: las 5 de la sección 12 (precisiones de ADR-37 y ADR-83).
 - Entregas a otros agentes:
   - arquitecto-software → DX-1, 3, 4, 5, 6, 8 y 9 y los E-SW abiertos;
   - arquitecto-maestro → corregir el motivo de P-D0-07 (DX-2) e incluir P-D0-D01 a D05 en la hoja del diseño;
-  - auditor-seguridad → 3.5, 3.6, DX-9 y R-1;
+  - auditor-seguridad → confirmar SD0-01, SD0-03, SD0-07, SD0-10, SD0-11, SD0-14 y SD0-16 en esta versión;
+  - arquitecto-software → en BP3: rutas de reportes por empresa y duplicado (2.6), uso de la definición de `Valido` (3.6) y la época del anillo (SD0-13). Los EventId de 5.6 (4733 y 4734) ya están alineados con BP3;
   - desarrollador-backend → D7-A, D7-P, el verbo y el retiro de las líneas heredadas;
   - devops → el procedimiento de conversión y la reversión con `padron`;
   - B ola 5 → `rptsis` v2;
   - documentador → 51619 a 51625 en ADR-82.
-- Próximo paso recomendado: conciliar DX-1 a DX-10 con el arquitecto de software y llevar la hoja del diseño a la firma (objetivo: 2026-10-31).
+- Próximo paso recomendado: el auditor confirma las correcciones (objetivo: 10-29) y el Maestro lleva P-D0-08 y la hoja del diseño a la firma (objetivo: 2026-10-31).
