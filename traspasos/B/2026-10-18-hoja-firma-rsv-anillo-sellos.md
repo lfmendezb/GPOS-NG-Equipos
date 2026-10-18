@@ -238,3 +238,11 @@ La revisión deja tres cosas para el Maestro:
 3. El candado CR-01 detecta una `GPOS_SYSDATA` restaurada antes de que corra la reescritura de RSV-13 (*inferido*; lo confirma el auditor).
 4. EventId 4723 sigue libre al construir: la revisión del #73 lo da como el siguiente.
 5. El sellado de una instalación real ocurre después de su migración desde DPAPI; en el DEMO puede no cumplirse.
+
+## Firma
+
+**Firmada por Leonardo Méndez, propietario, el 2026-10-18 en la sesión de B:** «Firmo según recomendación. Sobre quien realiza DB-7, entiendo que el equipo B debería asumir esta tarea por ser el equipo principal y mas estable con mayor capacidad de A y mejor estabildiad que C».
+
+- **RSV-F1:** (a). **RSV-F2:** (2a) + (1). **RSV-F3:** (a). **RSV-F4:** (a). **RSV-F5:** según la recomendación: ADR-79 nuevo para RSV-F1 y RSV-F2; precisión de ADR-58, con nota en ADR-59, para RSV-F3 y RSV-F4.
+- El PR lo construye **A**, detrás del #73, con objetivo antes del 2026-11-02. La precisión de DB7-06 (DB-7 la asume B) no cambia este reparto.
+

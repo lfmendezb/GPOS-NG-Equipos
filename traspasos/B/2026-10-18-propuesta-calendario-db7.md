@@ -351,3 +351,12 @@ Marque una opción por punto. «Según la recomendación» firma la opción reco
 5. El lote 2 de ADR-82, la ola 5 (ADR-109) y la fase A de ADR-81 se terminan por su cuenta y fuera de este presupuesto.
 6. El primer cliente se publica después del corte. Si se adelantara, aplica DB7-07.
 7. La corrección R-12 del escape del modo gráfico (2026-09-29) no la verifiqué en el código; D0 lo confirma.
+
+## Firma
+
+**Firmada por Leonardo Méndez, propietario, el 2026-10-18 en la sesión de B:** «Firmo según recomendación. Sobre quien realiza DB-7, entiendo que el equipo B debería asumir esta tarea por ser el equipo principal y mas estable con mayor capacidad de A y mejor estabildiad que C».
+
+- **DB7-01:** (B), la v1 mínima. **DB7-02**, **DB7-03**, **DB7-04 (a) y (b)**, **DB7-05** y **DB7-07:** según la recomendación.
+- **DB7-06, con otro reparto:** la construcción de DB-7 la asume **el equipo B**, por ser el equipo principal, con más capacidad que A y más estabilidad que C. Se mantienen el orden (la construcción empieza después del #57 y del #73) y el calendario de la sección 5, con la firma de la v1 el 2026-12-11 y el punto de control del 2026-11-20.
+- Lo que la sección 4 asignaba a A y a C (D0 a D4) pasa a B. El PR de RSV sigue en A (hoja `2026-10-18-hoja-firma-rsv-anillo-sellos.md`).
+
