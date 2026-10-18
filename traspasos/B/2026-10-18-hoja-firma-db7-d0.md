@@ -259,3 +259,11 @@ Los dos restos de N-4 y N-5 en DAT-D0 quedaron resueltos antes de presentar la h
 - [ ] Con cambios (indicar el punto y la opción): ______________________
 
 Firma del propietario: ______________________  Fecha: ____________
+
+## Firma
+
+**Firmada por Leonardo Méndez, propietario, el 2026-10-18 en la sesión de B:** «Firmo la hoja de D0 de DB-7 según la recomendación.»
+
+- Opción recomendada en los 12 puntos: P-D0-01 (a), P-D0-02 (a), P-D0-04 (b), P-D0-05 (sí), P-D0-06 (no validar en local en la v1), P-D0-07 (a), P-D0-08 (a), P-D0-D01 (a), P-D0-D02 (a), P-D0-D03 (a), P-D0-D04 (a) y P-D0-D05 (a).
+- Con la firma se acepta de forma expresa el residual sin sello de la nota 4.2 (SD0-14, R-DB7-11).
+- RQ-R12 (R-12 en D1) y la publicación solo con D1 a D5 unidos quedan como condiciones, no como preguntas.

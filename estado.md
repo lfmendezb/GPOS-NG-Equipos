@@ -171,6 +171,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
 - **2026-10-18, mañana (sesión nueva de B):**
+  - **Unidos #72, #56 y #69** (`feature/modelo-ng` = `322b21d6`; última marca `20261018153317`). **D0 de DB-7 FIRMADO** según la recomendación y registrado en `master` `06a7a7f4`. Quedan #61 y #71, que B mide ahora. Aviso `2026-10-18-unidos-72-56-69-y-d0-firmado`.
   - **D0 de DB-7 listo para firma:** blueprint v3 en `master` `c6c96828` (`docs/arquitectura/2026-10-18-db7-blueprint-v3.md`), modelo de datos `traspasos/B/2026-10-18-db7-d0-modelo-datos.md`, revisión de seguridad «Aprobado con observaciones» tras la relectura (`traspasos/B/2026-10-18-db7-d0-revision-seguridad.md`). **Hoja `traspasos/B/2026-10-18-hoja-firma-db7-d0.md`** (P-D0-01 a P-D0-D05, 12 puntos), pendiente del propietario. Unidos también #62 y #70 (`a960cfac`).
   - **Unidos #57 (fase A de ADR-81 con T-n), #58 y #74** (`feature/modelo-ng` = `55365806`); en la unión del #57, B ajustó dos pruebas por choque entre ramas (36 códigos de licencia; P9 con la marca vigente). Esquema de `GPOS_SYSDATA` en 5. **C rebasa #56, #69 y #72.** #62 y #70 en suite. **D0 de DB-7:** blueprint v3 y modelo de datos conciliados, en revisión de seguridad. Aviso `2026-10-18-unidos-57-58-74`.
   - **Unidos #51, #45, #48 + #60, #63 → #67 → #68 y #73** (`feature/modelo-ng` = `4e094323`); B regeneró el Designer y el guion del #48 en la unión. En cada suite oficial las fallas pasan solas. **C rebasa el #57, el #69 y el #72** sobre `4e094323`; después el #58 (A). **#61 y #71:** entran limpios, B los mide antes de unir. Aviso `2026-10-18-unidos-48-a-68-rebasar-57-y-69`.
@@ -345,7 +346,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Trabajando en:** nada; sin agentes activos, disponible. Entregado hoy: C-2 (H-11 Rechazado como publicable por C2-01; sin revertir la unión), C-8 (PR #19, unido), C-9 (PR #20, unido), C-10 (PR #21, no unir antes del 14-oct) y la fase A de ADR-81 en diseño cerrado (blueprint v3 y pantallas v2, P-81A-14 firmada). Siguiente posible: construir la fase A tras el segundo PR de H-11 (T1 antes, si B lo encarga). Vigilante Monitor armado (regla 8). ADR de C: 130 a 159.
 
 ## Pendientes del propietario
-- **Para firma (2026-10-18):** la hoja de D0 de DB-7 (`traspasos/B/2026-10-18-hoja-firma-db7-d0.md`, 12 puntos). - **Firmadas el 2026-10-18:** la hoja de DB-7 (DB-7 la construye B) y la de RSV del anillo. **EM-01 cumplida** por A el 2026-10-18 (`lfmendezb/GSF.EmisorLicencias`, privado).
+- **Firmada (2026-10-18):** la hoja de D0 de DB-7. - **Firmadas el 2026-10-18:** la hoja de DB-7 (DB-7 la construye B) y la de RSV del anillo. **EM-01 cumplida** por A el 2026-10-18 (`lfmendezb/GSF.EmisorLicencias`, privado).
 - **Equipo C disuelto (2026-10-14):**
   - retirar en LAPTOP-DUMQQ5QK la tarea programada de vigilancia;
   - decidir si la laptop sigue como equipo de prueba del DEMO;
