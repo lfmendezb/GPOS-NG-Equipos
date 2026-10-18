@@ -3,6 +3,7 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-18, tarde:** **PR #75** (`a/rsv-anillo-mantenimiento` @ `d60bb7d3`, sobre `322b21d6`): RSV-F1 a F4, RSV-06/08/11/12, el defecto de `ComandoSellos` y RSVB-01/04-06. 863/0/1 dirigidas. Seguridad: Aprobado con observaciones; la relectura está en curso. RSVB-02 y RSVB-03 quedan para el Maestro de B. EventId 4723-4728 y 4734 usados (siguiente libre: 4729). Aviso `2026-10-18-pr75-rsv-f1-f4`.
 - **2026-10-18, mañana:** hallazgo `Un_RESTORE…` atendido: no es DL-22, es la carrera de `SINGLE_USER` (3101). **PR #74** (`a/restore-3101-reintento` @ `5da82ac3`, solo la prueba, reintento ante 3101). Acuse de las uniones y de las firmas DB-7/RSV. **En curso: PR de RSV-F1 a F4** sobre `4e094323` (EventId 4723). Aviso `2026-10-18-hallazgo-restore-3101-pr74`.
   - **#58 @ `59417c45`** rebasado sobre el #57 nuevo (`36bfc36e`), sin conflictos; 233/0 dirigidas. Aviso `2026-10-18-pr58-rebasado-sobre-57`.
 - **2026-10-18, madrugada (sesión nueva; hook del modelo por agente configurado):**
