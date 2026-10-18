@@ -23,3 +23,5 @@ metadata:
 - **Al terminar esa tarea, sugerir volver a Sonnet con esfuerzo medio.**
 - Los agentes siguen con su modelo por definición ([[agentes-con-opus]]). Las correcciones pequeñas se le piden al mismo agente (continuación), lo mecánico va con `model: "sonnet"` y las búsquedas con Explore.
 - Aviso a los tres equipos: `avisos/B-a-A/2026-10-18-sesiones-sonnet-medio-escalar-opus.md` (y su copia en `B-a-C`).
+
+**Aprobación permanente para la pausa (propietario, 2026-10-18):** hasta el miércoles 21, B puede usar Opus 5.5 sin pedir permiso cada vez cuando una unión tenga conflictos o una suite falle por algo que no sea de las fallas conocidas. La sesión no puede cambiar su propio modelo: el trabajo de Opus se hace con un agente lanzado con `model: "opus"`, y la sesión sigue en Sonnet 5.5.

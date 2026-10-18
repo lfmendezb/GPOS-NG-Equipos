@@ -173,6 +173,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
 - **2026-10-18, mañana (sesión nueva de B):**
+  - **COLA UNIDA (`feature/modelo-ng` = `fd4f79bd`; última marca `20261018181156`):** #61 y #71 (medición: cumplen; N6-02 0,910), #75 a #82 y #84, y #83 (conflicto con el #61 resuelto con Opus). Suites con fallas solo de carga o corregidas en la unión. A y C sin nada abierto. Pendiente para el miércoles 21: ADR de Linux (falta el número), D1 de DB-7 desde el 2-nov. Aviso `2026-10-18-unida-la-cola-fd4f79bd`.
   - **PAUSA hasta el miércoles 21 (cuota de uso al límite; propietario):** sin tareas nuevas para A ni para C; terminan lo asignado y esperan. B deja correr la medición del #61 y el #71 con el mínimo de sesiones. Aviso `2026-10-18-pausa-hasta-miercoles-21`.
   - **Contexto corto (regla 10):** `CLAUDE.md` 19,5 KB (−42 %), memoria −9 entradas, 539 avisos archivados, `estado.md` de B recortado; vigilante con escritura atómica; Publicar no pisa cambios de otros. **Sí** a la corrección de C de `LongitudesColumnas`, con condiciones. Aviso `2026-10-18-contexto-corto-y-longitudes-columnas`.
   - **Regla nueva del propietario:** las sesiones de A, B y C trabajan con Sonnet 5.5 y esfuerzo medio, y sugieren Opus 5.5 en una línea para las tareas de riesgo. Aviso `2026-10-18-sesiones-sonnet-medio-escalar-opus`; memoria `sesiones-sonnet-medio-escalar-opus`.
