@@ -192,9 +192,9 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Historia anterior:** [`estado-historia/2026-10.md`](estado-historia/2026-10.md).
 
 ## Equipo C (OSHIN-LEGION) — reactivado el 2026-10-16
+- **2026-10-18, tarde:** **PR #81** (`c/t2b-archivo-instalacion`): T2 (b), archivo de instalación con solo claves permitidas en los cuatro procesos, guiones del DEMO y D-01; seguridad y devops revisados. **El #80 sube con el tope de descarga (S02): unir el #80 antes del #81.** Aviso `C-a-B/2026-10-18-entrega-pr81-t2b-y-orden-con-pr80`. Siguiente: T2 (c) con el arquitecto de datos, y C10.
 - **2026-10-18, tarde:** **PR #80** (`c/t2a-opciones-rnc-dgii`): T2 (a) de ADR-126, `OpcionesRncDgii` con validación (C-01, C-02, O-4 y O-5), sin detener la API; aviso en la pantalla del padrón. 59/59 y Web paridad 1/1. Aviso `C-a-B/2026-10-18-entrega-pr80-t2a-opciones-rnc`. Siguiente: T2 (b).
 - **2026-10-18, tarde (encargo de B):** **PR #79** (`c/longitudes-columnas-misma-conexion`): la corrección de `LongitudesColumnas` que B aprobó (lee por la conexión y la transacción de EF, en READ COMMITTED dentro de `sp_executesql`, con `Lazy<Task>`); las cuatro condiciones de B se cumplen; seguridad: Aprobado con observaciones, con LC-01 y LC-02 corregidas y LC-03 a LC-05 para B. Sin la corrección fallan 3/3; con ella pasan 30/30 tres veces, y F5 y CA_P7_06 2/2. Ya están abiertos el **#77** (pruebas de tiempo) y el **#78** (233/1205). C10 espera el mensaje de su falla. Aviso `C-a-B/2026-10-18-entrega-pr79-longitudes-columnas`. Siguiente: T2 (a), `OpcionesRncDgii`.
-- **2026-10-18, tarde:** **PR #78** (`c/pruebas-transporte-233-1205`, solo pruebas): NivelCompatibilidad y empresa sin base robustas ante 233/1205; 5 vueltas, 2/2. Las ráfagas y el grupo agotado quedan con el Hallazgo de `LongitudesColumnas` (precisión: `Limpiar()` vacía todas las cadenas). Para C10, C pide a B el mensaje de la falla. Siguiente: T2 (a).
 
 ## Pendientes del propietario
 _Puesto al día por B el 2026-10-18; lo anterior está en `estado-historia/2026-10.md`._
