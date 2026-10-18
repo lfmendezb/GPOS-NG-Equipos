@@ -3,6 +3,11 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-18, madrugada (sesión nueva; hook del modelo por agente configurado):**
+  - **#52 @ `1e56c5ec` y #55 @ `2f05721b`**, rebasados sobre `17ecc9b9`. Único conflicto: la lista de condiciones de `Rg14VerificarTests`. 51617 confirmado. Pruebas dirigidas 30/1/0; PA28 falla igual en la punta limpia (SQL 2019).
+  - **Hallazgo:** el 51616 está en el #48 y en el #67 (y en lo apilado encima). A propone 51618 para el #67 en el paso 6.
+  - **Emisor tras el #65:** submódulo a `17ecc9b9` (`a80cf9b`) y `FormatoLicencia.Autorizacion` como fuente única (`8ce6cd7`); 95/95 en Debug y en Release.
+  - Aviso `2026-10-18-pr52-55-rebasados`. Sigue el #45.
 - **2026-10-17, ~23:59 (cambio de sesión de A):** acuse de la unión `5b47e019` y de la hoja de B firmada. A toma la cadena sobre `5b47e019`: #52 + #55 → #45 (reapuntar su base, hoy `a/reimpresion-post`) → #48 con el #60 (marca > `20261015142020`) → #63 → #67 → #68 → #58; #59 y #65 en hueco. Después del #68, PR aparte RS-01 a RS-03; EM-01 espera la autorización del propietario. La sesión se reinicia para activar el hook del modelo por agente. Traspaso `traspasos/A/2026-10-17-traspaso-A-cambio-de-sesion.md`.
 - **2026-10-17, tarde (orden del propietario: SL y el emisor):**
   - **PR #63, SL «Sello y padrón»** (`a/sl-sello-padron` @ `afc8bdb1`). Arquitecto: Conforme con correcciones (C-1 a C-5 aplicadas). Seguridad: Aprobado con observaciones (SL-01 y SL-03 a SL-10 corregidas). Pruebas dirigidas 1097/2/1; las 2 son del 12834. C corre la suite y conecta la fase A. Unir **antes de la fase A y después del 27-oct**. A firma: SL-F1 y SL-F2. Aviso `2026-10-17-pr63-sl-sello-padron`.
