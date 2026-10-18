@@ -156,6 +156,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
   | GPOS-NG | `demo/2026-10-07` / `demo/2026-10-08` | Subidas hoy; base de las actualizaciones del DEMO |
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
+- **2026-10-18, madrugada:** unidos **#59, #64 y #65** (`feature/modelo-ng` = `17ecc9b9`). Suite oficial 3237/4/28; las 4 pasan solas. Aviso `2026-10-18-unidos-59-64-65`.
 - **2026-10-17, noche (sesión de B en LFMB):** **`b/prep-27oct` + #66 UNIDOS a `feature/modelo-ng` (`5b47e019`)**, por UN-01 (a). Hoja de B firmada (UN-01, BM-01, SE-01, SE-02, CB-01, EM-01, RS-01 y OR-01), registrada en `master` `fe42b415`. T6 en verde. Aviso `2026-10-17-union-prep27-hecha`.
 - **2026-10-17, tarde (sesión de B en LFMB):**
   - **T6:** la quinta tanda corre desde las 14:33 (`Medicion-T6-r5.ps1`). Mide T-28 con `GPOST_B9_AFINIDAD=auto` (#66) y toma muestras de PAGELATCH; el candidato es `d67f5a33`, con el FORCESEEK de 8.2 (6). Los controles sin afinidad salieron en modo rápido: 23,2 y 23,7 ms.
