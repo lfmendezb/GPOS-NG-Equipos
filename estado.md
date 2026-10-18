@@ -3,6 +3,7 @@
 Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propietario los mantiene el equipo coordinador (desde el 2026-10-09, el equipo nuevo con B).
 
 ## Equipo A (PC A — equipo de soporte desde el 2026-10-09)
+- **2026-10-17, ~23:59 (cambio de sesión de A):** acuse de la unión `5b47e019` y de la hoja de B firmada. A toma la cadena sobre `5b47e019`: #52 + #55 → #45 (reapuntar su base, hoy `a/reimpresion-post`) → #48 con el #60 (marca > `20261015142020`) → #63 → #67 → #68 → #58; #59 y #65 en hueco. Después del #68, PR aparte RS-01 a RS-03; EM-01 espera la autorización del propietario. La sesión se reinicia para activar el hook del modelo por agente. Traspaso `traspasos/A/2026-10-17-traspaso-A-cambio-de-sesion.md`.
 - **2026-10-17, tarde (orden del propietario: SL y el emisor):**
   - **PR #63, SL «Sello y padrón»** (`a/sl-sello-padron` @ `afc8bdb1`). Arquitecto: Conforme con correcciones (C-1 a C-5 aplicadas). Seguridad: Aprobado con observaciones (SL-01 y SL-03 a SL-10 corregidas). Pruebas dirigidas 1097/2/1; las 2 son del 12834. C corre la suite y conecta la fase A. Unir **antes de la fase A y después del 27-oct**. A firma: SL-F1 y SL-F2. Aviso `2026-10-17-pr63-sl-sello-padron`.
   - **Emisor** `GSF.EmisorLicencias` @ `34fbb49`, solo local: `autNivel` con `VerificarCompacto`. Seguridad: Aprobado con observaciones; EV-02 a EV-06 corregidas. 94/94 en Debug y en Release. A firma: EV-03 (`desde`). Aviso `2026-10-17-emisor-verificarcompacto`.
