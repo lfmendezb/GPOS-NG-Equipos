@@ -1,5 +1,7 @@
 # Hoja de firma de B (2026-10-17, noche)
 
+> **FIRMADA** por Leonardo Méndez, propietario, el 2026-10-17 en la sesión de B: «Firmo la hoja de B del 2026-10-17 según la recomendación: UN-01 (a), BM-01 (a), SE-01 (a), SE-02 (a), CB-01 (a), EM-01 (a), RS-01 (a) y OR-01.» Registro: SE-01 y SE-02 en ADR-51, CB-01 en ADR-54, RS-01 y OR-01 en ADR-83 (`master` `fe42b415`). UN-01: unión hecha en `feature/modelo-ng` `5b47e019`. BM-01: norma del banco desde ya. EM-01: lo crea el propietario.
+
 **Preparada por:** B, en LFMB. **Firma:** el propietario. Cada punto se puede firmar por separado («Firmo X según la recomendación» o con otra opción).
 
 Las decisiones que ya están firmadas en otras sesiones no entran aquí: SLF-01, el acta de GSF, AG-01 a AG-07, TN-01, 7(b), 7(d) y EV-03 (a), registradas en `master` `5cbbb12b`.
