@@ -172,7 +172,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
 - **2026-10-18, mañana (sesión nueva de B):**
-  - **Regla nueva del propietario:** las sesiones de A, B y C trabajan con Sonnet 5.5 y esfuerzo medio, y sugieren Opus 5.5 en una línea para las tareas de riesgo. Aviso `2026-10-18-sesiones-sonnet-medio-escalar-opus`; memoria `sesiones-sonnet-medio-escalar-opus`.
+  - **Regla nueva del propietario:** las sesiones de A, B y C trabajan con Sonnet 5 y esfuerzo medio, y sugieren Opus 5.5 en una línea para las tareas de riesgo. Aviso `2026-10-18-sesiones-sonnet-medio-escalar-opus`; memoria `sesiones-sonnet-medio-escalar-opus`.
   - **Encargo a C** (aprobado por el propietario): T2 de ADR-126 en PR pequeños (objetivo antes del 2026-11-02) y estabilizar las pruebas intermitentes bajo carga. Aviso `B-a-C/2026-10-18-encargo-t2-adr126-y-pruebas-intermitentes`.
   - **Medición del #61 y el #71 en curso** (`Medicion-61-71.ps1`, unas 6 h, máquina sola; base `322b21d6`, candidato `b/medir-cand` con #61 + #71 + N6-02E y LP-01). Sin suites ni compilaciones en LFMB hasta que termine. **Después:** unir el #75 (A), registrar el ADR de Linux (PL-01 a PL-15 firmada el 2026-10-18; **PL-10 cambiada a (a)** por el propietario en la sesión de B, aviso `2026-10-18-pl10-cambia-a-opcion-a`) y avisar a Backup Tool (H-L5). Encargo a A: H-L1 y H-L2 (aviso `2026-10-18-encargo-h-l1-h-l2`).
   - **Unidos #72, #56 y #69** (`feature/modelo-ng` = `322b21d6`; última marca `20261018153317`). **D0 de DB-7 FIRMADO** según la recomendación y registrado en `master` `06a7a7f4`. Quedan #61 y #71, que B mide ahora. Aviso `2026-10-18-unidos-72-56-69-y-d0-firmado`.
