@@ -1,4 +1,4 @@
-[Decisión preparada por el Arquitecto Maestro (equipo C)]  Estado: **Firmada por el propietario el 2026-10-18** (todo según la recomendación, salvo PL-10, en la opción (b); ver el final de la sección 10)
+[Decisión preparada por el Arquitecto Maestro (equipo C)]  Estado: **Firmada por el propietario el 2026-10-18: todo según la recomendación (PL-10 cambiada a (a) el 2026-10-18)**; ver el final de la sección 10
 
 # Propuesta de ADR: GPOS NG en Linux con las mismas garantías que en Windows (servidor y agente de impresión)
 
@@ -662,7 +662,19 @@ Todas las cifras son *inferidas*.
 
 **Resultado:** PL-01 (a), PL-02 (a), PL-03 (a), PL-04 (a), PL-05 (a), PL-06 (a), PL-07 (a), PL-08 (a), PL-09 (a), **PL-10 (b)**, PL-11 (a), PL-12 (a), PL-13 (a), PL-14 (a) y PL-15 (a). En PL-03 queda abierto qué equipo hace LN (lo propone B).
 
-**Consecuencias de PL-10 (b) que B debe recoger al registrar (las prepara C; no cambian lo firmado):**
+**Cambio de PL-10 a la opción (a) (2026-10-18, tarde).** El propietario lo reconsideró, primero en la sesión de B:
+
+> «He reconsiderado el punto PL-10 y entiendo que sera mejor esperar a que un cliente lo solicite por tanto cambio mi decisión por la opción (a)»
+
+y lo confirmó en la sesión de C:
+
+> «He reconsiderado PL-10 y adopto la opción (a)»
+
+(avisos `B-a-C/2026-10-18-pl10-cambia-a-opcion-a` y `C-a-B/2026-10-18-pl10-anotado`).
+
+**Resultado vigente:** PL-01 a PL-15, todos en la opción (a). Linux solo con Básica hasta que un cliente pida Avanzada en Linux. El texto del ADR de la sección 3 queda como está: bloque H, punto 1, y la alerta diaria del punto 5 de ADR-64. La matriz inicial es solo Ubuntu 24.04. El costo vuelve a ≈ 5,3 sp, y el riesgo de `tpm2` con FIPS sale de la ruta crítica de LS1. **Las consecuencias de PL-10 (b) que siguen quedan sin efecto**; se conservan solo como historia.
+
+**~~Consecuencias de PL-10 (b) que B debe recoger al registrar~~ (sin efecto desde el cambio a (a)):**
 1. **Cambia el bloque H del ADR.** Avanzada (FIPS) se ofrece en Linux desde la primera versión Linux, con las condiciones del punto 2 del bloque H: módulo OpenSSL validado FIPS 140-3 en modo FIPS, TPM 2.0 con C3, LUKS2 con C13, y el laboratorio y la revisión del auditor equivalentes a AP-09. Se quitan el punto 1 (Linux solo con Básica y la alerta diaria) y la alternativa descartada «Avanzada en Linux desde la primera versión». Sigue rigiendo que Avanzada no se puede seleccionar antes de la versión 1 del acceso multiempresa.
 2. **Relación con PL-04 (a)**, que dice «RHEL solo con Avanzada». Con PL-10 (b), la matriz tiene dos distribuciones desde el inicio: Ubuntu Server 24.04 LTS para Básica y una distribución con módulo FIPS validado para Avanzada.
    - **Lectura literal:** RHEL 9 o 10, con paquetes `.rpm`. Suma 0,5 sp, como la opción (c) de PL-04.
