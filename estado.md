@@ -169,6 +169,7 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 
 ## Equipo B (equipo nuevo — coordinador desde el 2026-10-09)
 - **2026-10-18, mañana (sesión nueva de B):**
+  - **Unidos #51, #45, #48 + #60, #63 → #67 → #68 y #73** (`feature/modelo-ng` = `4e094323`); B regeneró el Designer y el guion del #48 en la unión. En cada suite oficial las fallas pasan solas. **C rebasa el #57, el #69 y el #72** sobre `4e094323`; después el #58 (A). **#61 y #71:** entran limpios, B los mide antes de unir. Aviso `2026-10-18-unidos-48-a-68-rebasar-57-y-69`.
   - **Unidos #52 y #55** (`feature/modelo-ng` = `2875f345`): suite oficial 3261/1/31; PA30 ya pasa; la falla (`RutasLicenciaHttpTests.Un_RESTORE…`) pasa sola 3/3 (hallazgo para A). El #55 cerrado con nota (base `a/dl22-rotacion`). Sigue el #51 de C. Aviso `2026-10-18-unidos-52-55`.
   - **Ola 5, auditoría UNIDA** (`feature/modelo-ng` = `1768f6a3`); marca `20261015211406` conservada; SQL de la evidencia a `Infraestructura/Motor` (CA-0.8). Suite oficial 3251/4/28, las 4 pasan solas; Web 699/0, Reportes 433/0, MAUI 602/0. Aviso `2026-10-18-unida-ola5-auditoria`. **El #48 regenera Designer, snapshot y guion sobre `1768f6a3`** (marca igual).
   - **`master` `f86f88f8`:** `CLAUDE.md` al día (T1 de ADR-118/119, 3b tramo 1, T1 de ADR-126, RG-14 lotes, CB-01, SE-01/02, firmas del 17-oct); notas del registro en ADR-82 (51616 a 51618) y ADR-83 (51618 y EventId 4722).
