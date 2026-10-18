@@ -1,6 +1,6 @@
 ---
 name: orquestador
-description: "Planificador y validador del flujo de trabajo entre agentes. Úsalo al iniciar una tarea para elegir la ruta (completa, cambio acotado, corrección o consulta) y obtener la secuencia exacta de agentes con las entradas de cada uno, y al cerrar una fase para verificar que cada agente entregó lo que su contrato exige. No invoca agentes, no diseña ni programa, y no aprueba: informa el estado."
+description: Planificador y validador del flujo de trabajo entre agentes. Úsalo al iniciar una tarea para elegir la ruta (completa, cambio acotado, corrección o consulta) y obtener la secuencia exacta de agentes con las entradas de cada uno, y al cerrar una fase para verificar que cada agente entregó lo que su contrato exige. No invoca agentes, no diseña ni programa, y no aprueba: informa el estado.
 tools: Read, Glob, Grep, Bash, Write
 model: haiku
 ---

@@ -27,6 +27,15 @@ $archivoRegistro = Join-Path $dirEstado "vigilancia-$Equipo.log"
 
 function Registrar([string]$texto) { Add-Content $archivoRegistro "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $texto" -Encoding UTF8 }
 
+# Escritura atómica (punto 4 de la propuesta de C del 2026-10-18, aviso B-a-C/2026-10-18-propuesta-menos-contexto): un apagón a mitad de
+# Set-Content deja el archivo con bytes nulos o a medio escribir, y la próxima vuelta falla al leerlo. Se escribe a un temporal en el mismo
+# directorio y se renombra; Move-Item -Force es la operación atómica del sistema de archivos.
+function Escribir-Atomico([string]$ruta, [string]$contenido, [switch]$SinSaltoFinal) {
+    $temp = "$ruta.tmp-$PID"
+    if ($SinSaltoFinal) { Set-Content $temp $contenido -NoNewline } else { Set-Content $temp $contenido }
+    Move-Item -Force $temp $ruta
+}
+
 try {
     # ---------------------------------------------------------------- área común (sin tocar la copia de trabajo)
     git -C $raiz fetch --quiet origin 2>$null
@@ -54,7 +63,17 @@ try {
     # ---------------------------------------------------------------- PR abiertos o actualizados
     $prs = @()
     $previos = @{}
-    if (Test-Path $archivoPr) { (Get-Content $archivoPr -Raw | ConvertFrom-Json).PSObject.Properties | ForEach-Object { $previos[$_.Name] = $_.Value } }
+    $archivoDanado = $false
+    if (Test-Path $archivoPr) {
+        try {
+            $leido = Get-Content $archivoPr -Raw | ConvertFrom-Json
+            if ($leido) { $leido.PSObject.Properties | ForEach-Object { $previos[$_.Name] = $_.Value } } else { $archivoDanado = $true }
+        } catch {
+            # Archivo truncado o con bytes nulos (apagón a mitad de escritura): se trata como la primera vigilancia, no se detiene el vigilante
+            Registrar "estado de PR ilegible ($archivoPr), se trata como primera vigilancia: $($_.Exception.Message)"
+            $archivoDanado = $true
+        }
+    }
     $json = gh pr list --repo $RepoPr --state open --limit 50 --json number,title,headRefName,updatedAt,isDraft 2>$null
     if ($LASTEXITCODE -ne 0) { throw 'gh pr list falló' }
     # PowerShell 5.1: gh devuelve líneas y ConvertFrom-Json entrega el arreglo como un solo objeto; se une y se desenrolla
@@ -66,7 +85,7 @@ try {
         if (-not $previos.ContainsKey($clave)) { $prs += [pscustomobject]@{ P = $p; Que = 'nuevo' } }
         elseif ($previos[$clave] -ne $p.updatedAt) { $prs += [pscustomobject]@{ P = $p; Que = 'actualizado' } }
     }
-    $primeraVez = -not (Test-Path $archivoPr)
+    $primeraVez = (-not (Test-Path $archivoPr)) -or $archivoDanado
 
     # ---------------------------------------------------------------- resultado
     $accion = @($avisos | Where-Object { -not $_.EsAcuse })
@@ -105,8 +124,8 @@ try {
         Registrar "primera vigilancia: se toma como punto de partida ($($abiertos.Count) PR abiertos)"
     }
 
-    Set-Content $archivoUltima $actual -NoNewline
-    $estadoPr | ConvertTo-Json | Set-Content $archivoPr
+    Escribir-Atomico $archivoUltima $actual -SinSaltoFinal
+    Escribir-Atomico $archivoPr ($estadoPr | ConvertTo-Json)
 } catch {
     Registrar "ERROR: $($_.Exception.Message)"
     exit 1
