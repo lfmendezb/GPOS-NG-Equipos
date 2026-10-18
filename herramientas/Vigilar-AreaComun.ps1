@@ -27,7 +27,7 @@ $archivoRegistro = Join-Path $dirEstado "vigilancia-$Equipo.log"
 
 function Registrar([string]$texto) { Add-Content $archivoRegistro "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') $texto" -Encoding UTF8 }
 
-# Escritura atómica (punto 4 de la propuesta de C del 2026-10-18, aviso B-a-C/2026-10-18-propuesta-menos-contexto): un apagón a mitad de
+# Escritura atómica (punto 4 de la propuesta de C del 2026-10-18, aviso B-a-C/2026-10-18-propuesta-ahorro-de-contexto): un apagón a mitad de
 # Set-Content deja el archivo con bytes nulos o a medio escribir, y la próxima vuelta falla al leerlo. Se escribe a un temporal en el mismo
 # directorio y se renombra; Move-Item -Force es la operación atómica del sistema de archivos.
 function Escribir-Atomico([string]$ruta, [string]$contenido, [switch]$SinSaltoFinal) {

@@ -53,6 +53,11 @@ Repositorio privado de **coordinación** entre el **equipo B** (equipo nuevo, en
    - Si no hay nada nuevo, no interrumpe al propietario.
 9. **Informar cada tarea completada** (decisión del propietario, 2026-10-10). Cada vez que un equipo termina una tarea encargada (entrega, PR abierto, corrección, revisión, publicación o tarea cancelada o bloqueada), deja **en el momento** un aviso `Tipo: Entrega` (o `Hallazgo` si queda bloqueada) en `avisos/<Equipo>-a-B/` con qué se hizo, dónde (rama, commit, PR o ruta), cómo se verificó (pruebas y cifras) y qué queda pendiente, y actualiza su sección de `estado.md`. B, el coordinador, hace lo mismo hacia A y C cuando une o termina algo que les afecta. No se espera a la revisión siguiente ni a que el propietario pregunte.
 
+10. **Contexto corto** (decisión del propietario, 2026-10-18; propuesta de C `C-a-B/2026-10-18-propuesta-ahorro-de-contexto`). Lo que cada sesión lee al abrir se mantiene pequeño:
+    - **`estado.md`:** cada equipo deja en su sección **sus 3 entradas más recientes** y mueve las demás a `estado-historia/AAAA-MM.md` (al cambiar de sesión o cada lunes). B hace lo mismo con «Pendientes del propietario», que solo lista lo abierto.
+    - **Avisos:** al atender un aviso, su autor lo marca `Estado: Cerrado` (regla 2). **B archiva cada semana** los avisos de más de 3 días en `avisos/archivo/AAAA-MM/<de>-a-<para>/`, sin cambiar el nombre ni el contenido; las herramientas solo miran `avisos/<de>-a-<para>/`, así que lo archivado no se vuelve a leer al abrir. Para citar un aviso archivado basta su nombre.
+    - **Memoria común:** B la consolida cuando una entrada queda sustituida (se borra en `memoria/` y en el índice); las líneas del índice, de unos 100 caracteres como máximo.
+    - **`CLAUDE.md` (GPOS-NG):** solo las reglas que se aplican siempre; la historia de las firmas y lo que sigue «Decidido, no implementado» vive en `docs/adr/estado-de-construccion.md` y en `docs/adr/README.md`.
 ## Cómo se usa
 
 Clonar una vez en cada PC:

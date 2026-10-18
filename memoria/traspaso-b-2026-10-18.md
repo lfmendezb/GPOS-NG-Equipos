@@ -1,21 +1,20 @@
 ---
 name: traspaso-b-2026-10-18
-description: "LEER PRIMERO al abrir sesión de B: traspaso del 2026-10-18; punta 1768f6a3 (ola 5 auditoría unida); tareas 1 y 3 hechas; DB-7 y RSV para firma"
+description: LEER PRIMERO al abrir sesión de B: estado del 2026-10-18 (tarde); punta 322b21d6; D0 de DB-7 firmado; qué sigue
 metadata:
-  node_type: memory
   type: project
-  originSessionId: 924c86d7-164e-4af7-907a-23057f30c43b
-  modified: 2026-10-18T07:50:09.764Z
 ---
 
-Cambio de sesión de B, 2026-10-18 a las 03:04. Traspaso en el área común: `traspasos/B/2026-10-18-traspaso-B-cambio-de-sesion.md`. La sesión nueva (2026-10-18, mañana) avanzó así:
+Estado de B el 2026-10-18 (tarde). Detalle en `estado.md` del área común (sección B) y en sus avisos del día.
 
-- **Hecho:**
-  - (1) ola 5 auditoría unida: `feature/modelo-ng` = `1768f6a3`; marca `20261015211406` conservada (cabe entre `Uf05ForceSeek` y la del #48, `20261018042207`);
-  - (3) `CLAUDE.md` al día en `master` `f86f88f8`, con notas del registro en ADR-82 (51616 a 51618) y ADR-83 (51618, EventId 4722).
-- **Encargo a C:** 503 del #72 sin el nombre de la base para quien no es SUPER (aprobado por el propietario).
-- **Firmadas el 2026-10-18 y registradas en `master` `9b38c947`:** DB-7 (DB7-06: la construye B, D0 a D6, tras el #57 y el #73; control el 2026-11-20) y RSV (ADR-79; el PR es de A detrás del #73, antes del 2026-11-02).
-- **Sigue:** unir la cadena de A rebasada sobre `1768f6a3`: #52 → #55 → #51 → #45 → #48 (regenera Designer, snapshot y guion; marca igual) → #60 → #63 → #67 → #68 → #57 → #58 → #73.
+- **`feature/modelo-ng` = `322b21d6`**: unida toda la cadena firmada (#52 a #74), más #62, #70, #72, #56 y #69. Última marca de migración: `20261018153317`.
+- **`master`**: firmas del día registradas (DB-7 calendario, RSV con ADR-79, D0 de DB-7); `CLAUDE.md` recortado (historial en `docs/adr/estado-de-construccion.md`).
+- **En curso o pendiente:**
+  - medición del #61 y el #71 (`Medicion-61-71.ps1`; base `b/medir-base`, candidato `b/medir-cand` con #61 + #71, el conflicto con SC08 resuelto y las pruebas N6-02E y LP-01);
+  - unir el #75 (RSV-F1 a F4; mirar RSVB-02/03) y el #76 (H-L1/H-L2);
+  - el hallazgo de C sobre `LongitudesColumnas` (segunda conexión dentro de `SaveChanges`);
+  - registrar el ADR de Linux con PL-10 (a) y proponer el equipo de LN (PL-03);
+  - D1 de DB-7 desde el 2026-11-02 (lo construye B).
 
-**Why:** sin esta nota, una sesión nueva repetiría las tareas 1 y 3.
-**How to apply:** leer el traspaso, `estado.md` y los avisos posteriores a `1768f6a3`, y seguir con las uniones. Sustituye a [[traspaso-b-2026-10-17]] como punto de entrada.
+**Why:** la sesión del 18-oct hizo mucho; sin esta nota, la siguiente repetiría o perdería trabajo.
+**How to apply:** leer esto, `estado.md` (B) y los avisos posteriores a `322b21d6`; trabajar con Sonnet 5 y esfuerzo medio, y sugerir Opus 5.5 para las uniones con conflicto y el análisis de la medición ([[sesiones-sonnet-medio-escalar-opus]]).
