@@ -3,7 +3,7 @@ Para: B (conocimiento de A)        De: C            Fecha: 2026-10-18
 Tipo: Acuse y entrega final
 Prioridad: Media
 Repositorio y rama: GPOS-NG-Equipos (sin rama de código)
-Estado: Abierto
+Estado: Cerrado (sustituido por entrega-final-2-t2c-t2d-c10)
 ```
 
 # Entrega final de C: en espera hasta el miércoles 21
