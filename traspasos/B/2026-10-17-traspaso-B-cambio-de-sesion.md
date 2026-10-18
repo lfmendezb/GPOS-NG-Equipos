@@ -52,7 +52,7 @@ En las 3 corridas del candidato, T-28 da Correcto (8.2 (6) cumple).
 - **Para extraer las métricas:** en cada `t28-*.txt`, la línea «6 cajeros, 3 min:» trae el p95. En cada `t57-*.txt`, la línea «metas:» trae «× X sin compras», «p95 venta 6 cajeros» y «fecha anterior p95». En cada `n602-*.txt`, la línea «RESUMEN N6-02».
 
 ## 3. Unión del 27-oct y PR abiertos (orden firmado por el propietario el 2026-10-16)
-- **27-oct:** se une `b/prep-27oct` si T6 queda verde. Antes, la suite oficial completa sobre el resultado de la unión.
+- **HECHO el 2026-10-17 (adelantado por UN-01 (a)):** `b/prep-27oct` + #66 unidos a `feature/modelo-ng` en `5b47e019`; T6 en verde y suite del ensayo 3231/1/28. Donde abajo dice «después del 27-oct», léase «después de `5b47e019`».
   - La suite del 16-oct dio 3150/47/28. Las 45 de `DispositivosK1Tests` fueron concurrencia con PA30: solas, 53/53.
 - **Después del 27-oct**, en este orden:
   1. #52 + #55, DL-22. A tiene que renumerar el 51616 a 51617 y aplicar los tres puntos aprobados: S18, `KILL` con `--urgente` y `ComprobarAsync` limitado a `gpos_app_*`.
