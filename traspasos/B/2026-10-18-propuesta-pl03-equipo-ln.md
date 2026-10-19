@@ -23,3 +23,10 @@
 - [ ] Otro reparto (indicar)
 
 **Qué rompe:** nada (es un reparto interno). **A quién afecta:** a A (carga de enero y febrero). **Por qué se justifica:** un dueño por zona; no compite con el corte. **Cómo se migra:** no aplica.
+
+## Firma
+**Firmada por Leonardo Méndez, propietario, el 2026-10-18 en la sesión de B:** «Firmo la propuesta de PL-03 según la recomendación: A hace LN y LS, B hace LS5, el agente con el tramo 3b.»
+
+- **Reparto firmado:** A hace LN1 a LN3 (enero de 2027) y LS1 a LS4 (febrero y marzo, LS4 con el arquitecto de datos); B hace LS5 (devops, con auditor y QA) y `ILlaveFirmaTokens` dentro de D2 de DB-7; LC1 a LC3 en los repositorios de los conectores y de Backup Tool; LA1 a LA4 con quien construya el tramo 3b.
+- **Condición:** LN puede ir en paralelo con la fase B de ADR-81; LS espera a que esa fase esté unida. Si A estuviera saturado, el plan B de la propuesta (LN a C con revisión de A) requiere una nueva decisión del propietario.
+- Se registra en `master` con el ADR-129 el miércoles 21.
