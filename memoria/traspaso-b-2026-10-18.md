@@ -10,7 +10,7 @@ Estado de B el 2026-10-18 (tarde). Detalle en `estado.md` del área común (secc
 - **`feature/modelo-ng` = `fd4f79bd`**: toda la cola unida (#52 a #84). Última marca de migración: `20261018181156`. Medición del #61 y el #71: cumplen (informe `traspasos/B/2026-10-18-medicion-61-71.md`).
 - **`master`**: firmas del día registradas (DB-7, RSV con ADR-79, D0); `CLAUDE.md` recortado (historial en `docs/adr/estado-de-construccion.md`).
 - **PAUSA hasta el miércoles 21 de octubre (propietario):** cuota de uso al límite; A y C sin tareas nuevas. B gestiona todo con el mínimo de sesiones y sin vigilantes.
-- **Pendiente para el miércoles:** registrar el ADR de Linux con PL-10 (a) (falta que el propietario asigne el número; rango de C congelado) y proponer el equipo de LN (PL-03); LC-03 a LC-05 del #79 y S04, S05 y S07 del #81; D1 de DB-7 desde el 2-nov (lo construye B).
+- **Pendiente para el miércoles:** registrar el ADR de Linux con PL-10 (a) **con el número ADR-129** (asignado por el propietario el 2026-10-18; el rango de C sigue congelado; el 127 y el 128 quedan para los dos ADR de catering) y proponer el equipo de LN (PL-03); LC-03 a LC-05 del #79 y S04, S05 y S07 del #81; D1 de DB-7 desde el 2-nov (lo construye B).
 - **NuGet:** con paquetes nuevos hay que restaurar con `dotnet restore GPOS-NG.slnx --source https://api.nuget.org/v3/index.json` y compilar con `--no-restore` (el origen local de la configuración no existe).
 
 **Why:** la sesión del 18-oct hizo mucho; sin esta nota, la siguiente repetiría o perdería trabajo.
