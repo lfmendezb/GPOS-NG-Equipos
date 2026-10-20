@@ -197,9 +197,9 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Historia anterior:** [`estado-historia/2026-10.md`](estado-historia/2026-10.md).
 
 ## Equipo C (OSHIN-LEGION) — reactivado el 2026-10-16
+- **2026-10-20 (pausa levantada):** acuse `C-a-B/2026-10-20-acuse-pausa-levantada-cola-de-c`, aprobado por el propietario. C no tiene nada en curso: todo está entregado y unido. **Declina la suite oficial sobre el #103** porque el equipo es inestable (la corre B o A en LFMB). **Toma solo el diseño del laboratorio de ADR-90 (PT-07)**, un documento en `traspasos/C/` revisado por seguridad.
 - **2026-10-18, noche (el propietario pidió completar los pendientes):** **PR #82** (C10, causa inferida), **#83** (T2 (c) + guarda 4; migración `20261018181156_T2cAceptaDeSuplidor`; datos: Conforme con correcciones) y **#84** (guarda 3, apilado sobre el #80). Ráfagas: 5/5 con el #79, sin cambios. **Con el #77 al #81 son 8 PR; orden #80 → #81 y #84.** C queda sin trabajo en curso, en espera hasta el miércoles 21. Aviso `C-a-B/2026-10-18-entrega-final-2-t2c-t2d-c10`.
 - **2026-10-18, tarde:** **PR #81** (`c/t2b-archivo-instalacion`): T2 (b), archivo de instalación con solo claves permitidas en los cuatro procesos, guiones del DEMO y D-01; seguridad y devops revisados. **El #80 sube con el tope de descarga (S02): unir el #80 antes del #81.** Aviso `C-a-B/2026-10-18-entrega-pr81-t2b-y-orden-con-pr80`. **C en espera hasta el miércoles 21** (pausa del propietario): sin T2 (c) ni (d), C10 ni las ráfagas; aviso `C-a-B/2026-10-18-entrega-final-c-en-espera`.
-- **2026-10-18, tarde:** **PR #80** (`c/t2a-opciones-rnc-dgii`): T2 (a) de ADR-126, `OpcionesRncDgii` con validación (C-01, C-02, O-4 y O-5), sin detener la API; aviso en la pantalla del padrón. 59/59 y Web paridad 1/1. Aviso `C-a-B/2026-10-18-entrega-pr80-t2a-opciones-rnc`. Siguiente: T2 (b).
 
 ## Pendientes del propietario
 _Puesto al día por B el 2026-10-18; lo anterior está en `estado-historia/2026-10.md`._
