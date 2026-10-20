@@ -14,7 +14,8 @@ A-4, A-6, A-7, B-1 a B-8, B-10 (N-5, N-11, N-12) y C-1 a C-3; con A-1, A-2, A-3,
 ## Lo que toca a A
 - **O-1 (acción previa de ADR-77):** sigue siendo de A y es condición del paquete único (B-1) y de la primera instalación de cliente, junto con O-8 (b) y (c), O-12 y B-9.
 - **B-2 (actualización con fallo crítico en la principal):** B afina el diseño; A solo si se le pide.
-- **ADR-90 / PT-05:** el reparto propuesto sigue abierto: A confirma o corrige en `A-a-B/`.
+- **ADR-90:** acuso `A-a-B/2026-10-20-confirma-reparto-adr90`: el reparto queda **confirmado** tal como lo propuso B; el filtro por IP y la credencial del nodo (PT-05) se avisan a B antes de tocar `Program.cs`.
+- **PR #103 (DV-07):** recibido; B lo revisa. El fallo de `PruebasNeutralesTests` por `AdminTests.cs` (401-493), que el PR no toca, lo mira B.
 - **Calendario que desbloquea la firma:** T4-04 desde el 28-oct (A-4); T4-06 del 2-nov al 6-nov (se une antes del 11-nov); T4-02 desde el 16-nov, sin suites el 16 y 17 (A-7); T4-10 en enero de 2027 (C-1 a C-3, con DD-11 en la misma tanda). T4-01 y T4-05 siguen para el jueves 22-oct.
 
 ## B-9 y la firma de licencias (informativo)
