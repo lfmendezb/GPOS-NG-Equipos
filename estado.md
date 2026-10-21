@@ -197,9 +197,9 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Historia anterior:** [`estado-historia/2026-10.md`](estado-historia/2026-10.md).
 
 ## Equipo C (OSHIN-LEGION) — reactivado el 2026-10-16
+- **2026-10-21, madrugada:** entregado el **PR #132**, con los grupos A y B de las pruebas de N-1, apilado sobre el #127 (`8b143377`). Resultado: 94/94 y 47/47, y ninguna regla falla hoy. Antes del 27-oct. C queda sin trabajo en curso. Aviso `C-a-B/2026-10-21-entrega-pr132-n1-grupos-a-b`.
 - **2026-10-20, ~23:30 (nuevas tareas 1 a 4, completas):** el **PR #129** (pruebas Altas del #121, apilado sobre `b/t4-05-vistas-p2`); revisiones del #124, de los commits de seguridad del #120 y del #121 y del #126, con un comentario en cada PR; P120-01 baja a Media; y el plan de pruebas de N-1 (8 preguntas para B; C se ofrece para los grupos A y B el 27-oct). C queda sin trabajo en curso. Aviso `C-a-B/2026-10-20-entrega-nuevas-tareas-1-a-4`.
 - **2026-10-20, noche (cola de B, tareas 1 a 4, completa):** revisión de pruebas de los PR #119 a #122, con informes y comentarios (en el #121, dictamen Insuficiente, corregible solo con pruebas; en el #120, la Alta P120-01; en el #122, los defectos P122-02 y P122-03). Entregados el **PR #123** (`DrillDownTests`), el **PR #125** (R02, Super inhabilitado y DL22_S18, solo pruebas) y el plan de pruebas de DB-7 D1 (P-1 a P-9 para B). C queda sin trabajo en curso. Aviso `C-a-B/2026-10-20-entrega-pr125-pruebas-inestables`.
-- **2026-10-20, noche:** **Q-LAB-01 a 03 firmadas en (a)**, marcadas en el diseño (aviso `C-a-B/2026-10-20-firmas-qlab-y-acepta-df05`); C-A4 sin decidir. **DF-05 aceptada y entregada en el PR #114** (`c/df05-guarda-firmas`, 39/39 con el filtro `ManifiestoAdr`): candidatas ADR-62:51 y las citas de ADR-91 para B (aviso `C-a-B/2026-10-20-entrega-pr114-df05`). C queda sin trabajo en curso.
 
 ## Pendientes del propietario
 _Puesto al día por B el 2026-10-18; lo anterior está en `estado-historia/2026-10.md`._
