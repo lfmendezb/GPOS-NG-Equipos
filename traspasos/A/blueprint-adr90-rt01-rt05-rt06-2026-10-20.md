@@ -362,7 +362,7 @@ tests/GPOS.Web.Tests/Red/…       (manejador y rechazo de la Web)
 | **PR-1b · RT-01, Kestrel** | `a/adr90-rt01-escucha-servidor` | Proyecto `GPOS.Comun.Servidor`, `EscuchaServidor`, `EstadoRed`, conexión en la **Web** | No | Tras la firma de **F-1**; parte de la Web antes del 11-20 | PR-1a; F-1 |
 | **PR-3 · RT-06** | `a/adr90-rt06-filtro-origen` | `FiltroOrigenNodo`, `RechazoOrigenNodo` (Web), `DireccionIp` en `LimitesPeticiones.Ip`, prueba del freno de emparejamiento | No | **Antes del 2026-11-09** (D2) | **Solo PR-1a** (la API tiene ASP.NET por `GPOS.Core`; la Web también) |
 | **PR-2 · RT-05** | `a/adr90-rt05-escucha` | Puntos de escucha, selector, `AlmacenCertificadosServidor.Windows.cs`, `ClienteApiLocal`, H-15; conexión en la Web | No | **Después de PR-3**; parte de la Web antes del 11-20 o tras D4 | PR-1b (y F-1) |
-| **PR-4 · conexión en la API** | `a/adr90-api-program` | Las 4 líneas de la sección 7 | **Sí** | Con **F-5** firmada: en la ventana del **10-28 al 11-06**, **después del PR de N-1 de B**. Sin F-5 o si no llega: **después del 11-20** | PR-1a a PR-3; PR de N-1 (B); F-5 |
+| **PR-4 · conexión en la API** | `a/adr90-api-program` | Las 4 líneas de la sección 7 | **Sí** | Con **F-5** firmada: en la ventana del **10-28 al 11-06**, **después del PR de N-1 de B**. Sin F-5 o si no llega: **después del 11-20** | PR-1a a PR-3; PR de N-1 (B); F-5 **v2.2 (revisión de seguridad de PR-4, S4-01): PR-4 NO se une antes de PR-2** (con el modo presente y sin RT-05 la API ejecuta anillo, `Inicializacion` y trabajos en segundo plano, enlaza HTTP en loopback y solo entonces se detiene con 4746). PR-2 se apila sobre PR-4 y se unen juntos; orden: #122, #130, PR-1b, #136, PR-4 + PR-2. |
 
 - **Hasta que se firme F-5 y se una el PR de N-1, A no toca `src/GPOS.Api/Program.cs`** (AV).
 - PR-4 contiene **solo** las 4 líneas, el `using` y la referencia del `.csproj`, más una **prueba de arquitectura** sobre el texto de `Program.cs`: `UseFiltroOrigenNodo` antes de `UseForwardedHeaders` y `ExigirArranque` después de `builder.Build()` (RB 4.2, regla 3).
@@ -491,7 +491,7 @@ tests/GPOS.Web.Tests/Red/…       (manejador y rechazo de la Web)
 5. RT-01 se parte: PR-1a en `GPOS.Comun/Red`, sin proyecto nuevo, con `EventosRed` 4743-4752; PR-1b con `GPOS.Comun.Servidor` tras F-1.
 6. RT-05: HTTPS sin puerto 80; selector por huella SHA-256 con refresco de 5 min; la Web llama a la API por *loopback* con el nombre del sitio; `Api:Url` y `AllowedHosts` derivados (F-6).
 7. RT-06: filtro por la IP de la conexión normalizada antes de `UseForwardedHeaders`; PR-3 depende solo de PR-1a y se une antes del 11-09.
-8. PR-2 después de PR-3; PR-4 tras N-1 de B y F-5 (ventana 10-28 a 11-06) o después del 11-20; hasta entonces no se toca el `Program.cs` de la API.
+8. PR-2 después de PR-3; PR-4 tras N-1 de B y F-5 (ventana 10-28 a 11-06) o después del 11-20; hasta entonces no se toca el `Program.cs` de la API. **v2.2: PR-4 depende de PR-2 y se une con él (S4-01).**
 9. Ningún error SQL; EventId 4743-4752 libres en las 162 referencias de `origin` (comprobado el 2026-10-20).
 10. Esfuerzo: 3,65 dp (1,8 a 5,5), de USD 1.100 a 1.460. Pendientes de firma: F-1, F-5 y F-6.
 
