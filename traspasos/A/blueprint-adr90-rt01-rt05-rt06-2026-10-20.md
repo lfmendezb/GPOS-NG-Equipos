@@ -1,57 +1,84 @@
-# Blueprint técnico (contratos primero): ADR-90, RT-01, escucha de RT-05 y reglas de RT-06 en la aplicación
+# Blueprint técnico (contratos primero): ADR-90, RT-01, escucha de RT-05 y reglas de RT-06 en la aplicación · v2
 
-- **Fecha:** 2026-10-20 · **Autor:** arquitecto-software del equipo A · **Estado:** propuesta de contratos para revisión de B y del auditor-seguridad (no es una decisión firmada).
-- **Alcance:** solo lo que A construye en `GPOS.Api` y `GPOS.Web`. No diseña el paquete único, la ACL del registro, las reglas del cortafuegos ni la tarea de renovación (son de B), ni el verbo `GPOS.Migracion tls` (de A, en otro blueprint).
-- **Convención:** [V] = verificado con `git show`/`git grep` (cita `archivo:línea`); [I] = inferido. Código leído en `origin/feature/modelo-ng` @ `b8f166db` (base de las ramas `a/`); documentos en `origin/master` @ `45a9ab75`. No se compiló ni se ejecutó nada.
+- **Fecha:** 2026-10-20 (v1 y v2) · **Autor:** arquitecto-software del equipo A · **Estado:** propuesta de contratos, corregida con las respuestas de B. Lo que pide firma (F-1, F-5, F-6) sigue **Pendiente de firma** del propietario.
+- **Alcance:** solo lo que A construye en `GPOS.Api` y `GPOS.Web`. No diseña el paquete único, el verbo `red`, la ACL del registro, las reglas del cortafuegos ni la tarea de renovación (son de B), ni el verbo `GPOS.Migracion tls` (de A, en otro blueprint).
+- **Convención:** [V] = verificado con `git show`/`git grep` (cita `archivo:línea`); [I] = inferido. Código leído en `origin/feature/modelo-ng` @ `b8f166db` (base de las ramas `a/`); documentos en `origin/master` @ `e01784a9` (v1 usó `45a9ab75`; ADR-090 no cambió entre los dos, y las líneas de la hoja del tramo 4 que se citan aquí se volvieron a comprobar). No se compiló ni se ejecutó nada.
+- **Respuestas de B que aplica esta v2:** `GPOS-NG-Equipos/traspasos/B/2026-10-20-respuestas-b-a-los-planos-de-a.md` (en adelante **RB**) y el aviso `avisos/B-a-A/2026-10-20-encargo-tareas-y-respuestas-a-los-planos.md` (**AV**).
+
+## Registro de cambios
+
+| Versión | Cambio | Punto de B que lo pide |
+|---|---|---|
+| v2 | `FuenteRegistroWindows.cs` pasa a `FuenteConfiguracionRed.Windows.cs` y `AlmacenMaquinaWindows.cs` a `AlmacenCertificadosServidor.Windows.cs` (convención de ADR-129, B.3 y B.5) | HB-03; AV punto 4 |
+| v2 | Fuera de Windows ya no se devuelve `SinModo`: con Estricto, falla cerrada (ADR-129, B.2); sin Estricto, el mismo «sin modo» que en Windows | HB-03; RB Q-3 de 1.2 |
+| v2 | «Sin modo» se admite **solo si el modo de identidad no es Estricto**; con Estricto y sin `ModoRed`, 4743 y no arranca. Se elimina la opción (b) de 4.3 | HB-04; RB Q-3 de 1.2 |
+| v2 | `IpNodos` lo escribe siempre el paquete (vacío en nodos y sitio único); en «servidor de sitio», si **falta**, 4743 (antes: «lista vacía») | HB-05; RB Q-1 punto 1 y Q-7 de 1.2 |
+| v2 | Escritor único del registro: el verbo `red` de `GPOS.Migracion` (B), que crea la clave con su DACL; los MSI solo leen. Se suman `Version`, `FechaInstalacion` y `RegistroInstalacion` (los escribe el paso 9) | HB-08; RB Q-1 puntos 2 y 3 |
+| v2 | RT-01 sin proyecto nuevo: **PR-1a** solo en `GPOS.Comun/Red`; `GPOS.Comun.Servidor` solo en **PR-1b**, tras la firma de F-1 | HB-02; RB F-1 y 4.1; AV «Ya» punto 2 |
+| v2 | Reparto de PR: PR-3 antes del 2026-11-09; PR-2 después; PR-4 tras el PR de N-1 de B y la firma de F-5 (ventana 10-28 a 11-06; si no, después del 11-20). Hasta entonces no se toca `src/GPOS.Api/Program.cs` | HB-09, HB-14; RB 4.1 y 4.2; AV «Cuando B o el propietario respondan» |
+| v2 | EventId 4743 a 4752 confirmados para estas piezas (franja de A en la tabla de RB Q-8 de 1.1). El crítico de la API de reportes lo hace B con el 5119 | RB Q-5 de 1.2; Q-8 de 1.1 |
+| v2 | `Api:Url` y `AllowedHosts` se derivan del registro en el código (pendiente de confirmación en F-6); H-15 entra en PR-2 | RB Q-2 de 1.2; F-6 (i) |
+| v2 | El verbo `tls` instala la CA del sitio en `LocalMachine\Root` del servidor (paso 6 de la cadena, después de los MSI) | RB Q-8 de 1.2; F-6 (ii) |
+| v2 | Recuperación del servicio: como la estación, más `FailureActionsWhen`; R-10 queda Bajo | RB Q-4 de 1.2; HB-15 |
+| v2 | La clave (cuenta, IP) es de D2 y vive en memoria; PR-3 agrega la prueba del freno de emparejamiento con IPv4 mapeada | HB-10; RB Q-10 de 1.2 |
+| v2 | R-4 probablemente lo cubre el marco; se conserva la prueba en PR-4 | HB-11 |
+| v2 | Las preguntas Q-1 a Q-10 pasan a la sección 12 como «respondidas» | RB 1.2 |
 
 ## 0. Fuentes y estado
 
 | Fuente | Estado [V] |
 |---|---|
-| `docs/adr/ADR-090.md` | **Existe en `origin/master`** (no en `origin/feature/modelo-ng`). RT-01 `:25-33`, RT-05 `:60-70`, RT-06 `:71-79`, PT-01 `:236`, PT-02 `:237`, PT-05 `:240`, PT-06 `:241`, H-15 `:251` |
+| `docs/adr/ADR-090.md` | En `origin/master` (no en `origin/feature/modelo-ng`). RT-01 `:25-33`, RT-05 `:60-70`, RT-06 `:71-79`, «Impacto en el paquete único» `:137`, PT-01 `:236`, PT-02 `:237`, PT-05 `:240`, PT-06 `:241`, H-15 `:251` |
 | `docs/decisiones/2026-10-20-hoja-firma-precisiones-adr090.md` | En `origin/master`. Firmada PT-01 a PT-10 (`:5`). Qué se puede construir ya: `:280-290` |
 | `docs/seguridad/2026-10-20-revision-adr090-red-tls.md` | En `origin/master`. H-01, H-02, H-07 y H-08 (`:65-110`) |
-| `docs/decisiones/2026-10-20-hoja-firma-ola5-tramo4-e-instalador.md` | En `origin/master`, firmada salvo B-9 (`:5`). **RC-T4-3** (`:72`): lo que toque `src/GPOS.Api/Program.cs` se une **después del 2026-11-16**; la zona S está congelada del 11-11 al 11-13 |
+| `docs/decisiones/2026-10-20-hoja-firma-ola5-tramo4-e-instalador.md` | En `origin/master`. **RC-T4-3** (`:72`): lo que toque `src/GPOS.Api/Program.cs` se une **después del 2026-11-16**; la zona S está congelada del 11-11 al 11-13. F-5 propone adelantar PR-4 (sección 8) |
+| `docs/adr/ADR-129.md` | B.2 falla cerrada sin implementación para la plataforma (`:31`); B.3 sin proyectos nuevos y archivos `*.Windows.cs` / `*.Linux.cs` (`:32`); B.5 vigilancia con CA1416 y prueba de arquitectura (`:34`) |
+| RB | Respuestas de B; F-1, F-5 y F-6 **Pendientes de firma**; el resto, decisiones técnicas de B |
 
 **Hechos del código que fijan el diseño**
-- La API no arma su escucha: solo aplica límites a Kestrel con `GPOS:Servidor` (`src/GPOS.Api/Program.cs:45-46`) [V]. `UseHttps`, `Listen*` y `AddWindowsService` no aparecen en `GPOS.Api` [V; el registro como servicio es N-1, de B].
-- `ForwardedHeaders` confía en `X-Forwarded-For` de *loopback* y de `ProxiesConfiables` (`Program.cs:49-54`) y lo aplica en `app.UseForwardedHeaders()` (`Program.cs:349`), primer *middleware* de la canalización [V]. (La hoja cita `:37-42` y `:154` de `master`; en la base de A son `:49-54` y `:349`.)
+- La API no arma su escucha: solo aplica límites a Kestrel con `GPOS:Servidor` (`src/GPOS.Api/Program.cs:45-46`) [V]. `UseHttps`, `Listen*` y `AddWindowsService` no aparecen en `GPOS.Api` [V; `AddWindowsService` solo está en `src/GPOS.Reportes.Api/Program.cs:24` y `src/GPOS.AgenteImpresion/Estacion/ModoEstacion.cs:17`; el registro como servicio de la API es N-1, de B].
+- `ForwardedHeaders` confía en `X-Forwarded-For` de *loopback* y de `ProxiesConfiables` (`Program.cs:49-54`) y lo aplica en `app.UseForwardedHeaders()` (`Program.cs:349`), primer *middleware* de la canalización [V].
 - `LimitesPeticiones.Ip` no normaliza IPv4 mapeada (`src/GPOS.Api/Seguridad/LimitesPeticiones.cs:178`) [V]; `AuthEndpoints` sí lo hace en tres sitios (`src/GPOS.Api/Endpoints/AuthEndpoints.cs:212`, `:257`, `:283`) [V].
 - La Web toma `Api:Url` (`src/GPOS.Web/Program.cs:62-67`), con valor por omisión `http://localhost:5071/` (`src/GPOS.Web/appsettings.json:14`), `AllowedHosts: "*"` (`:9`), y agrega `ReenvioIpCliente` a su único `HttpClient` (`Program.cs:59`, `:67`) [V]. Usa HSTS y `UseHttpsRedirection` fuera de `Development` (`Program.cs:103-109`) [V].
-- Patrón a reutilizar: la API de reportes rechaza `Kestrel:Endpoints` (`src/GPOS.Reportes.Api/Endpoints/ServiciosReportes.cs:83-85`), valida sus direcciones (`:143-151`) y comprueba las enlazadas de verdad con `IServerAddressesFeature` en `ApplicationStarted` (`:170-179`) [V]. Hoy registra un crítico **sin** `EventId` (`:176`) [V].
-- `GPOS.Comun` no tiene referencia a ASP.NET Core (`src/GPOS.Comun/GPOS.Comun.csproj`) y lo usan `GPOS.Api`, `GPOS.Web`, `GPOS.Migracion`, `GPOS.Reportes` y `GPOS.Reportes.Api` [V].
-- Ya hay lectura de `HKLM` con `Registry.LocalMachine` en el agente (`src/GPOS.AgenteImpresion/ConfiguracionAgente.cs:13-19`) [V].
-- **EventId:** el **4742 ya está tomado** por `ModuloVenceIgnorado` del PR #103 (`origin/a/dv07-formato-licencia:src/GPOS.Core/Sistema/Licencia/EstadoLicenciaService.cs:145`) [V]. Del 4743 al 4769 no aparece ningún número en `src` de ninguna rama de `origin` ni en el área común [V, `git grep` sobre todas las ramas]. Por eso este blueprint empieza en el **4743**.
+- Patrón a reutilizar: la API de reportes rechaza `Kestrel:Endpoints` (`src/GPOS.Reportes.Api/Endpoints/ServiciosReportes.cs:83-85`), valida sus direcciones (`:143-151`) y comprueba las enlazadas de verdad con `IServerAddressesFeature` en `ApplicationStarted` (`:170-179`) [V].
+- **Modo Estricto:** la API lo lee con `ComprobacionAnillo.EsEstricto(IConfiguration)` sobre `GPOS:Seguridad:ModoIdentidad` (`src/GPOS.Core/Infraestructura/Anillo/ComprobacionAnillo.cs:47-51`) y la Web con `ProteccionDatosWeb.EsEstricto` (`src/GPOS.Web/Servicios/ProteccionDatosWeb.cs:35` y `:50`) [V]. La Web no referencia `GPOS.Core` (`src/GPOS.Web/GPOS.Web.csproj:4-16`) [V], así que `GPOS.Comun` **no** lee el modo: lo recibe como parámetro (5.1).
+- `GPOS.Comun` no tiene referencia a ASP.NET Core, pero sí a `Microsoft.Extensions.Logging.Abstractions` y a `Microsoft.Extensions.Configuration.Json` (`src/GPOS.Comun/GPOS.Comun.csproj`) [V]. Por eso `EventosRed` y la evaluación de RT-01 caben en `GPOS.Comun/Red` sin proyecto nuevo (PR-1a). Lo usan `GPOS.Api`, `GPOS.Web`, `GPOS.Migracion`, `GPOS.Reportes` y `GPOS.Reportes.Api` [V].
+- Ya hay lectura de `HKLM` con `Registry.LocalMachine` en el agente (`src/GPOS.AgenteImpresion/ConfiguracionAgente.cs:13-19`) [V]. En `src` no existe todavía ningún archivo `*.Windows.cs` ni `*.Linux.cs` [V, `git ls-tree` en `feature/modelo-ng` y `master`]: estas piezas serán las primeras con la convención.
+- **EventId:** el 4742 ya está tomado por `ModuloVenceIgnorado` del PR #103 (`origin/a/dv07-formato-licencia:src/GPOS.Core/Sistema/Licencia/EstadoLicenciaService.cs:145`) [V]. Del 4743 al 4799 no aparece ningún número en `src/*.cs` de las 162 referencias de `origin` [V, `git grep` del 2026-10-20].
 
 ## 1. Contexto y alcance
 
 | Pieza | Cláusula y precisión | Qué cubre aquí |
 |---|---|---|
-| **P1** | RT-01 + PT-06 | Modo leído **solo** del registro; falla cerrada; rechazo de todas las fuentes de direcciones; comprobación de las direcciones efectivas |
-| **P2** | RT-05 + PT-01 + PT-02 | Escucha armada en código por modo; selector de certificado por huella del registro con caché de 5 min; URL de la Web hacia la API por el nombre del sitio con la conexión TCP a *loopback* (`ConnectCallback`) |
+| **P1** | RT-01 + PT-06 | Modo leído **solo** del registro; falla cerrada (también «sin modo» con Estricto y fuera de Windows con Estricto); rechazo de todas las fuentes de direcciones; comprobación de las direcciones efectivas |
+| **P2** | RT-05 + PT-01 + PT-02 | Escucha armada en código por modo; selector de certificado por huella del registro con caché de 5 min; URL de la Web hacia la API por el nombre del sitio con la conexión TCP a *loopback* (`ConnectCallback`); `Api:Url` y `AllowedHosts` derivados (H-09, H-15; F-6 (i)) |
 | **P3** | RT-06 + PT-05 (punto 4) | Filtro sobre la IP de la conexión, **antes** de `UseForwardedHeaders`, para la clase «nodos»; normalización de IPv4 mapeada; corrección de `LimitesPeticiones.Ip` |
 
-**Fuera de alcance:** la credencial del nodo con audiencia exclusiva de `/api/sync/*` (PT-05, punto 5; es de la entrega 2 y `/api/sync/*` no existe); H-15 (cookies y `AllowedHosts`), aunque los contratos de P1 la dejan en una línea (ver 10); el verbo `tls`; todo lo de B.
+**Fuera de alcance:** la credencial del nodo con audiencia exclusiva de `/api/sync/*` (PT-05, punto 5; entrega 2); el verbo `tls` (incluida la CA en `LocalMachine\Root`, RB Q-8); el verbo `red` y todo lo del paquete (B); el crítico de la API de reportes (B, 5119; RB Q-5 de 1.2).
 
 ## 2. Módulos y dependencias
 
 ```
-GPOS.Comun (sin ASP.NET)                 GPOS.Comun.Servidor (nuevo; FrameworkReference Microsoft.AspNetCore.App)
-  Red/ModoRed, ConfiguracionRed            Red/EscuchaServidor   (Kestrel, fuentes rechazadas, direcciones efectivas)
-  Red/IFuenteConfiguracionRed              Red/SelectorCertificadoServidor (TLS, caché, eventos)
-  Red/FuenteRegistroWindows                Red/ClienteApiLocal   (SocketsHttpHandler + ConnectCallback)
-  Red/DireccionIp (normalizar, /32)        Red/EventosRed        (EventId 4743-4752)
-  Red/ValoresRegistroServidor (nombres)         ^            ^
-        ^      ^                                |            |
-        |      +---------- GPOS.Migracion (verbo tls: solo nombres de valores)
-        |                                       |            |
-     GPOS.Api ----------------------------------+        GPOS.Web
-       Seguridad/FiltroOrigenNodo (nuevo)              Servicios/RechazoOrigenNodo (nuevo)
+GPOS.Comun (sin ASP.NET) — PR-1a, sin proyecto nuevo          GPOS.Comun.Servidor (nuevo; FrameworkReference Microsoft.AspNetCore.App)
+  Red/ModoRed, ConfiguracionRed, LecturaRed                       — solo PR-1b y PR-2, tras la firma de F-1
+  Red/IFuenteConfiguracionRed, FuenteConfiguracionRed (fábrica)     Red/EscuchaServidor   (Kestrel, ApplicationStarted)
+  Red/FuenteConfiguracionRed.Windows.cs                             Red/SelectorCertificadoServidor (TLS, caché)
+  Red/DireccionIp (normalizar, /32)                                 Red/IAlmacenCertificadosServidor
+  Red/ValoresRegistroServidor (nombres)                             Red/AlmacenCertificadosServidor.Windows.cs
+  Red/EvaluacionArranqueRed (reglas puras de RT-01)                 Red/ClienteApiLocal   (SocketsHttpHandler + ConnectCallback)
+  Red/EventosRed (EventId 4743-4752)                                    ^            ^
+        ^      ^                                                        |            |
+        |      +---------- GPOS.Migracion (verbos red y tls: solo nombres de valores)
+        |                                                               |            |
+     GPOS.Api --------------------------------------------------------+        GPOS.Web
+       Seguridad/FiltroOrigenNodo (nuevo; PR-3)                             Servicios/RechazoOrigenNodo (nuevo; PR-3)
 ```
 
-- Sin ciclos: `GPOS.Comun.Servidor → GPOS.Comun`; `GPOS.Api` y `GPOS.Web → GPOS.Comun.Servidor`.
-- **Por qué un proyecto nuevo:** P1 y P2 usan Kestrel y los comparten la API y la Web. **Descartado:** (b) `FrameworkReference` de ASP.NET en `GPOS.Comun`, porque lo arrastraría a `GPOS.Migracion` y a `GPOS.Reportes` (el plan del tramo 4 pide que esa biblioteca no cargue ASP.NET); (c) archivos vinculados (`Compile Include … Link`) como el anillo de la Web: duplica la compilación y las pruebas. Costo de (a): un `.csproj` y una entrada en la solución; el MSI de B recoge un DLL más (pregunta Q-9).
-- El filtro de P3 vive en `GPOS.Api/Seguridad/FiltroOrigenNodo.cs`, archivo nuevo **fuera** de la zona S de DB-7 (zona S = `Seguridad.cs`, `Program.cs`, `PermisosServidor.cs`, `RevocacionSesiones.cs`, `ValidacionAcceso`; `docs/arquitectura/2026-10-18-db7-blueprint-v3.md:776` [V]).
+- Sin ciclos: `GPOS.Comun.Servidor → GPOS.Comun`; `GPOS.Api` y `GPOS.Web → GPOS.Comun.Servidor` (desde PR-1b) y `→ GPOS.Comun` (ya existe).
+- **PR-1a no necesita proyecto nuevo (HB-02).** Todo lo que no usa tipos de ASP.NET (`WebApplicationBuilder`, `ListenOptions`, `IServerAddressesFeature`) se mueve a `GPOS.Comun/Red`: tipos, fuente, validación de la tabla 4.1 y **las reglas de RT-01 como función pura** (`EvaluacionArranqueRed`), que reciben listas de claves y de direcciones como texto. `GPOS.Comun.Servidor` queda reducido a la conexión con Kestrel (PR-1b) y al TLS (PR-2).
+- **`GPOS.Comun.Servidor` exige la firma de F-1** (excepción a la regla de proyectos nuevos de `CLAUDE.md` y de ADR-129, B.3, `docs/adr/ADR-129.md:32` [V]). *Alternativa (F-1 b), si el propietario no exceptúa la biblioteca:* las piezas de Kestrel de PR-1b y PR-2 se comparten entre la API y la Web con archivos vinculados (`Compile Include … Link`), como el anillo en la Web (`src/GPOS.Web/GPOS.Web.csproj:14-16`) [V]. Costo: unos +0,3 dp de pruebas y una prueba de arquitectura que compare los vínculos [I]. Los contratos de la sección 5 no cambian; solo cambia el ensamblado que los contiene.
+- **Descartado:** `FrameworkReference` de ASP.NET en `GPOS.Comun`, porque lo arrastraría a `GPOS.Migracion` y a `GPOS.Reportes`.
+- El filtro de P3 vive en `GPOS.Api/Seguridad/FiltroOrigenNodo.cs`, archivo nuevo **fuera** de la zona S de DB-7 (zona S = `Seguridad.cs`, `Program.cs`, `PermisosServidor.cs`, `RevocacionSesiones.cs`, `ValidacionAcceso`; `docs/arquitectura/2026-10-18-db7-blueprint-v3.md:776` [V]). `GPOS.Api` ya tiene ASP.NET por `GPOS.Core` (`src/GPOS.Core/GPOS.Core.csproj:11`) [V], así que PR-3 **no** depende de `GPOS.Comun.Servidor`.
 
 ## 3. C4
 
@@ -61,22 +88,26 @@ No aplica en nivel de contexto ni de contenedores: los contenedores (`GPOS.Web`,
 
 ### 4.1 Registro: `HKLM\SOFTWARE\GPOS NG\Servidor` (vista de 64 bits, `RegistryView.Registry64`)
 
-Única fuente del modo, de los puertos y de la huella (PT-06, PT-02). El servicio **no** lee estos valores del entorno ni de `appsettings`.
+Única fuente del modo, de los puertos, de los nombres, de `IpNodos` y de la huella (PT-06, PT-02). El servicio **no** lee estos valores del entorno ni de `appsettings`.
+
+- **Escritor único: el verbo `red` de `GPOS.Migracion` (B)**, paso 2 de la cadena, **antes** de los MSI. El mismo paso crea la clave con DACL protegida: SYSTEM y Administradores con control total; Usuarios autenticados con lectura (ningún valor es secreto). Los MSI solo leen (`RegistrySearch` para su regla de cortafuegos). El verbo `tls` (A) escribe solo `HuellaApi` y `HuellaWeb` (RB Q-1 de 1.2, HB-08).
 
 | Valor | Tipo | Dominio | Lo escribe | Lo lee | Si falta | Si es inválido |
 |---|---|---|---|---|---|---|
-| `ModoRed` | `REG_SZ` | `UnEquipo` o `ServidorSitio` (comparación ordinal exacta) | paso del *bundle* (B) | API, Web | **Sin modo** (4.3) | 4743, no arranca |
-| `PuertoApi` | `REG_DWORD` | 1024–65535; distinto de `PuertoWeb`, de 5073 (reportes) y de 17654 (agente) | *bundle* (B; 5071 si el técnico no da `PUERTO_API`) | API, Web | con `ModoRed`: 4743 | 4743 |
-| `PuertoWeb` | `REG_DWORD` | 1–65535 | *bundle* (B), **solo** en la excepción del 443 ocupado (riesgos de ADR-90, `:186`) | Web | 443 | 4743 |
-| `NombresServidor` | `REG_MULTI_SZ` | 1 a 16 nombres; el **primero** es un nombre DNS (no IP: sin SNI no hay nombre que validar) y no es `localhost`; sin `.local` (PT-03) | *bundle* (B), desde `NOMBRES_SERVIDOR` | Web | `ServidorSitio`: 4743. `UnEquipo`: no se usa | 4743 |
+| `ModoRed` | `REG_SZ` | `UnEquipo` o `ServidorSitio` (comparación ordinal exacta) | verbo `red` (B) | API, Web | Sin Estricto: **sin modo** (4.3). Con Estricto: **4743, no arranca** | 4743, no arranca |
+| `PuertoApi` | `REG_DWORD` | 1024–65535; distinto de `PuertoWeb`, de 5073 (reportes) y de 17654 (agente) | verbo `red` (5071 si el técnico no da `PUERTO_API`) | API, Web | con `ModoRed`: 4743 | 4743 |
+| `PuertoWeb` | `REG_DWORD` | 1–65535 | verbo `red`, **solo** en la excepción del 443 ocupado (riesgos de ADR-90) | Web | 443 | 4743 |
+| `NombresServidor` | `REG_MULTI_SZ` | 1 a 16 nombres; el **primero** es un nombre DNS (no IP) y no es `localhost`; sin `.local` (PT-03) | verbo `red`, desde `NOMBRES_SERVIDOR` | Web (URL de la API y `AllowedHosts`) | `ServidorSitio`: 4743. `UnEquipo`: no se usa | 4743 |
 | `HuellaApi`, `HuellaWeb` | `REG_SZ` | 64 caracteres hexadecimales en mayúsculas: SHA-256 del DER del certificado | verbo `tls` (A), en el orden de PT-02 | API / Web | con `ModoRed`: 4747, no arranca | 4743 |
-| `IpNodos` | `REG_MULTI_SZ` | IP literal, con o sin `/32` o `/128`; cualquier otro prefijo es inválido | *bundle* (B), desde `IP_NODOS` | API, Web | lista vacía | 4743, no arranca |
+| `IpNodos` | `REG_MULTI_SZ` | IP literal, con o sin `/32` o `/128`; cualquier otro prefijo es inválido. **El paquete lo escribe siempre**, vacío en los nodos de sucursal y en un sitio único | verbo `red`, desde `IP_NODOS` | API, Web | `ServidorSitio`: **4743, no arranca** (falla cerrada; HB-05). `UnEquipo`: no se lee | 4743, no arranca |
+| `Version`, `FechaInstalacion`, `RegistroInstalacion` | `REG_SZ` | Los del paquete (INS:68) | paso 9 `verificar` (B), al terminar bien | lado elevado de N-10; `comprobar-servidor` | No afecta al arranque de la API ni de la Web | No afecta |
 
-- `SUBREDES_PUESTOS` y `SUBREDES_REMOTOS` (PT-05) **no** los lee la aplicación en la v1: sirven solo al cortafuegos. **Descartado:** clasificar las tres clases en la API desde ya; PT-05 solo ordena filtrar por ruta a los nodos, y la distinción de remotos en la bitácora no tiene un requisito firmado en la API (C13.5).
+- **Lista vacía frente a valor ausente:** un `REG_MULTI_SZ` presente y vacío es un conjunto vacío válido (el filtro no hace nada). Un valor ausente en «servidor de sitio» es una instalación incompleta o manipulada: **no** se interpreta como vacío.
+- `SUBREDES_PUESTOS` y `SUBREDES_REMOTOS` (PT-05) **no** los lee la aplicación en la v1: sirven solo al cortafuegos. **Descartado:** clasificar las tres clases en la API desde ya; PT-05 solo ordena filtrar por ruta a los nodos (C13.5).
 - **Huella SHA-256 y no la «huella» SHA-1 de Windows:** `X509Store.Find(FindByThumbprint)` usa SHA-1; se busca recorriendo `LocalMachine\My` y comparando `GetCertHash(HashAlgorithmName.SHA256)`. Son pocos certificados [I]. Evita depender de SHA-1 en Avanzada.
-- Los nombres de los valores son constantes en `GPOS.Comun/Red/ValoresRegistroServidor.cs`, compartidas con el verbo `tls`.
+- Los nombres de los valores son constantes en `GPOS.Comun/Red/ValoresRegistroServidor.cs`, compartidas con los verbos `red` (B) y `tls` (A).
 
-### 4.2 Tipos (en `GPOS.Comun/Red`)
+### 4.2 Tipos (en `GPOS.Comun/Red`; PR-1a)
 
 ```csharp
 public enum ModoRed { UnEquipo = 1, ServidorSitio = 2 }
@@ -88,13 +119,20 @@ public sealed record ConfiguracionRed(
 
 public abstract record LecturaRed
 {
-    public sealed record SinModo : LecturaRed;                          // ModoRed ausente
+    public sealed record SinModo : LecturaRed;                                  // ModoRed ausente (solo se admite sin Estricto)
+    public sealed record SinFuente : LecturaRed;                                // la plataforma no tiene fuente (fuera de Windows, hoy)
     public sealed record Valida(ConfiguracionRed Red) : LecturaRed;
-    public sealed record Invalida(string Valor, string Motivo) : LecturaRed;   // Motivo sin datos sensibles
+    public sealed record Invalida(string Valor, string Motivo) : LecturaRed;    // Motivo sin datos sensibles (incluye IpNodos ausente en ServidorSitio)
 }
 
-public interface IFuenteConfiguracionRed { LecturaRed Leer(); }          // también la usa el refresco del selector
-[SupportedOSPlatform("windows")] public sealed class FuenteRegistroWindows : IFuenteConfiguracionRed { … }
+public interface IFuenteConfiguracionRed { LecturaRed Leer(); }               // también la usa el refresco del selector
+
+// FuenteConfiguracionRed.cs (neutro): fábrica. En Windows devuelve la implementación de abajo; en otra plataforma, una fuente que
+// devuelve SinFuente. La decisión de arrancar o no la toma EvaluacionArranqueRed con el modo Estricto (5.1).
+public static class FuenteConfiguracionRed { public static IFuenteConfiguracionRed Crear(); }
+
+// FuenteConfiguracionRed.Windows.cs (ADR-129, B.3 y B.5: único archivo de estas piezas que usa Microsoft.Win32.Registry)
+[SupportedOSPlatform("windows")] internal sealed class FuenteConfiguracionRedWindows : IFuenteConfiguracionRed { … }
 
 public static class DireccionIp
 {
@@ -103,47 +141,73 @@ public static class DireccionIp
 }
 ```
 
-En Linux (ADR-129) no hay fuente todavía: la fábrica devuelve `SinModo` [I; la fuente de Linux es de la fase de ADR-129].
+**Fuera de Windows (ADR-129, B.2; HB-03):** no hay fuente todavía (la de Linux es de la fase LN). La fábrica devuelve `SinFuente`, y la evaluación la trata igual que `SinModo`: **con Estricto, 4743 y no arranca**; sin Estricto, el «sin modo» de 4.3 (solo *loopback*). **Se descarta** lo que decía la v1 («en Linux la fábrica devuelve `SinModo`» sin condición), porque dejaba arrancar una instalación Estricta sin falla cerrada.
 
-### 4.3 Estado «sin modo» (registro ausente)
+### 4.3 Estado «sin modo» (registro ausente) — **solo sin Estricto** (HB-04; RB Q-3 de 1.2)
 
-No es un tercer modo instalable: el paquete exige `MODO_RED` en la primera instalación (PT-06), así que solo se da en desarrollo, en las pruebas y en el DEMO que todavía no usa el paquete.
+No es un tercer modo instalable: el paquete exige `MODO_RED` en la primera instalación (PT-06) e impone Estricto (INS B-11), así que «sin modo» solo se da en desarrollo, en las pruebas y en el DEMO que todavía no usa el paquete.
 
-- **(a, recomendada)** Se conserva la configuración actual (`urls`, `launchSettings`, `Api:Url`), pero **toda dirección efectiva debe ser de *loopback*** (cualquier esquema; A5 admite HTTP en *loopback*). Si no, 4746 y se detiene. Cada arranque deja el 4745 (aviso). Es **más** restrictivo que «un equipo», así que no es un valor por omisión que abra puertos.
-- **(b)** Igual que hoy, sin comprobar direcciones, con el aviso 4745. No rompe un DEMO que hoy se abra desde otra PC, pero deja sin falla cerrada una instalación a la que se le borre el registro (hace falta ser administrador).
-- **(c, descartada)** No arrancar sin registro: rompe el desarrollo, las pruebas y el DEMO hasta que adopte el paquete (A-5).
-- Se recomienda (a), salvo que B confirme que el DEMO se usa desde otra PC (Q-3). En ese caso, (b) **hasta la primera instalación de cliente** y luego (a).
+| Modo de identidad | `ModoRed` ausente (o `SinFuente`) |
+|---|---|
+| **Estricto** (`GPOS:Seguridad:ModoIdentidad = Estricto`) | **4743 y no arranca.** Es la falla cerrada de RT-01 y PT-06: una instalación de cliente a la que le borren el registro no arranca en *loopback* con HTTP |
+| **No Estricto** (desarrollo, pruebas, DEMO) | Se conserva la configuración actual (`urls`, `launchSettings`, `Api:Url`), pero **toda dirección efectiva debe ser de *loopback*** (cualquier esquema; A5 admite HTTP en *loopback*). Si no, 4746 y se detiene. Cada arranque deja el 4745 (aviso) |
+
+- **Por qué no rompe nada hoy [V, según RB Q-3]:** el DEMO escucha solo en `localhost` (`instalador/Demo/scripts/herramientas/Comun-Demo.ps1:344` y `:374`), igual que `launchSettings` de la API y de la Web, el ensayo de implantación y las pruebas con Kestrel (`127.0.0.1`).
+- **Cuando el DEMO adopte el paquete (A-5):** usará «un equipo», y devops quitará `ASPNETCORE_URLS` de sus guiones, porque con el modo presente es una fuente rechazada (regla 1 de 5.1).
+- **Descartadas:** (b) de la v1 (sin comprobar direcciones), porque deja sin falla cerrada una instalación a la que se le borre el registro; (c) no arrancar nunca sin registro, porque rompe el desarrollo, las pruebas y el DEMO hasta A-5.
+- **Residual:** el modo Estricto sale de la configuración (`ComprobacionAnillo.cs:47`) [V], que en una instalación solo puede escribir un administrador [I]. Quitar a la vez el registro y Estricto exige ser administrador, igual que R-9.
 
 ## 5. Contratos
 
-### 5.1 P1 · RT-01: arranque con falla cerrada (`GPOS.Comun.Servidor/Red/EscuchaServidor.cs`)
+### 5.1 P1 · RT-01: arranque con falla cerrada
+
+**Reglas puras (PR-1a, `GPOS.Comun/Red/EvaluacionArranqueRed.cs`):**
+
+```csharp
+public static class EvaluacionArranqueRed
+{
+    // Antes de Build. No lanza: devuelve el resultado para registrarlo con el logger real.
+    // estricto: lo calcula el llamador (API: ComprobacionAnillo.EsEstricto; Web: ProteccionDatosWeb.EsEstricto).
+    // clavesConfiguracion / variablesEntorno: nombres presentes (y el valor de preferHostingUrls), no sus valores.
+    public static ResultadoArranqueRed Evaluar(ServicioRed servicio, LecturaRed lectura, bool estricto,
+        IReadOnlyDictionary<string, string?> clavesConfiguracion, IReadOnlyDictionary<string, string?> variablesEntorno,
+        string? apiUrlConfigurada);
+
+    // En ApplicationStarted: direcciones efectivas como texto (IServerAddressesFeature.Addresses).
+    public static ResultadoDirecciones ComprobarDirecciones(ResultadoArranqueRed arranque, IEnumerable<string> direccionesEfectivas);
+}
+public sealed record ResultadoArranqueRed(bool PuedeArrancar, EventId? Evento, string? Motivo, ConfiguracionRed? Red, bool SinModo)
+{ public IReadOnlySet<IPAddress> IpNodos { get; } /* vacío en SinModo */ }
+```
+
+**Conexión con Kestrel (PR-1b, tras F-1; `GPOS.Comun.Servidor/Red/EscuchaServidor.cs`):**
 
 ```csharp
 public static class EscuchaServidor
 {
-    // Antes de Build: lee la fuente, valida, rechaza fuentes de direcciones y arma ConfigureKestrel (P2).
-    // No lanza: guarda el resultado para registrarlo con el logger real.
-    public static EstadoRed Preparar(WebApplicationBuilder builder, ServicioRed servicio, IFuenteConfiguracionRed? fuente = null);
+    // Antes de Build: lee la fuente, llama a Evaluar y arma ConfigureKestrel (P2, desde PR-2).
+    public static EstadoRed Preparar(WebApplicationBuilder builder, ServicioRed servicio, bool estricto, IFuenteConfiguracionRed? fuente = null);
 
     // Después de Build y antes de Run: registra 4743/4744/4747 y lanza ArranqueRedException (el proceso termina con código ≠ 0);
-    // en SinModo registra 4745; engancha la comprobación de direcciones efectivas (4746) a ApplicationStarted.
+    // en SinModo registra 4745; engancha ComprobarDirecciones (4746) a ApplicationStarted.
     public static void ExigirArranque(WebApplication app, EstadoRed estado);
 }
-public sealed class EstadoRed { public ConfiguracionRed? Red { get; } public IReadOnlySet<IPAddress> IpNodos { get; } /* vacío en SinModo */ … }
 public sealed class ArranqueRedException : Exception { … }   // mensaje sin rutas ni valores sensibles
 ```
 
-**Reglas** (con `ModoRed` presente; en `SinModo` solo rigen la 4 y la comprobación de *loopback* de 4.3):
-1. **Fuentes de direcciones rechazadas** (4744): en la configuración, `urls`, `http_ports`, `https_ports`, `preferHostingUrls` (si es `true`), y cualquier hijo de `Kestrel:Endpoints` o de `Kestrel:Certificates`; en el entorno del proceso, `ASPNETCORE_URLS`, `DOTNET_URLS`, `ASPNETCORE_HTTP_PORTS`, `DOTNET_HTTP_PORTS`, `ASPNETCORE_HTTPS_PORTS`, `DOTNET_HTTPS_PORTS`, `ASPNETCORE_PREFERHOSTINGURLS` y `DOTNET_PREFERHOSTINGURLS`. Se miran las dos cosas porque `WebApplicationBuilder` copia la configuración del anfitrión en `builder.Configuration` [I: comportamiento documentado de .NET; lo fija una prueba]. `preferHostingUrls` se incluye porque, en `true`, hace que `urls` **sustituya** a los puntos armados en código [I].
+**Reglas** (con `ModoRed` presente; en «sin modo» —solo sin Estricto— rigen únicamente la 4 y la comprobación de *loopback* de 4.3):
+0. **Lectura y modo:** `SinModo` o `SinFuente` con Estricto → 4743, no arranca. `Invalida` → 4743, no arranca (incluye `IpNodos` ausente en «servidor de sitio»).
+1. **Fuentes de direcciones rechazadas** (4744): en la configuración, `urls`, `http_ports`, `https_ports`, `preferHostingUrls` (si es `true`), y cualquier hijo de `Kestrel:Endpoints` o de `Kestrel:Certificates`; en el entorno del proceso, `ASPNETCORE_URLS`, `DOTNET_URLS`, `ASPNETCORE_HTTP_PORTS`, `DOTNET_HTTP_PORTS`, `ASPNETCORE_HTTPS_PORTS`, `DOTNET_HTTPS_PORTS`, `ASPNETCORE_PREFERHOSTINGURLS` y `DOTNET_PREFERHOSTINGURLS`. Se miran las dos cosas porque `WebApplicationBuilder` copia la configuración del anfitrión en `builder.Configuration` [I: comportamiento documentado de .NET; lo fija una prueba].
 2. **Valores** según la tabla de 4.1; un valor inválido → 4743.
-3. **Una sola fuente:** la variable `GPOS_MODO_RED` o la clave `GPOS:Red:Modo`, si aparecen con un valor distinto del registro (o con el registro ausente) → 4743. Si coinciden, se ignoran.
+3. **Una sola fuente:** la variable `GPOS_MODO_RED` o la clave `GPOS:Red:Modo`, si aparecen con un valor distinto del registro (o con el registro ausente) → 4743. Si coinciden, se ignoran. En la Web, un `Api:Url` configurado distinto del derivado del registro → 4743 (5.2).
 4. **Direcciones efectivas** (4746, en `ApplicationStarted`, con `IServerAddressesFeature`, como `ServiciosReportes.cs:170-179`):
    - `UnEquipo`: toda dirección es `https` y de *loopback*.
-   - `ServidorSitio`: toda dirección es `https` y su puerto es el armado; **ninguna** `http`, tampoco en *loopback* (no se arma ninguna).
+   - `ServidorSitio`: toda dirección es `https` y su puerto es el armado; **ninguna** `http`, tampoco en *loopback*.
+   - «Sin modo» (sin Estricto): toda dirección es de *loopback*.
    - Si falla: `LogCritical(4746)`, `Environment.ExitCode = 1` y `StopApplication()`.
-5. La API de reportes **no** cambia en estas piezas (sigue en `http://localhost:5073`, RT-05). Recomendación aparte, sin PR aquí: que su crítico de `:176` lleve un `EventId` (pregunta Q-5).
+5. La API de reportes **no** cambia en estas piezas (sigue en `http://localhost:5073`, RT-05). Su crítico sin `EventId` lo corrige **B** en un PR del tramo 4 con el **5119 `DireccionNoPermitida`** y `Environment.ExitCode = 1` (RB Q-5 de 1.2; HB-12). A no lo toca.
 
-### 5.2 P2 · RT-05: escucha por modo y selector
+### 5.2 P2 · RT-05: escucha por modo y selector (PR-2, tras PR-1b)
 
 **Puntos de escucha armados en código** (dentro de `Preparar`, con `ConfigureKestrel`; se suman a `OpcionesServidor.Aplicar` y `OpcionesServidorWeb.Aplicar`, que no cambian):
 
@@ -155,14 +219,17 @@ public sealed class ArranqueRedException : Exception { … }   // mensaje sin ru
 
 - Protocolos: `HttpProtocols.Http1AndHttp2`; TLS: `SslProtocols.Tls12 | Tls13` explícito; sin certificado de cliente. Las suites de Schannel las fija devops (RT-09).
 - HTTPS por `ListenOptions.UseHttps(TlsHandshakeCallbackOptions { OnConnection = _ => selector.OpcionesVigentes, HandshakeTimeout = 10 s })`.
-  - Así cada saludo usa un `SslStreamCertificateContext` ya construido (`offline: true`, sin descargas AIA), en lugar de armar la cadena en cada conexión [I: a medir en el laboratorio].
-  - `ApplicationProtocols` se fija en `[h2, http/1.1]`; con la devolución de llamada no lo pone Kestrel [I; lo fija una prueba].
-  - **Descartado:** `ServerCertificateSelector` (más simple, pero no controla el contexto ni los protocolos y no deja cachear la cadena).
+  - Cada saludo usa un `SslStreamCertificateContext` ya construido (`offline: true`, sin descargas AIA) [I: a medir en el laboratorio].
+  - `ApplicationProtocols` se fija en `[h2, http/1.1]` [I; lo fija una prueba].
+  - **Descartado:** `ServerCertificateSelector` (no controla el contexto ni los protocolos y no deja cachear la cadena).
 
 **Selector** (`GPOS.Comun.Servidor/Red/SelectorCertificadoServidor.cs`):
 
 ```csharp
-public interface IAlmacenCertificadosServidor { X509Certificate2? BuscarPorSha256(string huella); }   // prod: LocalMachine\My, ReadOnly|OpenExistingOnly
+public interface IAlmacenCertificadosServidor { X509Certificate2? BuscarPorSha256(string huella); }
+// AlmacenCertificadosServidor.Windows.cs (ADR-129, B.3): [SupportedOSPlatform("windows")] internal sealed class
+//   AlmacenCertificadosServidorWindows : IAlmacenCertificadosServidor — LocalMachine\My, ReadOnly|OpenExistingOnly.
+// Fuera de Windows no hay implementación: con Estricto ya no se llega aquí (5.1, regla 0); sin Estricto no se arma HTTPS ("sin modo").
 public sealed class SelectorCertificadoServidor : IDisposable
 {
     public SelectorCertificadoServidor(ServicioRed servicio, IFuenteConfiguracionRed fuente, IAlmacenCertificadosServidor almacen,
@@ -173,12 +240,11 @@ public sealed class SelectorCertificadoServidor : IDisposable
 }
 ```
 
-- **Refresco:** `PeriodicTimer` de **5 minutos** sobre `TimeProvider`. **No se lee el registro ni el almacén dentro del saludo TLS**: el saludo solo lee una referencia (sin bloqueo ni E/S en el hilo de la conexión).
+- **Refresco:** `PeriodicTimer` de **5 minutos** sobre `TimeProvider`. **No se lee el registro ni el almacén dentro del saludo TLS.**
 - **Un certificado es utilizable si:** está en el almacén; su SHA-256 coincide; tiene llave privada **y la cuenta del servicio la abre** (`GetECDsaPrivateKey()`, o `GetRSAPrivateKey()` para un certificado del cliente; una `CryptographicException` lo hace no utilizable); trae EKU `serverAuth`; `NotBefore ≤ ahora < NotAfter`.
-- **Cambio de huella:** si la nueva es utilizable, se cambia y se registra el 4749 (información). Si no, **se sigue sirviendo el anterior** y se registra el 4748 (crítico), como mucho una vez por huella en cada refresco (PT-02).
-- **El anterior se conserva en memoria** hasta el siguiente cambio, para los saludos en curso, y se libera después.
-- **Al arrancar**, sin certificado utilizable: 4747 y no arranca.
-- El selector **no** juzga el vencimiento cercano: los avisos a 20, 10 y 3 días son de la tarea de renovación de B (H-11).
+- **Cambio de huella:** si la nueva es utilizable, se cambia y se registra el 4749. Si no, **se sigue sirviendo el anterior** y se registra el 4748 (crítico), como mucho una vez por huella en cada refresco (PT-02). El anterior se conserva en memoria hasta el siguiente cambio.
+- **Al arrancar**, sin certificado utilizable: 4747 y no arranca. Con las acciones de recuperación del MSI (RB Q-4), un 4747 transitorio (la tarea de renovación aún no dio la lectura de la llave) se recupera solo.
+- El selector **no** juzga el vencimiento cercano: los avisos a 20, 10 y 3 días son de la tarea de renovación (EventId 4780 a 4789, del verbo `tls`).
 
 **Cliente de la Web hacia la API** (`GPOS.Comun.Servidor/Red/ClienteApiLocal.cs`; PT-01):
 
@@ -194,13 +260,13 @@ public static class ClienteApiLocal
 ```
 
 - `ConnectCallback`: si `DnsEndPoint.Host` (sin distinguir mayúsculas) no es el anfitrión de `DireccionApi`, o el puerto no es `PuertoApi`, lanza `HttpRequestException` («destino no permitido»). Si coinciden, conecta un `Socket` a `127.0.0.1` y, si falla, a `::1`, con `NoDelay`. No consulta DNS.
-- `SslOptions`: `TargetHost` = el nombre de la URL (SNI y validación sobre ese nombre; lo hace `SocketsHttpHandler` por omisión [I, ya señalado en la hoja `:327`]), `EnabledSslProtocols = Tls12 | Tls13`, `CertificateRevocationCheckMode = NoCheck` (RT-04: no hay CRL ni OCSP).
-- **Sin `RemoteCertificateValidationCallback`:** la cadena y el nombre los valida el sistema. Exige que la CA del sitio esté en `LocalMachine\Root` **del propio servidor**; el navegador del servidor la necesita igual (Q-8).
-  - **Descartado:** confianza personalizada con la CA de `%ProgramData%\GPOS NG\Servidor\tls\` en producción. Abre un segundo camino de confianza y obliga a excepciones en la prueba de arquitectura de RT-10, punto 5. Solo la sobrecarga interna de pruebas la usa.
+- `SslOptions`: `TargetHost` = el nombre de la URL, `EnabledSslProtocols = Tls12 | Tls13`, `CertificateRevocationCheckMode = NoCheck` (RT-04).
+- **Sin `RemoteCertificateValidationCallback`:** la cadena y el nombre los valida el sistema. **La CA del sitio la instala el verbo `tls` en `LocalMachine\Root` del propio servidor, en los dos modos, en el paso 6 de la cadena** (RB Q-8 de 1.2). Con el «certificado del cliente» no instala nada. La Web no fija una CA propia: usa solo el almacén del sistema (coherente con PT-03).
 - `PooledConnectionLifetime = 10 min`: las conexiones abiertas toman el certificado renovado de la API sin reiniciar la Web.
-- **`Api:Url` con modo presente:** la URL sale de `DireccionApi` (registro). Si la configuración trae un `Api:Url` distinto → 4743, no arranca. En `SinModo` rige `Api:Url` como hoy. Esto cumple H-09 («sin `Api:Url` por omisión fuera de `Development`») sin que el MSI escriba la URL. **Alternativa:** que el MSI escriba `Api:Url` en `GPOS.Web.json`. Exige añadir `Api` a `ArchivoInstalacion.SeccionesPermitidas` (`src/GPOS.Comun/Configuracion/ArchivoInstalacion.cs:27`) y abre dos fuentes del puerto que pueden divergir; se descarta salvo que B prefiera (Q-2).
+- **`Api:Url` derivado (RB Q-2; pendiente de confirmación en F-6 (i)):** con modo presente, la URL sale de `DireccionApi`. Si la configuración trae un `Api:Url` distinto → 4743, no arranca. En «sin modo» rige `Api:Url` como hoy. El MSI **no** escribe `Api:Url`, y `ArchivoInstalacion.SeccionesPermitidas` sigue solo con `GPOS:RncDgii` (`src/GPOS.Comun/Configuracion/ArchivoInstalacion.cs:27`) [V].
+- **H-15 en PR-2 (unos 0,1 dp):** `AllowedHosts` se arma en el código a partir de `NombresServidor` (más `localhost` en «un equipo»); cookies con `Secure`. Una sola fuente (PT-06). También pendiente de confirmación en F-6 (i).
 
-### 5.3 P3 · RT-06: filtro por la IP de la conexión (PT-05, punto 4)
+### 5.3 P3 · RT-06: filtro por la IP de la conexión (PT-05, punto 4; PR-3)
 
 ```csharp
 // GPOS.Api/Seguridad/FiltroOrigenNodo.cs (nuevo)
@@ -214,30 +280,32 @@ public static IApplicationBuilder UseRechazoOrigenNodo(this IApplicationBuilder 
 | Posición | **Primer** *middleware* de la API, antes de `app.UseForwardedHeaders()` (`Program.cs:349`); en la Web, antes de `Program.cs:101` |
 | IP evaluada | `DireccionIp.Normalizar(ctx.Connection.RemoteIpAddress)`; nunca `X-Forwarded-For`. Si es `null` (canalización, `TestServer`), no se filtra |
 | API, IP ∈ `IpNodos` | Solo pasa `ctx.Request.Path.StartsWithSegments("/api/sync", OrdinalIgnoreCase)`; `/api/syncx` no pasa. Lo demás → **403** |
-| Web, IP ∈ `IpNodos` | **403** para todo: un nodo no tiene nada que hacer en el 443 (PT-05: el 443 no se abre a esa clase). Cubre un cortafuegos mal configurado |
+| Web, IP ∈ `IpNodos` | **403** para todo (PT-05: el 443 no se abre a esa clase) |
 | Otras clases | Sin filtro por ruta (PT-05) |
-| `IpNodos` vacío | El *middleware* no hace nada (nodos de sucursal y sitio único) |
-| Respuesta 403 de la API | `application/problem+json`: `{"title":"Origen no permitido","status":403,"codigo":"ORIGEN_NO_PERMITIDO"}`, `Cache-Control: no-store`, sin `detail` (no revela la regla) |
+| `IpNodos` vacío | El *middleware* no hace nada (nodos de sucursal y sitio único). `IpNodos` **ausente** en «servidor de sitio» ya no llega aquí: el servicio no arrancó (4743) |
+| Respuesta 403 de la API | `application/problem+json`: `{"title":"Origen no permitido","status":403,"codigo":"ORIGEN_NO_PERMITIDO"}`, `Cache-Control: no-store`, sin `detail` |
 | Respuesta 403 de la Web | Texto plano corto, sin cuerpo HTML |
-| Evento | API: 4750 (aviso) con IP, método y ruta truncada a 200 caracteres, **sin la consulta**. Web: 4751. Como mucho uno por IP cada 60 s, con el número de suprimidos. **No** se escribe en `BitacoraSeguridad`: ninguna petición anónima provoca escrituras en SQL (evita amplificar una denegación de servicio). Descartado: una fila por rechazo |
+| Evento | API: 4750 (aviso) con IP, método y ruta truncada a 200 caracteres, **sin la consulta**. Web: 4751. Como mucho uno por IP cada 60 s, con el número de suprimidos. **No** se escribe en `BitacoraSeguridad` |
 
 **Corrección de `LimitesPeticiones.Ip`** (`LimitesPeticiones.cs:178`):
 `public static string Ip(HttpContext ctx) => DireccionIp.Normalizar(ctx.Connection.RemoteIpAddress)?.ToString() ?? "desconocida";`
-Sigue leyendo la IP **después** de `UseForwardedHeaders` (los límites quieren la IP del usuario, no la de la Web): es correcto y no cambia. `AuthEndpoints` (zona T de DB-7) **no** se toca; adoptar `DireccionIp` allí queda para B (Q-10).
+Sigue leyendo la IP **después** de `UseForwardedHeaders`. `AuthEndpoints` (zona T de DB-7) **no** se toca: cambiar sus tres normalizaciones en línea por `DireccionIp.Normalizar` lo hará D2 cuando toque ese archivo (RB Q-10 de 1.2).
+
+**Clave (cuenta, IP) de DB-7 (corrige la v1; HB-10):** es de **D2**, no de D1, y vive en memoria (15 min, tope de 100 000 entradas), sin persistirse (BP3:528, :631, :767 y :1083, según RB). Normalizar `LimitesPeticiones.Ip` solo trae beneficios: D2 lo usará como única fuente. `LimitesPeticiones.Ip` también lo usan el emparejamiento y la autenticación de dispositivos (`src/GPOS.Api/Endpoints/RestauranteDispositivosEndpoints.cs:33`; `src/GPOS.Api/Seguridad/AutenticacionDispositivo.cs:41`, según HB-10), cuya clave ya normaliza (`src/GPOS.Core/Servicios/Modulos/Restaurante/Dispositivos/Contratos.cs:170-178`, según RB). PR-3 agrega una prueba de que el freno de emparejamiento sigue igual con IPv4 mapeada. **PR-3 se une antes del 2026-11-09**, cuando D2 empieza a usar la IP para el bloqueo.
 
 ### 5.4 Errores
 
-- **HTTP:** solo `403 ORIGEN_NO_PERMITIDO` (P3). Lo demás son fallos de arranque, que no producen respuesta HTTP.
+- **HTTP:** solo `403 ORIGEN_NO_PERMITIDO` (P3). Lo demás son fallos de arranque, sin respuesta HTTP.
 - **SQL:** **ninguno**. Las piezas no tocan la base; no se usa ningún número, tampoco del 51618 al 51644.
 - **Excepciones:** `ArranqueRedException` (arranque); `HttpRequestException` del `ConnectCallback` («destino no permitido»), que la Web trata como API no disponible (`/estado-api` → 503, `Program.cs:132-145`).
 
-### 5.5 EventId (rango propuesto: 4743 a 4752; siguiente libre, 4753)
+### 5.5 EventId (franja de A para ADR-90: 4743 a 4752; tabla de RB Q-8 de 1.1)
 
 | Id | Nombre | Nivel | Quién | Cuándo |
 |---|---|---|---|---|
-| 4743 | `RedConfiguracionInvalida` | Crítico | API, Web | Valor del registro inválido, modo del entorno distinto, `Api:Url` distinto, `IpNodos` con prefijo amplio |
+| 4743 | `RedConfiguracionInvalida` | Crítico | API, Web | Valor del registro inválido; **`ModoRed` ausente con Estricto**; **sin fuente para la plataforma con Estricto**; **`IpNodos` ausente en «servidor de sitio»**; modo del entorno distinto; `Api:Url` distinto; `IpNodos` con prefijo amplio |
 | 4744 | `RedFuenteEscuchaRechazada` | Crítico | API, Web | Una fuente de direcciones de 5.1, regla 1 |
-| 4745 | `RedSinModo` | Aviso | API, Web | Arranque sin `ModoRed` (4.3) |
+| 4745 | `RedSinModo` | Aviso | API, Web | Arranque sin `ModoRed` y **sin** Estricto (4.3) |
 | 4746 | `RedDireccionNoPermitida` | Crítico | API, Web | Dirección efectiva fuera de lo armado |
 | 4747 | `TlsCertificadoNoDisponible` | Crítico | API, Web | Al arrancar, sin certificado utilizable |
 | 4748 | `TlsCertificadoNuevoNoUsable` | Crítico | API, Web | La huella nueva no es utilizable; se sigue con la anterior |
@@ -246,77 +314,89 @@ Sigue leyendo la IP **después** de `UseForwardedHeaders` (los límites quieren 
 | 4751 | `WebOrigenNodoDenegado` | Aviso | Web | 403 a un nodo en el 443 |
 | 4752 | (reservado) | — | — | Para una sola ampliación de estas piezas sin pedir rango |
 
-- Se declaran como `public static readonly EventId X = new(n, "Nombre")` en `EventosRed`, que es el formato que reconoce `EventIdUnicosTests` (`tests/GPOS.Tests/Arquitectura/EventIdUnicosTests.cs:20-24`) [V].
-- Antes de unir cada PR, `git grep` en todas las ramas de `origin` (regla de P-D1-01).
+- Se declaran como `public static readonly EventId X = new(n, "Nombre")` en `GPOS.Comun/Red/EventosRed.cs` (PR-1a), que es el formato que reconoce `EventIdUnicosTests` (`tests/GPOS.Tests/Arquitectura/EventIdUnicosTests.cs:20-21`) [V]. `GPOS.Comun` ya referencia `Microsoft.Extensions.Logging.Abstractions` [V], así que no hace falta `GPOS.Comun.Servidor` para declararlos. *Diferencia con RB 4.1, que ponía `EventosRed` en PR-1b:* se adelanta a PR-1a porque AV pide «PR-1a con los EventId 4743 a 4752» y las pruebas de la evaluación pura los necesitan; no cambia ningún número.
+- Resto de la franja 47xx (no son de este plano): 4753-4766 acción previa y actualizador (A); 4767-4779 `GPOS.Instalacion` de B; 4780-4789 verbo `tls` y su tarea (A); 4790-4799 reserva de DB-7. Se abandona 5130-5149.
+- Antes de unir cada PR, `git grep` en todas las ramas de `origin` (regla de ADR-82:220; RB 4.2, regla 7).
 - Son eventos del registro de la aplicación, no de `EventosSeguridad`: no entran en la comprobación de catálogo del 4733 de DB-7.
 - El origen en el Visor de eventos lo da `AddWindowsService` (N-1, B).
 
 ## 6. Interfaces entre módulos
 
-- **Verbo `tls` → servicios:** solo por el registro (`HuellaApi`, `HuellaWeb`) y el almacén `LocalMachine\My`, en el orden de PT-02: emitir, dar lectura de la llave a `NT SERVICE\GPOS.Api|Web`, comprobar que la abre y **luego** publicar la huella. El servicio no avisa al verbo: el refresco de 5 minutos basta.
-- **Paquete (B) → servicios:** `ModoRed`, `PuertoApi`, `PuertoWeb`, `NombresServidor` e `IpNodos` en el registro. Ningún valor en el entorno del servicio.
+- **Verbo `red` (B) → servicios:** `ModoRed`, `PuertoApi`, `PuertoWeb`, `NombresServidor` e `IpNodos` (siempre presente) en el registro, escritos en el paso 2 de la cadena, antes de los MSI. Si cambia el modo, deja el evento de PT-06 (franja 4767-4779 de B). Ningún valor en el entorno del servicio.
+- **Verbo `tls` (A) → servicios:** solo por el registro (`HuellaApi`, `HuellaWeb`) y el almacén `LocalMachine\My`, en el orden de PT-02: emitir, dar lectura de la llave a `NT SERVICE\GPOS.Api|Web`, comprobar que la abre y **luego** publicar la huella. Corre en el paso 6, **después** de los MSI (las cuentas virtuales ya existen y la raíz ya está protegida; HB-01; F-6 (ii)). El servicio no avisa al verbo: el refresco de 5 minutos basta.
 - **Web → API:** `https://<nombre>:<PuertoApi>` por *loopback* (5.2), con el mismo `ReenvioIpCliente` de hoy.
 
 ## 7. Estructura de proyectos y carpetas
 
 ```
-src/GPOS.Comun/Red/{ModoRed,ConfiguracionRed,LecturaRed,IFuenteConfiguracionRed,FuenteRegistroWindows,DireccionIp,ValoresRegistroServidor}.cs
-src/GPOS.Comun.Servidor/GPOS.Comun.Servidor.csproj          (net10.0; FrameworkReference Microsoft.AspNetCore.App; → GPOS.Comun)
-src/GPOS.Comun.Servidor/Red/{EscuchaServidor,EstadoRed,ArranqueRedException,SelectorCertificadoServidor,
-                              IAlmacenCertificadosServidor,AlmacenMaquinaWindows,ClienteApiLocal,EventosRed}.cs
-src/GPOS.Api/Seguridad/FiltroOrigenNodo.cs
-src/GPOS.Web/Servicios/RechazoOrigenNodo.cs
+src/GPOS.Comun/Red/{ModoRed,ServicioRed,ConfiguracionRed,LecturaRed,IFuenteConfiguracionRed,FuenteConfiguracionRed,
+                    DireccionIp,ValoresRegistroServidor,EvaluacionArranqueRed,EventosRed}.cs                          (PR-1a)
+src/GPOS.Comun/Red/FuenteConfiguracionRed.Windows.cs                                                                  (PR-1a)
+src/GPOS.Comun.Servidor/GPOS.Comun.Servidor.csproj   (net10.0; FrameworkReference Microsoft.AspNetCore.App; → GPOS.Comun) (PR-1b, tras F-1)
+src/GPOS.Comun.Servidor/Red/{EscuchaServidor,EstadoRed,ArranqueRedException}.cs                                         (PR-1b)
+src/GPOS.Comun.Servidor/Red/{SelectorCertificadoServidor,IAlmacenCertificadosServidor,ClienteApiLocal}.cs              (PR-2)
+src/GPOS.Comun.Servidor/Red/AlmacenCertificadosServidor.Windows.cs                                                      (PR-2)
+src/GPOS.Api/Seguridad/FiltroOrigenNodo.cs                                                                              (PR-3)
+src/GPOS.Web/Servicios/RechazoOrigenNodo.cs                                                                             (PR-3)
 tests/GPOS.Tests/Red/…           (Comun, Comun.Servidor y el filtro de la API)
 tests/GPOS.Web.Tests/Red/…       (manejador y rechazo de la Web)
 ```
 
-**Puntos de toque en `src/GPOS.Api/Program.cs` (zona S de DB-7; RC-T4-3: unión después del 2026-11-16; A avisa a B antes de abrir el PR):**
-1. Tras `:46`: `var red = EscuchaServidor.Preparar(builder, ServicioRed.Api);`
+- Solo los archivos `*.Windows.cs` usan API de una plataforma (registro, almacén de certificados), para que pase la prueba de arquitectura de ADR-129, B.5 [V `docs/adr/ADR-129.md:34`]. `DireccionIp`, `EvaluacionArranqueRed` y el selector son neutros.
+
+**Puntos de toque en `src/GPOS.Api/Program.cs` (zona S de DB-7; solo en PR-4):**
+1. Tras `:46`: `var red = EscuchaServidor.Preparar(builder, ServicioRed.Api, ComprobacionAnillo.EsEstricto(builder.Configuration));`
 2. Tras `:339`: `EscuchaServidor.ExigirArranque(app, red);`
 3. Antes de `:349`: `app.UseFiltroOrigenNodo(red.IpNodos);`
 4. Un `using GPOS.Comun.Servidor.Red;` y la referencia en `GPOS.Api.csproj`.
 
-**Todo lo demás se construye sin tocar `Program.cs` de la API:** las bibliotecas, `FiltroOrigenNodo.cs`, `LimitesPeticiones.cs:178`, `Program.cs` de la Web (zona U; DB-7 la ocupa desde el 11-23, `db7-blueprint-v3.md:788` [V]) y todas las pruebas. Las del filtro arman su propia canalización con `TestServer` y no usan `WebApplicationFactory<Program>`.
+**Todo lo demás se construye sin tocar `Program.cs` de la API:** las bibliotecas, `FiltroOrigenNodo.cs`, `LimitesPeticiones.cs:178` y todas las pruebas. Las del filtro arman su propia canalización con `TestServer` y no usan `WebApplicationFactory<Program>`.
 
-**Puntos de toque en `src/GPOS.Web/Program.cs`:** tras `:50`, `Preparar(builder, ServicioRed.Web)`. En `:62-67`, la URL de `DireccionApi` y `.ConfigurePrimaryHttpMessageHandler(() => ClienteApiLocal.CrearManejador(red))` con modo presente. Tras `:98`, `ExigirArranque`. Antes de `:101`, `UseRechazoOrigenNodo`.
+**Puntos de toque en `src/GPOS.Web/Program.cs` (zona U de DB-7 desde el 11-23; HB-14):** tras `:50`, `Preparar(builder, ServicioRed.Web, ProteccionDatosWeb.EsEstricto(builder.Configuration))` (PR-1b). En `:62-67`, la URL de `DireccionApi` y `.ConfigurePrimaryHttpMessageHandler(() => ClienteApiLocal.CrearManejador(red))` con modo presente (PR-2). Tras `:98`, `ExigirArranque` (PR-1b). Antes de `:101`, `UseRechazoOrigenNodo` (PR-3, o PR-1b si PR-3 se une antes). **Las partes de la Web se unen antes del 11-20**, o esperan a que se una D4.
 
-## 8. División en PR (un PR por cláusula; RC-90-2)
+## 8. División en PR (un PR por cláusula; RC-90-2) — reparto de RB 4.1 y AV
 
 | PR | Rama (base `feature/modelo-ng`) | Contenido | Toca `Program.cs` de la API | Se une | Depende de |
 |---|---|---|---|---|---|
-| **PR-1 · RT-01** | `a/adr90-rt01-modo-red` | `GPOS.Comun/Red`, proyecto `GPOS.Comun.Servidor` con `EscuchaServidor` (5.1), `EventosRed`, y la conexión en la **Web** | No | Cuando B la revise | — |
-| **PR-2 · RT-05** | `a/adr90-rt05-escucha` | Puntos de escucha, selector y `ClienteApiLocal`; conexión en la Web | No | Tras PR-1 | PR-1; Q-8 para el laboratorio, no para unir |
-| **PR-3 · RT-06** | `a/adr90-rt06-filtro-origen` | `FiltroOrigenNodo`, `RechazoOrigenNodo` (Web), `DireccionIp` en `LimitesPeticiones.Ip` | No | Tras PR-1 (puede ir en paralelo con PR-2) | PR-1 |
-| **PR-4 · conexión en la API** | `a/adr90-api-program` | Las 4 líneas de la sección 7 | **Sí** | **Después del 2026-11-16**, con aviso previo a B | PR-1 a PR-3 |
+| **PR-1a · RT-01, núcleo** | `a/adr90-rt01-modo-red` | `GPOS.Comun/Red` completo (4.2, `EvaluacionArranqueRed`, `EventosRed` 4743-4752, `FuenteConfiguracionRed.Windows.cs`, constantes del registro). **Sin proyecto nuevo y sin conectar** | No | **Ya** (10-22 a 10-27), cuando B lo revise | — |
+| **PR-1b · RT-01, Kestrel** | `a/adr90-rt01-escucha-servidor` | Proyecto `GPOS.Comun.Servidor`, `EscuchaServidor`, `EstadoRed`, conexión en la **Web** | No | Tras la firma de **F-1**; parte de la Web antes del 11-20 | PR-1a; F-1 |
+| **PR-3 · RT-06** | `a/adr90-rt06-filtro-origen` | `FiltroOrigenNodo`, `RechazoOrigenNodo` (Web), `DireccionIp` en `LimitesPeticiones.Ip`, prueba del freno de emparejamiento | No | **Antes del 2026-11-09** (D2) | **Solo PR-1a** (la API tiene ASP.NET por `GPOS.Core`; la Web también) |
+| **PR-2 · RT-05** | `a/adr90-rt05-escucha` | Puntos de escucha, selector, `AlmacenCertificadosServidor.Windows.cs`, `ClienteApiLocal`, H-15; conexión en la Web | No | **Después de PR-3**; parte de la Web antes del 11-20 o tras D4 | PR-1b (y F-1) |
+| **PR-4 · conexión en la API** | `a/adr90-api-program` | Las 4 líneas de la sección 7 | **Sí** | Con **F-5** firmada: en la ventana del **10-28 al 11-06**, **después del PR de N-1 de B**. Sin F-5 o si no llega: **después del 11-20** | PR-1a a PR-3; PR de N-1 (B); F-5 |
 
-- **Recomendada (a):** PR-1 a PR-3 se unen ya; en la API el código queda sin conectar hasta PR-4.
-- **Descartada (b):** que cada PR lleve sus líneas de la API: los tres esperarían al 16-nov, con tres rebases sobre la zona S.
-- Si B acepta adelantar PR-4 a antes del 2026-11-02 (la zona S de DB-7 empieza en S2, `db7-blueprint-v3.md:785` [V]), se ahorra un mes de código sin conectar (Q-6).
+- **Hasta que se firme F-5 y se una el PR de N-1, A no toca `src/GPOS.Api/Program.cs`** (AV).
+- PR-4 contiene **solo** las 4 líneas, el `using` y la referencia del `.csproj`, más una **prueba de arquitectura** sobre el texto de `Program.cs`: `UseFiltroOrigenNodo` antes de `UseForwardedHeaders` y `ExigirArranque` después de `builder.Build()` (RB 4.2, regla 3).
+- **Antes de abrir PR-4**, A deja un aviso en `avisos/A-a-B/`; B confirma la ventana y hace la unión. La suite completa corre sola, con el filtro oficial `Transicion!=Ola5&Transicion!=Defecto` (RB 4.2, regla 6). Los días 11-16 y 11-17 no se corren suites.
+- **Si F-1 se firma con la opción (b)** (sin `GPOS.Comun.Servidor`), PR-1b y PR-2 vinculan los archivos de Kestrel en `GPOS.Api.csproj` y `GPOS.Web.csproj`; el reparto y las fechas no cambian.
 - Cada PR cita ADR-90, la cláusula y el PT, y pasa la suite oficial con el filtro vigente.
 
 ## 9. Pruebas
 
-**PR-1**
-- `FuenteRegistroWindows` con un doble de `IFuenteConfiguracionRed` y, en una prueba marcada solo para Windows, con una subclave temporal de `HKCU` (la fuente recibe la raíz inyectada).
-- Tabla de valores válidos e inválidos de 4.1: puerto 0, 70000 o 5073; `NombresServidor[0]` igual a `localhost` o a una IP; `IpNodos` con `/24`; huella de 40 caracteres.
-- Cada fuente de 5.1, regla 1, por configuración y por variable de entorno → 4744 y `ArranqueRedException`.
+**PR-1a**
+- `FuenteConfiguracionRedWindows` con un doble de `IFuenteConfiguracionRed` y, en una prueba marcada solo para Windows, con una subclave temporal de `HKCU` (la fuente recibe la raíz inyectada).
+- Tabla de valores válidos e inválidos de 4.1: puerto 0, 70000 o 5073; `PuertoApi = PuertoWeb`; `NombresServidor[0]` igual a `localhost` o a una IP; `IpNodos` con `/24`; huella de 40 caracteres.
+- **`IpNodos`:** presente y vacío en «servidor de sitio» → válido, conjunto vacío; **ausente** en «servidor de sitio» → `Invalida` y 4743; ausente en «un equipo» → válido.
+- **Estricto:** `SinModo` + Estricto → no arranca, 4743; `SinModo` sin Estricto → arranca con 4745; `SinFuente` (plataforma simulada) + Estricto → 4743; `SinFuente` sin Estricto → como `SinModo`.
+- Cada fuente de 5.1, regla 1, por configuración y por variable de entorno → 4744.
 - `GPOS_MODO_RED` distinto, o sin registro → 4743.
-- Direcciones efectivas, en tabla:
+- `ComprobarDirecciones` en tabla:
   - `UnEquipo`: `https://127.0.0.1:5071` sí; `https://[::]:5071` no; `http://localhost:5071` no.
   - `ServidorSitio`: `https://[::]:5071` sí; `http://[::]:80` no; `https://[::]:5072` no.
-  - `SinModo`: `http://localhost:5071` sí; `http://0.0.0.0:5071` no.
-- Arranque real de Kestrel en modo `SinModo` con `urls=http://0.0.0.0:0` → 4746 y código de salida ≠ 0.
+  - «Sin modo»: `http://localhost:5071` sí; `http://0.0.0.0:5071` no.
+- Prueba de arquitectura de ADR-129, B.5, sobre `GPOS.Comun/Red`: `Microsoft.Win32.Registry` solo en `*.Windows.cs`.
+
+**PR-1b**
+- Arranque real de Kestrel en «sin modo» con `urls=http://0.0.0.0:0` → 4746 y código de salida ≠ 0.
+- `ArranqueRedException` con 4743/4744 desde `ExigirArranque`; en Estricto sin registro, la Web no arranca.
 
 **PR-2**
 - Certificados ECDSA P-256 creados en la prueba (`CertificateRequest`) y un `IAlmacenCertificadosServidor` en memoria.
 - Kestrel real en un puerto libre: el saludo TLS 1.2 y 1.3 entrega el certificado esperado; TLS 1.1 se rechaza; con `h2` y con HTTP/1.1, y WebSocket (Blazor) por HTTP/1.1.
-- Con `FakeTimeProvider`: cambiar la huella → el saludo nuevo usa el certificado nuevo **después** del refresco de 5 min, no antes; 4749.
+- Con `FakeTimeProvider`: cambiar la huella → el saludo nuevo usa el certificado nuevo **después** del refresco de 5 min; 4749.
 - Huella nueva sin llave privada, sin EKU `serverAuth` o vencida → se sirve la anterior; 4748 una sola vez por refresco.
 - Al arrancar sin certificado → 4747, no arranca.
-- `ClienteApiLocal`:
-  - con un servidor en *loopback* y un certificado para `gpos-s01.prueba` (raíz de prueba por la sobrecarga interna), la petición a `https://gpos-s01.prueba:{p}` llega sin DNS;
-  - un certificado para otro nombre → falla (sin relajar el nombre);
-  - una URL con otro anfitrión o puerto → «destino no permitido».
+- `ClienteApiLocal`: con un servidor en *loopback* y un certificado para `gpos-s01.prueba` (raíz de prueba por la sobrecarga interna), la petición llega sin DNS; un certificado para otro nombre → falla; otro anfitrión o puerto → «destino no permitido».
+- `Api:Url` distinto del derivado → 4743. `AllowedHosts` derivado de `NombresServidor` (H-15).
 - Prueba de arquitectura: ningún `RemoteCertificateValidationCallback` ni `DangerousAcceptAnyServerCertificateValidator` en `src/GPOS.Web` ni en `src/GPOS.Comun.Servidor`, fuera de la sobrecarga interna.
 
 **PR-3**
@@ -326,59 +406,67 @@ tests/GPOS.Web.Tests/Red/…       (manejador y rechazo de la Web)
   - `/API/SYNC/x` → pasa; `/api/syncx` → 403;
   - desde `::ffff:10.9.0.5` → 403;
   - desde `10.9.0.5` con `X-Forwarded-For: 127.0.0.1` → 403;
-  - desde *loopback* con `X-Forwarded-For: 10.9.0.5` → **no** se filtra (es la Web; ver riesgo R-5);
+  - desde *loopback* con `X-Forwarded-For: 10.9.0.5` → **no** se filtra (es la Web; ver R-5);
   - 100 rechazos en 60 s → un solo 4750 con el número de suprimidos.
-- Kestrel real: `/api/sync/../auth/empresas` llega normalizado y se rechaza [I: Kestrel quita los segmentos con punto; la prueba lo fija].
+- Kestrel real: `/api/sync/../auth/empresas` llega normalizado y se rechaza [I: la prueba lo fija].
 - `LimitesPeticiones.Ip` con `::ffff:192.168.1.10` → `192.168.1.10`.
+- **Freno de emparejamiento** de dispositivos: mismo resultado con `192.168.1.10` y con `::ffff:192.168.1.10` (HB-10).
 - Web: un nodo en el 443 → 403 y 4751.
 
 **PR-4**
-- Suite oficial completa (sola, según la regla de B).
-- Una prueba de humo de `WebApplicationFactory<Program>` en `SinModo` (entorno `Pruebas`) que arranca igual que hoy.
-- **Riesgo R-4:** con la API en `[::]` y la Web conectando a `127.0.0.1`, la IP que ve `ForwardedHeaders` es `::ffff:127.0.0.1`. Hay que comprobar que `KnownProxies` la acepta y que los límites por IP siguen viendo la IP del usuario.
+- Suite oficial completa (sola).
+- Prueba de humo de `WebApplicationFactory<Program>` en «sin modo» (entorno `Pruebas`, sin Estricto) que arranca igual que hoy.
+- Prueba de arquitectura del orden en `Program.cs` (sección 8).
+- **R-4:** con la API en `[::]` y la Web conectando a `127.0.0.1`, la IP que ve `ForwardedHeaders` es `::ffff:127.0.0.1`. Se comprueba que `KnownProxies` la acepta y que los límites por IP siguen viendo la IP del usuario. Según HB-11, probablemente lo cubre el marco [I], porque el código solo agrega proxies a los valores por omisión (`Program.cs:49-54`) [V]; la prueba se conserva.
 
-**Laboratorio (QA, con el paquete de B; no bloquea unir):** servicio con cuenta virtual, renovación con el reloj adelantado pasado el vencimiento (PT-02), actualización sin `MODO_RED` y con un modo distinto (PT-06), y el filtro con un nodo real por la VPN.
+**Laboratorio (QA, con el paquete de B; no bloquea unir):** servicio con cuenta virtual, renovación con el reloj adelantado pasado el vencimiento (PT-02), actualización sin `MODO_RED` y con un modo distinto (PT-06), registro borrado con Estricto (no arranca, 4743), `IpNodos` borrado en «servidor de sitio» (no arranca), recuperación del servicio tras 4747 transitorio (RB Q-4), y el filtro con un nodo real por la VPN.
 
 ## 10. Esfuerzo (días-persona, ±50 %; 1 sp = 5 dp; USD 1.500 a 2.000 por sp)
 
 | PR | dp | Nota |
 |---|---|---|
-| PR-1 · RT-01 | 1,0 | Incluye el proyecto nuevo |
-| PR-2 · RT-05 | 1,5 | El selector y las pruebas con TLS real son lo más caro |
-| PR-3 · RT-06 | 0,6 | |
+| PR-1a · RT-01 núcleo | 0,7 | Evaluación pura, fuente, Estricto y `IpNodos`; sin proyecto nuevo |
+| PR-1b · RT-01 Kestrel | 0,4 | Incluye el proyecto nuevo (o los vínculos, si F-1 b) |
+| PR-2 · RT-05 | 1,6 | Incluye H-15 (0,1) |
+| PR-3 · RT-06 | 0,65 | Incluye la prueba del freno de emparejamiento (0,05) |
 | PR-4 · conexión en la API | 0,3 | Más una ejecución de la suite completa |
-| **Total** | **3,4 dp (1,7 a 5,1), unas 0,68 sp, de USD 1.020 a 1.360** | |
+| **Total** | **3,65 dp (1,8 a 5,5), unas 0,73 sp, de USD 1.100 a 1.460** | +0,25 dp frente a la v1: separar PR-1a/PR-1b, H-15 y las pruebas de Estricto e `IpNodos` |
 
-ADR-90 estima para esta fila 0,45 sp, más ~0,02 de PT-01 y 0,05 a 0,10 de PT-05: de 2,6 a 2,9 dp. El exceso, de unos 0,5 dp, viene del proyecto nuevo y de las pruebas con TLS real; está dentro del ±50 %. **Opción más barata:** dejar la Web sin `RechazoOrigenNodo` (−0,1 dp), aceptando que la protección del 443 frente a un nodo dependa solo del cortafuegos. No la recomiendo: es la única defensa si la regla del 443 queda mal configurada. **H-15** (cookies `Secure` y `AllowedHosts` desde `NombresServidor`) cabe en 0,1 dp sobre PR-2 si B lo quiere en la misma tanda.
+**Opción más barata:** dejar la Web sin `RechazoOrigenNodo` (−0,1 dp). No la recomiendo: es la única defensa si la regla del 443 queda mal configurada. Con F-1 (b), +0,3 dp.
 
 ## 11. Riesgos de seguridad
 
 | # | Riesgo | Prob. / impacto | Mitigación en el contrato | Residual |
 |---|---|---|---|---|
-| R-1 | Una fuente de direcciones no prevista abre un puerto | Baja / Alto | Lista de 5.1 (incluye `preferHostingUrls`) **y** comprobación de direcciones efectivas (4746), que cubre lo que la lista no vea | Bajo |
-| R-2 | El selector bloquea o encarece los saludos (E/S en el hilo de TLS) | Media sin caché / Medio | Refresco por temporizador; el saludo solo lee una referencia; contexto con `offline: true` | Bajo [I, a medir] |
-| R-3 | La renovación publica una huella cuya llave el servicio no abre | Media / Alto | Orden de PT-02 en el verbo; el selector conserva el anterior y avisa con 4748 | Bajo |
-| R-4 | `ForwardedHeaders` no reconoce `::ffff:127.0.0.1` como proxy conocido y todos los usuarios de la Web comparten un cupo por IP (inicio de sesión) | Media / Medio | Prueba en PR-4; si falla, se agregan `::ffff:127.0.0.1` a `KnownProxies` o se escucha la API con sockets separados para IPv4 e IPv6 | Bajo tras la prueba [I] |
-| R-5 | Un nodo llega a la API completa a través de la Web (443) si el cortafuegos queda mal | Baja / Medio | `RechazoOrigenNodo` en la Web; y el acceso a datos exige un token de persona de la central (ADR-53) | Bajo |
-| R-6 | Eludir el filtro con trucos de ruta (`%2F`, `..`, mayúsculas) | Baja / Medio | `StartsWithSegments` sobre la ruta ya normalizada por Kestrel; pruebas de PR-3 | Bajo |
+| R-1 | Una fuente de direcciones no prevista abre un puerto | Baja / Alto | Lista de 5.1 **y** comprobación de direcciones efectivas (4746) | Bajo |
+| R-2 | El selector bloquea o encarece los saludos | Media sin caché / Medio | Refresco por temporizador; el saludo solo lee una referencia | Bajo [I, a medir] |
+| R-3 | La renovación publica una huella cuya llave el servicio no abre | Media / Alto | Orden de PT-02 en el verbo; el selector conserva el anterior (4748) | Bajo |
+| R-4 | `ForwardedHeaders` no reconoce `::ffff:127.0.0.1` | Baja / Medio | Probablemente lo cubre el marco (HB-11); prueba en PR-4 | Bajo |
+| R-5 | Un nodo llega a la API completa a través de la Web (443) si el cortafuegos queda mal | Baja / Medio | `RechazoOrigenNodo`; el acceso a datos exige un token de persona (ADR-53) | Bajo |
+| R-6 | Eludir el filtro con trucos de ruta | Baja / Medio | `StartsWithSegments` sobre la ruta normalizada; pruebas de PR-3 | Bajo |
 | R-7 | Inundación del Visor de eventos con 403 | Media / Bajo | Un evento por IP cada 60 s; sin escrituras en SQL | Bajo |
-| R-8 | `SinModo` (a) rompe un DEMO usado desde otra PC; (b) deja una instalación sin falla cerrada si se borra el registro | Media / Bajo | Q-3; (b) solo hasta la primera instalación de cliente | Bajo |
-| R-9 | Un administrador local cambia el registro (modo, `IpNodos` vacío) | Baja / Alto | ACL de B (solo Administradores y SYSTEM); un administrador ya controla el equipo | Medio, aceptado (como H-13) |
-| R-10 | Bucle de reinicios del servicio tras una falla cerrada, con eventos críticos repetidos | Media / Bajo | Código de salida ≠ 0; las acciones de recuperación del servicio las define B (Q-4) | Bajo |
-| R-11 | La Web confía en cualquier raíz del almacén del servidor para hablar con la API | Baja / Medio | El tráfico no sale del equipo (`ConnectCallback` a *loopback*); para suplantar a la API hace falta un proceso local en ese puerto **y** un certificado válido para el nombre | Bajo |
+| R-8 | Una instalación de cliente con el registro borrado arranca abierta | Baja / Alto | «Sin modo» solo sin Estricto; con Estricto, 4743 (HB-04). `IpNodos` ausente en «servidor de sitio» → 4743 (HB-05) | Bajo |
+| R-9 | Un administrador local cambia el registro (modo, `IpNodos` vacío) o quita Estricto | Baja / Alto | DACL del verbo `red` (solo SYSTEM y Administradores escriben); un administrador ya controla el equipo | Medio, aceptado (como H-13) |
+| R-10 | Bucle de reinicios tras una falla cerrada | Media / Bajo | Código de salida ≠ 0; recuperación del MSI: 3 reinicios a los 60 s, contador diario, `FailureActionsWhen="failedToStopOrReturnedError"`; después, alerta de «servicio detenido más de 2 minutos» (B-8) (RB Q-4; HB-15) | Bajo |
+| R-11 | La Web confía en cualquier raíz del almacén del servidor | Baja / Medio | El tráfico no sale del equipo (`ConnectCallback` a *loopback*) | Bajo |
+| R-12 | F-1 no se firma pronto y PR-1b/PR-2 se retrasan hasta chocar con D4 en la Web (11-23) | Media / Medio | PR-1a y PR-3 no dependen de F-1; con F-1 (b) se sigue con vínculos | Bajo |
 
-## 12. Preguntas para B
+## 12. Preguntas de la v1 y respuestas de B (RB 1.2)
 
-1. **Q-1 · Registro.** ¿Aceptas los nombres, tipos y dominios de 4.1, incluido `PuertoWeb` opcional para la excepción del 443? ¿El paso del *bundle* que escribe el registro es el mismo que crea la ACL?
-2. **Q-2 · `Api:Url`.** ¿Te sirve que la Web derive la URL del registro (recomendada), o prefieres que el MSI escriba `Api:Url`? Con esa opción hay que añadir `Api` a `SeccionesPermitidas` y comprobar que coincide con el registro.
-3. **Q-3 · DEMO.** ¿El DEMO o alguna prueba de C abre hoy la Web o la API desde otra PC? Decide entre (a) y (b) de 4.3.
-4. **Q-4 · Recuperación del servicio.** ¿Qué acciones de recuperación pondrá el MSI (reiniciar, cuántas veces)? Afecta a R-10.
-5. **Q-5 · EventId.** ¿Reservas 4743 a 4752 para estas piezas? ¿Tienes en tu árbol, sin publicar, algo del 47xx? ¿Pongo `EventId` también al crítico de la API de reportes (`ServiciosReportes.cs:176`), o lo haces en el tramo 4?
-6. **Q-6 · Ventana de `Program.cs` de la API.** ¿PR-4 (4 líneas) espera al 16-nov (RC-T4-3), o puede unirse antes del 2-nov, cuando aún no empieza la zona S de D1?
-7. **Q-7 · Nodos.** En un nodo de sucursal, ¿el *bundle* deja `IpNodos` vacío o sin crear? Las dos formas valen.
-8. **Q-8 · CA en el servidor.** ¿El paso `tls` del *bundle* instala la CA del sitio en `LocalMachine\Root` del propio servidor? Es necesario para que la Web valide a la API con el sistema y para el navegador del servidor. El verbo es de A; el orden en la cadena es de B.
-9. **Q-9 · Proyecto nuevo.** `GPOS.Comun.Servidor.dll` entra en los MSI de la API y de la Web. ¿La recolección de archivos lo toma sola, o hay que listarlo?
-10. **Q-10 · DB-7.** `LimitesPeticiones.Ip` normalizado cambia la clave «(cuenta, IP)» que usa D1 (`db7-blueprint-v3.md:631`) solo para clientes IPv4 sobre doble pila. ¿Esa clave se persiste? Si se persiste, ¿conviene que D1 adopte `DireccionIp.Normalizar` en `AuthEndpoints` (zona T) al mismo tiempo?
+| # | Pregunta | Respuesta de B, aplicada en esta v2 |
+|---|---|---|
+| Q-1 | Registro | Aceptado con cinco cambios: `IpNodos` ausente → 4743 en «servidor de sitio»; escritor único `red` con su ACL; `Version`, `FechaInstalacion`, `RegistroInstalacion`; `PuertoApi ≠ PuertoWeb`; `PuertoWeb` opcional (4.1) |
+| Q-2 | `Api:Url` | Derivado del registro; también `AllowedHosts` (H-15) en PR-2. Confirmación en F-6 (i) |
+| Q-3 | DEMO | Nadie abre el DEMO desde otra PC; «sin modo» solo sin Estricto (4.3) |
+| Q-4 | Recuperación del servicio | Como la estación, más `FailureActionsWhen` (R-10) |
+| Q-5 | EventId | 4743-4752 para A; el 5119 de reportes lo hace B |
+| Q-6 | Ventana de PR-4 | Exige firma (F-5): ventana 10-28 a 11-06 tras N-1 de B; si no, después del 11-20 |
+| Q-7 | `IpNodos` en un nodo | Vacío, nunca sin crear |
+| Q-8 | CA en el servidor | Sí, la instala el verbo `tls` en el paso 6 |
+| Q-9 | Recolección del DLL nuevo | La toma sola (`Files` de WiX 5 [I]); `construir.ps1 -Firmar` rechaza un `GPOS.*.dll` sin firma |
+| Q-10 | Clave (cuenta, IP) | Es de D2 y en memoria; PR-3 antes del 11-09 |
+
+**Abierto:** nada para B. Las firmas F-1, F-5 y F-6 las prepara el Arquitecto Maestro y las firma el propietario.
 
 ## 13. Necesidades para Datos e Integraciones
 
@@ -387,20 +475,30 @@ ADR-90 estima para esta fila 0,45 sp, más ~0,02 de PT-01 y 0,05 a 0,10 de PT-05
 
 ## 14. Decisiones candidatas a precisión (no ADR nuevo)
 
-- **Estado `SinModo`** (4.3): opción (a) o (b). Es la única que cambia qué ve alguien (el DEMO); el Arquitecto Maestro decide si va a firma.
-- **URL de la Web derivada del registro** (5.2) frente a `Api:Url` escrito por el MSI (H-09 dice «lo escribe el MSI»).
-- **Huella SHA-256** del DER en lugar de la de SHA-1 de Windows. Afecta al verbo `tls`.
-- **Proyecto `GPOS.Comun.Servidor`** (2).
+- **«Sin modo» solo sin Estricto; fuera de Windows, falla cerrada con Estricto** (4.3, 4.2). Precisión de RT-01 (RB, candidata 3). Técnica, sin firma.
+- **`IpNodos` siempre escrito; ausente en «servidor de sitio» = 4743.** Precisión de PT-05/PT-06. Técnica.
+- **URL de la Web y `AllowedHosts` derivados del registro** (5.2) — **F-6 (i), Pendiente de firma** (confirmación).
+- **Huella SHA-256** del DER en lugar de la SHA-1 de Windows. Afecta al verbo `tls`.
+- **Proyecto `GPOS.Comun.Servidor`** — dentro de **F-1, Pendiente de firma**; alternativa (b) con vínculos.
+- **PR-4 adelantado** — **F-5, Pendiente de firma**.
 
 ## Resumen (10 líneas)
 
-1. ADR-90, la hoja de PT-01 a PT-10 y la revisión de seguridad están en `origin/master` y no en `feature/modelo-ng`. Todo está firmado y sin construir.
-2. Única fuente: `HKLM\SOFTWARE\GPOS NG\Servidor`, con `ModoRed`, `PuertoApi`, `PuertoWeb`, `NombresServidor`, `HuellaApi`, `HuellaWeb` e `IpNodos`. Sin registro rige `SinModo` (solo *loopback*).
-3. RT-01: se rechazan `urls`, `*_PORTS`, `preferHostingUrls` y `Kestrel:Endpoints/Certificates`, y se comprueban las direcciones efectivas, con falla cerrada.
-4. RT-05: HTTPS sin puerto 80. «Un equipo» escucha en `ListenLocalhost` y «servidor de sitio» en `ListenAnyIP`; TLS 1.2 y 1.3 con `TlsHandshakeCallbackOptions`.
-5. Selector por huella SHA-256 refrescado cada 5 min fuera del saludo. Si la huella nueva no sirve, sigue con la anterior y avisa (4748).
-6. La Web llama a `https://<NombresServidor[0]>:<PuertoApi>` con `ConnectCallback` a *loopback*, valida con el sistema y no tiene validador propio.
-7. RT-06: filtro por la IP de la conexión normalizada, antes de `UseForwardedHeaders`. Un nodo solo llega a `/api/sync/*` (403 `ORIGEN_NO_PERMITIDO`), y la Web lo rechaza en el 443.
-8. EventId del 4743 al 4752 (el 4742 ya lo usa el PR #103). Ningún error SQL.
-9. Cuatro PR. Los de RT-01, RT-05 y RT-06 no tocan `Program.cs` de la API; las 4 líneas de la API van en PR-4, después del 16-nov (RC-T4-3), salvo que B lo adelante.
-10. Esfuerzo: 3,4 dp (de 1,7 a 5,1), de USD 1.020 a 1.360. Hay 10 preguntas abiertas para B; las principales son el DEMO (`SinModo`), `Api:Url`, la CA en el servidor y la ventana de PR-4.
+1. v2 aplica las respuestas de B (RB y AV): renombres `*.Windows.cs`, «sin modo» solo sin Estricto, `IpNodos` obligatorio y nuevo reparto de PR.
+2. Única fuente: `HKLM\SOFTWARE\GPOS NG\Servidor`, escrita solo por el verbo `red` de B antes de los MSI; `tls` escribe solo las huellas.
+3. Con Estricto, sin `ModoRed` o sin fuente para la plataforma → 4743 y no arranca; sin Estricto, «sin modo» solo en *loopback* (4745).
+4. `IpNodos` presente y vacío es válido; ausente en «servidor de sitio» → 4743 (falla cerrada).
+5. RT-01 se parte: PR-1a en `GPOS.Comun/Red`, sin proyecto nuevo, con `EventosRed` 4743-4752; PR-1b con `GPOS.Comun.Servidor` tras F-1.
+6. RT-05: HTTPS sin puerto 80; selector por huella SHA-256 con refresco de 5 min; la Web llama a la API por *loopback* con el nombre del sitio; `Api:Url` y `AllowedHosts` derivados (F-6).
+7. RT-06: filtro por la IP de la conexión normalizada antes de `UseForwardedHeaders`; PR-3 depende solo de PR-1a y se une antes del 11-09.
+8. PR-2 después de PR-3; PR-4 tras N-1 de B y F-5 (ventana 10-28 a 11-06) o después del 11-20; hasta entonces no se toca el `Program.cs` de la API.
+9. Ningún error SQL; EventId 4743-4752 libres en las 162 referencias de `origin` (comprobado el 2026-10-20).
+10. Esfuerzo: 3,65 dp (1,8 a 5,5), de USD 1.100 a 1.460. Pendientes de firma: F-1, F-5 y F-6.
+
+### Cierre
+- Estado: Completado
+- Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\A\blueprint-adr90-rt01-rt05-rt06-2026-10-20.md` (v2)
+- Supuestos: `Microsoft.Win32.Registry` está disponible en `net10.0` sin paquete extra [I]; el comportamiento de `WebApplicationBuilder` con `urls` y `preferHostingUrls`, de `ForwardedHeadersMiddleware` con IPv4 mapeada y de `Files`/`FailureActionsWhen` en WiX 5 es [I] y lo fijan pruebas o el laboratorio; las citas de BP3 y de `RestauranteDispositivosEndpoints.cs`/`AutenticacionDispositivo.cs`/`Contratos.cs` se toman de RB sin volver a verificarlas.
+- Decisiones candidatas a ADR: las de la sección 14 (precisiones de ADR-90; sin ADR nuevo).
+- Entregas a otros agentes: Arquitecto Maestro → F-1, F-5 y F-6 a la hoja; desarrollador de A → PR-1a ya y PR-3 antes del 11-09; B → revisión de PR-1a, verbo `red`, PR de N-1 y 5119; devops de B → recuperación con `FailureActionsWhen`, quitar `ASPNETCORE_URLS` del DEMO al adoptar el paquete; QA → laboratorio de la sección 9.
+- Próximo paso recomendado: que el desarrollador de A abra PR-1a sobre `feature/modelo-ng` con los contratos de 4.2, 5.1 y 5.5.

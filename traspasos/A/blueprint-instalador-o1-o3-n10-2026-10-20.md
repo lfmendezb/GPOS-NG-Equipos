@@ -1,28 +1,45 @@
-# Blueprint de contratos: O-1, O-3 y N-10 del paquete único del servidor (equipo A)
+# Blueprint de contratos: O-1, O-3 y N-10 del paquete único del servidor (equipo A) · v2
 
-- **Fecha:** 2026-10-20 · **Agente:** arquitecto-software (equipo A) · **Estado del documento:** propuesta técnica. Lo que exige firma queda **Pendiente de firma** del propietario (ver 6).
-- **Origen:** diseño v2 del instalador único (`docs/operaciones/2026-10-19-diseno-instalador-reportes.md`, en adelante **INS**) y hoja del tramo 4 (`docs/decisiones/2026-10-20-hoja-firma-ola5-tramo4-e-instalador.md`, en adelante **HOJA**), ambos en `origin/master` (`45a9ab75`).
-- **Alcance:** O-1 (acción previa de ADR-77, punto 3), O-3 (componente de la raíz `%ProgramData%\GPOS NG` y de `config\`) y N-10 (privilegios del actualizador para lanzar el *bundle*). **N-1 (modo servicio de `GPOS.Api`) es de B:** aquí solo se anota como dependencia.
-- **Método:** todo se leyó con `git show`/`git grep`, sin cambiar de rama ni ejecutar nada. Convención: **[V]** = verificado, con cita `archivo:línea` (rama indicada); **[I]** = inferido, a confirmar al construir o en el laboratorio.
-- **Unidades:** esfuerzo en días-persona (dp), con ±50 %. Supuesto para comparar con INS y ADR-77, que usan sp: 1 sp ≈ 5 dp [I].
+- **Fecha:** 2026-10-20 (v1 y v2) · **Agente:** arquitecto-software (equipo A) · **Estado del documento:** propuesta técnica, corregida con las respuestas de B. Lo que exige firma queda **Pendiente de firma** del propietario (ver 6).
+- **Origen:** diseño v2 del instalador único (`docs/operaciones/2026-10-19-diseno-instalador-reportes.md`, **INS**) y hoja del tramo 4 (`docs/decisiones/2026-10-20-hoja-firma-ola5-tramo4-e-instalador.md`, **HOJA**), en `origin/master` (v1 leyó `45a9ab75`; v2 vuelve a comprobar las líneas citadas de HOJA en `e01784a9`).
+- **Respuestas de B que aplica esta v2:** `GPOS-NG-Equipos/traspasos/B/2026-10-20-respuestas-b-a-los-planos-de-a.md` (**RB**) y el aviso `avisos/B-a-A/2026-10-20-encargo-tareas-y-respuestas-a-los-planos.md` (**AV**).
+- **Alcance:** O-1 (acción previa de ADR-77, punto 3), O-3 (componente de la raíz `%ProgramData%\GPOS NG` y de `config\`), la **lista de privilegios de `NT SERVICE\GPOS.Api`** (N-1, resto; nueva en v2) y N-10 (privilegios del actualizador). El código de N-1 (`AddWindowsService`, `AddSystemd`, `ARRANQUE_PRIVILEGIOS`) es de B.
+- **Método:** todo se leyó con `git show`/`git grep`, sin cambiar de rama ni ejecutar nada. **[V]** = verificado, con cita `archivo:línea` (rama indicada; por omisión `origin/feature/modelo-ng` @ `b8f166db`); **[I]** = inferido.
+- **Unidades:** esfuerzo en días-persona (dp), ±50 %; 1 sp = 5 dp.
+
+## Registro de cambios
+
+| Versión | Cambio | Punto de B que lo pide |
+|---|---|---|
+| v2 | **H-4 confirmado y ampliado (HB-01, Alta).** Se adopta la cadena de B: validación previa, `preparar`, `red`, **`GPOS.Api.msi` primero** (su acción previa crea la raíz protegida), Web, Reportes, `tls`, esquema, credenciales y `verificar`. C-O1-5 se reescribe sobre esa cadena (1.4) | HB-01; RB Q-2 de 1.1; AV punto 4 |
+| v2 | **`CarpetaAnillo.Crear` no crea padres con la DACL heredada:** contrato nuevo en 1.4.2 (lo construye A en la pista de H-17 v2) | HB-01 (3); AV punto 4 |
+| v2 | **EventId 4753 a 4766** para la acción previa y el actualizador (antes 4743-4756, que se solapaba con ADR-90). 4767-4779 son de `GPOS.Instalacion` de B; por eso el evento de la comprobación K del servicio a demanda pasa a la franja de B | RB Q-8 de 1.1; HB-06; AV «EventId» |
+| v2 | Declaración de los EventId de la acción de forma que los vea `EventIdUnicosTests` (o B extiende la prueba a `instalador/**`) | HB-06 (3) |
+| v2 | **Lista de privilegios de `NT SERVICE\GPOS.Api`** (sección 4 nueva): la propone A; devops de B la mide con `sc qprivs`; el auditor la revisa | RB Q-7 de 1.1; HB-18; HOJA:491 y :594; AV punto 4 |
+| v2 | **O-1 y O-3 esperan la firma de F-1** (excepción de cinco proyectos: acción DTF, tres `.wixproj` y `GPOS.Comun.Servidor`) | RB F-1 y 4.1; AV «Cuando B o el propietario respondan» |
+| v2 | **N-10 en detalle, Q-4 y Q-5 no se firman ahora:** primero la revisión del auditor (B-6, HOJA:338). Se incorporan HB-13 (`requiereTecnico` derivado por la tubería; separar las partes con SQL) y la recomendación de B para Q-5 | RB F-3; HB-13; AV |
+| v2 | F-2 (O-3) y F-4 (EventId) dejan de ser firmas: son puntos técnicos (HOJA:485-486 y :495) | HB-17; RB sección 2 |
+| v2 | O-1 se declara fuente de la implementación Windows de `IComprobacionCarpetas` (ADR-129, B.4) cuando A la construya en LN | HB-07 |
+| v2 | Anillo de la Web en `GPOS.Web.msi`: fila en `GposCarpetaPrevia` (lo define devops de B) | HB-16 |
+| v2 | Preguntas Q-1 a Q-8 respondidas (sección 7) | RB 1.1 |
 
 ---
 
 ## 0. Hallazgos previos que cambian el planteamiento
 
-| # | Hallazgo | Evidencia | Severidad | Efecto |
-|---|---|---|---|---|
-| H-1 | **N-10 ya tiene firmado el principio (a)** desde el 2026-10-20: actualización automática; el agente sin privilegios descarga y una tarea elevada fija **vuelve a verificar** el manifiesto, el SHA-256 y Authenticode antes de ejecutar el único archivo. Aquí no se reabre (a) frente a (b): se diseña el contrato de (a) y se deja (b) como modo de reserva. | [V] `docs/adr/ADR-063.md:36`; `docs/adr/ADR-076.md:44`; HOJA:331-349 (B-6 firmado) | — | Ver 3 |
-| H-2 | **La raíz ya tiene dos GUID de componente distintos** en dos MSI existentes: el conector IQ usa `9E7A0D3C-1F42-4B6E-8C5D-0A1B2C3D4E5F` y el agente de impresión (estación) usa `0D4B8E27-6A13-4F9C-B852-7E1A9C3D6F20` para la misma carpeta y con el mismo SDDL. Rompe las reglas de componentes de Windows Installer: hoy es benigno porque el SDDL es idéntico y la carpeta solo se borra vacía [I], pero no es el diseño que pide INS. | [V] `GPOS-NG-AddOn-IQS`, `origin/b/conector-iq-instalador`: `instalador/GPOS.Conector.Iq.Instalador/Package.wxs:181-183`; [V] `GPOS-NG`, `origin/feature/modelo-ng`: `instalador/AgenteImpresion/Package.wxs:120-124` | Media | Ver 2 |
-| H-3 | **Ya no son tres MSI, sino hasta seis** que comparten la raíz en un servidor: `GPOS.Api.msi`, `GPOS.Reportes.msi`, `GPOS.Web.msi` (N-4, firmado: la Web va como servicio y es el tercer MSI), el agente o estación de impresión y los conectores IQ y AdmCloud, que están en otros repositorios. | [V] HOJA:48 (N-4 confirmado); INS:404 | — | Refuerza el fragmento compartido y el GUID publicado en el vector |
-| H-4 | **Puede crearse una raíz sin proteger antes de cualquier MSI.** La cadena de Burn ejecuta `GPOS.Migracion … --fase esquema` **antes** de los MSI (INS:35 y :123), y `CarpetaAnillo.Crear` crea los padres con `Directory.CreateDirectory(padre)`, que hereda la DACL de `%ProgramData%` (Usuarios puede crear). El registro del *bundle* también se escribe en `%ProgramData%\GPOS NG\Instalacion\` (INS:69), y Burn lo crea antes de lanzar el primer paquete [I]. Si la raíz no existía, queda creada por un administrador con escritores heredados (`BUILTIN\Users`): la acción previa del primer MSI la rechaza con `ESCRITOR_NO_PERMITIDO` y **toda instalación nueva falla con 1603** [I]. Si la acción no existiera, la raíz quedaría débil. | [V] `origin/feature/modelo-ng`: `src/GPOS.Core/Infraestructura/Anillo/CarpetaAnillo.cs:39-42`; [V] INS:35, :69, :123 | **Alta** | Contrato C-O1-5 (ver 1.4) |
-| H-5 | **El EventId 4742 ya está tomado:** `ModuloVenceIgnorado`, en la rama de A `a/dv07-formato-licencia`. ADR-82 lo daba como «siguiente libre». Este documento propone empezar en el **4743**. | [V] `origin/a/dv07-formato-licencia`: `src/GPOS.Core/Sistema/Licencia/EstadoLicenciaService.cs:145`; [V] `docs/adr/ADR-082.md:220` | Media | Ver 4 |
-| H-6 | **La actualización automática choca con D-09 de ADR-82.** `GPOS.Migracion` corre con la identidad nominal de Windows del técnico, y `gpos_esquema` está aplazado. Una tarea elevada (SYSTEM) que ejecuta el *bundle* lanzaría los pasos SQL de la cadena (esquema, credenciales, `verificar`) con `NT AUTHORITY\SYSTEM`, que no tiene esos permisos ni debe tenerlos [I]. | [V] `docs/adr/ADR-082.md:48`, `:91`; INS:134 (autenticación integrada del administrador que instala) | **Alta** | Ver 3.3 (modo híbrido) |
-| H-7 | **Discrepancia de asignación:** la tabla de pendientes de HOJA asigna «N-1 (resto): lista de privilegios de `NT SERVICE\GPOS.Api`» al **arquitecto-software de A y devops**. El encargo de esta tarea dice que N-1 es de B. | [V] HOJA:491 y :594 | Baja | Pregunta Q-7 |
+| # | Hallazgo | Evidencia | Severidad | Efecto | Estado tras RB |
+|---|---|---|---|---|---|
+| H-1 | **N-10 ya tiene firmado el principio (a)**: actualización automática; el agente sin privilegios descarga y una tarea elevada fija **vuelve a verificar** antes de ejecutar el único archivo. | [V] `docs/adr/ADR-063.md:36`; `docs/adr/ADR-076.md:44`; HOJA:331-349 (B-6 firmado) | — | Ver 5 | Sin cambio |
+| H-2 | **La raíz tiene dos GUID de componente distintos** en dos MSI: IQ `9E7A0D3C-…` y estación `0D4B8E27-…`. | [V] `GPOS-NG-AddOn-IQS`, `origin/b/conector-iq-instalador`: `instalador/GPOS.Conector.Iq.Instalador/Package.wxs:181-183`; [V] `instalador/AgenteImpresion/Package.wxs:120-124` | Media | Ver 2 | B alinea IQ y AdmCloud en su próxima versión (RB Q-3) |
+| H-3 | **Hasta seis MSI** comparten la raíz en un servidor. | [V] HOJA:48; INS:404 | — | Fragmento compartido y GUID en el vector | Sin cambio |
+| H-4 | **Puede crearse una raíz sin proteger antes de cualquier MSI** (esquema antes de los MSI; `CarpetaAnillo.Crear` crea el padre con `Directory.CreateDirectory(padre)`, que hereda la DACL; registro de Burn bajo `Instalacion\`). | [V] `src/GPOS.Core/Infraestructura/Anillo/CarpetaAnillo.cs:39-42`; `src/GPOS.Migracion/EmpresasSistema.cs:31` configura el anillo de instalación; `src/GPOS.Core/Infraestructura/Anillo/AnilloDataProtection.cs:257` llama a `Crear()`; INS:35, :69, :123 | **Alta** | 1.4 | **Confirmado por B (HB-01), con dos motivos más**: `sistema --login-api "NT SERVICE\GPOS.Api"` corre antes de que exista el servicio, y `tls` antes de los MSI escribiría `Servidor\tls\` sin la raíz protegida. Resuelto con la nueva cadena y el contrato de `CarpetaAnillo` (1.4) |
+| H-5 | **El EventId 4742 ya está tomado** (`ModuloVenceIgnorado`). | [V] `origin/a/dv07-formato-licencia`: `src/GPOS.Core/Sistema/Licencia/EstadoLicenciaService.cs:145` | Media | Ver 6 | Franja de este plano: **4753 a 4766** (RB Q-8). Del 4743 al 4799 no hay ningún número en `src/*.cs` de las 162 referencias de `origin` [V, `git grep` del 2026-10-20] |
+| H-6 | **La actualización automática choca con D-09 de ADR-82** (SQL privilegiado con la identidad del técnico). | [V] `docs/adr/ADR-082.md:48`, `:91`; INS:134 | **Alta** | 5.3 | B acepta la dirección; **no se firma ahora** (F-3, tras el auditor). HB-13 añade que un `requiereTecnico: false` equivocado deja el sitio sin servicio en Estricto [V `src/GPOS.Api/Servicios/Inicializacion.cs:105-108` y `:175`] |
+| H-7 | Discrepancia de asignación de la lista de privilegios de `NT SERVICE\GPOS.Api`. | [V] HOJA:491 y :594 | Baja | — | **Resuelta: la fija A** (la hoja firmada prevalece sobre el encargo); devops de B la mide. Ver 4 |
 
 ---
 
-## 1. O-1 · Acción previa de ADR-77, punto 3
+## 1. O-1 · Acción previa de ADR-77, punto 3 — **espera la firma de F-1**
 
 ### 1.1 Decisión recomendada
 
@@ -30,32 +47,34 @@
 2. **Forma:** WiX DTF en C# (.NET Framework 4.7.2, igual que el conector IQ), empaquetada con SfxCA en una `.CA.dll` firmada. El esquema WiX va en un **fragmento fuente compartido** que cada `.wixproj` incluye con `<Compile Include>`. No se usa `.wixlib` ni `.msm` (ver 2).
 3. **Dónde vive** (repositorio `GPOS-NG`):
    - `instalador/Comun/GPOS.Instalador.Acciones/GPOS.Instalador.Acciones.csproj`: el proyecto DTF;
-   - `instalador/Comun/GPOS.Instalador.Acciones/ComprobacionCarpetasPrevias.cs`: la lógica, sin dependencia de DTF, para que también la compilen las pruebas;
+   - `instalador/Comun/GPOS.Instalador.Acciones/ComprobacionCarpetasPrevias.cs`: la lógica, sin dependencia de DTF, que compila en `net472` y en `net10.0` (la vinculan las pruebas);
    - `instalador/Comun/Fragmentos/ComprobacionCarpetasPrevias.wxs`: `Binary`, las dos `CustomAction`, la tabla propia, el mensaje `Error` y la secuencia;
    - `instalador/Comun/Fragmentos/RaizGposNg.wxs`: los componentes de O-3.
-4. **Quién la construye:** el **desarrollador del equipo A**, porque es la implementación general que ADR-77 asigna a A: «instalador de la API: 0,1» dentro de los 0,43 sp de A [V] `docs/adr/ADR-077.md:57-59`. Cada dueño de MSI la enchufa en el suyo: devops o B en Api, Reportes y Web; A en el agente de impresión.
-5. **Punto de partida:** se porta la implementación ya probada del conector IQ (`AccionesInstalador.cs`, `ComprobacionCarpetas.cs`, 390 líneas, error 25001, 19 de 19 vectores v2) [V] `GPOS-NG-AddOn-IQS`, `origin/b/conector-iq-instalador`: `instalador/GPOS.Conector.Iq.Instalador.Acciones/AccionesInstalador.cs:15-88`, `…Acciones.csproj:16,28`; el 19/19 sale del mensaje del *commit* `222a3b2`. Se agregan R-5 (las ACE que no se pueden evaluar cuentan como escritor ajeno) y la lectura por el mismo identificador (`comoLee`). **No** se toma la DLL del repositorio del conector: el núcleo no depende de un complemento (ADR-73, 73.7). Las dos implementaciones se mantienen equivalentes con el mismo vector.
-6. **Condición de firma (ya firmada en B-1):** «el *bundle* no se firma ni se publica sin la acción previa» [V] HOJA:241. Se aplica con una guarda en `construir.ps1 -Firmar` de cada MSI y en el del *bundle* (prueba P-O1-6).
+4. **Quién la construye:** el **desarrollador del equipo A** (ADR-77 asigna a A el «instalador de la API: 0,1» [V] `docs/adr/ADR-077.md:57-59`). Cada dueño de MSI la enchufa en el suyo: devops o B en Api, Reportes y Web; A en el agente de impresión.
+5. **Punto de partida:** se porta la implementación probada del conector IQ (error 25001, 19 de 19 vectores v2) [V] `GPOS-NG-AddOn-IQS`, `origin/b/conector-iq-instalador`: `instalador/GPOS.Conector.Iq.Instalador.Acciones/AccionesInstalador.cs:15-88`. Se agregan R-5 y la lectura por el mismo identificador (`comoLee`). **No** se toma la DLL del conector (ADR-73, 73.7).
+6. **Condición firmada (B-1):** «el *bundle* no se firma ni se publica sin la acción previa» [V] HOJA:241. Guarda en `construir.ps1 -Firmar` de cada MSI y del *bundle* (P-O1-6).
+7. **Costura de ADR-129, B.4 (HB-07):** `ComprobacionCarpetasPrevias.cs` se escribe con lo que compila en `net472` y `net10.0`, y **se declara fuente de la implementación Windows de `IComprobacionCarpetas`** cuando A la construya en la tanda LN (enero), vinculada en los dos lados. Hasta entonces, el control de deriva entre las cinco implementaciones es el vector v2/v3 en cada una. No bloquea.
 
-### 1.2 ¿Exige excepción a la regla de proyectos nuevos? **Sí.**
+### 1.2 Excepción a la regla de proyectos nuevos — **F-1, Pendiente de firma**
 
-- **Regla [V]:** `CLAUDE.md:24` (`master`): «el blueprint de H0 (4.2) admite solo `GPOS.Migracion`», con excepciones nominales (`GPOS.Criptografia`, `GPOS.Comun`, `GPOS.Reportes`, `GPOS.Reportes.Api`, `tests/GPOS.Reportes.Tests` e `instalador/Reportes`). La excepción de la ola 5 nombra expresamente un instalador, `instalador/Reportes` [V] (misma línea; ADR-109:43). Por eso se infiere que **los proyectos de instalador cuentan** como proyectos nuevos [I].
-- **Por qué no cabe en un proyecto existente:**
-  - una acción DTF de WiX 5 tiene que ser de .NET Framework [I, conocido de WiX 5; el conector IQ usa `net472`, V];
-  - todos los proyectos de `src` son `net10.0` [V] `src/GPOS.Comun/GPOS.Comun.csproj:4` (`feature/modelo-ng`).
-- **Alternativas descartadas:**
-  - **PowerShell:** ADR-77 lo descarta [V] `docs/adr/ADR-077.md:48`.
-  - **Una acción de tipo EXE que llame a `GPOS.Migracion.exe comprobar-carpetas`:** el EXE no está instalado cuando corre la acción (`InstallFiles` va después de `CreateFolders`). Habría que meterlo en la tabla `Binary` de cada MSI (decenas de MB, autocontenido [I]), y se ejecutaría como SYSTEM, dentro del MSI, una herramienta capaz de hacer SQL privilegiado, contra el espíritu de ADR-44 y de B-1.
-  - **Una acción nativa en C++:** otro tipo de proyecto (`vcxproj`), más riesgo de memoria y ninguna reutilización.
-  - **Reutilizar la DLL del conector IQ:** dependencia invertida del núcleo hacia un complemento.
-  - **Comprobar solo desde el *bundle*** (un `ExePackage` previo): no protege un MSI instalado por separado (el agente en las estaciones, la reparación de un MSI desde la caché) y no cumple la letra de ADR-77, punto 3 («acción diferida y sin suplantación del MSI»).
-- **Alcance de la excepción que se pide (Pendiente de firma, F-1):**
-  - un proyecto `instalador/Comun/GPOS.Instalador.Acciones` (`net472`, `WixToolset.Dtf.CustomAction` y `WixToolset.Dtf.WindowsInstaller` 5.0.2, lo mismo que IQ);
-  - **fuera de `GPOS-NG.slnx`**, para que la solución siga siendo solo `net10.0`; lo compila el `construir.ps1` de cada instalador, como hace IQ [V] `…Acciones.csproj:10-13`;
-  - sin referencias desde `src`;
-  - sus pruebas van en `GPOS.Tests`, con el archivo de lógica vinculado: no se crea un proyecto de pruebas nuevo.
-- **Costo:** USD 0 de licencias. Es una DLL más que firmar (ADR-77:66, ADR-33).
-- **Aviso para B y devops:** los `.wixproj` de `GPOS.Api.msi`, `GPOS.Web.msi` y del *bundle* también son proyectos nuevos, y ADR-109:113 dice que «no se fija aquí el nombre del proyecto del paquete». Conviene que la misma firma F-1 los nombre (Q-1).
+- **Regla [V]:** `CLAUDE.md` («Proyectos nuevos») y ADR-129, bloque B, punto 3 («Sin proyectos nuevos», `docs/adr/ADR-129.md:32`). La excepción de la ola 5 nombra un instalador (`instalador/Reportes`, ADR-109:43), así que los proyectos de instalador cuentan [V según RB Q-1].
+- **Por qué no cabe en un proyecto existente:** una acción DTF de WiX 5 es de .NET Framework [I; IQ usa `net472`, V]; todos los proyectos de `src` son `net10.0` [V] `src/GPOS.Comun/GPOS.Comun.csproj:4`.
+- **Alternativas descartadas:** PowerShell (ADR-77 lo descarta, [V] `docs/adr/ADR-077.md:48`); acción EXE que llame a `GPOS.Migracion.exe` (no está instalado cuando corre la acción y metería SQL privilegiado como SYSTEM dentro del MSI); acción nativa C++; reutilizar la DLL de IQ; comprobar solo desde el *bundle* (no protege un MSI instalado por separado ni cumple la letra de ADR-77, punto 3).
+- **Lista de F-1 que propone B y que A hace suya (RB Q-1 de 1.1, opción (a)):**
+
+  | Proyecto | Ruta | Destino | ¿En `GPOS-NG.slnx`? | Construye |
+  |---|---|---|---|---|
+  | Acción previa compartida (O-1) | `instalador/Comun/GPOS.Instalador.Acciones/GPOS.Instalador.Acciones.csproj` | `net472` | No | A |
+  | MSI de la API | `instalador/Api/GPOS.Api.Instalador.wixproj` | WiX 5 | No | devops / B |
+  | MSI de la Web | `instalador/Web/GPOS.Web.Instalador.wixproj` | WiX 5 | No | devops / B |
+  | *Bundle* | `instalador/Servidor/GPOS.Servidor.Paquete.wixproj` | WiX 5 Burn | No | devops / B |
+  | Biblioteca de red de servidor (ADR-90) | `src/GPOS.Comun.Servidor/GPOS.Comun.Servidor.csproj` | `net10.0` | Sí | A |
+
+  - Sin referencias desde `src` hacia `instalador/`. Las pruebas de la acción van en `GPOS.Tests` con el archivo de lógica vinculado (no hay proyecto de pruebas nuevo).
+  - `GPOS.Instalacion` **no** es un proyecto: es el origen de eventos del Visor que declara `GPOS.Api.msi` (RB Q-1).
+  - El actualizador de N-10 pedirá su propia excepción con F-3.
+- **Mientras F-1 no se firme:** A **no** crea `instalador/Comun/` ni modifica el MSI del agente para O-1 u O-3 (AV). Lo que sí puede avanzar sin proyecto nuevo: la lógica de `ComprobacionCarpetasPrevias.cs` como diseño y sus casos de prueba sobre el vector, en este documento.
+- **Costo:** USD 0 de licencias; una DLL más que firmar (ADR-77:66, ADR-33).
 
 ### 1.3 Contrato de la acción
 
@@ -63,359 +82,339 @@
 
 | Pieza | Valor |
 |---|---|
-| Tabla propia `GposCarpetaPrevia` | Columnas: `Id` (clave), `Directorio` (referencia a `Directory`), `Servicio` (texto, puede ser nulo: nombre del servicio de Windows cuya cuenta virtual `NT SERVICE\<Servicio>` es escritora admitida en esa carpeta), `CrearSiFalta` (0 o 1; **solo** la fila de la raíz lleva 1), `Orden` (entero; de padres a hijos) |
-| Acción inmediata `GposPrepararCarpetasPrevias` | Lee la tabla, resuelve cada `[Directorio]` y fija `CustomActionData` de la diferida. Secuencia: `Before="InstallInitialize"`, condición `NOT REMOVE~="ALL"` |
-| Acción diferida `GposComprobarCarpetasPrevias` | `Execute="deferred"`, `Impersonate="no"`, `Return="check"`. Secuencia: `After="InstallInitialize"`, antes de `StopServices`, `CreateFolders` e `InstallFiles`. Condición `NOT REMOVE~="ALL"`: corre en la instalación, la reparación y la actualización mayor, y no en la desinstalación |
-| Mensaje de error | `Error Id="25101"`: «GPOS NG no se instaló: la carpeta [2] no es segura ([3]). No se cambió nada. Ver el procedimiento de operaciones, sección «Carpeta insegura».» Se eligió el 25101 para no confundirlo en soporte con los 25001 a 25003 del conector IQ [V] `…Iq.Instalador/Package.wxs:108-110` |
-| Por qué la tabla y no `SetProperty` | Con hasta 6 MSI y los SID de cada servicio, la cadena de `SetProperty` pasaría del límite de 255 caracteres de `CustomAction.Target` que documentó IQ (ICE03) [V] `…Iq.Instalador/Package.wxs:104`. **Alternativa descartada:** `SetProperty` como en IQ, válida si un MSI declara pocas carpetas; queda como reserva si `CustomTable` diera problemas en WiX 5 |
+| Tabla propia `GposCarpetaPrevia` | Columnas: `Id` (clave), `Directorio` (referencia a `Directory`), `Servicio` (texto, puede ser nulo: nombre del servicio cuya cuenta virtual `NT SERVICE\<Servicio>` es escritora admitida), `CrearSiFalta` (0 o 1; **solo** la fila de la raíz lleva 1), `Orden` (de padres a hijos) |
+| Acción inmediata `GposPrepararCarpetasPrevias` | Lee la tabla, resuelve cada `[Directorio]` y fija `CustomActionData`. `Before="InstallInitialize"`, condición `NOT REMOVE~="ALL"` |
+| Acción diferida `GposComprobarCarpetasPrevias` | `Execute="deferred"`, `Impersonate="no"`, `Return="check"`. `After="InstallInitialize"`, antes de `StopServices`, `CreateFolders` e `InstallFiles`. Condición `NOT REMOVE~="ALL"` |
+| Mensaje de error | `Error Id="25101"`: «GPOS NG no se instaló: la carpeta [2] no es segura ([3]). No se cambió nada. Ver el procedimiento de operaciones, sección «Carpeta insegura».» (distinto de los 25001 a 25003 de IQ) |
+| Por qué la tabla y no `SetProperty` | Límite de 255 caracteres de `CustomAction.Target` (ICE03) con hasta 6 MSI y los SID de cada servicio. `SetProperty` queda como reserva |
 
-**Entradas:**
-- las filas de `GposCarpetaPrevia` del MSI. **Toda** carpeta bajo `CommonAppDataFolder` que el MSI declara con `CreateFolder` lleva su fila (prueba P-O1-3). Las carpetas que crea el servicio en tiempo de ejecución no se declaran ni se comprueban aquí (P-77-4, condición 4; vector `noDeclara`);
-- el SID de cada `Servicio` se **calcula** a partir del nombre (S-1-5-80 más el SHA-1 del nombre en mayúsculas), como `CuentaServicioVirtual.Sid` y como admite la nota (a) de ADR-77 [V] `docs/adr/ADR-077.md:105`. Ningún SID se escribe a mano.
+**Entradas:** las filas de `GposCarpetaPrevia` del MSI. **Toda** carpeta bajo `CommonAppDataFolder` que el MSI declara con `CreateFolder` lleva su fila (P-O1-3), **incluida la carpeta del anillo de la Web en `GPOS.Web.msi`, con `Servicio = GPOS.Web`** (HB-16; la define devops de B). El SID de cada `Servicio` se **calcula** (S-1-5-80 + SHA-1 del nombre en mayúsculas) [V] `docs/adr/ADR-077.md:105`.
 
-**Reglas** (exactamente las del vector v2, sin el dueño adicional de P-77-4, que no rige en el MSI [V] `docs/adr/ADR-077.md:91`):
-- de padres a hijos;
-- se lee del mismo identificador, abierto sin seguir el punto de reanálisis;
-- dueños admitidos: SYSTEM, Administradores y TrustedInstaller;
-- escritores admitidos: esos tres más la cuenta de `Servicio` en su fila;
-- `CREATOR OWNER` no cuenta como escritor;
-- una DACL nula o una ACE que no se puede evaluar cuentan como escritor ajeno;
-- **nunca limpia ni cambia el dueño.**
+**Reglas** (las del vector v2, sin el dueño adicional de P-77-4, que no rige en el MSI [V] `docs/adr/ADR-077.md:91`): de padres a hijos; se lee del mismo identificador, abierto sin seguir el punto de reanálisis; dueños admitidos SYSTEM, Administradores y TrustedInstaller; escritores admitidos esos tres más la cuenta de `Servicio` de su fila; `CREATOR OWNER` no cuenta; DACL nula o ACE no evaluable = escritor ajeno; **nunca limpia ni cambia el dueño.**
 
-**Creación de la raíz:** si falta la carpeta con `CrearSiFalta=1`, se crea en una sola llamada (`CreateDirectory` con `SECURITY_ATTRIBUTES` construidos desde `raiz.sddl` del vector [V] `adr077-carpetas.v2.json:29`).
-- Si la llamada falla con `ERROR_ALREADY_EXISTS` (carrera), la carpeta se comprueba como existente.
-- Cualquier otro fallo es `SEGURIDAD_ILEGIBLE`.
+**Creación de la raíz:** si falta la carpeta con `CrearSiFalta=1`, se crea en una sola llamada (`CreateDirectory` con `SECURITY_ATTRIBUTES` desde `raiz.sddl` del vector). `ERROR_ALREADY_EXISTS` (carrera) → se comprueba como existente; cualquier otro fallo → `SEGURIDAD_ILEGIBLE`. **En la cadena de B, la primera en ejecutarse es la de `GPOS.Api.msi` (paso 3), así que es ella la que crea la raíz protegida en una instalación nueva.**
 
 **Salidas:**
 
 | Resultado | Qué devuelve | Efecto |
 |---|---|---|
 | Todo seguro o inexistente | `ActionResult.Success` | La instalación sigue |
-| Rechazo | Mensaje 25101 con [2] = ruta y [3] = `PUNTO_DE_REANALISIS` / `NO_ES_CARPETA` / `DUENO_NO_PERMITIDO` / `ESCRITOR_NO_PERMITIDO` / `SEGURIDAD_ILEGIBLE`; `ActionResult.Failure` | **1603**. Windows Installer revierte la instalación sin haber tocado carpetas ni DACL. Dentro del *bundle*, Burn revierte el límite de reversión y el *bundle* sale con 1603 [I] |
-| Excepción inesperada | Igual que `SEGURIDAD_ILEGIBLE` (falla cerrada, vector `fallaCerrada`) | 1603 |
+| Rechazo | Mensaje 25101 con [2] = ruta y [3] = `PUNTO_DE_REANALISIS` / `NO_ES_CARPETA` / `DUENO_NO_PERMITIDO` / `ESCRITOR_NO_PERMITIDO` / `SEGURIDAD_ILEGIBLE`; `ActionResult.Failure` | **1603**; Windows Installer revierte. Dentro del *bundle*, Burn revierte el límite de reversión (que agrupa solo los tres MSI) [I] |
+| Excepción inesperada | Igual que `SEGURIDAD_ILEGIBLE` (falla cerrada) | 1603 |
 
-**Registro:** una línea por carpeta en el registro del MSI, con el prefijo `GposComprobarCarpetasPrevias:`. Contiene la ruta, el código y el SID culpable. Los SID no son secretos; nunca se registran valores de propiedades.
+**Registro:** una línea por carpeta en el registro del MSI, con el prefijo `GposComprobarCarpetasPrevias:`: ruta, código y SID culpable. Nunca valores de propiedades.
 
-**Eventos:** origen `GPOS.Instalacion`, registro «Aplicación»:
-- la acción **solo escribe el evento si el origen ya existe**. Nunca lo crea, porque eso dejaría una clave de registro fuera del control del MSI. En una instalación nueva queda solo el registro del MSI y de Burn; en una reinstalación o actualización, que es donde una raíz plantada es más probable, queda además el evento;
-- EventId en 4.
+**Eventos:** origen `GPOS.Instalacion`, registro «Aplicación». La acción **solo escribe el evento si el origen ya existe** (no lo crea). EventId en la sección 6 (4753 a 4755).
 
-**Errores SQL:** ninguno, porque la acción no toca SQL. Si alguna pieza de este documento llegara a necesitarlos, quedarían fuera de 51618 a 51644.
+**Errores SQL:** ninguno.
 
-### 1.4 Contrato con los pasos de la cadena que corren antes del primer MSI (por H-4)
+### 1.4 Contrato con la cadena del *bundle* (H-4 / HB-01) — **cadena de B adoptada**
 
-**C-O1-5 (para B y devops):** ningún paso del *bundle* anterior al primer `MsiPackage` crea nada bajo `%ProgramData%\GPOS NG`. Se cumple de una de estas dos formas:
-- **(a, recomendada)** el primer elemento de la cadena es un MSI del núcleo (por ejemplo, `GPOS.Api.msi`), que crea la raíz protegida con su acción previa;
-  - los pasos `--fase esquema` que necesiten el anillo de `GPOS.Migracion` van después de él, o
-  - `GPOS.Migracion` crea sus carpetas con una función compartida que hace lo mismo que la acción: comprobar y, si falta, crear la raíz en una sola llamada;
-  - en cualquier caso, `CarpetaAnillo.Crear` deja de crear padres con DACL heredada fuera de la carpeta del componente (P-77-2);
-- **(b)** el registro de Burn queda en su carpeta por omisión (`%TEMP%` de quien instala) y `comprobar-servidor` copia el registro consolidado a `Instalacion\` al final, cuando la raíz ya existe protegida.
+#### 1.4.1 C-O1-5 (v2): ningún paso anterior al primer `MsiPackage` crea nada bajo `%ProgramData%\GPOS NG`
 
-La recomendación es (a) junto con (b) para el registro. Esto reordena INS 1.1 y 3.1, que deciden B y devops (Q-2). Si no se hace, la primera instalación limpia falla con 1603 (si existe la acción) o deja la raíz débil (si no existe).
+Se adopta la cadena de RB Q-2 de 1.1 (confirmación del texto de ADR-90 en **F-6 (ii)**, Pendiente de firma):
+
+| # | Paquete | Escribe bajo `%ProgramData%\GPOS NG` | Qué garantiza para O-1 |
+|---|---|---|---|
+| 0 | `comprobar-servidor --fase previa` | No | Solo lectura |
+| 1 | `preparar` (solo en actualización) | No (respaldos en la ruta de MD-54) | — |
+| 2 | `red` | No (solo `HKLM\SOFTWARE\GPOS NG\Servidor`) | — |
+| 3 | **`GPOS.Api.msi`** | Sí | **Su acción previa crea la raíz protegida** (`CrearSiFalta=1`) y comprueba la carpeta de la API |
+| 4-5 | `GPOS.Web.msi`, `GPOS.Reportes.msi` | Sí | Su acción comprueba la raíz ya creada y sus carpetas |
+| 6 | `tls` | Sí, bajo la raíz ya protegida (`Servidor\tls\` con DACL protegida explícita) | — |
+| 7-8 | `esquema`, `credenciales` | No | El anillo de `GPOS.Migracion` encuentra la raíz protegida; aun así rige 1.4.2 |
+| 9 | `verificar` | Sí, al final: crea `Instalacion\` con DACL protegida explícita y copia el registro de Burn | El registro de Burn queda en `%TEMP%` de quien instala hasta aquí (opción (b) de la v1) |
+
+- **Requisito para devops (B):** que `GPOS.Api.msi` sea el primer `MsiPackage` y que ningún `ExePackage` de los pasos 0 a 2 escriba bajo la raíz (prueba P-O1-8). Si en el futuro la cadena empezara con otro MSI del núcleo, vale igual, porque todos incluyen la misma acción y la fila de la raíz.
+- **MSI instalado por separado** (estación, reparación desde la caché): la acción previa de ese MSI cubre la raíz por sí misma.
+
+#### 1.4.2 Contrato de `CarpetaAnillo.Crear` (A, pista de H-17 v2; HB-01 (3))
+
+Hoy `Crear` hace `Directory.CreateDirectory(padre)` y luego crea la hoja con su DACL protegida [V] `CarpetaAnillo.cs:39-42`; el padre hereda la DACL de `%ProgramData%` (Usuarios puede crear). Lo usan la API y `GPOS.Migracion` (`AnilloDataProtection.cs:257`; `EmpresasSistema.cs:31`) y, vinculado, la Web (`src/GPOS.Web/GPOS.Web.csproj:16`) [V]. Contrato nuevo (P-77-2: «fuera de la carpeta de componente, toda carpeta se crea con DACL protegida explícita» [V] `docs/adr/ADR-077.md:99`):
+
+1. **Nunca** crea un padre con la DACL heredada.
+2. Busca el antepasado existente más cercano. Si es (o está debajo de) un punto de reanálisis → falla cerrada (`InvalidOperationException` con el mismo motivo que `Comprobar`).
+3. Cada padre que falte se crea **en una sola llamada con DACL protegida explícita**, de arriba abajo:
+   - la raíz `%ProgramData%\GPOS NG`, con `raiz.sddl` del vector v2 (la misma que la acción previa de O-1; prueba P-O1-4 compartida);
+   - los intermedios, con la DACL de `CarpetaAnillo.Seguridad()` (SYSTEM, Administradores y la identidad del servicio, sin herencia).
+4. **En Estricto, si falta la raíz → falla cerrada** («la raíz la crea el instalador»): en una instalación con el paquete la raíz ya existe desde el paso 3, así que su ausencia es una anomalía. Sin Estricto (desarrollo, pruebas, DEMO) se crea según el punto 3.
+5. Sigue sin tocar una carpeta existente (no limpia ni cambia dueños).
+6. **Residual:** en desarrollo, una raíz creada por la API tendrá como dueño la cuenta del proceso; un MSI instalado después la rechazaría (`DUENO_NO_PERMITIDO`, la acción no admite P-77-4). Es aceptable: solo ocurre fuera del paquete y se corrige borrando la carpeta de desarrollo.
+- **Pruebas:** padre ausente → se crea protegido (sin ACE heredadas; comparación con `raiz.sddl` o con `Seguridad()`); padre unión → falla; Estricto sin raíz → falla; Windows simulado falso → `PlatformNotSupportedException` como hoy.
+- **Esfuerzo:** 0,5 dp (A), incluido en la pista de H-17 v2. No necesita proyecto nuevo ni firma.
 
 ### 1.5 Pruebas requeridas (O-1)
 
 | ID | Prueba | Tipo |
 |---|---|---|
-| P-O1-1 | La lógica contra los 19 casos del vector v2 (como IQ), más R-5 (ACE compuesta o desconocida: escritor ajeno) y `CREATOR GROUP` y `OWNER RIGHTS` como escritores no admitidos. Lista blanca inyectable para no necesitar elevación | Unitaria en `GPOS.Tests` (archivo vinculado) |
-| P-O1-2 | Uniones y vínculos reales: `mklink /J` no exige elevación [I], así que se puede probar `PUNTO_DE_REANALISIS` sin elevación; `NO_ES_CARPETA` con un archivo | Unitaria con carpetas temporales |
-| P-O1-3 | Arquitectura: en cada `Package.wxs` del núcleo, toda carpeta bajo `CommonAppDataFolder` con `CreateFolder` tiene su fila en `GposCarpetaPrevia`; solo la raíz lleva `CrearSiFalta=1`; la acción está programada después de `InstallInitialize` y antes de `CreateFolders`, con `Impersonate="no"` | Lectura de `.wxs` (estilo `EstacionInstaladorTests`) |
-| P-O1-4 | El SDDL de creación de la raíz es igual a `raiz.sddl` del vector, comparado por SHA-256 del vector | Unitaria |
-| P-O1-5 | El SID calculado de `GPOS.Api`, `GPOS.Reportes`, `GPOS.Web` y `GPOS.EstacionImpresion` coincide con `sc showsid` (constantes de prueba) | Unitaria |
-| P-O1-6 | `construir.ps1 -Firmar` falla si el `.wxs` no incluye el fragmento o si la `.CA.dll` no verifica con `signtool verify /pa /tw` | Análisis del guion (`Parser::ParseFile`) más una prueba de la guarda |
-| P-O1-7 | Laboratorio elevado (una persona, máquina virtual): raíz plantada por un usuario, unión plantada, dueño ajeno y escritor ajeno, cada uno → 1603 sin cambios; raíz ausente → se crea con el SDDL exacto (`icacls`) | Manual, QA y devops |
-| P-O1-8 | Cadena del *bundle* con la raíz ausente: la primera instalación limpia termina bien (cubre H-4) | Manual, laboratorio |
+| P-O1-1 | La lógica contra los 19 casos del vector v2, más R-5 y `CREATOR GROUP`/`OWNER RIGHTS` como escritores no admitidos. Lista blanca inyectable | Unitaria en `GPOS.Tests` (archivo vinculado) |
+| P-O1-2 | Uniones y vínculos reales (`mklink /J` sin elevación [I]); `NO_ES_CARPETA` con un archivo | Unitaria con carpetas temporales |
+| P-O1-3 | En cada `Package.wxs` del núcleo, toda carpeta bajo `CommonAppDataFolder` con `CreateFolder` tiene su fila en `GposCarpetaPrevia` (incluida la del anillo de la Web); solo la raíz lleva `CrearSiFalta=1`; la acción va después de `InstallInitialize` y antes de `CreateFolders`, con `Impersonate="no"` | Lectura de `.wxs` |
+| P-O1-4 | El SDDL de creación de la raíz es igual a `raiz.sddl` del vector (SHA-256); la misma constante la usa `CarpetaAnillo` (1.4.2) | Unitaria |
+| P-O1-5 | El SID calculado de `GPOS.Api`, `GPOS.Reportes`, `GPOS.Web` y `GPOS.EstacionImpresion` coincide con `sc showsid` | Unitaria |
+| P-O1-6 | `construir.ps1 -Firmar` falla si el `.wxs` no incluye el fragmento o si la `.CA.dll` no verifica con `signtool verify /pa /tw` | Análisis del guion |
+| P-O1-7 | Laboratorio elevado: raíz plantada, unión plantada, dueño ajeno y escritor ajeno → 1603 sin cambios; raíz ausente → se crea con el SDDL exacto | Manual, QA y devops |
+| P-O1-8 | **Cadena de B con la raíz ausente:** la primera instalación limpia termina bien; tras el paso 2 no existe nada bajo `%ProgramData%\GPOS NG`; tras el paso 3 la raíz tiene el SDDL exacto; `Instalacion\` y `Servidor\tls\` quedan con DACL protegida explícita; reversión forzada en cada paso | Manual, laboratorio |
 
 ### 1.6 Esfuerzo (A, ±50 %)
 
 | Partida | dp |
 |---|---|
 | Proyecto DTF y puerto de la lógica de IQ con R-5 y `comoLee` | 1,5 |
-| Fragmento WiX (tabla, dos acciones, `Error`, secuencia) y guarda de `construir.ps1` | 0,5 |
+| Fragmento WiX y guarda de `construir.ps1` | 0,5 |
 | Pruebas P-O1-1 a P-O1-6 | 1,0 |
 | Enchufarla en el MSI del agente o estación (quita el bloqueo K1-02 [V] `instalador/AgenteImpresion/Package.wxs:25-30, :151-152`) | 0,25 |
 | Procedimiento de operaciones («Carpeta insegura») | 0,25 |
-| **Total de A** | **3,5 dp** (1,75 a 5,25) |
+| **Total de A (O-1)** | **3,5 dp** (1,75 a 5,25) |
+| Aparte: `CarpetaAnillo.Crear` (1.4.2), pista de H-17 v2 | 0,5 |
 | Fuera del total: enchufarla en Api, Reportes y Web (devops o B) | unos 0,1 dp por MSI |
 | Fuera del total: laboratorio P-O1-7 y P-O1-8 (QA o devops) | 1 dp |
 
 ---
 
-## 2. O-3 · Quién declara la raíz `%ProgramData%\GPOS NG` y `config\`
+## 2. O-3 · Quién declara la raíz `%ProgramData%\GPOS NG` y `config\` — **punto técnico; espera la firma de F-1**
 
-### 2.1 Decisión recomendada
+O-3 es un punto técnico sin firma del propietario [V] HOJA:486 (antes F-2; HB-17). Se construye junto con O-1, **después de la firma de F-1**, porque el fragmento vive en `instalador/Comun/` y solo tiene consumidores con los nuevos `.wixproj` (RB 4.1; AV).
 
-1. **Ningún MSI es «dueño» de la raíz.** Todos los MSI del núcleo declaran los mismos componentes, **byte a byte**, porque incluyen el mismo archivo fuente `instalador/Comun/Fragmentos/RaizGposNg.wxs`. Windows Installer cuenta las referencias por GUID, así que la raíz persiste mientras quede algún cliente.
-2. **Un solo GUID canónico por componente, publicado en el vector de ADR-77** (punto 6, «una sola definición»). Se agrega de forma aditiva en una v3 del vector (`componentesCompartidos`), para que los repositorios de los conectores comparen su constante con una prueba, como ya hacen con el SDDL.
-3. **`Permanent="yes"`** en los dos componentes. Desinstalar todo nunca quita la raíz ni `config\` (coherente con INS 6, «conserva siempre `%ProgramData%\GPOS NG` completo» [V] INS:242). Además evita que, tras una desinstalación completa, un usuario recree la raíz y bloquee la reinstalación.
-4. **No se usa `.msm` ahora.** Si algún día hay que distribuir el fragmento a otros repositorios (AdmCloud, Polaris), se usa **`.wixlib`** dentro de `GPOS.AddOn.Kit`, no `.msm` (ver 2.3).
+### 2.1 Decisión recomendada (sin cambios de fondo)
+
+1. **Ningún MSI es «dueño» de la raíz.** Todos los MSI del núcleo declaran los mismos componentes, **byte a byte**, con el mismo archivo `instalador/Comun/Fragmentos/RaizGposNg.wxs`. Windows Installer cuenta referencias por GUID.
+2. **Un solo GUID canónico por componente, publicado en el vector de ADR-77** (v3 aditiva, `componentesCompartidos`).
+3. **`Permanent="yes"`** en los dos componentes (coherente con INS 6 [V] INS:242).
+4. **No se usa `.msm`.** Reserva: `.wixlib` en `GPOS.AddOn.Kit` si aparece deriva entre repositorios.
 
 ### 2.2 Contrato de los componentes
 
 | Componente | `Directory` (Id fijo) | GUID canónico | Contenido | Atributos |
 |---|---|---|---|---|
-| `RaizGposNg` | `DirGposNgDatos` = `CommonAppDataFolder\GPOS NG` | `9E7A0D3C-1F42-4B6E-8C5D-0A1B2C3D4E5F` (el del conector IQ, que es el único MSI con la raíz instalado fuera del desarrollo [V] `…Iq.Instalador/Package.wxs:181`; elegirlo evita cambiar un componente ya instalado en pruebas) | `CreateFolder` + `PermissionEx Sddl="O:SYG:SYD:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;AU)"` (vector `raiz.sddl`) | `Permanent="yes"`, `Bitness="always64"` |
-| `ConfigGposNg` | `DirGposNgConfig` = `…\GPOS NG\config` | `0B21B6DB-0F32-4111-AF3D-12630EB877C3` (nuevo; generado para este contrato) | `CreateFolder` + `PermissionEx` con el **mismo SDDL de la raíz**, explícito y protegido: escriben solo SYSTEM y Administradores; leen los procesos (lee `ArchivoInstalacion`, `%ProgramData%\GPOS NG\config\<proceso>.json`) [V] `origin/feature/modelo-ng`: `src/GPOS.Comun/Configuracion/ArchivoInstalacion.cs:29-36` | `Permanent="yes"`, `Bitness="always64"` |
+| `RaizGposNg` | `DirGposNgDatos` = `CommonAppDataFolder\GPOS NG` | `9E7A0D3C-1F42-4B6E-8C5D-0A1B2C3D4E5F` (el de IQ) | `CreateFolder` + `PermissionEx Sddl="O:SYG:SYD:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;0x1200a9;;;AU)"` (vector `raiz.sddl`) | `Permanent="yes"`, `Bitness="always64"` |
+| `ConfigGposNg` | `DirGposNgConfig` = `…\GPOS NG\config` | `0B21B6DB-0F32-4111-AF3D-12630EB877C3` (nuevo) | `CreateFolder` + el **mismo SDDL de la raíz**, explícito y protegido [V] `src/GPOS.Comun/Configuracion/ArchivoInstalacion.cs:29-36` | `Permanent="yes"`, `Bitness="always64"` |
 
-**Reglas del contrato:**
-- **R-O3-1.** Lo incluyen todos los MSI del núcleo que escriben o leen bajo la raíz: Api, Reportes, Web y agente o estación.
-- **R-O3-2.** Cada MSI declara además **solo** su carpeta de componente (ADR-77, punto 5), con su fila en `GposCarpetaPrevia`.
-- **R-O3-3.** El agente de impresión cambia el GUID de su `DatosGposNg` (`0D4B8E27-…`) por el canónico. No rompe nada: esa *feature* solo existe en la compilación de desarrollo [V] `instalador/AgenteImpresion/Package.wxs:92`.
-- **R-O3-4.** El conector IQ conserva su GUID (ya es el canónico) y agrega `Permanent="yes"` en su próxima versión. El conector AdmCloud adopta el mismo GUID. Las dos tareas son de B, en sus repositorios (Q-3).
-- **R-O3-5.** **`config\` no lleva escritor de servicio:** ningún proceso escribe allí; solo leen. **Alternativa descartada:** dar lectura solo a los SID de los servicios en lugar de a AU. Acopla `config\` a la lista de servicios y obliga a cambiar el GUID o el contenido en cada servicio nuevo, sin una ganancia clara: el archivo no admite secretos por construcción (lista blanca `GPOS:RncDgii`, B-7 firmado) [V] `ArchivoInstalacion.cs:27`.
+**Reglas:** R-O3-1 lo incluyen Api, Reportes, Web y agente o estación. R-O3-2 cada MSI declara además solo su carpeta de componente, con su fila en `GposCarpetaPrevia`. R-O3-3 el agente cambia `0D4B8E27-…` por el canónico (la *feature* solo existe en desarrollo [V] `instalador/AgenteImpresion/Package.wxs:92`). **R-O3-4 (aceptada por B, RB Q-3):** IQ agrega `Permanent="yes"` y conserva su GUID; AdmCloud adopta el canónico; cada conector agrega P-O3-5; unos 0,25 dp por conector, de B; no hay instalaciones de IQ 0.4.1 fuera del laboratorio [I]. R-O3-5 `config\` sin escritor de servicio.
 
 ### 2.3 Alternativas evaluadas
 
-| Opción | Ventajas | Contras | Veredicto |
-|---|---|---|---|
-| **Fragmento fuente compartido + GUID en el vector (recomendada)** | Contenido idéntico garantizado en el núcleo (un archivo); sin proyecto extra; la prueba del vector cubre los otros repositorios | Los conectores mantienen su copia (se controla con la prueba) | Elegida |
-| `.msm` (módulo de combinación) | Una sola pieza binaria | Otro proyecto WiX (otra excepción a `CLAUDE.md:24`); modularización de identificadores; el `.msm` no se firma por sí mismo [I]; habría que consumir un binario del núcleo desde los complementos | Descartada |
-| `.wixlib` | Es la forma recomendada por WiX para compartir fragmentos con binarios [I]; podría viajar en `GPOS.AddOn.Kit` | Otro proyecto; hoy no hace falta (el núcleo comparte por fuente) | **Reserva:** si la deriva entre repositorios aparece en la prueba del vector |
-| Un solo MSI (Api) declara la raíz | Simple | El agente y los conectores se instalan sin la Api; el orden de la cadena importaría; si se desinstala la Api, la raíz queda sin dueño | Descartada |
-| Que ningún MSI la declare (solo la crea la acción) | Mínimo | La reparación no restaura la DACL; `config\` quedaría sin dueño | Descartada |
-
-### 2.4 Pruebas requeridas (O-3)
-
-| ID | Prueba |
+| Opción | Veredicto |
 |---|---|
-| P-O3-1 | Todo `Package.wxs` del núcleo que tiene `CommonAppDataFolder` incluye `RaizGposNg.wxs`; ningún otro componente apunta a `DirGposNgDatos` ni a `DirGposNgConfig` |
-| P-O3-2 | Los GUID y el SDDL de `RaizGposNg.wxs` son iguales a los de `componentesCompartidos` del vector v3, comparado por SHA-256 |
-| P-O3-3 | Los dos componentes tienen `Permanent="yes"` y ninguna `RemoveFolder` ni `RemoveFile` sobre esas carpetas |
-| P-O3-4 | Laboratorio: instalar Reportes y Api, desinstalar Reportes → raíz y `config\` intactos con el SDDL exacto; desinstalar todo → siguen ahí; reinstalar → la acción previa pasa |
-| P-O3-5 | (B, repositorios de los conectores) Su prueba del vector compara el GUID canónico |
+| **Fragmento fuente compartido + GUID en el vector** | Elegida |
+| `.msm` | Descartada (otro proyecto, otra excepción; no se firma por sí mismo [I]) |
+| `.wixlib` | Reserva si aparece deriva |
+| Un solo MSI (Api) declara la raíz | Descartada (el agente y los conectores se instalan sin la Api) |
+| Ningún MSI la declara (solo la acción) | Descartada (la reparación no restaura la DACL) |
+
+### 2.4 Pruebas (O-3)
+
+P-O3-1 a P-O3-4 como en la v1 (inclusión del fragmento; GUID y SDDL contra el vector v3; `Permanent="yes"`; laboratorio de desinstalación parcial y total). P-O3-5 en los conectores (B).
 
 ### 2.5 Esfuerzo (A, ±50 %)
 
-| Partida | dp |
-|---|---|
-| Fragmento `RaizGposNg.wxs` | 0,25 |
-| Vector v3 (aditivo; lo publica el documentador) y pruebas P-O3-1 a P-O3-3 | 0,5 |
-| Cambio de GUID en el agente | 0,1 |
-| **Total de A** | **0,85 dp** (0,4 a 1,3) |
-| Fuera del total: B en IQ y AdmCloud | unos 0,25 dp por conector |
+**0,85 dp** (0,4 a 1,3): fragmento 0,25; vector v3 y pruebas 0,5; GUID del agente 0,1. Fuera: B en IQ y AdmCloud, unos 0,25 dp por conector.
 
 ---
 
-## 3. N-10 · Privilegios del agente de actualización para lanzar el *bundle* elevado
+## 3. Lista de privilegios de `NT SERVICE\GPOS.Api` (N-1, resto) — **propuesta de A; devops de B la mide** (nueva en v2)
 
-### 3.1 Decisión recomendada
+**Reparto (RB Q-7 de 1.1; HOJA:491 y :594 [V]):** A propone y justifica privilegio por privilegio (ADR-76, punto 2); **devops de B la mide** en el laboratorio con `sc qprivs GPOS.Api` y una ejecución completa; el **auditor-seguridad** la revisa; el **desarrollador de B** construye N-1 (`AddWindowsService`, `AddSystemd`, `ARRANQUE_PRIVILEGIOS`). No bloquea O-1, O-3 ni N-10.
 
-**(a), como ya se firmó** [V] ADR-063.md:36, con el contrato de abajo. **(b)** (que el técnico confirme cada actualización) no se descarta: queda como **modo de reserva**, para:
-- las versiones que exigen técnico (ver 3.3);
-- los sitios donde el propietario lo elija;
-- el período en que el agente no exista (ya previsto: «el técnico ejecuta el *bundle* a mano»).
+### 3.1 Propuesta
 
-**Comparación de las dos opciones:**
-
-| Criterio | (a) Tarea elevada fija solo para el archivo firmado | (b) Confirmación del técnico |
+| Privilegio | ¿En `RequiredPrivilege`? | Justificación (evidencia) |
 |---|---|---|
-| Cumple la publicación continua (memoria «actualización automática», ADR-63) | Sí | No: depende de una visita o de una sesión remota |
-| Superficie de ataque | Un componente SYSTEM que procesa archivos descargados (el manifiesto JWS y el ejecutable). Se mitiga con una nueva verificación sobre una copia en una carpeta SYSTEM-only, sin argumentos del lado sin privilegios, un solo archivo y un solo firmante esperado | Mínima: la persona eleva con UAC |
-| Riesgo operativo | Parar la venta a mitad de turno → hace falta una ventana de mantenimiento (Q-5) | Sin parada sorpresa, pero se acumulan versiones sin aplicar (y parches de seguridad) |
-| Compatibilidad con D-09 de ADR-82 (H-6) | **No** para las versiones con cambios de esquema → modo híbrido (3.3) | Sí |
-| Costo de construcción | 7 a 8 dp (3.6) | unos 1 dp (aviso y botón; ya cubierto por el procedimiento manual) |
+| `SeChangeNotifyPrivilege` | **Sí (único)** | Atravesar carpetas sin permiso de lectura en cada nivel; es la norma por omisión de PA-76-1 y lo que ya declara la estación [V] `instalador/AgenteImpresion/Package.wxs:110-112`; `src/GPOS.AgenteImpresion/Estacion/IdentidadServicio.cs:30` |
+| `SeImpersonatePrivilege` | **No** | El único punto de suplantación es la canalización de introspección: `RunAsClient` solo para leer el SID del cliente con `WindowsIdentity.GetCurrent(TokenAccessLevels.Query)` [V] `src/GPOS.Comun/Introspeccion/ServidorIntrospeccion.cs:196-209`, registrada en la API [V] `src/GPOS.Api/Seguridad/ValidadorTokenPrincipal.cs:87` y `:123`. Sin el privilegio, el token del cliente queda en nivel de identificación, que basta para consultar el SID [I; lo comprueba el laboratorio, como dice RB Q-7]. No hay `AddNegotiate`, `RunImpersonated` ni `LogonUser` en `GPOS.Api`, `GPOS.Core`, `GPOS.Comun` ni `GPOS.Criptografia` [V, `git grep`] |
+| `SeCreateGlobalPrivilege` | **No** | No hay objetos `Global\`, `Mutex`, `MemoryMappedFile` ni semáforos con nombre en esos proyectos [V, `git grep`]. Las canalizaciones con nombre no lo necesitan [I] |
+| `SeTakeOwnershipPrivilege`, `SeRestorePrivilege`, `SeBackupPrivilege`, `SeSecurityPrivilege` | **No** | El código solo fija como dueño la **propia** cuenta (canalización, `ServidorIntrospeccion.cs:120`) y crea las carpetas del anillo y de la licencia con DACL de SYSTEM, Administradores y la identidad del proceso (`CarpetaAnillo.cs:64-71`; `src/GPOS.Core/Sistema/Licencia/AlmacenLicenciaDisco.cs:113-122`) [V], lo que no exige privilegio; no lee ni escribe SACL. Los respaldos de SQL los hace el motor, no la API |
+| `SeAuditPrivilege` | **No** | La API escribe en el registro «Aplicación», no en «Seguridad» |
+| `SeAssignPrimaryTokenPrivilege`, `SeIncreaseQuotaPrivilege`, `SeTcbPrivilege`, `SeDebugPrivilege` | **No** | La API no lanza procesos con otro token ni lee la memoria de otros procesos (no hay `Process.Start`/`ProcessStartInfo` en esos proyectos [V, `git grep`]) |
+| `SeIncreaseWorkingSetPrivilege`, `SeTimeZonePrivilege`, `SeSystemtimePrivilege` | **No** | Sin uso en el código [V, `git grep` sin `SetSystemTime`] |
 
-### 3.2 Arquitectura y contrato
+**Lo que no necesita privilegio (para que el laboratorio no lo confunda):** abrir la llave privada del certificado TLS (`LocalMachine\My`): la da la ACL de la llave, que concede el verbo `tls` (PT-02); escuchar en `PuertoApi` con Kestrel (Windows no tiene puertos privilegiados y Kestrel no usa HTTP.sys ni `urlacl`) [I]; conectarse a SQL Server con autenticación integrada; escribir eventos en «Aplicación» con un origen ya registrado por el MSI; DPAPI de la máquina.
+
+### 3.2 Contrato para N-1 (B) y el MSI (devops de B)
+
+- `GPOS.Api.msi`: `<ServiceConfig OnInstall="yes" OnReinstall="yes"><RequiredPrivilege Name="SeChangeNotifyPrivilege" /></ServiceConfig>`, como la estación; recuperación como RB Q-4 de 1.2 (60 s, 3 veces, contador diario, `FailureActionsWhen="failedToStopOrReturnedError"`).
+- `ARRANQUE_PRIVILEGIOS` (B): la API compara su token con la lista declarada (`["SeChangeNotifyPrivilege"]`, como `IdentidadServicio.PrivilegiosDeclarados`) y, si sobra alguno, falla cerrada con su evento (EventId de N-1, que fija B).
+- **Medición (devops de B):** `sc qprivs GPOS.Api` tras instalar; `whoami /priv` desde el proceso (o el evento de `ARRANQUE_PRIVILEGIOS`); ejecución completa: arranque en Estricto, emisión de token, introspección desde `GPOS.Reportes` (`NT SERVICE\GPOS.Reportes`), TLS con el certificado del sitio, renovación de huella y escritura de eventos. Si alguna operación falla por un privilegio, se agrega **solo** ese y se justifica por escrito (ADR-76, punto 2).
+- **`NT SERVICE\GPOS.Web` (recomendación, mismo método):** misma lista. La Web no tiene canalización ni suplantación; usa el anillo (vinculado) y el TLS del sitio. La mide el mismo laboratorio.
+- **Fuera de Windows (ADR-129):** la equivalencia (capacidades de systemd, `NoNewPrivileges`) es de la tanda LN; no se fija aquí.
+
+**Esfuerzo:** A 0,25 dp (esta sección y la revisión del resultado del laboratorio). Laboratorio: devops de B, unos 0,5 dp [I].
+
+---
+
+## 4. Dependencias (no se diseñan aquí)
+
+- **N-1 (B):** `GPOS.Api` como servicio. Bloquea `GPOS.Api.msi`, que en la cadena de B es el **primer MSI** y crea la raíz (1.4.1).
+- **ADR-90 / B-3:** el verbo `red` (B) escribe `HKLM\SOFTWARE\GPOS NG\Servidor` antes de los MSI; el verbo `tls` (A) corre después de los MSI (plano de ADR-90 v2).
+- **El agente de actualización** (pista de ADR-63): lado sin privilegios, manifiesto y segundo canal.
+
+---
+
+## 5. N-10 · Privilegios del agente de actualización — **no se firma ahora; primero la revisión del auditor (B-6)**
+
+> **Estado v2:** B acepta la dirección técnica, pero **N-10 en detalle, Q-4 y Q-5 no se firman ahora** (RB F-3; AV). B-6, firmado, exige que el auditor-seguridad revise el diseño antes de construir el actualizador [V] HOJA:338, y el actualizador no entra antes del corte (INS 9.2). Lo que sigue es la **entrada para el auditor**, no una propuesta a firma. Frase, cuando toque: «F-3, Q-4 y Q-5 según la recomendación».
+
+### 5.1 Decisión recomendada
+
+**(a), como ya se firmó** [V] ADR-063.md:36, con el contrato de abajo. **(b)** (que el técnico confirme cada actualización) queda como **modo de reserva** para las versiones que exigen técnico (5.3), los sitios donde el propietario lo elija y el período sin agente.
+
+| Criterio | (a) Lado elevado fijo solo para el archivo firmado | (b) Confirmación del técnico |
+|---|---|---|
+| Publicación continua (ADR-63) | Sí | No |
+| Superficie de ataque | Un componente SYSTEM que procesa archivos descargados; mitigado con nueva verificación sobre copia SYSTEM-only, sin argumentos, un solo archivo y un solo firmante | Mínima |
+| Riesgo operativo | Ventana de mantenimiento (Q-5) | Versiones sin aplicar |
+| Compatibilidad con D-09 (H-6) | Solo con el modo híbrido (5.3) | Sí |
+| Costo | 7 dp (5.6) | unos 1 dp |
+
+### 5.2 Arquitectura y contrato
 
 **Componentes:**
-- **`GPOS.Actualizador`** (lado sin privilegios):
-  - servicio de Windows con la cuenta virtual `NT SERVICE\GPOS.Actualizador` y `RequiredPrivilege` = **solo `SeChangeNotifyPrivilege`** (ADR-76 con PA-76-1), con la autocomprobación `ARRANQUE_PRIVILEGIOS`;
-  - consulta el manifiesto, descarga y verifica por primera vez. No ejecuta nada;
-  - salida HTTPS solo hacia el origen del manifiesto. Es la pista aparte de ADR-63 y no se diseña aquí.
-- **Lado elevado: el mismo binario firmado en modo `aplicar`**, para no crear un segundo proyecto. Lo lanza **un servicio de Windows de inicio a demanda** como `LocalSystem`, `GPOS.Actualizador.Aplicar`, que **no es residente**: arranca, aplica y se detiene.
-  - **Por qué un servicio a demanda y no una tarea programada:**
-    - WiX lo declara de forma nativa con `ServiceInstall` y `ServiceConfig`, sin acciones personalizadas; WiX 5 no trae un elemento para tareas programadas [I];
-    - el permiso de arranque (`SERVICE_START`) se concede con precisión a `NT SERVICE\GPOS.Actualizador` mediante la DACL del servicio (`PermissionEx` sobre `ServiceInstall` [I]);
-    - el Administrador de servicios deja su rastro (7036).
-  - Es una «tarea elevada fija» en el sentido de lo firmado. **Alternativa descartada:** una tarea programada como SYSTEM con su descriptor de seguridad. Es equivalente, pero exige una acción personalizada o `schtasks` para registrarla y su ACL es menos visible para el auditor.
-  - **Segunda alternativa descartada:** un servicio SYSTEM residente con una canalización de órdenes, que dejaría un servidor SYSTEM permanente que escucha.
+- **`GPOS.Actualizador`** (lado sin privilegios): servicio con `NT SERVICE\GPOS.Actualizador`, solo `SeChangeNotifyPrivilege` y `ARRANQUE_PRIVILEGIOS`; consulta, descarga y verifica por primera vez; no ejecuta nada.
+- **Lado elevado: el mismo binario firmado en modo `aplicar`**, lanzado por un **servicio de inicio a demanda** como `LocalSystem`, `GPOS.Actualizador.Aplicar`, no residente. Por qué servicio y no tarea programada: WiX lo declara de forma nativa; el permiso `SERVICE_START` se concede con precisión al agente; el Administrador de servicios deja rastro (7036). Descartadas: tarea programada SYSTEM (exige acción personalizada o `schtasks`); servicio SYSTEM residente con canalización.
+- **Excepción de proyecto:** `GPOS.Actualizador` y su MSI son proyectos nuevos; su excepción se pide con F-3 (RB Q-1).
 
-**Carpetas** (todas con la acción previa de O-1 y bajo la raíz de O-3):
+**Carpetas** (con la acción previa de O-1 y bajo la raíz de O-3):
 
 | Carpeta | DACL protegida | Uso |
 |---|---|---|
-| `%ProgramData%\GPOS NG\Actualizador\Entrega\` | SY y BA control total; `NT SERVICE\GPOS.Actualizador` Modificar (`0x1301bf`) | El agente deja aquí `manifiesto.jws` y el *bundle* candidato |
-| `%ProgramData%\GPOS NG\Actualizador\Aplicar\` | **Solo SY y BA**; sin lectura de AU ni del agente | Copia de trabajo del lado elevado, registros de Burn y los dos últimos *bundles* aplicados (*roll-forward*, O-10) |
+| `%ProgramData%\GPOS NG\Actualizador\Entrega\` | SY y BA control total; `NT SERVICE\GPOS.Actualizador` Modificar (`0x1301bf`) | Manifiesto y *bundle* candidato |
+| `%ProgramData%\GPOS NG\Actualizador\Aplicar\` | **Solo SY y BA** | Copia de trabajo, registros de Burn y los dos últimos *bundles* aplicados |
 
-**Contrato del modo `aplicar` (lado elevado):**
+**Contrato del modo `aplicar`:**
 
 | Aspecto | Contrato |
 |---|---|
-| **Entradas** | **Ninguna desde la línea de órdenes ni desde el agente.** Rutas fijas compiladas en el binario, más los valores de `HKLM\SOFTWARE\GPOS NG\Actualizador` (escritura solo de SY y BA): `UltimoSecManifiesto`, `Ventana` y `Modo` (`Automatico` o `Asistido`) |
-| **Paso 1. Carpetas** | Comprueba `Entrega\` y `Aplicar\` con las reglas del vector (dueño, escritores, reanálisis) antes de leer nada → si falla, evento 4752 y código 24 |
-| **Paso 2. Copia** | Abre cada archivo de `Entrega\` **sin seguir reanálisis** y con `FILE_SHARE_READ` solamente, y lo copia a `Aplicar\`. Desde aquí trabaja solo sobre la copia (cierra la carrera entre comprobar y usar) |
-| **Paso 3. Nueva verificación** (no confía en el agente) | (i) Firma JWS del manifiesto con el verificador estricto único de `GPOS.Criptografia` (R-1 de ADR-77 [V] ADR-077.md:76) y con las llaves y la regla INV-3 de ADR-63; (ii) `sec` del manifiesto mayor que `UltimoSecManifiesto` (contra repetición); (iii) la entrada «servidor» declara **un solo archivo** con versión mayor que la instalada (`HKLM\SOFTWARE\GPOS NG\Servidor`); sin degradación → código 23; (iv) SHA-256 de la copia igual al del manifiesto; (v) `WinVerifyTrust` con la cadena válida **y** sujeto, emisor y EKU de firma de código iguales a los esperados del manifiesto (ADR-63, punto 5, con K-06 de ADR-75); (vi) la comparación con el manifiesto anterior que defina el diseño del agente (punto 6). Cada fallo tiene su evento y su código; el archivo se mueve a `Aplicar\rechazados\` |
-| **Paso 4. Condiciones** | Dentro de la ventana configurada. Si el manifiesto marca la versión con `requiereTecnico` (3.3), **no se aplica**: evento 4754 y código 31 |
-| **Paso 5. Ejecución** | `CreateProcess` (nunca `ShellExecute`) sobre la copia, con argumentos **fijos**: `/quiet /norestart /log "<Aplicar>\registros\<versión>.log"`, más la propiedad del *bundle* `MODO=Automatico` (3.3). Directorio de trabajo `Aplicar\`, entorno mínimo y espera con límite de 60 min [I; medir] |
-| **Paso 6. Resultado** | Lee el código de salida del *bundle*: 0 o 3010 → evento 4750 y se actualiza `UltimoSecManifiesto`; otro valor (por ejemplo, 1603 de O-1) → evento 4751 con el código y la ruta del registro. **Nunca reinicia el equipo** (3010 se informa) |
-| **Paso 7. Limpieza** | Vacía `Entrega\` y conserva en `Aplicar\` los dos últimos *bundles* aplicados |
+| **Entradas** | **Ninguna desde la línea de órdenes ni desde el agente.** Rutas fijas, más `HKLM\SOFTWARE\GPOS NG\Actualizador` (escritura solo de SY y BA): `UltimoSecManifiesto`, `Ventana`, `Modo`. La versión instalada se lee de `Version` en `HKLM\SOFTWARE\GPOS NG\Servidor`, que escribe el paso 9 (RB Q-1 de 1.2, punto 3) |
+| **Paso 1. Carpetas** | Comprueba `Entrega\` y `Aplicar\` con el vector → si falla, evento **4762** y código 24 |
+| **Paso 2. Copia** | Abre cada archivo de `Entrega\` sin seguir reanálisis y con `FILE_SHARE_READ`, y lo copia a `Aplicar\` |
+| **Paso 3. Nueva verificación** | (i) JWS con el verificador estricto único de `GPOS.Criptografia` e INV-3 de ADR-63; (ii) `sec` mayor que `UltimoSecManifiesto`; (iii) un solo archivo con versión mayor que la instalada (sin degradación → código 23, evento **4763**); (iv) SHA-256 de la copia; (v) `WinVerifyTrust` con sujeto, emisor y EKU esperados (ADR-63, punto 5; K-06 de ADR-75); (vi) comparación con el manifiesto anterior. Cada fallo con su evento (**4757** a **4759**) y su código |
+| **Paso 4. Condiciones** | Dentro de la ventana (Q-5). Si el manifiesto marca `requiereTecnico` (5.3), no se aplica: evento **4764** y código 31 |
+| **Paso 5. Ejecución** | `CreateProcess` sobre la copia, con argumentos **fijos**: `/quiet /norestart /log "<Aplicar>\registros\<versión>.log"` y `MODO=Automatico`; entorno mínimo; límite de 60 min [I] |
+| **Paso 6. Resultado** | 0 o 3010 → evento **4760** y se actualiza `UltimoSecManifiesto`; otro valor → evento **4761** con el código y la ruta del registro. **Nunca reinicia** |
+| **Paso 7. Limpieza** | Vacía `Entrega\`; conserva los dos últimos *bundles* en `Aplicar\` |
 
-**Códigos de salida del modo `aplicar`** (los registra el Administrador de servicios y los lee el agente):
+**Códigos de salida:** 0 aplicada; 3010 aplicada, requiere reinicio; 10 nada que aplicar; 20 manifiesto rechazado; 21 SHA-256 distinto; 22 Authenticode o firmante; 23 degradación o repetición; 24 carpeta insegura; 30 fuera de la ventana; 31 exige técnico; 40 el *bundle* falló; 1 error interno.
 
-| Código | Significado |
-|---|---|
-| 0 | Aplicada |
-| 3010 | Aplicada; requiere reinicio |
-| 10 | No hay nada que aplicar |
-| 20 | Manifiesto rechazado |
-| 21 | SHA-256 distinto |
-| 22 | Authenticode rechazado o firmante inesperado |
-| 23 | Degradación o repetición |
-| 24 | Carpeta insegura |
-| 30 | Fuera de la ventana |
-| 31 | La versión exige técnico |
-| 40 | El *bundle* falló (su código va en el evento 4751) |
-| 1 | Error interno (falla cerrada) |
+**Autoactualización del agente:** entrada propia en el manifiesto; el modo `aplicar` lanza su MSI desacoplado y termina (Q-6, diseño del agente).
 
-**Autoactualización del agente:** el agente **no** viaja dentro del *bundle* del servidor, porque el servicio que lanza el *bundle* no puede ser reemplazado por ese mismo *bundle* [I]. Tiene su propia entrada en el manifiesto, y el modo `aplicar` lanza su MSI **desacoplado y termina**. La siguiente ejecución lee el resultado en el registro de Windows Installer y emite el evento 4750 o 4751. Este detalle se cierra en el diseño del agente (Q-6).
+**Privilegios del lado elevado (PA-76-1):** `LocalSystem`; la lista de `RequiredPrivilege` se **mide** en el laboratorio (`sc qprivs` y una actualización completa) y la revisa el auditor. Prohibidos de entrada, salvo prueba en contra: `SeDebugPrivilege`, `SeTcbPrivilege`, `SeImpersonatePrivilege` y `SeAssignPrimaryTokenPrivilege`.
 
-**Privilegios (PA-76-1):**
-- **lado sin privilegios:** solo `SeChangeNotifyPrivilege` (norma por omisión);
-- **lado elevado:** `LocalSystem`. La lista exacta de `RequiredPrivilege` **se mide en el laboratorio**, con `sc qprivs` y una actualización completa del *bundle*, y la revisa el auditor-seguridad.
-  - Punto de partida que se propone probar: el mínimo con el que Burn y su motor elevado completan una actualización de máquina, porque el trabajo de los MSI lo hace el servicio `msiserver` con su propio token [I].
-  - **Prohibidos de entrada, salvo prueba en contra:** `SeDebugPrivilege`, `SeTcbPrivilege`, `SeImpersonatePrivilege` y `SeAssignPrimaryTokenPrivilege`.
-  - Si Burn necesita alguno, se justifica por escrito (ADR-76, punto 2).
+### 5.3 Modo híbrido por H-6 (con HB-13)
 
-### 3.3 Modo híbrido por H-6 (conflicto con D-09 de ADR-82)
+1. **`requiereTecnico` lo deriva la tubería, nunca a mano (HB-13):** al publicar, compara con los de la versión publicada anterior `EsquemaSistema.Version`, la versión de esquema de empresa, `rpt.VersionContrato` y el contrato de sobres. Si cualquiera cambia → `true`. Motivo: en Estricto la API no arranca si la marca de esquema es menor que la compilada [V] `src/GPOS.Api/Servicios/Inicializacion.cs:105-108` y `:175`, así que un `false` equivocado no corrompe datos pero **deja el sitio sin servicio** hasta que llegue el técnico.
+2. **Con `false`:** el *bundle* corre en `MODO=Automatico` y **omite los `ExePackage` con SQL** (esquema, credenciales y `verificar` con SQL); la verificación final usa solo comprobaciones locales y `/api/salud` de las tres API.
+3. **Separar lo que tiene SQL (HB-13):** `preparar` mezcla detener (sin SQL) con respaldar (con SQL), y `comprobar-servidor --fase previa` tiene partes con SQL. Para `MODO=Automatico`, B separa esas partes para que el modo automático ejecute solo las que no usan SQL privilegiado.
+4. **Con `true`:** el lado elevado no aplica: evento 4764 y aviso; el técnico ejecuta el *bundle* con su identidad (D-09).
+5. **Alternativa que el auditor debe evaluar (RB F-3):** que la cuenta virtual del lado elevado tenga un login de Windows con permisos de esquema. No tiene contraseña que custodiar (el motivo de D-09 para aplazar `gpos_esquema` [V según RB] `docs/adr/ADR-082.md:71`), pero es una identidad SQL privilegiada permanente y exigiría precisar D-09 con firma. Otra descartada: revivir `gpos_esquema` con credencial sellada.
+6. **Qué rompe (híbrido):** la actualización no es automática en las versiones que migran, hoy casi todas [I].
 
-1. **Qué marca el manifiesto:** cada versión del servidor declara `requiereTecnico: true|false`. Es `true` si la versión contiene **cualquier** paso con SQL que exija una identidad privilegiada: una migración de esquema, `crear-lectura` o un cambio de sobres. Lo fija la tubería al publicar, comparando las migraciones con las de la versión anterior.
-2. **Qué hace cada lado:**
-   - con `requiereTecnico: false`, el *bundle* corre en `MODO=Automatico`: **omite los `ExePackage` con SQL** (esquema, credenciales y `verificar`) y la verificación final usa solo comprobaciones locales: R1 a R8, P1 a P7 y K1 a K3, más `/api/salud` de las tres API, que informa si la versión del esquema es compatible;
-   - con `requiereTecnico: true`, el lado elevado no aplica la versión: avisa (evento 4754 y aviso en la API) y el técnico ejecuta el *bundle* a mano con su identidad nominal (D-09). Es la opción (b), limitada a esas versiones.
-3. **Respaldo previo:** B-5 lo exige antes de **migrar**. En `MODO=Automatico` no hay migración, así que no aplica [I]. Lo confirma el propietario (Q-4).
-4. **Alternativas descartadas:**
-   - **revivir `gpos_esquema`** con la credencial sellada en la máquina: contradice D-09 sin una firma nueva y crea un secreto más que custodiar;
-   - **un login de Windows para la cuenta del lado elevado con permisos de DDL:** convierte el actualizador en una identidad SQL privilegiada permanente;
-   - ambas se pueden reabrir si la mayoría de las versiones resulta tener `requiereTecnico: true`. En la fase actual es probable [I]: casi todas las tandas traen migraciones.
+### 5.4 Pruebas requeridas (N-10)
 
-### 3.4 Pruebas requeridas (N-10)
+P-N10-1 a P-N10-8 como en la v1, con los EventId renumerados (5.2 y sección 6) y una más:
+- **P-N10-9:** la tubería deriva `requiereTecnico = true` cuando cambia cualquiera de las cuatro versiones de 5.3, punto 1, y `false` solo si ninguna cambia (prueba de la tubería con dos manifiestos).
 
-| ID | Prueba |
-|---|---|
-| P-N10-1 | El modo `aplicar` no lee argumentos: con cualquier argumento extra termina con código 1 (prueba unitaria del analizador de órdenes) |
-| P-N10-2 | Rechazos: manifiesto mal firmado, `sec` repetido, versión menor, SHA distinto, Authenticode válido de **otro** firmante y archivo sin firma → cada uno con su código y su evento, y nada se ejecuta (ejecutor simulado) |
-| P-N10-3 | Carrera: cambiar el archivo de `Entrega\` después de la copia no altera lo que se ejecuta (ejecutor simulado que recibe la ruta de `Aplicar\`) |
-| P-N10-4 | `Entrega\` como unión o con un escritor ajeno → código 24 |
-| P-N10-5 | `requiereTecnico: true` → código 31 y ninguna ejecución |
-| P-N10-6 | Las DACL de `Aplicar\` y `Entrega\` y la DACL del servicio `GPOS.Actualizador.Aplicar` (solo `SERVICE_START` y consulta para el agente) se comparan con constantes (lectura de `.wxs`) |
-| P-N10-7 | El *bundle* acepta `MODO=Automatico` y en ese modo la cadena no contiene `ExePackage` con SQL (extiende B-1 y B-4 de INS) |
-| P-N10-8 | Laboratorio: actualización completa como SYSTEM y medición de los privilegios mínimos con `sc qprivs`; 1603 forzado (raíz plantada) → evento 4751; 3010 sin reinicio |
+### 5.5 Lo que necesita el auditor-seguridad (B-6)
 
-### 3.5 Lo que necesita el auditor-seguridad
+1. El contrato del modo `aplicar` (comprobaciones repetidas, copia SYSTEM-only, argumentos fijos).
+2. La lista de `RequiredPrivilege` del lado elevado medida en P-N10-8.
+3. La DACL del servicio a demanda (el agente puede arrancarlo, no reconfigurarlo).
+4. El modo híbrido frente a D-09, la derivación de `requiereTecnico` (HB-13) y la alternativa del login de la cuenta virtual (5.3, punto 5).
+5. El riesgo residual del parser JWS y de `WinVerifyTrust` como SYSTEM.
+6. Para O-1: la falla cerrada, que la acción nunca limpie y la DLL de SfxCA firmada por dentro y por fuera.
+7. **Nuevo en v2:** la lista de privilegios de `NT SERVICE\GPOS.Api` (sección 3) con el resultado del laboratorio.
 
-1. Revisar el contrato del modo `aplicar`: la lista de comprobaciones repetidas, la copia a una carpeta SYSTEM-only y los argumentos fijos.
-2. Aprobar o corregir la lista de `RequiredPrivilege` del lado elevado medida en P-N10-8, y la justificación de cada privilegio.
-3. Validar la DACL del servicio a demanda: el agente puede arrancarlo, pero no reconfigurarlo (`SERVICE_CHANGE_CONFIG` denegado), y que un agente comprometido no gane nada más allá de forzar una nueva verificación.
-4. Evaluar el modo híbrido de 3.3 frente a D-09 y si `MODO=Automatico` debilita la verificación integrada (sin R9 y R10).
-5. Evaluar el riesgo residual del parser JWS y de `WinVerifyTrust` corriendo como SYSTEM sobre entradas descargadas, y si conviene una comprobación de revocación en línea.
-6. Para O-1: revisar la falla cerrada (`SEGURIDAD_ILEGIBLE`), que la acción nunca limpie, y la DLL de SfxCA firmada por dentro y por fuera (WDAC, AppLocker), como en IQ [V] `…Acciones.csproj:44-55`.
+### 5.6 Esfuerzo (±50 %; excluye el agente sin privilegios)
 
-### 3.6 Esfuerzo (±50 %; excluye el agente sin privilegios, que es la pista de ADR-63)
-
-| Partida | dp |
-|---|---|
-| Modo `aplicar` (pasos 1 a 7, códigos, eventos) | 3,0 |
-| Servicio a demanda y sus DACL en el MSI del actualizador | 1,0 |
-| `MODO=Automatico` en el *bundle* (B o devops) | 1,0 |
-| Pruebas P-N10-1 a P-N10-7 | 2,0 |
-| **Total** | **7 dp** (3,5 a 10,5) |
-| Fuera del total: laboratorio P-N10-8 (devops o QA) | 1 dp |
-| Fuera del total: revisión del auditor | 1 dp |
-| Costo de infraestructura | USD 0. Una pieza más que firmar (ADR-33) |
+**7 dp** (3,5 a 10,5): modo `aplicar` 3,0; servicio a demanda y DACL 1,0; `MODO=Automatico` en el *bundle* (B o devops) 1,0; pruebas 2,0. Fuera: laboratorio 1 dp; auditor 1 dp; separación de `preparar` y de la fase previa (B) [I] unos 0,5 dp. USD 0 de infraestructura.
 
 ---
 
-## 4. EventId propuestos (origen `GPOS.Instalacion` para O-1 y `GPOS.Actualizador` para N-10)
+## 6. EventId (franja de A para la acción previa y el actualizador: **4753 a 4766**; RB Q-8 de 1.1)
 
-**Situación:** el 4742 está ocupado (H-5). Se propone **reservar del 4743 al 4756**. Antes de usar cada número se comprueba con `git grep` en todas las ramas de `origin` (regla de ADR-82:220). La reserva la registra el documentador en la nota de ADR-82, coordinada con B, porque N-8 (`GPOS.Instalacion` con 5130 a 5149) es de B y choca con los 5130 a 5133 y 5140 a 5143 de IMP [V] HOJA:495.
+**Reparto de la franja 47xx (técnico, sin firma; B lo registra con el documentador como nota de ADR-82):** 4742 `ModuloVenceIgnorado` (#103); 4743-4752 ADR-90 (A); **4753-4766 acción previa de O-1 (origen `GPOS.Instalacion`) y lado elevado del actualizador (`GPOS.Actualizador`) (A)**; 4767-4779 `GPOS.Instalacion` de B (`comprobar-servidor`, `implantar-servidor`, `red`); 4780-4789 verbo `tls` y su tarea (A); 4790-4799 reserva de DB-7. Se abandona 5130-5149 (choca con 5130-5133 y 5140-5143) [V HOJA:495].
 
 | EventId | Nombre | Nivel | Emisor | Datos (sin secretos) |
 |---|---|---|---|---|
-| 4743 | `CarpetaPreviaRechazada` | Error | Acción de O-1 (si el origen existe) | ruta, código, SID culpable, ProductCode, versión |
-| 4744 | `CarpetaPreviaIlegible` | Error | Acción de O-1 | ruta, error de Windows |
-| 4745 | `RaizCreadaProtegida` | Información | Acción de O-1 | ruta, SHA-256 del SDDL aplicado |
-| 4746 | `ActualizacionCandidata` | Información | Modo `aplicar` | versión y `sec` |
-| 4747 | `ActualizacionManifiestoRechazado` | Error | Modo `aplicar` | motivo (firma, INV-3, `sec`) |
-| 4748 | `ActualizacionHashDistinto` | Error | Modo `aplicar` | esperado y obtenido |
-| 4749 | `ActualizacionFirmaRechazada` | Error | Modo `aplicar` | sujeto, emisor, EKU y resultado de `WinVerifyTrust` |
-| 4750 | `ActualizacionAplicada` | Información | Modo `aplicar` | versión, código 0 o 3010, duración |
-| 4751 | `ActualizacionFallida` | Error | Modo `aplicar` | código del *bundle* y ruta del registro |
-| 4752 | `ActualizacionCarpetaInsegura` | Error | Modo `aplicar` | ruta y código del vector |
-| 4753 | `ActualizacionDegradacionRechazada` | Advertencia | Modo `aplicar` | versión instalada y ofrecida |
-| 4754 | `ActualizacionRequiereTecnico` | Advertencia | Modo `aplicar` | versión, motivo (`requiereTecnico` o fuera de la ventana) |
-| 4755 | `ActualizacionServicioAlterado` | Error | `comprobar-servidor` (comprobación K nueva) | la configuración o la DACL del servicio a demanda no coinciden con lo esperado |
-| 4756 | (reserva) | — | — | — |
+| 4753 | `CarpetaPreviaRechazada` | Error | Acción de O-1 (si el origen existe) | ruta, código, SID culpable, ProductCode, versión |
+| 4754 | `CarpetaPreviaIlegible` | Error | Acción de O-1 | ruta, error de Windows |
+| 4755 | `RaizCreadaProtegida` | Información | Acción de O-1 | ruta, SHA-256 del SDDL aplicado |
+| 4756 | `ActualizacionCandidata` | Información | Modo `aplicar` | versión y `sec` |
+| 4757 | `ActualizacionManifiestoRechazado` | Error | Modo `aplicar` | motivo (firma, INV-3, `sec`) |
+| 4758 | `ActualizacionHashDistinto` | Error | Modo `aplicar` | esperado y obtenido |
+| 4759 | `ActualizacionFirmaRechazada` | Error | Modo `aplicar` | sujeto, emisor, EKU y resultado de `WinVerifyTrust` |
+| 4760 | `ActualizacionAplicada` | Información | Modo `aplicar` | versión, código 0 o 3010, duración |
+| 4761 | `ActualizacionFallida` | Error | Modo `aplicar` | código del *bundle* y ruta del registro |
+| 4762 | `ActualizacionCarpetaInsegura` | Error | Modo `aplicar` | ruta y código del vector |
+| 4763 | `ActualizacionDegradacionRechazada` | Advertencia | Modo `aplicar` | versión instalada y ofrecida |
+| 4764 | `ActualizacionRequiereTecnico` | Advertencia | Modo `aplicar` | versión, motivo (`requiereTecnico` o fuera de la ventana) |
+| 4765 | (reserva de la acción previa) | — | — | — |
+| 4766 | (reserva del actualizador) | — | — | — |
 
-- **Nota [I]:** en el registro **Seguridad** de Windows, el 4742 al 4756 son eventos de auditoría de cuentas («cuenta de equipo cambiada», etc.). No hay colisión técnica, porque son registro y origen distintos, pero las reglas de alerta del Visor de eventos tienen que filtrar por origen y no solo por número (aviso para devops).
-- **Alertas mínimas** (B-8 firmado): 4743, 4744, 4747, 4748, 4749, 4751 y 4752 a 4755.
+- **Cambio frente a la v1:** `ActualizacionServicioAlterado` (la comprobación K de `comprobar-servidor` sobre la configuración y la DACL del servicio a demanda) **sale de esta franja**: la emite un verbo de B, así que su número es de 4767-4779 y lo asigna B cuando construya la comprobación (Entregas). Los nombres de 4756 a 4764 pueden cambiar con la revisión del auditor (5); los números quedan reservados.
+- **Visibilidad para `EventIdUnicosTests` (HB-06 (3)):** la prueba solo revisa `src/**/*.cs` [V] `tests/GPOS.Tests/Arquitectura/EventIdUnicosTests.cs:10-24`, y la acción DTF vive en `instalador/`. Opciones: **(a, recomendada)** B extiende la prueba a `instalador/**/*.cs` (0,25 dp, B) y A declara los tres números de la acción en `ComprobacionCarpetasPrevias.cs` con la forma que la prueba reconoce (`public static readonly EventId X = new(n, "Nombre")`; en `net472`, con un `EventId` mínimo propio bajo `#if NETFRAMEWORK` para no añadir `Microsoft.Extensions.Logging.Abstractions` a la `.CA.dll` [I]); **(b)** sin extender la prueba, A añade en `src` un espejo con las mismas constantes, que una prueba compara con el archivo de la acción. Los del actualizador vivirán en `src` y la prueba los verá sin cambios.
+- **Nota [I]:** en el registro **Seguridad** de Windows, 4742 a 4799 son eventos de auditoría de cuentas; no hay colisión (otro registro y otro origen), pero las alertas filtran por origen y número.
+- **Alertas mínimas** (B-8): 4753, 4754, 4757, 4758, 4759, 4761, 4762, 4763 y 4764.
+- Antes de unir cada PR que agregue EventId, `git grep` en todas las ramas de `origin` (RB 4.2, regla 7).
 
-**Errores SQL:** ninguno en estos tres contratos. Si alguno hiciera falta, se usa la franja libre que fije el arquitecto-datos, **fuera de 51618 a 51644**.
-
----
-
-## 5. Dependencias (no se diseñan aquí)
-
-- **N-1 (B):** `GPOS.Api` como servicio de Windows. Bloquea `GPOS.Api.msi`, y por tanto el primer MSI de la cadena que, según C-O1-5 (a), crea la raíz. Su lista de privilegios entra en la fila de `GposCarpetaPrevia` solo como nombre de servicio (`GPOS.Api`). Ver H-7.
-- **ADR-90 / B-3:** la red y el TLS de la Api y la Web no cambian estos contratos.
-- **El agente de actualización** (pista de ADR-63): el lado sin privilegios, el formato del manifiesto (el arquitecto-integraciones agrega `requiereTecnico` y la entrada «servidor» de un solo archivo) y el segundo canal.
+**Errores SQL:** ninguno en estos contratos; si alguno hiciera falta, fuera de 51618 a 51644.
 
 ---
 
-## 6. Firmas que necesita (Pendientes de firma del propietario)
+## 7. Firmas y estado (Pendientes de firma del propietario)
 
-| # | Qué se firma | Recomendación |
+| # | Qué | Estado v2 |
 |---|---|---|
-| F-1 | Excepción a `CLAUDE.md:24` para `instalador/Comun/GPOS.Instalador.Acciones` (`net472`, fuera de `GPOS-NG.slnx`), como precisión de ADR-77, punto 3. Conviene que nombre en la misma firma los `.wixproj` nuevos del paquete (Api, Web y *bundle*) | Sí |
-| F-2 | O-3: fragmento compartido, GUID canónico `9E7A0D3C-…` para la raíz y `0B21B6DB-…` para `config\`, `Permanent="yes"`, GUID publicado en el vector v3 | Sí |
-| F-3 | N-10 en detalle: lado elevado como servicio a demanda que reverifica (precisa el principio ya firmado) y **modo híbrido** `requiereTecnico` frente a D-09 | Sí, sujeto a la revisión del auditor |
-| F-4 | Reserva de EventId 4743 a 4756 | Sí, coordinada con N-8 de B |
+| **F-1** | Excepción a la regla de proyectos nuevos para los **cinco** proyectos de 1.2 (acción DTF, tres `.wixproj`, `GPOS.Comun.Servidor`) | **Pendiente de firma; firmar ahora** (RB). Sin ella no empiezan O-1, O-3 ni PR-1b de ADR-90 |
+| F-2 | O-3 | **No requiere firma:** punto técnico [V] HOJA:486 (HB-17) |
+| **F-3** | N-10 en detalle (servicio a demanda, modo híbrido derivado), Q-4 y Q-5 | **No se firma ahora**: después de la revisión del auditor (B-6, HOJA:338). Incluirá la excepción del proyecto `GPOS.Actualizador` |
+| F-4 | Reserva de EventId | **No requiere firma:** punto técnico [V] HOJA:495; resuelto por B (sección 6) |
+| F-5, F-6 | De ADR-90 (PR-4 adelantado; `Api:Url`/`AllowedHosts` y orden de `tls`) | Ver el plano de ADR-90 v2. F-6 (ii) confirma el orden de la cadena de 1.4.1 |
 
----
+## 8. Preguntas de la v1 y respuestas de B (RB 1.1)
 
-## 7. Preguntas abiertas
+| # | Pregunta | Respuesta de B, aplicada en esta v2 |
+|---|---|---|
+| Q-1 | ¿Los `.wixproj` entran en F-1? | Sí, nombrados uno por uno, más `GPOS.Comun.Servidor` (1.2) |
+| Q-2 | ¿Se reordena la cadena? | Sí, (a) + (b) y más: `red` antes de los MSI; `tls`, esquema y credenciales después (1.4.1) |
+| Q-3 | IQ y AdmCloud | En la próxima versión de cada conector, y antes de cualquier instalación fuera de desarrollo (R-O3-4) |
+| Q-4 | Respaldo en `MODO=Automatico` | Recomendación: sin respaldo, porque no cambia datos. **No se firma ahora** (F-3) |
+| Q-5 | Ventana de mantenimiento | Recomendación de B, que A adopta: ventana configurable por sitio, por omisión 02:00-05:00, aplicada solo si no hubo ventas en los últimos 15 minutos (señal sin SQL privilegiado, por `/api/salud`), aplazamiento máximo de 7 días y luego aviso. Se descarta «sin jornadas abiertas» (un negocio de 24 horas nunca aplicaría) [I]. **No se firma ahora** (F-3) |
+| Q-6 | Autoactualización del agente y `requiereTecnico` | Entrada del diseño del actualizador; no se decide aquí |
+| Q-7 | ¿Quién fija los privilegios de la API? | A (sección 3); devops de B mide; auditor revisa |
+| Q-8 | ¿Franja 47xx en lugar de 5130-5149? | Sí, con el reparto de la sección 6 |
 
-| # | Para | Pregunta | Recomendación |
-|---|---|---|---|
-| Q-1 | B, devops y el propietario | ¿Los `.wixproj` de `GPOS.Api.msi`, `GPOS.Web.msi` y del *bundle* entran en la misma excepción F-1? | Sí, nombrados uno por uno |
-| Q-2 | B y devops | H-4 / C-O1-5: ¿se reordena la cadena para que el primer elemento sea un MSI del núcleo y el registro de Burn quede fuera de `GPOS NG` hasta el final? | (a) + (b) |
-| Q-3 | B | ¿Cuándo alinean IQ (`Permanent="yes"`) y AdmCloud (GUID canónico)? ¿Hay alguna instalación de IQ 0.4.1 fuera del laboratorio? | En la próxima versión de cada conector |
-| Q-4 | El propietario | Con `MODO=Automatico` (sin migración), ¿se exige igual el respaldo previo de B-5? | No: B-5 se refiere a migrar |
-| Q-5 | El propietario | Ventana de mantenimiento por sitio (por ejemplo, de 02:00 a 05:00) y si debe esperar a que no haya jornadas abiertas | Ventana configurable; jornadas: sí, si la API lo expone sin SQL privilegiado |
-| Q-6 | El diseñador del agente (arquitecto-integraciones) | Autoactualización del agente desacoplada (3.2) y formato de `requiereTecnico` en el manifiesto | Entrada propia del agente; bandera booleana firmada |
-| Q-7 | B y el coordinador | H-7: ¿quién fija la lista de privilegios de `NT SERVICE\GPOS.Api`, A (HOJA:491) o B (encargo)? | Que lo aclare el coordinador; no bloquea O-1, O-3 ni N-10 |
-| Q-8 | B (N-8) | ¿Se adopta 4743 a 4756 en lugar de 5130 a 5149 para `GPOS.Instalacion`, incluidos los eventos de RT-04 de ADR-90? | Sí; deja libre la franja 51xx de reportes |
-
----
-
-## 8. Riesgos
+## 9. Riesgos
 
 | Riesgo | Severidad | Mitigación |
 |---|---|---|
-| H-4: la primera instalación limpia falla, o queda una raíz débil, por un paso previo al MSI | Alta | C-O1-5; P-O1-8 |
-| H-6: la actualización automática casi nunca aplica, porque casi todas las versiones migran | Media | Modo híbrido; reabrir `gpos_esquema` con una firma si la medición lo justifica |
-| Un componente SYSTEM procesa archivos descargados | Media | Copia a SYSTEM-only, reverificación, argumentos fijos, revisión del auditor |
-| Deriva entre las implementaciones de la comprobación de carpetas (IQ MSI, IQ arranque, agente, Reportes y la acción nueva) | Media | Vector común con pruebas en cada repositorio; `.wixlib` como reserva |
-| `CustomTable` o `PermissionEx` sobre `ServiceInstall` se comportan distinto en WiX 5 | Baja | Reserva con `SetProperty` (O-1) o tarea programada (N-10); se comprueba al compilar |
+| H-4/HB-01: la primera instalación limpia falla o deja la raíz débil | Alta → **Baja** con la cadena de B | 1.4.1 (`GPOS.Api.msi` primero), 1.4.2 (`CarpetaAnillo`), P-O1-8 |
+| F-1 no se firma pronto: O-1 no empieza y el *bundle* no se puede firmar (B-1) | Media / Alto | F-1 primera en la hoja (RB) |
+| El nuevo orden de la cadena tiene un efecto de Burn no previsto (reversión, caché) | Media | P-O1-8 con reversión forzada en cada paso |
+| La lista de privilegios de la API resulta corta (introspección sin `SeImpersonatePrivilege`) | Baja | Medición de devops; se agrega solo lo que se demuestre, con justificación |
+| H-6: la actualización automática casi nunca aplica | Media | Modo híbrido derivado; alternativa del login de la cuenta virtual para el auditor |
+| Componente SYSTEM que procesa archivos descargados | Media | Copia SYSTEM-only, reverificación, argumentos fijos, auditor (B-6) |
+| Deriva entre las implementaciones de la comprobación de carpetas | Media | Vector común; `IComprobacionCarpetas` en LN con la lógica de O-1 como fuente (HB-07) |
+| `CustomTable`, `PermissionEx` sobre `ServiceInstall` o `FailureActionsWhen` en WiX 5 | Baja | Se comprueba al compilar; reservas descritas |
 
 ---
 
 ## Resumen (10 líneas)
 
-1. O-1: hace falta una acción DTF compartida, diferida y sin suplantación (puerto de la de IQ), con el fragmento `instalador/Comun/Fragmentos/ComprobacionCarpetasPrevias.wxs`; la construye el desarrollador de A en unos 3,5 dp.
-2. O-1 **sí exige una excepción** a `CLAUDE.md:24` (proyecto `net472` fuera de la solución). No hay alternativa sin proyecto que cumpla ADR-77, punto 3.
-3. Contrato de O-1: tabla `GposCarpetaPrevia`, mensaje 25101, salida 1603 y los códigos del vector v2. Nunca limpia; solo crea la raíz si falta.
-4. Hallazgo Alto H-4: `GPOS.Migracion` y el registro de Burn pueden crear la raíz sin protegerla antes del primer MSI (`CarpetaAnillo.cs:41`). Hay que reordenar la cadena (C-O1-5).
-5. O-3: fragmento fuente compartido con el GUID canónico de IQ (`9E7A0D3C-…`) para la raíz y uno nuevo (`0B21B6DB-…`) para `config\`, `Permanent="yes"` y el GUID publicado en el vector v3. Sin `.msm`.
-6. O-3 corrige H-2: el agente y el conector IQ ya usan GUID distintos para la misma raíz. Unos 0,85 dp de A, más el trabajo de B en los conectores.
-7. N-10: el principio (a) ya está firmado. Se propone el lado elevado como servicio a demanda que copia a una carpeta SYSTEM-only y reverifica el manifiesto, el SHA-256 y Authenticode, con argumentos fijos. Unos 7 dp.
-8. Hallazgo Alto H-6: la actualización automática choca con D-09 de ADR-82 (migración con la identidad del técnico). Se propone un modo híbrido con `requiereTecnico` en el manifiesto.
-9. EventId: el 4742 ya está tomado en `a/dv07-formato-licencia`. Se proponen 4743 a 4756 y ningún error SQL; si alguno hiciera falta, fuera de 51618 a 51644.
-10. Pendiente de firma: F-1 a F-4. El auditor revisa N-10 (privilegios medidos, DACL del servicio y modo híbrido) y la falla cerrada de O-1.
+1. v2 aplica las respuestas de B: cadena nueva (HB-01), `CarpetaAnillo` sin padres heredados, EventId 4753-4766, privilegios de la API y estado de las firmas.
+2. O-1: acción DTF compartida, diferida y sin suplantación (puerto de IQ); 3,5 dp de A; **espera la firma de F-1** (cinco proyectos).
+3. H-4 confirmado por B y resuelto: `GPOS.Api.msi` es el primer MSI y su acción crea la raíz protegida; `red` antes, y `tls`, esquema y credenciales después.
+4. `CarpetaAnillo.Crear` dejará de crear padres con DACL heredada: raíz con `raiz.sddl`, intermedios con DACL protegida y, en Estricto, falla si falta la raíz (0,5 dp, pista H-17 v2).
+5. O-3: fragmento compartido, GUID canónico de IQ y nuevo para `config\`, `Permanent="yes"`; punto técnico sin firma, construido tras F-1.
+6. Privilegios de `NT SERVICE\GPOS.Api`: solo `SeChangeNotifyPrivilege`, justificado contra el código; devops de B lo mide con `sc qprivs` y el auditor lo revisa.
+7. EventId: 4753-4755 para la acción previa, 4756-4764 para el actualizador, 4765-4766 de reserva; la comprobación K del servicio a demanda pasa a la franja de B.
+8. N-10 en detalle, Q-4 y Q-5 **no se firman ahora**: primero el auditor (B-6). `requiereTecnico` lo deriva la tubería (HB-13).
+9. F-2 y F-4 dejan de ser firmas (puntos técnicos de la hoja).
+10. Pendiente de firma: F-1 (ahora); F-3 (después del auditor).
 
 ### Cierre
 - Estado: Completado
-- Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\A\blueprint-instalador-o1-o3-n10-2026-10-20.md`
-- Supuestos: 1 sp ≈ 5 dp; la sintaxis de `CustomTable` y de `PermissionEx` sobre `ServiceInstall` en WiX 5, el comportamiento de Burn como SYSTEM y la creación de la carpeta del registro por Burn son inferidos; que los proyectos de instalador cuentan para `CLAUDE.md:24` es inferido de la excepción de ADR-109; el estado del código es el de `origin/master` y `origin/feature/modelo-ng` del 2026-10-20.
-- Decisiones candidatas a ADR: precisión de ADR-77, punto 3 (acción compartida, excepción de proyecto, C-O1-5); precisión de ADR-77, punto 6 (GUID de los componentes compartidos en el vector v3); precisión de ADR-63/ADR-76 (lado elevado a demanda y modo híbrido `requiereTecnico` frente a D-09 de ADR-82). Las redacta el arquitecto-maestro.
-- Entregas a otros agentes: desarrollador de A → acción y fragmentos; B y devops → C-O1-5, `MODO=Automatico`, Q-1, Q-2, Q-7 y Q-8; B (conectores) → R-O3-4; arquitecto-integraciones → `requiereTecnico` y la entrada del agente en el manifiesto; arquitecto-datos → confirmar que `MODO=Automatico` puede omitir los pasos SQL; auditor-seguridad → 3.5; documentador → vector v3 y reserva de EventId en ADR-82; QA → P-O1-7, P-O1-8, P-O3-4 y P-N10-8.
-- Próximo paso recomendado: llevar F-1 a F-4 y Q-2 a la próxima hoja del arquitecto-maestro, y avisar a B de H-4 y H-6 antes de que devops empiece el *bundle*.
+- Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\A\blueprint-instalador-o1-o3-n10-2026-10-20.md` (v2)
+- Supuestos: 1 sp = 5 dp; la sintaxis de `CustomTable`, `PermissionEx` sobre `ServiceInstall` y `FailureActionsWhen` en WiX 5, el comportamiento de Burn como SYSTEM, que la suplantación en nivel de identificación basta para leer el SID del cliente sin `SeImpersonatePrivilege` y que Kestrel no necesita privilegios para escuchar son inferidos; las citas de INS y de `ADR-082.md:71` se toman de RB sin volver a verificarlas.
+- Decisiones candidatas a ADR: precisión de ADR-77, punto 3 (acción compartida y C-O1-5 sobre la cadena de B); precisión de ADR-77, punto 6 (GUID en el vector v3); precisión de P-77-2 para `CarpetaAnillo` (padres con DACL protegida explícita; Estricto sin raíz = falla); precisión de ADR-76 (lista de privilegios de `GPOS.Api`); precisión de ADR-63/ADR-76 (lado elevado y modo híbrido derivado) tras el auditor. Las redacta el Arquitecto Maestro.
+- Entregas a otros agentes: Arquitecto Maestro → F-1 a la hoja (y F-3 tras el auditor); desarrollador de A → `CarpetaAnillo.Crear` (1.4.2) en la pista de H-17 v2, y O-1/O-3 tras F-1; devops de B → cadena de 1.4.1, fila del anillo de la Web en `GPOS.Web.msi`, medición de privilegios (sección 3), `FailureActionsWhen`; desarrollador de B → N-1 con `ARRANQUE_PRIVILEGIOS`, extensión de `EventIdUnicosTests` a `instalador/**`, número de `ActualizacionServicioAlterado` en 4767-4779, separación de `preparar` y de la fase previa; B (conectores) → R-O3-4; auditor-seguridad → 5.5; documentador → nota de EventId en ADR-82 y vector v3; arquitecto-datos → lista de versiones para derivar `requiereTecnico` y login de `NT SERVICE\GPOS.Api` después del MSI (RB 5); QA → P-O1-7, P-O1-8, P-O3-4 y P-N10-8.
+- Próximo paso recomendado: que el Arquitecto Maestro lleve F-1 a la firma antes del 2026-10-28 y que devops de B mida la lista de la sección 3 en cuanto exista `GPOS.Api.msi`.
