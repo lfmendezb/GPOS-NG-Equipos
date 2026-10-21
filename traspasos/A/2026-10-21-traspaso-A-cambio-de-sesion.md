@@ -3,7 +3,7 @@
 Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo 2 compilaciones a la vez), pegue: «Somos el equipo A. Lee `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\A\2026-10-21-traspaso-A-cambio-de-sesion.md` y retoma desde ahí». Sustituye al traspaso del 2026-10-18.
 
 ## 0. Antes de nada
-- **Hay una suite oficial corriendo** (sin agente) en `C:\Users\lfmen\source\repos\GPOS-NG-pr2` sobre `a/adr90-rt05-tls-escucha` @ `ae432314`: `dotnet test tests/GPOS.Tests --no-build --filter "Transicion!=Ola5&Transicion!=Defecto"`, iniciada hacia las 14:35. Salida: `C:\Users\lfmen\AppData\Local\Temp\claude\C--Users-lfmen-source-repos-Solucion-GPOS-NG\18f65f3f-6063-4693-9cad-760d63179546\scratchpad\suite-pr2.txt` (termina con la línea de totales). **No compilar en ese árbol hasta que termine**; después borrar `testhost.exe`. Si el proceso murió con la sesión, repetirla.
+- **Hay una suite oficial corriendo** (sin agente) en `C:\Users\lfmen\source\repos\GPOS-NG-pr2` sobre `a/adr90-rt05-tls-escucha` @ `da8c3668`: `dotnet test tests/GPOS.Tests --no-build --filter "Transicion!=Ola5&Transicion!=Defecto"`, iniciada hacia las 15:35 (la primera, `suite-pr2.txt`, sobre ae432314 dio 4893 correctas y 3 fallidas: 1 mía de ADR-126, ya corregida, y las 2 inestables conocidas C10 y Rg14Lote2). Salida de la nueva: `C:\Users\lfmen\AppData\Local\Temp\claude\C--Users-lfmen-source-repos-Solucion-GPOS-NG\18f65f3f-6063-4693-9cad-760d63179546\scratchpad\suite-pr2-b.txt` (termina con la línea de totales). **No compilar en ese árbol hasta que termine**; después borrar `testhost.exe`. Si el proceso murió con la sesión, repetirla.
 - Vigilancia: la tarea de Windows «GPOS-NG Vigilar área común (A)» está habilitada (cada 10 min, sin costo de modelo; el propietario levantó la pausa el 2026-10-21). Al abrir, armar el `Monitor` de `novedades-A.md` (comando en la memoria `revision-area-comun-30-min`) y leer `novedades-A.md`.
 - Leer `avisos/B-a-A` nuevos y `traspasos/B/2026-10-21-cierre-sesion-b.md`. **Nada se une sin orden expresa del propietario.**
 
@@ -12,17 +12,18 @@ Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo
 |---|---|---|---|
 | GPOS-NG #103 | `a/dv07-formato-licencia` @ 662eb9e9 | DV-07: formato de la licencia | Aceptado por B. Se une **seguido** del PR #1 del emisor, con la suite oficial sobre el combinado |
 | GSF.EmisorLicencias #1 | `a/dv07-ajuste-emisor` | Ajuste del emisor (submódulo en 662eb9e9) | Abierto. Antes de unir, subir el submódulo al commit unido |
-| #122 | `a/adr90-rt01-modo-red` @ 8c99f9cf | PR-1a de ADR-90 (RT-01) | Aprobado con observaciones (B, C, seguridad). Suite oficial completa sin repetir tras las correcciones |
-| #130 | `a/adr90-rt06-filtro-origen` @ e53b71a3 | PR-3 (RT-06, filtro por IP del nodo), apilado sobre #122 | Idem |
-| #137 | `a/adr90-rt05-escucha-servidor` | PR-1b (`GPOS.Comun.Servidor`), apilado sobre #130 | Seguridad: aprobado con observaciones (S1b-01 a 04 corregidos) |
+| #122 | `a/adr90-rt01-modo-red` @ d592b338 | PR-1a de ADR-90 (RT-01) | Aprobado con observaciones (B, C, seguridad). Suite oficial completa sin repetir tras las correcciones |
+| #130 | `a/adr90-rt06-filtro-origen` @ 37d7bb05 | PR-3 (RT-06, filtro por IP del nodo), apilado sobre #122 | Idem |
+| #137 | `a/adr90-rt05-escucha-servidor` @ 99d5f79e | PR-1b (`GPOS.Comun.Servidor`), apilado sobre #130 | Seguridad: aprobado con observaciones (S1b-01 a 04 corregidos) |
 | #136 | `a/n1-endurecimiento-servicio` @ 2cd41377 | N-1: S-03, S-04, S-05, S-07, R-02, R-03, R-06 | B: aprobado con observaciones |
 | #124 | `a/instalador-o1-o3` @ 82318329 | O-1 y O-3 (acción previa, raíz y `config\`) | Seguridad y C: aprobado con observaciones. Falta S-04 (devops) y laboratorio |
-| #139 (borrador) | `a/adr90-pr4-cableado-api` @ a32eb8b6 | PR-4: `Program.cs` de la API, retira `FijarEscuchaPorOmision`, regla sin modo | **No se une sin PR-2** |
-| #140 (borrador) | `a/adr90-rt05-tls-escucha` @ ae432314 | PR-2 (RT-05: TLS, selector, URL de la Web, H-15) más 8 commits de correcciones | Relectura: aprobado con observaciones |
+| #139 (borrador) | `a/adr90-pr4-cableado-api` @ fcc3d3b9 | PR-4: `Program.cs` de la API, retira `FijarEscuchaPorOmision`, regla sin modo | **No se une sin PR-2** |
+| #140 (borrador) | `a/adr90-rt05-tls-escucha` @ da8c3668 | PR-2 (RT-05: TLS, selector, URL de la Web, H-15) más 8 commits de correcciones | Relectura: aprobado con observaciones |
 
 **Orden de unión previsto:** #122 → #130 → #137 (reapuntar la base tras cada uno) → #136 → (#139 y #140 juntos) → #124. Cada unión: `gh pr merge N --merge --match-head-commit <sha>`; tras unir, rebasar lo apilado.
 
 ## 2. Pendiente inmediato de A
+0. Ya hecho el 2026-10-21 tarde: aviso a B con acuses de sus tareas nuevas (acepto 1, 2 y 3; no tomo la 4), lista S-16 (`rutas-inventario-sin-filtro-sucursal-2026-10-21.md`; B decide D-1 a D-4 y el alcance de E-1) y la pila actualizada (`A-a-B/2026-10-21-acuse-tareas-nuevas-s16-y-pila-adr90.md`). Falta solo informar el resultado de la suite nueva.
 1. Esperar la suite de §0 y publicar en `A-a-B/` el aviso con la pila (#137, #139, #140) y su resultado (la relectura dice «unir con observaciones» si la suite está en verde). Fechas prometidas a B: PR-1b 2026-10-28 y PR-4 2026-10-30 (ventana F-5: 28-oct a 6-nov, terminar antes del 2-nov; DB-7 empieza el 2-nov en la zona de `Program.cs`).
 2. **R-01 y R-02 de la relectura de PR-2 y PR-4** (`traspasos/A/relectura-seguridad-pr2-pr4-adr90-2026-10-21.md`): encadenar la excepción original en `ExigirArranque` y ampliar la prueba de S2-05 (cuatro vías nuevas y más carpetas); R-04 opcional. Son minutos.
 3. **S2-04** (decidir si `AllowedHosts` de la API se endurece, arquitecto de A) y dejar H-15 (`Secure` «con modo», `UseCookiePolicy`) y H-09 (4743 en lugar de excepción) en el plano.
