@@ -136,7 +136,7 @@ El laboratorio usa los nombres y contratos de BP-A:
 
   Los avisos a 20, 10 y 3 días son de la tarea de B (origen de N-8).
 - **Web → API:** `ClienteApiLocal`, con `https://<NombresServidor[0]>:<PuertoApi>` y `ConnectCallback` a `127.0.0.1` y, si falla, a `::1`.
-- **Linux:** BP-A devuelve `SinModo` en Linux (4.2), así que R-L espera la fuente Linux de A.
+- **Linux:** BP-A v2 devuelve `SinPlataforma` en Linux (4.2; corrección de la revisión del PR #122), así que R-L espera la fuente Linux de A.
 
 Las diferencias se resuelven en la sección 11 (C-A1 a C-A5).
 
@@ -821,7 +821,7 @@ Puntos que **no** se resuelven en este diseño. Cada uno va a su responsable.
 | LS-03 y LS-09 (contratos) | A, arquitecto-software | SD-10 v2: DER de la CA en el QR o por una ruta de solo lectura, y su validación de perfil; reglas de normalización de nombres de la sección 4.1. El diseño ya las fija como política de prueba |
 | O-02 y O-03, `NotBefore` (O-07) | A, arquitecto-software y desarrollador-backend; B (`comprobar-servidor`) | Verbo: al menos un DNS y `NotBefore` − 1 h. Selector: `HuellaAnterior`, su orden de escritura y la regla de arranque. `comprobar-servidor`: subárboles `dNSName` e `iPAddress` presentes en la CA |
 | F-05 | A, desarrollador-backend | Variante ECDSA de `PrivadaEnTpm` si la CA es ECDSA |
-| R-L | A, arquitecto-software (tramo Linux) | El equivalente de PT-02 en Linux, con nginx o Kestrel (ADR-129, C15). BP-A devuelve `SinModo` en Linux (4.2) |
+| R-L | A, arquitecto-software (tramo Linux) | El equivalente de PT-02 en Linux, con nginx o Kestrel (ADR-129, C15). BP-A v2 devuelve `SinPlataforma` en Linux (4.2; corrección de la revisión del PR #122) |
 | **LS-20** | **A**, arquitecto-software (SD-10 v2) | Al dar de alta el ancla: subárboles permitidos **exactamente** iguales a la lista del sitio del QR (más la exclusión de `/0` si no hay IP, y el EKU si se firma Q-LAB-01) y ninguna extensión crítica desconocida. Opcional: el SHA-256 del DER en el QR. Orden: ninguna credencial por la conexión sin validar; el código de emparejamiento (`ClienteDispositivo.cs:130`) y el inicio de sesión de MAUI, solo por una conexión nueva con P-FIJADA. Lo prueban LAB-84 y LAB-85 |
 | **LS-21** | **A** (reglas) y **Arquitecto Maestro** (con LS-05) | A: en el modo público, sin comodines parciales, una sola etiqueta, al menos dos etiquetas tras el `*` y nunca con un host IP; el modo lo fija solo el QR o la opción explícita «certificado del cliente», nunca un alta manual sin huella. Maestro: si la bajada de modo y el comodín cambian RT-10 puntos 4 y 5, preparar la nota o la precisión. Lo prueban LAB-81 y LAB-86 |
 | **C-A1** · Web → API | **A**, arquitecto-software | BP-A (5.2) valida a la API con el almacén del sistema, sin validador propio (su R-11). Este diseño proponía P-FIJADA (O-04), porque PT-03 pide exclusividad allí donde hay CA fijada. Hay que decidir: (a) mantener BP-A y aceptar R-11 (el laboratorio prueba LAB-22 así), o (b) usar la sobrecarga con la CA del sitio también en producción, dentro del validador único (LS-16). El laboratorio no depende de la elección |
