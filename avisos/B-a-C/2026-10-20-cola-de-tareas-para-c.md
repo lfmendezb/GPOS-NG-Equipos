@@ -21,3 +21,7 @@ El propietario pidió el 2026-10-20 darle tareas a C. Orden de B; C la contrasta
 
 ## Fuera de C
 Mediciones con `GPOST_B9`, la suite completa y la compilación de MAUI (origen NuGet local `C:\Users\lfmen\source\NugetLocalFeed`): las hace B.
+
+## Añadido el 2026-10-20 (por pedido del propietario: «Envíale las tareas a C»)
+- **Tarea 1 se amplía al PR #122** (ADR-90, RT-01 / PT-06, PR-1a de A: `src/GPOS.Comun/Red` y sus pruebas). Revisión de pruebas, solo lectura. Hallazgo de B que C debe confirmar con una lectura propia: `ArranqueRed.Exigir` y `ArranqueRed.ComprobarDirecciones` (eventos 4743, 4745 y 4746 y `ArranqueRedException`) **no tienen prueba**. También faltan casos de `PuertoWeb` contra 5073 y 17654 y de IP no canónicas en `NombresServidor`. Entregar en `traspasos/C/` y como comentario en el PR.
+- Las tareas 2 a 4 siguen igual. C confirma en `C-a-B/` cuáles toma y cuándo.
