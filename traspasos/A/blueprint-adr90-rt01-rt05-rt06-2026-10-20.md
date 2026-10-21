@@ -315,14 +315,14 @@ Sigue leyendo la IP **después** de `UseForwardedHeaders`. `AuthEndpoints` (zona
 | 4752 | (reservado) | — | — | Para una sola ampliación de estas piezas sin pedir rango |
 
 - Se declaran como `public static readonly EventId X = new(n, "Nombre")` en `GPOS.Comun/Red/EventosRed.cs` (PR-1a), que es el formato que reconoce `EventIdUnicosTests` (`tests/GPOS.Tests/Arquitectura/EventIdUnicosTests.cs:20-21`) [V]. `GPOS.Comun` ya referencia `Microsoft.Extensions.Logging.Abstractions` [V], así que no hace falta `GPOS.Comun.Servidor` para declararlos. *Diferencia con RB 4.1, que ponía `EventosRed` en PR-1b:* se adelanta a PR-1a porque AV pide «PR-1a con los EventId 4743 a 4752» y las pruebas de la evaluación pura los necesitan; no cambia ningún número.
-- Resto de la franja 47xx (no son de este plano): 4753-4766 acción previa y actualizador (A); 4767-4779 `GPOS.Instalacion` de B; 4780-4789 verbo `tls` y su tarea (A); 4790-4799 reserva de DB-7. Se abandona 5130-5149.
+- Resto de la franja 47xx (no son de este plano): 4753-4766 acción previa y actualizador (A); 4771-4779 (4767-4770: N-1 de B; aviso B del 2026-10-21) `GPOS.Instalacion` de B; 4780-4789 verbo `tls` y su tarea (A); 4791-4799 reserva de DB-7 (4790: T1-7 de B). Se abandona 5130-5149.
 - Antes de unir cada PR, `git grep` en todas las ramas de `origin` (regla de ADR-82:220; RB 4.2, regla 7).
 - Son eventos del registro de la aplicación, no de `EventosSeguridad`: no entran en la comprobación de catálogo del 4733 de DB-7.
 - El origen en el Visor de eventos lo da `AddWindowsService` (N-1, B).
 
 ## 6. Interfaces entre módulos
 
-- **Verbo `red` (B) → servicios:** `ModoRed`, `PuertoApi`, `PuertoWeb`, `NombresServidor` e `IpNodos` (siempre presente) en el registro, escritos en el paso 2 de la cadena, antes de los MSI. Si cambia el modo, deja el evento de PT-06 (franja 4767-4779 de B). Ningún valor en el entorno del servicio.
+- **Verbo `red` (B) → servicios:** `ModoRed`, `PuertoApi`, `PuertoWeb`, `NombresServidor` e `IpNodos` (siempre presente) en el registro, escritos en el paso 2 de la cadena, antes de los MSI. Si cambia el modo, deja el evento de PT-06 (franja 4771-4779 (4767-4770: N-1 de B; aviso B del 2026-10-21) de B). Ningún valor en el entorno del servicio.
 - **Verbo `tls` (A) → servicios:** solo por el registro (`HuellaApi`, `HuellaWeb`) y el almacén `LocalMachine\My`, en el orden de PT-02: emitir, dar lectura de la llave a `NT SERVICE\GPOS.Api|Web`, comprobar que la abre y **luego** publicar la huella. Corre en el paso 6, **después** de los MSI (las cuentas virtuales ya existen y la raíz ya está protegida; HB-01; F-6 (ii)). El servicio no avisa al verbo: el refresco de 5 minutos basta.
 - **Web → API:** `https://<nombre>:<PuertoApi>` por *loopback* (5.2), con el mismo `ReenvioIpCliente` de hoy.
 
