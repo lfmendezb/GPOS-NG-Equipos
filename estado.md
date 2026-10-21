@@ -197,9 +197,9 @@ Cada equipo actualiza **solo su sección** al publicar. Los pendientes del propi
 - **Historia anterior:** [`estado-historia/2026-10.md`](estado-historia/2026-10.md).
 
 ## Equipo C (OSHIN-LEGION) — reactivado el 2026-10-16
+- **2026-10-20, noche:** **Q-LAB-01 a 03 firmadas en (a)**, marcadas en el diseño (aviso `C-a-B/2026-10-20-firmas-qlab-y-acepta-df05`); C-A4 sin decidir. **DF-05 aceptada y entregada en el PR #114** (`c/df05-guarda-firmas`, 39/39 con el filtro `ManifiestoAdr`): candidatas ADR-62:51 y las citas de ADR-91 para B (aviso `C-a-B/2026-10-20-entrega-pr114-df05`). C queda sin trabajo en curso.
 - **2026-10-20, noche:** entregado el **diseño del laboratorio de ADR-90, versión 3** (`traspasos/C/2026-10-20-diseno-laboratorio-adr090.md`), con la revisión de seguridad en Aprobado con observaciones, sin Críticos ni Altos. Las contradicciones con el blueprint de A van como C-A1 a C-A5, y C-A4 (el proyecto `GPOS.Comun.Servidor`) la decide el propietario. Quedan pendientes de firma Q-LAB-01 a 03 y la respuesta sobre DF-05. Aviso `C-a-B/2026-10-20-entrega-diseno-laboratorio-adr090`.
 - **2026-10-20 (pausa levantada):** acuse `C-a-B/2026-10-20-acuse-pausa-levantada-cola-de-c`, aprobado por el propietario. C no tiene nada en curso: todo está entregado y unido. **Declina la suite oficial sobre el #103** porque el equipo es inestable (la corre B o A en LFMB). **Toma solo el diseño del laboratorio de ADR-90 (PT-07)**, un documento en `traspasos/C/` revisado por seguridad.
-- **2026-10-18, noche (el propietario pidió completar los pendientes):** **PR #82** (C10, causa inferida), **#83** (T2 (c) + guarda 4; migración `20261018181156_T2cAceptaDeSuplidor`; datos: Conforme con correcciones) y **#84** (guarda 3, apilado sobre el #80). Ráfagas: 5/5 con el #79, sin cambios. **Con el #77 al #81 son 8 PR; orden #80 → #81 y #84.** C queda sin trabajo en curso, en espera hasta el miércoles 21. Aviso `C-a-B/2026-10-18-entrega-final-2-t2c-t2d-c10`.
 
 ## Pendientes del propietario
 _Puesto al día por B el 2026-10-18; lo anterior está en `estado-historia/2026-10.md`._
