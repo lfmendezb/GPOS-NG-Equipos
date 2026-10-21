@@ -11,7 +11,7 @@
     - suma las precisiones de B (`avisos/B-a-C/2026-10-20-conforme-cola-de-c.md`): PT-02 explícito, la CA sucesora con certificado cruzado (PT-04, bloque S nuevo) y las pruebas de arquitectura de los valores HTTP por omisión (sección 14);
     - se alinea con el blueprint de A (`traspasos/A/blueprint-adr90-rt01-rt05-rt06-2026-10-20.md`, en adelante **BP-A**). Las contradicciones con BP-A van en la sección 11 (C-A1 a C-A5).
 
-  La sección 13 traza cada LS, de LS-01 a LS-22. **No está firmado:** Q-LAB-01 a Q-LAB-03 esperan la firma del propietario.
+  La sección 13 traza cada LS, de LS-01 a LS-22. **Firmado por el propietario el 2026-10-20 («todo según recomendación»):** Q-LAB-01 (a), Q-LAB-02 (a) y Q-LAB-03 (a), con el subconjunto en memoria de N-L en la fase 1.
 - **Base leída:**
   - `origin/master` `45a9ab75`: ADR-90, hoja de PT-01 a PT-10, REV y ADR-129;
   - `origin/feature/modelo-ng` `b8f166db`: código.
@@ -733,6 +733,8 @@ Como el exceso supera el presupuesto firmado, va a firma: **Q-LAB-03**.
 
 ### Q-LAB-01 · EKU `serverAuth` en la CA del sitio (O-05, con LS-07 y LS-13)
 
+**Firmado el 2026-10-20: (a).** Los casos «según la firma» (LAB-30, LAB-62 y LAB-88b) se leen con (a).
+
 **Problema.** Las Name Constraints impiden que una llave filtrada suplante sitios de Internet. Pero la CA está en `LocalMachine\Root` de cada puesto **para todos los usos**, y las NC no limitan:
 - la firma de código, que no lleva nombres DNS;
 - el correo S/MIME, porque `rfc822Name` no está restringido.
@@ -759,6 +761,8 @@ LAB-30 lo mide con una hoja **dentro** de las NC y con un control (CA-X), para q
 
 ### Q-LAB-02 · Revocación con el «certificado del cliente» (sin CA fijada; O-06)
 
+**Firmado el 2026-10-20: (a) `NoCheck`**, con el residual de la CA de dominio declarado aparte.
+
 **Problema.** PT-03 manda usar el almacén del sistema, pero no dice si se comprueba la revocación.
 
 **Opciones:**
@@ -781,6 +785,8 @@ LAB-30 lo mide con una hoja **dentro** de las NC y con un control (CA-X), para q
 [ ] (a) · [ ] (b) · [ ] (c) · [ ] Otra: ______
 
 ### Q-LAB-03 · Presupuesto del laboratorio y momento del bloque Linux
+
+**Firmado el 2026-10-20: (a).** Se aprueba el exceso (laboratorio de 0,50 a 0,54 sp). El subconjunto en memoria de N-L corre en la fase 1 y el resto, con el tramo Linux de ADR-129.
 
 **Problema.** El laboratorio completo pasa las 0,35 sp de ADR-90 en **0,15 a 0,19 sp** con Windows y el subconjunto en memoria de Linux (de USD 225 a 380), y en 0,17 a 0,21 sp si todo el bloque Linux corre ahora (sección 9).
 
