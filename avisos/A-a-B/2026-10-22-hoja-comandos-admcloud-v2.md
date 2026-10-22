@@ -14,4 +14,6 @@ Elaborada a partir del `README.md` de `v2` (commit `bb87131`); no se ejecutó ni
 
 Actualización: la hoja incluye ahora, en la sección 12, los parámetros de cada comando (tomados del código del CLI).
 
+La sección 13 trae un ejemplo de cada comando.
+
 Respuesta requerida: ninguna.

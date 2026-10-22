@@ -186,3 +186,81 @@ Recomendación: no usar `--password` ni `--value` en la línea de comandos (qued
 | `audit show <número>...` | uno o varios números de evento, como los muestra `audit list` |
 | `audit forward` | ninguno (copia ya lo pendiente a SQL Server) |
 | `audit purge` | `--older-than <días>` · `--before <fecha>` (aaaa-mm-dd, hora local) · `--target all\|local\|sqlserver` (por omisión `all`) · `--apply` (sin ella solo simula) |
+
+---
+
+# 13. Un ejemplo de cada comando
+
+Se ejecutan desde la carpeta de instalación (`C:\GSF\SyncAdmCloud`). Los valores (servidor, base, números de documento, fechas) son de ejemplo.
+
+## sync
+```powershell
+.\IGpostAC.exe sync all                              # todo lo habilitado en Api_AdmCloud_Settings
+.\IGpostAC.exe sync customers                        # maestra de clientes
+.\IGpostAC.exe sync quotes COT-0088                  # una cotización
+.\IGpostAC.exe sync salesorders PED-0912             # un pedido de venta
+.\IGpostAC.exe sync invoices A-001234                # una factura concreta (crédito o contado)
+.\IGpostAC.exe sync returns DEV-0034 --no-wait       # una devolución; encola y termina
+.\IGpostAC.exe sync receipts --timeout 120           # recibos pendientes, esperando hasta 2 min
+.\IGpostAC.exe sync items 721296                     # un artículo simple creado en el POS
+```
+
+## sign
+```powershell
+.\IGpostAC.exe sign "3F2504E0-4F89-41D3-9A0C-0305E82C3301;32"      # formato heredado {guid};{tipoNcf}
+.\IGpostAC.exe sign 3F2504E0-4F89-41D3-9A0C-0305E82C3301 31 --wait false
+```
+
+## reconcile
+```powershell
+.\IGpostAC.exe reconcile                             # mide, sin modificar (usa Reconciliation:FromDate)
+.\IGpostAC.exe reconcile --from 2026-06-01           # mide desde otra fecha
+.\IGpostAC.exe reconcile --from 2026-06-01 --apply   # recupera, consultando antes a AdmCloud
+```
+
+## service
+```powershell
+.\IGpostAC.exe service                               # sincronización continua hasta detenerlo (Ctrl+C)
+```
+
+## queue
+```powershell
+.\IGpostAC.exe queue stats                           # resumen del estado de la cola
+.\IGpostAC.exe queue list --state DeadLetter --type CashInvoice --limit 50
+.\IGpostAC.exe queue show A-001234                   # estado de un documento
+.\IGpostAC.exe queue retry A-001234                  # devolverlo a la cola tras corregir la causa
+.\IGpostAC.exe queue verify                          # resolver los que esperan confirmación de AdmCloud
+.\IGpostAC.exe queue purge --older-than 60           # simula: qué se borraría
+.\IGpostAC.exe queue purge --older-than 60 --apply   # borra de verdad
+```
+
+## config connection
+```powershell
+.\IGpostAC.exe config connection set --server "SRV01\SQLEXPRESS" --database "POS_CLIENTE" --user "gsf"
+.\IGpostAC.exe config connection set --server "SRV01\SQLEXPRESS" --database "POS_CLIENTE" --integrated --trust-server-certificate
+.\IGpostAC.exe config connection show                # estado, sin revelar la contraseña
+.\IGpostAC.exe config connection test                # comprueba que la cadena guardada conecta
+.\IGpostAC.exe config connection clear --yes         # borra la cadena guardada sin preguntar
+```
+
+## config schema
+```powershell
+.\IGpostAC.exe config schema install                 # crea Api_AdmCloud_SyncEstado, vistas y ItemSync (repetir tras actualizar)
+.\IGpostAC.exe config schema status                  # comprueba si los objetos están instalados
+```
+
+## audit
+```powershell
+.\IGpostAC.exe audit list --document A-001234 --since 2026-10-01 --level Warning --limit 100
+.\IGpostAC.exe audit list --pending --json           # lo aún no copiado a SQL Server, en JSON
+.\IGpostAC.exe audit show 1842 1843                  # eventos completos por número
+.\IGpostAC.exe audit forward                         # copiar ya lo pendiente a SQL Server
+.\IGpostAC.exe audit purge --older-than 90 --target local          # simula
+.\IGpostAC.exe audit purge --before 2026-07-01 --target all --apply # borra de verdad
+```
+
+## Invocación desde GPOS (sin cambios respecto de v1)
+```powershell
+.\IGpostAC.exe                                       # sincroniza todo lo habilitado
+.\IGpostAC.exe "3F2504E0-4F89-41D3-9A0C-0305E82C3301;32"   # firma ese documento
+```
