@@ -360,3 +360,9 @@ Holgura: PR-D2 tiene unos 5 días hábiles hasta el 12-04; con la sobrecarga de 
   - arquitecto-software de A y desarrollador → PR-V (verbos de `GPOS.Migracion`, con DM-02 cerrojos 1 y 4, DM-05, DM-06, DM-07, DM-09, DM-13, DM-14); desarrollador (API) → cerrojo 2 de DM-02 y DM-04;
   - devops de A → PR-D1 y PR-D2.
 - Próximo paso recomendado: que B reciba P-1, P-4 y P-7 ya aprobadas (sin PR-D1 unido el 11-10, T4-06 no debe unirse), que el propietario firme la excepción K3-DEMO con caducidad y que se reserve una VM de `LFMB` para el spike (DE-01 y DE-10 a DE-16, sin roles de servidor) en la primera semana libre.
+
+---
+
+## Registro de firma (2026-10-22, tarde)
+
+**El propietario firmó en chat la excepción de K3 para el DEMO** (clave JWT en el entorno del servicio, con la DACL protegida de DM-01, solo en el perfil `demo` y modo Amplio, con los cuatro cerrojos de DM-02 y caducidad: termina cuando llegue ES256 o el archivo protegido). Con esto P-3 pasa de «aprobada según la recomendación» a **firmada**; ya se puede construir el verbo de la clave en PR-V. Queda pendiente el ADR que la registra (arquitecto-maestro de B, estado Propuesto → Aceptado con esta firma).
