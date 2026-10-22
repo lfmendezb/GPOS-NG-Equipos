@@ -3,22 +3,43 @@ Para: B        De: C        Fecha: 2026-10-22
 Tipo: Entrega (tarea 3 del aviso B-a-C/2026-10-22-respuesta-dorados-y-tareas-nuevas-2: plan de la prueba de arquitectura de CamposPersonalesTitular.json, ADR-92 TT-05/F-4)
 Prioridad: Media
 Repositorio y rama: GPOS-NG `feature/modelo-ng` (esquema de destino; TT lo construye B con L1b desde 2026-11-16); fuentes leidas con `git show origin/...`
-Estado: Abierto (plan, sin codigo; adelantado respecto de la fecha 9-nov)
+Estado: Abierto (versión 2, 2026-10-22: ajustada con los hechos verificados en el código y el inventario de salidas; plan, sin código; adelantado respecto de la fecha 9-nov)
 ```
 
-# Plan de la prueba de arquitectura de `CamposPersonalesTitular.json` (TT-01 a TT-03)
+# Plan de la prueba de arquitectura de `CamposPersonalesTitular.json` (TT-01 a TT-03), versión 2
 
 **Fuentes leidas:** (1) mi `traspasos/C/2026-10-22-plan-pruebas-tt-adr92.md`, grupo A (ARQ-01..ARQ-14) y sus D-n; (2) `traspasos/B/2026-10-22-respuesta-especialista-pos-tt.md` completa (lista de campos de TT-02, JSON propuesto en su 1.7); (3) ADR-92, bloque TT y precision del 2026-10-22, y la hoja `2026-10-22-hoja-firma-adr92-precisiones.md` (F-4, F-5, F-7, F-9, P-2, Q-TT1-a), ambos de `origin/master`; (4) **codigo vivo en `origin/feature/modelo-ng`, marcado [V]** (ver 11): `Terceros.cs`, `Personas.cs`, `MaeConfiguracion.cs` (mapeo de `Cliente`), `CfgConfiguracion.cs` (mapeo de `Empleado`), `PuenteMae.cs` (cabecera), `TablasEndpoints.cs` (grupos de `/api/maestros`), y las pruebas modelo `ClasificacionRutasLicenciaTests`, `CambioRncEnLaApiTests`, `ContratoConsultasTests`, `RutasLicenciaAprobadas.json`. Nada compilado ni ejecutado.
 
 **Clave.** [V] verificado en codigo (archivo, rama); [I] inferido; [P1], [P2], [P9] = depende de las preguntas 1, 2 y 9 de mi plan de TT, que B lleva al propietario; [D-n] = decision abierta de la seccion 1 de ese plan (D-2 espejo, D-4 lista final de anonimizacion, D-5 deuda F-9, D-6 deduccion de persona fisica, D-7 comensales, D-8 firma del JSON, D-10 rectificar un bloqueado). **Falla si...** = la mutacion mental: la linea de produccion o del JSON que, cambiada, debe poner la prueba en rojo.
 
+## Cambios de la versión 2
+
+Insumos nuevos: `verificacion-codigo-hechos-tt.md` (hechos [V] sobre `b4378650`), `inventario-reportes-identificacion-tercero.md` (22 salidas) y el aviso de B del 2026-10-22 (las preguntas 1, 2 y 9 de mi plan de TT **aún no se han llevado al propietario**). Hice `git fetch`: `origin/feature/modelo-ng` está en `2fa6843b` y, según `git diff --name-only`, ningún archivo citado por los hechos cambió desde `b4378650`; releí `PuenteMae.ClienteAsync/SuplidorAsync/EliminarMaestroAsync` en `2fa6843b`. Nada compilado ni ejecutado.
+
+| ID | Qué cambió | Por qué |
+|---|---|---|
+| §7.2, ARQ-09 | El centinela del espejo es **real**: `PuenteMae` existe en `2fa6843b`. Se describe qué copia, qué no copia y qué nunca escribe | Hecho 5 (`PuenteMae.cs:143-162`) |
+| ARQ-10 | Ya no pide que el puente exponga `ColumnasPersonalesCopiadas` (pregunta 9 cerrada): descubre las columnas copiadas **por comportamiento** (centinelas) | Hecho 5 |
+| §2.1 regla 3, JSON | `espejoHeredado.extra` (`Telefono3`, `CorreoElectronico3`, `IdDireccion`) **se sustituye** por `extraNoEscritas` solo documental: el puente nunca las escribe | Hecho 5; hallazgo H-A8 |
+| §2.6 G-1, G-3 | G-1: la constante existe y nadie más la usa (cuidado con el otro `CodigoContado` de `Catalogos.cs:63`); G-3: la semilla está en `SqlMigracionesMae.cs:56-58`, ya no «ubicación [I]» | Hecho 4 |
+| §6.4, S-7 | El interceptor se registra en **dos** contextos (`u.Ng` y `u.Heredado`): el puente escribe con otro `DbContext` | Hecho 5 |
+| §7.5 (nuevo) | **Clase 5 · centinela de salidas con identificación**: `SalidasIdentificacionTercero.json` versionado, casos Z-1 a Z-6, mutaciones M-28 a M-30 | Inventario de 22 salidas (ARQ-17 del plan de TT) |
+| §7.6 (nuevo) | Centinelas del estado «bloqueado»: X-5 (escritores de `Inhabilitado`) y X-6 (consumidores de un tercero, `ConsumidoresTerceroBloqueo.json`); mutaciones M-31 y M-32 | Hecho 0 y hechos 1 a 3, 6, 7 (ARQ-15 y ARQ-16 del plan de TT) |
+| §4.1 | M-28 a M-33 nuevas | Los centinelas anteriores |
+| §9 | **Revisión de H-A1 a H-A7** (todas vigentes; H-A4 ajustada) y H-A8, H-A9 nuevos | Hechos 0 y 5; inventario |
+| §10 | Pregunta 9 **cerrada**; 7 precisada (P1, P2, P9 siguen pendientes del propietario); preguntas 11 a 13 nuevas | — |
+| §0, §11, §13 | Casos (39), esfuerzo (3,4 dp) y «Qué no verifiqué» actualizados | — |
+
+**Pendiente del propietario (ningún hecho lo resuelve):** **P1** (¿rectificar purga el historial?: cambia una clave del JSON), **P2** (sin comprobantes, ¿se anonimizan nombre y documento?: cambia las listas condicionales) y **P9** (¿TT escribe el espejo o espera la eliminación del puente?: decide si el JSON lleva `espejoHeredado` o si las rutas se desactivan). Los hechos reducen el costo de P9 (el puente es reutilizable y escribe solo 13 columnas) pero no la deciden.
+
 ## 0. Resumen
 
-- **Un conjunto de 4 clases de prueba** (no una sola), con 31 casos, porque cada una exige un entorno distinto: dos corren sin base (texto y modelo EF), una necesita la API en proceso con solo la base del sistema, y una necesita base de empresa. Asi la parte barata (a, b, e, g y la mayor parte de c) corre en segundos y en cualquier maquina, incluida OSHIN-LEGION.
+- **Un conjunto de 5 clases de prueba** (no una sola; la quinta es nueva en la v2), con 39 casos (31 del v1 + 6 de la clase 5 + 2 centinelas X-5/X-6), porque cada una exige un entorno distinto: dos corren sin base (texto y modelo EF), una necesita la API en proceso con solo la base del sistema, y una necesita base de empresa. Asi la parte barata (a, b, e, g y la mayor parte de c) corre en segundos y en cualquier maquina, incluida OSHIN-LEGION.
 - **Lo que se sostiene hoy [V]:** el modelo de EF se puede leer sin conectarse a la base (`EmpresaNgDbContext` es un `DbContext` con `DbContextOptions`; hay mapeo con largos y tipos), la API se puede recorrer sin empresas (`ApiRutasLicenciaFactory`, patron de `ClasificacionRutasLicenciaTests`) y ya existe la lista aprobada de rutas `RutasLicenciaAprobadas.json`. No existe todavia `/api/titulares`, ni `TitularBloqueadoEn`, ni el privilegio, ni el JSON en ninguna rama (busqueda sin resultados [V]).
 - **Cuatro hallazgos del plan (seccion 9):** (H-A1) el JSON propuesto por el especialista **viola** la regla `conservarBloqueado ⊆ rectificar` de mi ARQ-05 (`TipoIdentificacion`); (H-A2) la lista `nunca` no tiene motivo por columna, lo que impide el criterio «declarada no personal con motivo»; (H-A3) `excluir` como cadena SQL es un hueco que ninguna prueba cierra (H-6 de mi plan); (H-A4) la deteccion de lecturas fuera de la lista exige que TT no use SQL a mano en la API: hay que fijarlo como regla de construccion.
+- **(v2) Hechos que cambian el plan:** el estado «cliente bloqueado» no existe en operación y ninguna barrera de documento nuevo lee la marca (X-5, X-6); el puente existe y escribe 13 columnas, nunca `Telefono3`/`CorreoElectronico3`/`IdDireccion` y no copia `Inhabilitado` (ARQ-10); y 22 salidas muestran la identificación del tercero, de las cuales 606, 607, la impresión de comprobantes y la retención **no se enmascaran** (clase 5).
 - **Dependencias:** [P1] cambia el esquema del JSON (si rectificar purga el historial), [P2] cambia las listas `conservarBloqueado` (condicional a que existan comprobantes), [P9] decide si el JSON lleva `espejoHeredado` o si TT se desactiva mientras exista `PuenteMae`. El plan se escribe con la lista del especialista; los casos marcados cambian de resultado esperado, no de estructura.
-- **Esfuerzo (inferido de C, ±40 %):** 2,0 dias-persona de pruebas para a..h sin el espejo ni comensales (frente a 1,5 dp del plan de TT para ARQ-01..08/11, porque aqui se suman el interceptor de SQL, la prueba de mutaciones y el JSON canonico); +0,5 dp si [P9] pide el espejo; +0,25 dp para el centinela de comensales. Sin costo de infraestructura.
+- **Esfuerzo (inferido de C, ±40 %):** 3,4 días-persona de pruebas para las clases 1 a 5 sin el espejo ni comensales (el v1 decía 2,0 para a..h; +0,25 de X-5/X-6, +0,6 de la clase 5, +0,3 de ajustes y mutaciones nuevas); +0,5 dp si P9 pide el espejo (ARQ-09/10 por comportamiento, ya sin pedir cambios al puente); +0,25 dp para el centinela de comensales. Sin costo de infraestructura; sin paquetes nuevos (la clase 5 usa `sys.columns`/`sys.sql_modules` y reflexión).
 
 ## 1. Ubicacion de los archivos (propuesta, siguiendo la estructura que ya existe [V])
 
@@ -34,6 +55,9 @@ El patron del repositorio es `tests/GPOS.Tests/Arquitectura/` para las pruebas d
 | `tests/GPOS.Tests/Arquitectura/CamposPersonalesTitularCoberturaTests.cs` | Clase 2: modelo EF contra el JSON (c) | C |
 | `tests/GPOS.Tests/Arquitectura/RutasTitularArquitecturaTests.cs` | Clase 3: rutas, DTO, clase `Esencial`, servidor decide (d, f) | C |
 | `tests/GPOS.Tests/Arquitectura/AccesoDatosTitularTests.cs` | Clase 4: interceptor de SQL (d en ejecucion) | C |
+| `tests/GPOS.Tests/Titulares/SalidasIdentificacionTercero.json` (v2) | Lista versionada de las salidas con identificación y su política (§7.5); misma guarda dorado + `CAMBIOS.md` que el JSON de TT | B, con la firma del contador para las obligatorias |
+| `tests/GPOS.Tests/Titulares/ConsumidoresTerceroBloqueo.json` (v2) | Lista versionada de los consumidores de cliente y suplidor y su decisión ante un bloqueado (§7.6) | B |
+| `tests/GPOS.Tests/Arquitectura/SalidasIdentificacionTests.cs` y `EstadoBloqueadoArquitecturaTests.cs` (v2) | Clase 5 y centinelas X-5, X-6 | C |
 
 La carpeta `Titulares` de pruebas se incluye en el proyecto como `CopyToOutputDirectory` si hace falta; basta con leer por `Raiz()` como hace `CambioRncEnLaApiTests` [V] (busca `GPOS-NG.slnx` hacia arriba).
 
@@ -98,9 +122,9 @@ El plan de TT (ARQ-08) decia leer `excluir: ["Codigo = 'GENERICO'"]` como texto.
 
 | Caso | Verifica | Falla si… |
 |---|---|---|
-| G-1 `Excluir_GENERICO_coincide_con_la_constante` | `clientes.excluirCodigos` contiene exactamente `Cliente.CodigoContado` (por reflexion: `typeof(Cliente).GetField("CodigoContado").GetRawConstantValue()`) [V: la constante existe, `Terceros.cs:17`, valor `"GENERICO"`] | se renombra la constante y el JSON queda atras, o el JSON la quita |
+| G-1 `Excluir_GENERICO_coincide_con_la_constante` | `clientes.excluirCodigos` contiene exactamente `Cliente.CodigoContado` (por reflexion: `typeof(Cliente).GetField("CodigoContado").GetRawConstantValue()`) [V: la constante existe, `Terceros.cs:17`, valor `"GENERICO"`, y en `2fa6843b` no se referencia en ningún otro lugar de `src` ni `tests`; **no confundir** con el `CodigoContado` de `Catalogos.cs:63`, valor `"CONTADO"`, de otro catálogo: la reflexión es sobre el tipo `Cliente`] | se renombra la constante y el JSON queda atras, o el JSON la quita |
 | G-2 `El_servicio_usa_la_constante_no_un_literal` | busqueda por simbolo/texto en `src/GPOS.Core/Titulares/**`: no aparece el literal `"GENERICO"` fuera del JSON y de la constante | alguien copia el literal en el servicio |
-| G-3 `Todo_registro_sembrado_de_sistema_esta_excluido` | recorre los datos iniciales (`database/*.sql` y los sembradores de `GPOS.Migracion` [I: ubicacion exacta no verificada]) y, para cliente/suplidor/empleado con `TipoIdentificacion IN ('C','P','N')` o empleado, cada `Codigo` sembrado figura en `excluirCodigos` | se siembra otro registro de sistema («CLIENTE RAPIDO») y no se excluye |
+| G-3 `Todo_registro_sembrado_de_sistema_esta_excluido` | recorre los datos iniciales ([V] `SqlMigracionesMae.cs:56-58` y `database/02_actualizacion_gpos.sql:256`, según la verificación; más los sembradores de `GPOS.Migracion` [I]) y, para cliente/suplidor/empleado con `TipoIdentificacion IN ('C','P','N')` o empleado, cada `Codigo` sembrado figura en `excluirCodigos` | se siembra otro registro de sistema («CLIENTE RAPIDO») y no se excluye |
 | G-4 (clase 4, con base) `GENERICO_nunca_lo_toca_TT` | ver 6.4 | la ruta lo lee o lo escribe |
 
 La mayuscula/minuscula (`generico`): la comparacion del servicio debe ser la de la base (CI). Se prueba por comportamiento (HTTP-09 del plan de TT), no aqui; aqui solo se prohibe `==` en memoria sobre el codigo en el servicio de TT (busqueda de simbolos: ningun `string.Equals`/`==` con la constante dentro de `Titulares`; la exclusion va dentro de la consulta). [I: heuristica de texto, ver falsos positivos en 8]
@@ -181,6 +205,12 @@ La tabla siguiente es el «plan de mutacion» de la prueba. Cada fila: lo que se
 | M-25 | Quitar `espejoHeredado` mientras exista `PuenteMae` | ARQ-09 (7.2) [P9][D-2] | espejo |
 | M-26 | Dejar `espejoHeredado` cuando `PuenteMae` ya no existe | ARQ-09 (7.2) [P9][D-2] | centinela de dos sentidos |
 | M-27 | Agregar a `com.Comensal` una columna `Cedula` | ARQ-13 (7.3) [D-7] | comensal sin identificadores ajenos |
+| M-28 | **(v2)** Crear una vista `rpt.X` con una columna `RncCliente` sin ponerla en `SalidasIdentificacionTercero.json` | Z-1 | salidas nuevas clasificadas |
+| M-29 | **(v2)** Cambiar la política de `rpt.Formato606` a `enmascarable`, o enmascarar su `RncCedula` | Z-3 (y SQL-80 del plan de TT) | el 606 y el 607 no se enmascaran |
+| M-30 | **(v2)** Agregar a `ReportesSemilla.cs` un reporte con SQL directo sobre `caja.CajaChica.RncCedula` sin clasificar | Z-2 | reportes con SQL directo |
+| M-31 | **(v2)** Agregar una ruta que ponga `cat.Cliente.Inhabilitado` fuera de TT | X-5 | escritores de `Inhabilitado` |
+| M-32 | **(v2)** Agregar un servicio que llame a `ReferenciasNg.ClienteAsync` sin listarlo en `ConsumidoresTerceroBloqueo.json` | X-6 | consumidores de un tercero |
+| M-33 | **(v2)** Que `PuenteMae.ClienteAsync` asigne `Telefono3` (o cualquier columna heredada no clasificada) | ARQ-10 | espejo por comportamiento |
 
 ### 4.2 Como se ejecutan las mutaciones sin dejarlas en el codigo
 
@@ -273,6 +303,8 @@ Las **tablas auxiliares** (`audit.Bitacora`, la tabla de solicitud/apoderado [H-
 - Se usa un analizador reducido propio sobre el texto que genera EF para SQL Server (`UPDATE [cat].[Cliente] SET [Telefono] = @p0, ... WHERE ...`; `SELECT [c].[Id], [c].[Codigo]...`) **o**, si el equipo tiene `Microsoft.SqlServer.TransactSql.ScriptDom`, ese. Costo del paquete: licencia MIT y ya en el ecosistema de SQL [I: no verificado si ya esta referenciado; **politica de paquetes: solo si B lo aprueba**]. La alternativa sin paquete: contar con que EF emite siempre `[alias].[Columna]`/`SET [Col] =` y extraer con expresiones regulares, **cubriendo solo lo que EF emite**; las sentencias que no calzan con el patron hacen fallar la prueba («no entiendo este SQL»), nunca la pasan en vacio.
 - El interceptor lee `DbCommand.CommandText` en `ReaderExecuting`/`NonQueryExecuting`/`ScalarExecuting` y su `Parameters`.
 - Registra por solicitud (correlacion con `AsyncLocal` o un `ILogger` de la prueba).
+- **(v2) Se registra en los dos contextos de la unidad de trabajo:** `u.Ng` (modelo nuevo) y `u.Heredado` (el puente escribe `Clientes`/`Suplidores` con otro `DbContext` [V `PuenteMae.cs:143-162`]). Un interceptor solo en `u.Ng` no vería nunca la escritura del espejo y S-7 pasaría en vacío. `PuenteMae` usa EF y no SQL a mano [V], por lo que no viola X-1.
+- **(v2) Implicación de diseño [I]:** si el servicio de TT rectificara llamando a `MaestrosService.GuardarClienteNgAsync` (que escribe el DTO completo y llama al puente), S-1 fallaría y un campo omitido podría quedar en blanco. El diseño que cumple S-1 es: `UPDATE` propio de las columnas de la lista, y luego `PuenteMae.ClienteAsync` con un DTO reconstruido de la fila ya actualizada.
 
 ### 6.5 Reglas de arquitectura que sostienen a la clase 4
 
@@ -297,12 +329,23 @@ El JSON del especialista trae `excluir: ["Codigo = 'GENERICO'"]` y `personaFisic
 
 Si la respuesta es «rectificar purga la version anterior del historial», el JSON necesita una clave por maestro (`rectificarPurgaHistorial: true`) y el verbo de `GPOS.Migracion` deberia correr tambien para rectificar. Impacto en esta prueba: (i) esquema (a): una propiedad mas permitida; (ii) X-3: el verbo se invoca desde dos acciones; (iii) C-7 sin cambio. Si la respuesta es «el valor viejo queda hasta el verbo de F-5», no cambia nada de la lista (SQL-05 del plan de TT lo afirma como comportamiento). **La prueba de arquitectura es indiferente; el esquema del JSON, no.**
 
-### 7.2 [P9][D-2] Espejo heredado (`PuenteMae`)
+### 7.2 [P9][D-2] Espejo heredado (`PuenteMae`) — reescrita en la v2
 
-- **[V] `PuenteMae` existe en `feature/modelo-ng`** (`src/GPOS.Core/Infraestructura/Transicion/PuenteMae.cs`, se elimina «en la ola 3» segun su propio texto). El espejo sigue vivo.
-- **ARQ-09 (centinela de dos sentidos):** detectar por reflexion `typeof(PuenteMae)` (o `Type.GetType("GPOS.Core.Infraestructura.Transicion.PuenteMae, GPOS.Core")`, que devuelve `null` cuando desaparece sin romper la compilacion de la prueba). Si existe: o el JSON tiene `espejoHeredado` en clientes y suplidores **con las columnas extra** (`Telefono3`, `CorreoElectronico3`, `IdDireccion` [I: del especialista, `Maestros.cs` heredado de master, no verificado aqui]) o el JSON declara `estado: "aplazado-hasta-eliminar-puente"` y la clase 3 comprueba que **las rutas de TT estan desactivadas** (R-1 espera lista vacia). Si no existe: el JSON no debe llevar `espejoHeredado`. Los dos sentidos del fallo son los de M-25/M-26.
-- **ARQ-10:** que las columnas que `PuenteMae` copia a `Clientes`/`Suplidores` esten todas en `rectificar` ∪ `espejoHeredado.extra`. La lista de columnas que copia `PuenteMae` **no la leí** (solo la cabecera [V]); se obtendria por busqueda de las asignaciones dentro de `PuenteMae.ClienteAsync`/`SuplidorAsync` o, mejor, por un contrato de la propia clase (que exponga el mapa de columnas). Propuesta a B: exponer `PuenteMae.ColumnasPersonalesCopiadas` para que la prueba no dependa de un analisis de texto. [P9]
-- **Interceptor y espejo:** con [P9] = «TT escribe el espejo», S-7 amplia las tablas permitidas a `Clientes`/`Suplidores` y las columnas a `rectificar` + `extra`; con [P9] = «TT espera», S-7 las prohibe.
+**Lo verificado en `2fa6843b` [V]** (`src/GPOS.Core/Infraestructura/Transicion/PuenteMae.cs`, releído por mí; coincide con la verificación de `b4378650`):
+
+- `PuenteMae` existe y «se elimina en la ola 3» (cabecera). Sigue siendo un centinela real, no hipotético.
+- `ClienteAsync(u, ClienteDto d, ct)` (líneas 143-152) y `SuplidorAsync` (154-162) **reciben el DTO completo** y lo copian a la fila heredada de `Clientes`/`Suplidores` en la misma unidad de trabajo. Copian: razón social, nombre comercial, RNC (el DTO ya trae solo dígitos, `MaestrosService.cs:166, 204`), `Telefono1`, `Telefono2`, `Mobil`, `Fax`, `Contacto`, `Direccion`, `CorreoElectronico1`, `CorreoElectronico2`, `PaginaWeb`, `Nota` y los catálogos y condiciones comerciales.
+- **No escriben** `Telefono3`, `CorreoElectronico3` ni `IdDireccion` (no hay asignación en el texto): en filas creadas por el puente quedan `NULL`. El plan v1 y el JSON del especialista los trataban como «columnas extra» a anonimizar: no hay nada que anonimizar.
+- **No copian `Inhabilitado`** ni `LimiteCredito` (verificación, hecho 5): la fila heredada nunca ve un bloqueo.
+- `EliminarMaestroAsync` (líneas ~247-252) **borra** la fila heredada; TT bloquea y no elimina, así que no debe llamarla (SQL-25 del plan de TT).
+
+**Consecuencias para la prueba:**
+
+1. **ARQ-09 (centinela de dos sentidos), sin cambio de fondo:** `Type.GetType("GPOS.Core.Infraestructura.Transicion.PuenteMae, GPOS.Core")`. Si existe: o el JSON tiene `espejoHeredado` en clientes y suplidores (`{tabla, extraNoEscritas, vigenteHasta}`), o declara `estado: "aplazado-hasta-eliminar-puente"` y la clase 3 comprueba que las rutas de TT están desactivadas (R-1 espera lista vacía); lo decide **P9**. Si no existe: el JSON no debe llevar `espejoHeredado`. Mutaciones M-25 y M-26.
+2. **ARQ-10 por comportamiento (sustituye la petición de `ColumnasPersonalesCopiadas`; pregunta 9 de la v1 cerrada):** un contexto heredado de prueba (en memoria; [I] se puede instanciar), un `ClienteDto` y un `SuplidorDto` con un **centinela único** en cada propiedad de texto, una llamada al puente y la lectura de qué columnas de `Clientes`/`Suplidores` contienen un centinela. Cada una debe corresponder a una columna **clasificada** del modelo nuevo; `Telefono3`, `CorreoElectronico3` e `IdDireccion` no deben contener ninguno. Si el puente empieza a copiar un campo nuevo (M-33) la prueba lo atrapa sin analizar texto de código.
+3. **Interceptor y espejo:** S-7 amplía las tablas permitidas a `Clientes`/`Suplidores` y las columnas a las que ARQ-10 descubre **solo si P9 = «TT escribe el espejo»**; si P9 = «TT espera», S-7 las prohíbe. El interceptor debe estar registrado en `u.Heredado` (§6.4).
+4. **JSON:** `espejoHeredado.extra` del especialista se sustituye por `extraNoEscritas` (documental, verificada por ARQ-10: debe seguir `NULL`). Es un cambio a la propuesta del especialista que firma B (H-A8).
+5. **Qué no resuelve el hecho:** no decide P9. Reduce su costo (el puente es reutilizable en una llamada) pero el propietario, con B, decide si TT sale antes de la ola 3 con el espejo o se aplaza hasta eliminarlo.
 
 ### 7.3 [D-7] Comensales
 
@@ -311,6 +354,43 @@ Si la respuesta es «rectificar purga la version anterior del historial», el JS
 ### 7.4 [D-4][D-5] Lista final de anonimizacion y deuda F-9
 
 Con [D-4] la lista de `anonimizarAlSuprimir` puede perder `NombreComercial`, `Contacto`, `PaginaWeb` o `Nota`. Para la prueba no cambia estructura: el cambio pasa por la guarda 2.2. Con [D-5] se suma una lista `conservarPorDeuda` (nombre, documento y un medio de contacto, propuesta de B no firmada). Regla: `conservarPorDeuda ⊆ rectificar ∪ derivadas` y `conservarPorDeuda ∩ anonimizarAlSuprimir` solo puede contener las columnas que se anonimizan *despues* (supresion aplazada): hasta firmar, **la clave no esta permitida en el esquema** (regla 3 de 2.1), y la prueba lo afirma para no dejar pasar una lista no firmada.
+
+### 7.5 (v2) Clase 5 · Centinela de salidas que exponen identificación (ARQ-17 del plan de TT)
+
+**Para qué.** El inventario contó 22 salidas que muestran la identificación del tercero y encontró una fuga que el enmascarado de `rpt.CajaChica` no cubre (`EF-CAJA-CHICA`, `ReportesSemilla.cs:303-304`). Hoy nada obliga a que una salida nueva se clasifique. La lista versionada `SalidasIdentificacionTercero.json` hace que toda vista, consulta, reporte de la semilla o modelo de impresión que exponga identificación, contacto o dirección de un tercero **deba figurar con su política**, de modo que agregar una obliga a decidir.
+
+**Forma de la lista** (misma guarda de dorado y `CAMBIOS.md` que el JSON de TT, §2.2; por ello el cambio se ve en tres lugares):
+
+```json
+{ "version": 1,
+  "salidas": [
+    { "id": "rpt.Formato606", "inventario": 11, "tipo": "vista",
+      "columnas": ["RncCedula"], "politica": "obligatoria-no-enmascarar",
+      "fuente": "copia-en-documento", "dependeDe": "ninguna", "privilegio": null,
+      "motivo": "Formato DGII; se protege por acceso (RS-04), no por enmascarado" },
+    { "id": "rpt.CatCliente", "inventario": 6, "tipo": "vista",
+      "columnas": ["Identificacion"], "politica": "enmascarable",
+      "fuente": "maestro", "dependeDe": "letra", "privilegio": null, "motivo": "..." } ] }
+```
+
+Valores cerrados: `politica` ∈ {`enmascarable`, `obligatoria-no-enmascarar`, `restringida-por-privilegio`}; `fuente` ∈ {`maestro`, `copia-en-documento`, `texto-libre`}; `dependeDe` ∈ {`letra`, `largo`, `ninguna`, `EsPersonaFisica`}. La columna `fuente` es la que importa para TT: lo que lee del **maestro** muestra lo anonimizado tras suprimir; lo que lee la **copia en el documento** conserva el valor sellado (TT-04, ADR-74); `texto-libre` (caja chica) queda fuera de TT (D-14).
+
+| ID | Caso | Cómo se detecta | Falla si… |
+|---|---|---|---|
+| Z-1 | `Toda_vista_con_identificacion_esta_clasificada`: en una base temporal con las migraciones aplicadas, toda columna de salida de las vistas de `rpt`, `rptc` y `ext` (este último, ADR-109) cuyo nombre case con el patrón de identificación o contacto (`(?i)(rnc|cedula|identificacion|pasaporte|documento|telefono|movil|correo|direccion)`) figura en la lista | `sys.columns` de las vistas: da la definición **vigente**, lo que resuelve que haya dos definiciones de `rpt.ConsultaFactura` y tres de `Formato607` en los guiones | una vista nueva expone RNC sin política (M-28) |
+| Z-2 | `Todo_reporte_de_la_semilla_con_SQL_directo_esta_clasificado`: para cada reporte de `ReportesSemilla.cs` cuyo SQL nombra una tabla base (no `rpt.`/`rptc.`) que tiene una columna de identificación, el par (reporte, tabla.columna) figura. La lista de «tablas con identificación» sale del **modelo de EF**: todas las columnas de texto cuyo nombre case con el patrón, en cualquier entidad (esto descubre `caja.CajaChica.RncCedula`) | modelo EF sin conexión (§3.1) + extracción de `esquema.tabla` del texto SQL | `EF-CAJA-CHICA` o un reporte semejante vuelve a eludir el enmascarado (M-30) |
+| Z-3 | `Las_obligatorias_no_se_enmascaran`: para las entradas `obligatoria-no-enmascarar` (606, 607, impresión de comprobantes, retención, verificación de exportación) la definición de la vista (`sys.sql_modules`) no aplica el patrón de enmascarado (`'*******'`, `RIGHT(..., 4)`) a la columna listada; el modelo de impresión no pasa el valor por una función de enmascarado | texto de `sys.sql_modules` + reflexión; el comportamiento lo cubren SQL-80/81/82/83 del plan de TT | alguien enmascara «todo lo que muestre la identificación» y rompe el 606 o el comprobante (M-29) |
+| Z-4 | `Los_modelos_de_impresion_estan_clasificados`: las propiedades con patrón de identificación o contacto de los tipos de `GPOS.Contracts.Impresion` y de `FabricaModelo` (cliente, retención, caja chica) figuran con su política | reflexión sobre los tipos del modelo de formato | un campo de tercero nuevo sale impreso sin política |
+| Z-5 | `Las_tablas_con_identificacion_estan_clasificadas` (v2): cada tabla con columna de identificación del modelo de EF figura en `tablasConIdentificacion` como `maestro`, `copia-en-documento` o `texto-libre`; una tabla nueva obliga a decidir si TT-04 (copias selladas) o TT-P3 la alcanza | modelo EF | se agrega `fis.Retencion.NombreBeneficiario` o una tabla con cédula sin decidir si la supresión debe tratarla |
+| Z-6 | `La_lista_de_salidas_no_tiene_entradas_muertas_ni_incompletas`: cada entrada existe todavía (vista, reporte o tipo), tiene `motivo` de al menos 15 caracteres y, si es `restringida-por-privilegio`, el privilegio nombrado existe (`verdatospersonales`) | base y reflexión | la lista envejece y deja de vigilar |
+
+**Límites declarados.** (i) Z-1 y Z-2 necesitan base y modelo; Z-3/Z-4/Z-5/Z-6 corren sin base salvo la parte de vistas. (ii) El patrón detecta nombres, no contenido: una columna llamada `Doc` con una cédula escapa (se cubre solo con revisión humana de la lista). (iii) El diseñador de reportes permite elegir cualquier columna: lo que un usuario construya en la base de datos del cliente queda fuera de la lista; es el riesgo aparte que ya anota el inventario. (iv) Qué se enmascara y cómo es decisión de ADR-161 (M-5), no de esta prueba: la clase 5 solo obliga a que la decisión exista por salida.
+
+### 7.6 (v2) Centinelas del estado «bloqueado» (ARQ-15 y ARQ-16 del plan de TT)
+
+- **X-5 `Escritores_de_Inhabilitado`.** Por símbolos de escritura sobre `Cliente.Inhabilitado`: hoy [V] ninguna ruta lo pone en 1 (`ClienteDto` no lo tiene, `GuardarClienteNgAsync` no lo escribe, `MaestrosService.cs:137-210`); el conjunto de escritores debe ser exactamente {servicio de TT}. Para `Suplidor` el editor sí lo escribe (`MaestrosService.cs:358`): el conjunto es {editor, TT} y el editor **no puede quitar una marca de TT** (HTTP-50 del plan de TT, por comportamiento). Falla si: se agrega «inhabilitar cliente» fuera de TT (M-31).
+- **X-6 `Consumidores_de_un_tercero_estan_clasificados`.** `ConsumidoresTerceroBloqueo.json` lista cada punto que lee un cliente o suplidor para un documento (`ReferenciasNg.ClienteAsync`, `PartidasCxp.SuplidorAsync` y las lecturas directas del DbSet) con `decision` ∈ {`rechaza-documento-nuevo`, `permite-liquidacion`} y el archivo y método; hoy [V] ninguno de cliente lee la marca, y de suplidor unos validan (`Notas.cs:68`, `Bancos.cs:73`, `Compras.cs:444`) y otros no (`Bancos.cs:370`, `Aplicaciones.cs:52`, `Devoluciones.cs:71`). La detección es por texto (llamadas a esas dos funciones y al DbSet) con clave `archivo::método`: [I] heurística, con falsos positivos que se resuelven agregando la entrada, no relajando la regla. Falla si un servicio nuevo lee el tercero sin decidir (M-32). Sirve también para que HTTP-31a del plan de TT sea una prueba parametrizada sobre la lista y no una enumeración a mano.
+- **Orden de firma.** Los dos JSON nuevos (§1) los firma B junto con `CamposPersonalesTitular.json` (D-8); el contador firma la política de las salidas `obligatoria-no-enmascarar`.
 
 ## 8. Evasiones previstas y falsos positivos
 
@@ -355,18 +435,38 @@ Con [D-4] la lista de `anonimizarAlSuprimir` puede perder `NombreComercial`, `Co
 - **H-A6. Fallo posible en la lista del especialista, sin consecuencia para la prueba:** el texto de su 1.5 habla de «cuatro datos» y enumera cinco para el empleado (H-5 de mi plan de TT).
 - **H-A7. Aviso de seguridad menor:** `alias` incluye `Identificacion → RNC` para suplidores y clientes, pero la columna `Identificacion` del empleado se llama `Cedula`; el JSON no tiene alias para `Cedula`, asi que el DTO de empleados usara `Cedula` y el de clientes `RNC`. Esta bien, pero C-6 debe distinguir por maestro, no usar un mapa global.
 
+### Revisión de H-A1 a H-A7 en la v2
+
+| Hallazgo | Veredicto | Ajuste |
+|---|---|---|
+| H-A1 (`TipoIdentificacion` viola `conservarBloqueado ⊆ rectificar`) | **Vigente** | Sin cambio: `reglas.derivadas` sigue siendo la propuesta. La verificación no tocó esta columna |
+| H-A2 (`nunca` sin motivo por columna) | **Vigente, reforzada** | Las columnas que la verificación hizo visibles (`Inhabilitado`, `FusionadoEnId`, `Prospecto`) necesitan motivo; `Inhabilitado` además **no está en el DTO del cliente** (hecho 0), de modo que C-6 y el mapa de alias nunca la ven |
+| H-A3 (`excluir` y `personaFisica` como cadena SQL) | **Vigente, reforzada** | Confirmado que la constante `Cliente.CodigoContado` existe y nadie más la usa: `excluirCodigos` es comparable por reflexión (G-1) |
+| H-A4 (el interceptor solo protege si TT no usa SQL a mano) | **Vigente, ajustada** | `PuenteMae` usa EF, no SQL a mano [V]; pero escribe con **otro contexto** (`u.Heredado`): el interceptor debe registrarse en los dos (§6.4). Además `GuardarClienteNgAsync` escribe el DTO completo: TT no puede rectificar a través de él sin romper S-1 |
+| H-A5 («Esencial» no es clase de campo) | **Vigente** | Sin hecho nuevo; pregunta 4 abierta |
+| H-A6 («cuatro datos» frente a cinco del empleado) | **Vigente** | Sin consecuencia para la prueba |
+| H-A7 (alias `Identificacion→RNC` frente a `Cedula` del empleado) | **Vigente** | C-6 por maestro, no mapa global |
+
+- **H-A8 (v2). `espejoHeredado.extra` del JSON del especialista es innecesario.** El puente nunca escribe `Telefono3`, `CorreoElectronico3` ni `IdDireccion` [V]; el JSON debe llevar `extraNoEscritas` documental y dejar que ARQ-10 compruebe por comportamiento. Pedir a B que lo firme así.
+- **H-A9 (v2). Dos JSON más que firmar.** `SalidasIdentificacionTercero.json` y `ConsumidoresTerceroBloqueo.json` se suman a D-8; sin ellos, X-6 y la clase 5 no tienen contra qué comparar.
+
 ## 10. Preguntas para B y dependencias
 
-1. ¿Los verbos HTTP de `rectificar` y `suprimir` (PUT o POST)? La lista blanca de R-1 los necesita exactos.
-2. ¿B acepta cambiar a `excluirCodigos` y `personaFisica: {tipos}` (H-A3)? Sin esto, el hueco de 6.6 queda abierto. (= pregunta 10 de mi plan de TT.)
-3. ¿B acepta agregar `reglas.derivadas`, `soloAnonimizar` y `ClasificacionColumnas.json` al JSON de `version: 1` (H-A1, H-A2)? Los firma el propietario junto con el resto del contenido (D-8).
-4. «Intersección vacía con campos `Esencial`» (E-5): ¿se entiende como `nunca` (propuesta, 2.3) o como las columnas que otras rutas `Esencial` ya escriben?
-5. Regla de construccion X-1: TT sin SQL a mano en la API. ¿Se acepta? Si no, la clase 4 pierde su fundamento y hay que sustituirla por una prueba de datos (SQL-01..03 del plan de TT) sola.
-6. ¿B aprueba depender de `Microsoft.SqlServer.TransactSql.ScriptDom` (o usar el analizador reducido, 6.4)? Politica de paquetes: solo con tu visto bueno.
-7. **[P1] [P2] [P9]**: las respuestas del propietario cambian, respectivamente: una clave del JSON (rectificar y el historial), las listas condicionales de `conservarBloqueado`, y la presencia de `espejoHeredado`/la desactivacion de TT. Pido que B me avise cuando las tenga para ajustar los casos marcados.
-8. ¿Donde vive la tabla de la solicitud del titular (apoderado, motivo, fecha de recepcion, adjunto del poder)? (H-4 de mi plan de TT.) Sin esa respuesta, `tablasAuxiliares` (6.2) queda incompleto.
-9. ¿`PuenteMae` expondra su mapa de columnas (7.2)? Si no, ARQ-10 sera un analisis de texto fragil.
-10. Cuando llegue ADR-161, `personaFisica` cambia de forma (D-6): ¿B me avisa? (Pregunta 13 de mi plan de TT.)
+Estado tras la v2: **CERRADA** = la contesta un hecho verificado; **PENDIENTE (propietario)** = B debe llevarla; **ABIERTA** = decide B o un agente.
+
+1. **ABIERTA.** ¿Los verbos HTTP de `rectificar` y `suprimir` (PUT o POST)? La lista blanca de R-1 los necesita exactos.
+2. **ABIERTA.** ¿B acepta cambiar a `excluirCodigos` y `personaFisica: {tipos}` (H-A3)? (= pregunta 10 de mi plan de TT.) La constante verificada la hace viable.
+3. **ABIERTA.** ¿B acepta agregar `reglas.derivadas`, `soloAnonimizar`, `extraNoEscritas` y `ClasificacionColumnas.json` al JSON de `version: 1` (H-A1, H-A2, H-A8)?
+4. **ABIERTA.** «Intersección vacía con campos `Esencial`» (E-5): ¿`nunca` (propuesta, 2.3) o las columnas que otras rutas `Esencial` ya escriben?
+5. **ABIERTA.** Regla X-1: TT sin SQL a mano en la API. Ahora con evidencia: `PuenteMae` usa EF, así que no la viola.
+6. **ABIERTA.** ¿B aprueba depender de `Microsoft.SqlServer.TransactSql.ScriptDom` o usar el analizador reducido (6.4)? Política de paquetes.
+7. **PENDIENTE (propietario): P1, P2, P9.** Cambian, respectivamente: una clave del JSON (rectificar y el historial), las listas condicionales de `conservarBloqueado` (sin comprobantes) y la presencia de `espejoHeredado` o la desactivación de TT. Ningún hecho verificado las resuelve; el de P9 reduce su costo (§7.2). Pido que B me avise cuando las tenga.
+8. **ABIERTA.** ¿Dónde vive la tabla de la solicitud del titular? (H-4 del plan de TT.) Sin ella `tablasAuxiliares` (6.2) queda incompleto.
+9. **CERRADA (v2).** ¿`PuenteMae` expondrá su mapa de columnas? **No hace falta:** ARQ-10 descubre las columnas copiadas por comportamiento (centinelas). Sin trabajo para B.
+10. **ABIERTA.** Cuando llegue ADR-161, `personaFisica` cambia de forma (D-6) y las políticas `enmascarable` de la clase 5 pasan a depender de `EsPersonaFisica`: ¿B me avisa?
+11. **Nueva (v2), ABIERTA.** ¿B firma `SalidasIdentificacionTercero.json` y `ConsumidoresTerceroBloqueo.json` junto con el JSON de TT (H-A9) y el contador la política de las salidas obligatorias?
+12. **Nueva (v2), ABIERTA.** El inventario no miró teléfono, correo ni dirección: ¿se amplía el inventario para que Z-1 parta de una lista completa, o la clase 5 la descubre y se firma después?
+13. **Nueva (v2), ABIERTA.** X-6 detecta consumidores por texto (`archivo::método`): ¿B prefiere un metadato en los servicios (más robusto, toca código de producción) o la heurística de texto?
 
 ## 11. Orden de construccion y esfuerzo
 
@@ -380,10 +480,12 @@ Esfuerzo **inferido** de C, ±40 %, en dias-persona de pruebas, sin contar el co
 | 4 | Clase 2: lectura del modelo EF sin conexion y C-1..C-7 + `ClasificacionColumnas.json` | modelo de F-7 (`TitularBloqueadoEn`) para C-2/E-1; si falta, esa parte espera | 0,5 |
 | 5 | Clase 3: rutas y DTO (R-1..R-5, D-1..D-8, F-1) | rutas de L1b construidas (desde 2026-11-16) | 0,4 |
 | 6 | Clase 4: interceptor + analizador + S-1..S-8 y X-1..X-4 | servicio de TT construido; base temporal | 0,6 |
-| 7 | Espejo (ARQ-09/10, M-25/26) | [P9] | 0,5 (si hay espejo) |
+| 7 | Espejo (ARQ-09/10 por comportamiento, M-25/26/33) | [P9] | 0,5 (si hay espejo) |
+| 6b | (v2) Centinelas X-5 y X-6 y sus JSON | JSON firmados (H-A9); no dependen de P9 | 0,25 |
+| 6c | (v2) Clase 5: Z-1 a Z-6 y M-28 a M-30 | `SalidasIdentificacionTercero.json` firmado; base temporal para Z-1 | 0,6 |
 | 8 | Comensales (ARQ-12..14, M-27) | [D-7]; entrega 3 | 0,25 |
 
-**Total: 2,55 dp (de 1,5 a 3,6 con el margen) para los pasos 1-6, mas 0,75 dp condicionales (7 y 8).** Los pasos 1 a 3 se pueden escribir **hoy** con el JSON del especialista (previa firma, D-8) y correr sin base. Los pasos 4 a 6 esperan al codigo de TT. No hace falta mas infraestructura que la existente.
+**Total (v2): 3,4 dp (de 2,0 a 4,8 con el margen; el v1 decía 2,55) para los pasos 1-6c, mas 0,75 dp condicionales (7 y 8).** Los pasos 1 a 3 se pueden escribir **hoy** con el JSON del especialista (previa firma, D-8) y correr sin base. Los pasos 4 a 6 esperan al codigo de TT. No hace falta mas infraestructura que la existente.
 
 **Corrida sugerida:** clases 1 y 2 con `--filter "FullyQualifiedName~CamposPersonalesTitular"`; clases 3 y 4 con `--filter "Categoria=Titulares"`; siempre junto al filtro oficial (`Transicion!=Ola5&Transicion!=Defecto`) en la maquina de B, no en OSHIN-LEGION (donde solo corren las clases 1 y 2, que no usan base).
 
@@ -409,6 +511,9 @@ Esfuerzo **inferido** de C, ±40 %, en dias-persona de pruebas, sin contar el co
 - **No lei** los bloques UR y CS de ADR-92 completos, ni `traspasos/A/adr92-respuestas-datos` ni `-software`; el bloque TT y la precision del 2026-10-22 si.
 - **No verifique** datos legales ni de la DGII (siguen siendo del especialista y de la hoja).
 - Los conteos de la seccion 0 («31 casos») son una estimacion contada en este documento (clase 1: ~12; clase 2: 7; clase 3: ~13; clase 4: ~8, con solapes), no una cifra auditada.
+- **(v2) De la verificación de código:** releí yo `PuenteMae.ClienteAsync`, `SuplidorAsync` y `EliminarMaestroAsync` en `2fa6843b`; los demás hechos (consumidores de `ClienteRef`, `Notas.cs:68`, `Bancos.cs:73`, `Compras.cs:444`, `MaestrosService.cs:137-210` y `:358`) son del agente de lectura y de `b4378650`, sin releer; comprobé con `git diff --name-only` que esos archivos no cambiaron hasta `2fa6843b`. No sé si el contexto heredado se puede instanciar en memoria para ARQ-10 (infiero que sí).
+- **(v2) Del inventario:** búsqueda por texto, no lectura completa; faltan por leer `ReportesVentasRegistrados.cs`, `ReportesInventarioRegistrados.cs`, `Definiciones/` y el diseñador de reportes; no sé qué vistas exponen teléfono, correo o dirección (el inventario buscó identificación); no confirmé cuál definición de `rpt.ConsultaFactura` y `Formato607` está vigente (Z-1 la resuelve con `sys.columns` en una base real, sin ejecutar aún). La detección de consumidores de X-6 y de SQL de la semilla en Z-2 es por texto y no la probé.
+- **(v2)** Los conteos de la §0 (39 casos: 31 del v1, 6 de la clase 5 y 2 centinelas X-5/X-6) son una estimación contada en este documento, no una cifra auditada.
 
 ### Cierre
 - Estado: Completado (plan, sin ejecucion; no aplica recomendacion de QA sobre codigo todavia)
@@ -416,4 +521,4 @@ Esfuerzo **inferido** de C, ±40 %, en dias-persona de pruebas, sin contar el co
 - Supuestos: el contenido de `CamposPersonalesTitular.json` es el propuesto por el especialista (1.7), no firmado (D-8); [P1], [P2], [P9] sin respuesta; los verbos HTTP, los nombres de metadato y de tipos de TT son simbolicos; todo lo marcado [I]
 - Decisiones candidatas a ADR: ninguna nueva; precisan el diseño de TT (no ADR) las propuestas de 2.4, 3.3 y 6.6 (cambios al JSON del especialista) y la regla X-1 (sin SQL a mano en TT), que B decide
 - Entregas a otros agentes: B (arquitecto-software/desarrollador-backend) → preguntas 1-10 de la seccion 10, en especial el cambio de forma del JSON (H-A1..H-A3), la regla X-1 y la clase de `Esencial`; especialista-pos → ordenar la lista y agregar `derivadas`/`soloAnonimizar`/`excluirCodigos` al firmar `version: 1`; arquitecto-datos → ubicacion de la tabla de solicitud y de la migracion de `TitularBloqueadoEn` (C-2/E-1)
-- Proximo paso recomendado: que B firme la forma del JSON (preguntas 2 y 3) y las respuestas [P1][P2][P9]; C escribe primero las clases 1 y 2 (sin base, 1,5 dp) con el JSON firmado.
+- Proximo paso recomendado: que B lleve al propietario P1, P2 y P9 y firme la forma del JSON y los dos JSON nuevos (preguntas 2, 3 y 11); C escribe primero las clases 1 y 2 (sin base) y X-5/X-6 con el JSON firmado.
