@@ -12,4 +12,6 @@ Por encargo del propietario, la hoja con los comandos de `IGpostAC.exe` v2 (`GSF
 
 Elaborada a partir del `README.md` de `v2` (commit `bb87131`); no se ejecutó ningún comando ni se contrastó con el código del CLI. Si «complemento v2» se refería a otra cosa (p. ej. el conector de GPOS NG), avisen.
 
+Actualización: la hoja incluye ahora, en la sección 12, los parámetros de cada comando (tomados del código del CLI).
+
 Respuesta requerida: ninguna.

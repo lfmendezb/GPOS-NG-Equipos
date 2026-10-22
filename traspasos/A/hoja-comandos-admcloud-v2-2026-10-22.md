@@ -120,3 +120,69 @@ UPDATE Api_AdmCloud_Settings SET ItemSync = 1;  -- lista en la vista de revisió
 3. `.\IGpostAC.exe queue retry <doc>`.
 
 Los documentos nunca crean artículos; las variantes y los servicios no se crean (quedan `Unsupported` en `Api_AdmCloud_SyncRevisar`).
+
+---
+
+# 12. Parámetros de cada comando
+
+Tomados del código del CLI (`v2\GSF.Sync.AdmCloud.Cli\Commands\*.cs`). `<x>` = argumento posicional; `[ ]` = opcional. Los booleanos (`--apply`, `--json`…) no llevan valor: basta escribirlos.
+
+## sync (all | customers | quotes | salesorders | invoices | returns | receipts | items)
+| Parámetro | Tipo | Por omisión | Descripción |
+|---|---|---|---|
+| `[documento]` | texto | todos los pendientes | Número del documento (o del artículo en `items`) a sincronizar |
+| `--no-wait` | bandera | espera | Encola y termina sin esperar |
+| `--timeout <seg>` | entero | 600 | Segundos máximos al drenar la cola; `0` = sin límite |
+
+## sign `<documento>` `[tipoNcf]`
+| Parámetro | Tipo | Por omisión | Descripción |
+|---|---|---|---|
+| `<documento>` | texto | — | Identificador del documento en AdmCloud, o el formato heredado `{guid};{tipoNcf}` |
+| `[tipoNcf]` | texto | — | Tipo de secuencia fiscal. Con 32 basta la firma; los demás requieren consultar el estado |
+| `--wait` | booleano | `true` | Espera a que se complete la firma antes de terminar |
+
+## reconcile
+| Parámetro | Tipo | Por omisión | Descripción |
+|---|---|---|---|
+| `--from aaaa-mm-dd` | fecha | `Reconciliation:FromDate` de `appsettings.json` | Fecha de documento desde la que revisa, inclusive. Sin ella ni la clave, no corre (código 3) |
+| `--apply` | bandera | simula | Encola la recuperación; sin ella solo informa el alcance |
+
+## service
+Sin parámetros. Drena la cola de forma continua; si otro proceso ya la drena, no arranca un segundo.
+
+## queue
+| Subcomando | Parámetros |
+|---|---|
+| `queue stats` | ninguno |
+| `queue list` | `--state <estado>` (filtra) · `--type <tipo>` (filtra) · `--limit <n>` (25 por omisión) |
+| `queue show <documento>` | `<documento>`: número, p. ej. `A-001234` |
+| `queue retry <documento>` | `<documento>`: número o identificador del trabajo |
+| `queue verify` | ninguno |
+| `queue purge` | `--older-than <días>` (por omisión `Queue:SucceededRetention`, 30) · `--apply` (sin ella solo simula). Borra solo los ya sincronizados o cancelados; los que requieren revisión nunca |
+
+- **Valores de `--state`:** `Pending`, `Leased`, `InFlight`, `Verifying`, `Succeeded`, `Failed`, `DeadLetter`, `Cancelled`.
+- **Valores de `--type`:** `Customer`, `Quote`, `SalesOrder`, `CreditInvoice`, `CashInvoice`, `CashReturn`, `CustomerCreditNote`, `CashReceipt`, `ElectronicSign`, `Reconciliation`, `Item`.
+
+## config connection
+| Subcomando | Parámetros |
+|---|---|
+| `config connection set` | `--value <cadena>` (cadena completa; si se omite, se pide oculta) · `--server <srv>` · `--database <bd>` · `--user <usr>` · `--password <clave>` (con `--user` y sin ella, se pide oculta) · `--integrated` (autenticación de Windows) · `--trust-server-certificate` (certificado autofirmado) · `--no-test` (guarda sin comprobar) |
+| `config connection show` | ninguno (no revela la contraseña) |
+| `config connection test` | ninguno |
+| `config connection clear` | `--yes` (confirma el borrado sin preguntar) |
+
+Recomendación: no usar `--password` ni `--value` en la línea de comandos (queda en el historial); omitirlos para que la pida por consola.
+
+## config schema
+| Subcomando | Parámetros |
+|---|---|
+| `config schema install` | ninguno |
+| `config schema status` | ninguno |
+
+## audit
+| Subcomando | Parámetros |
+|---|---|
+| `audit list` | `--document <doc>` · `--job <guid>` (trabajo de la cola) · `--type <tipo>` (p. ej. `CashInvoice`, `Item`) · `--level <nivel>` (mínimo: `Information`, `Warning`, `Error`, `Fatal`) · `--since <fecha>` y `--until <fecha>` (`aaaa-mm-dd` o `"aaaa-mm-dd hh:mm"`, hora local) · `--search <texto>` (mensaje, excepción, propiedades, comando) · `--limit <n>` (50) · `--console` (solo líneas escritas en consola) · `--pending` (solo lo no copiado a `Api_AdmCloud_SyncLog`) · `--detail` (cada evento completo) · `--json` (exportar) |
+| `audit show <número>...` | uno o varios números de evento, como los muestra `audit list` |
+| `audit forward` | ninguno (copia ya lo pendiente a SQL Server) |
+| `audit purge` | `--older-than <días>` · `--before <fecha>` (aaaa-mm-dd, hora local) · `--target all\|local\|sqlserver` (por omisión `all`) · `--apply` (sin ella solo simula) |
