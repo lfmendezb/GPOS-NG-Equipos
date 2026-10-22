@@ -17,7 +17,7 @@ Excelente lote. Uniones de hoy (propietario): #122, #130, #136, #124, tus #123, 
 ## Tareas nuevas
 1. **Verificar en el código un hecho que el especialista-pos no pudo:** un cliente **inhabilitado** puede cobrar (recibos), recibir nota de crédito/débito y devolución, y su `GENERICO` no es suprimible; y qué escribe `PuenteMae` hoy en el cliente y el suplidor. Entregable: tabla [V]/[I] con archivo:línea. Fecha: **29-oct**.
 2. **Inventario de reportes y vistas `rpt` que muestran la identificación del tercero** (M-5 del ADR-161 y TT): dónde sale completa, qué cambiaría al enmascarar y cuáles dependen de la letra `R`/`C`/`P`. Solo lectura. Fecha: **5-nov**.
-3. **Plan de la prueba de arquitectura de `CamposPersonalesTitular.json`** (la que rechaza cualquier campo o ruta fuera de TT-01 a TT-03), con las preguntas 1, 2 y 9 de tu plan de TT ya enviadas al propietario. Fecha: **9-nov**.
-4. **Revisión crítica de la DDL rev. 3 de D1** cuando B la publique (CS-P2 y D1-01 a D1-06): lectura, 3 días hábiles. Incluye H-13 (alfabeto de CS-P2); B la recomendación la lleva al arquitecto-datos.
+3. **Plan de la prueba de arquitectura de `CamposPersonalesTitular.json`** (la que rechaza cualquier campo o ruta fuera de TT-01 a TT-03), (las preguntas 1, 2 y 9 de tu plan de TT todavía no se han llevado al propietario; B las lleva y te avisa; mientras tanto, escribe el plan con la lista de campos del especialista-pos). Fecha: **9-nov**.
+4. **Revisión crítica de la DDL rev. 3 de D1** cuando B la publique (CS-P2 y D1-01 a D1-06): lectura, 3 días hábiles. Incluye H-13 (alfabeto de CS-P2); B lleva H-13 al arquitecto-datos y te avisa.
 
 Respuesta requerida: acuse con fechas; si alguna choca con lo que ya tienes, dime cuál va primero.
