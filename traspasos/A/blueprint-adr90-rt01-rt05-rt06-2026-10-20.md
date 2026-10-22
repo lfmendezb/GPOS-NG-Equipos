@@ -23,6 +23,7 @@
 | v2 | La clave (cuenta, IP) es de D2 y vive en memoria; PR-3 agrega la prueba del freno de emparejamiento con IPv4 mapeada | HB-10; RB Q-10 de 1.2 |
 | v2 | R-4 probablemente lo cubre el marco; se conserva la prueba en PR-4 | HB-11 |
 | v2 | Las preguntas Q-1 a Q-10 pasan a la sección 12 como «respondidas» | RB 1.2 |
+| v2 (precisión 2026-10-21) | 5.2: H-15 se cierra solo en la Web (la API sigue con `AllowedHosts` de su configuración); «con modo» en lugar de «fuera de `Development`»; sin `X-Forwarded-Proto` con el modo; H-09 construido en la Web (4743 y código 1) | S2-04 de la revisión de seguridad de PR-2; R-03 y R-04 de la relectura |
 
 ## 0. Fuentes y estado
 
@@ -265,6 +266,9 @@ public static class ClienteApiLocal
 - `PooledConnectionLifetime = 10 min`: las conexiones abiertas toman el certificado renovado de la API sin reiniciar la Web.
 - **`Api:Url` derivado (RB Q-2; pendiente de confirmación en F-6 (i)):** con modo presente, la URL sale de `DireccionApi`. Si la configuración trae un `Api:Url` distinto → 4743, no arranca. En «sin modo» rige `Api:Url` como hoy. El MSI **no** escribe `Api:Url`, y `ArchivoInstalacion.SeccionesPermitidas` sigue solo con `GPOS:RncDgii` (`src/GPOS.Comun/Configuracion/ArchivoInstalacion.cs:27`) [V].
 - **H-15 en PR-2 (unos 0,1 dp):** `AllowedHosts` se arma en el código a partir de `NombresServidor` (más `localhost` en «un equipo»); cookies con `Secure`. Una sola fuente (PT-06). También pendiente de confirmación en F-6 (i).
+  - **Alcance construido (2026-10-21; S2-04 de la revisión de seguridad de PR-2, opción b, decisión del arquitecto de A):** H-15 se cierra **solo en la Web**. La API no usa cookies y autentica con *bearer*; con TLS y validación del certificado por nombre, un *DNS rebinding* falla en el saludo. Su `AllowedHosts` sigue como lo trae su configuración (`*`) y no se endurece en PR-2; lo fija `tests/GPOS.Tests/Red/EscuchaWebModoTests.cs` (`En_la_API_AllowedHosts_no_cambia`). Alternativa descartada por ahora: la misma derivación en la API (unos 0,05 dp), por coherencia y sin reducción de riesgo medible hoy.
+  - **«Con modo» en lugar de «fuera de `Development`»:** el filtro de anfitrión (lista cerrada, `AllowEmptyHosts = false`, S2-03), `Secure` en todas las cookies (política de cookies, S2-02) y el reenvío **sin `X-Forwarded-Proto`** (R-03 de la relectura) se aplican cuando el modo de red está presente (`EscuchaServidor.AplicarWeb`). Sin modo solo se llega sin Estricto, y el 4746 limita la escucha a *loopback*.
+  - **H-09 construido en la Web:** sin modo, un `Api:Url` ausente, en blanco o que no sea una dirección absoluta `http`/`https` (R-04) niega el arranque con el 4743 (`ClienteApiLocal.ExigirUrlApi`), y `ExigirArranque` lo registra y la Web sale con código 1, en lugar de una excepción sin manejar. El `?? throw` de `src/GPOS.Web/Program.cs` queda como guarda. La parte de MAUI de H-09 sigue con RT-10.
 
 ### 5.3 P3 · RT-06: filtro por la IP de la conexión (PT-05, punto 4; PR-3)
 
