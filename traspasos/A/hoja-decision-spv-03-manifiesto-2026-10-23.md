@@ -1,6 +1,6 @@
 # Hoja de decisión SPV-03: el manifiesto del paquete se lee sin autenticar
 
-Para: propietario (vía B) · De: A · 2026-10-23 · Estado: **Propuesta** (la firma es del propietario)
+Para: propietario (vía B) · De: A · 2026-10-23 · Estado: **Firmada (a)** por el propietario en el chat del 2026-10-23, tarde (aviso de B `avisos/B-a-A/2026-10-23-spv-03-firmada-y-huellaapi.md`)
 
 ## 1. Qué es
 `implantar-servidor --fase servicios` copia los binarios del paquete a Archivos de programa y los verifica contra `manifiesto.sha256`, que se lee de la **misma carpeta** (`--origen`) que los binarios. La verificación protege contra un cambio posterior a esa lectura (DM-08, SPV-01, SPW-01), no contra uno anterior: quien pudiera escribir en la carpeta del paquete antes de ejecutar cambiaría binario y manifiesto a la vez y todo pasaría. Severidad Media, residual del DEMO (revisión de seguridad PR-V, 22 y 23-oct).
@@ -21,8 +21,8 @@ El límite de confianza es la carpeta del paquete: el mismo atacante ya cambiar�
 **(a) para el DEMO**, con estas condiciones escritas en la guía del DEMO y verificadas por el verbo (ya están en el borrador de PR-D2): extracción en carpeta protegida fuera de OneDrive y del perfil, elevación obligatoria, y el paquete del DEMO no se entrega a clientes. La opción (b) se programa con el *bundle* y la actualización automática, no antes de D4.
 
 ## 5. Qué firma el propietario
-- [ ] (a) aceptado como residual del DEMO, con las condiciones de la sección 4.
-- [ ] (b) manifiesto firmado antes de D4 (unas 0,5 dp).
-- Fecha y firma: ____________________
+- [x] (a) aceptado como residual del DEMO, con las condiciones de la sección 4.
+- [ ] (b) manifiesto firmado: no antes de D4; se programa con el *bundle* y la actualización automática (decisión del propietario, 2026-10-23).
+- Fecha y firma: 2026-10-23, Leonardo Méndez, en el chat (registrado por B; marcado por A).
 
 La decisión no cambia el código de PR-V; solo cierra SPV-03 en la matriz de la revisión.

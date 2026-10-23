@@ -46,7 +46,7 @@ El núcleo de lo que pide el dictamen está bien construido:
 |---|---|---|
 | SPV-01 | **Media** | Una huella distinta en el destino detiene la fase, pero el binario no verificado se queda en `Program Files` (y, al actualizar, el servicio ya apunta a él) |
 | SPV-02 | **Media** | La copia desde `--origen` sigue uniones y vínculos: el proceso elevado puede leer un archivo protegido y dejarlo en una carpeta que leen los Usuarios |
-| SPV-03 | **Media** (residual del DEMO) | El manifiesto se lee, sin autenticar, de la misma carpeta del usuario que los binarios: DM-08 solo cubre el cambio posterior a esa lectura |
+| SPV-03 | **Media** (residual del DEMO; **cerrado el 2026-10-23: el propietario firmó (a)**, hoja `hoja-decision-spv-03-manifiesto-2026-10-23.md`; (b) con el *bundle*) | El manifiesto se lee, sin autenticar, de la misma carpeta del usuario que los binarios: DM-08 solo cubre el cambio posterior a esa lectura |
 | SPV-04 | **Media** | `MotivoClaveServicio` solo busca derechos de lectura: no reconoce `GENERIC_EXECUTE` (que en una clave equivale a `KEY_READ`), `WRITE_DAC`, `WRITE_OWNER`, `KEY_SET_VALUE` ni `GENERIC_WRITE` de otros SID |
 | SPV-05 | **Media** | Se conserva la clave JWT que ya estaba, aunque la DACL estuviera abierta al entrar (clave posiblemente expuesta) y sin validar que tenga 48 bytes |
 | SPV-06 | **Media** | `--usuario-instala` rechaza solo IU, AU, BU y Todos: acepta Invitados, NETWORK, SERVICE, LOCAL, Usuarios del dominio, etc. Con WP pueden detener la API y ocupar el puerto 5071 |
