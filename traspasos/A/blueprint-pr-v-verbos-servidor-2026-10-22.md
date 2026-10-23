@@ -107,7 +107,7 @@ Si la lectura de **cualquier** comprobación falla (permiso, servicio detenido, 
 9. Textual: `Recoger-Evidencia.ps1` no hace `reg query`/`reg export` de la clave del servicio (DM-05).
 
 ## 7. EventId y registro
-- Origen `GPOS.Instalacion` (de B). **EventId: 5130 a 5139** de la franja 5130-5149 reservada al instalador (N-8) [V, aviso de B del 22-oct]; propongo 5130 fase iniciada, 5131 fase completada, 5132 detenido por guarda, 5133 clave JWT rotada (sin valor), 5134 resultado de la comprobación. **B confirma el rango**; se verifica con `git grep` en todas las ramas el día de construir (ADR-82). No usar 4780-4789 (verbo `tls`) ni 4771-4779 (`GPOS.Instalacion`, de B).
+- Origen `GPOS.Instalacion` (de B). **EventId: 5134 a 5138** de la franja 5130-5149 reservada al instalador (N-8) [V, aviso de B del 22-oct]; propongo (corregido el 22-oct, tras comprobar que 5130-5133 y 5140-5143 ya están en uso) 5134 fase iniciada, 5135 fase completada, 5136 detenido por guarda, 5137 clave JWT rotada (sin valor), 5138 resultado de la comprobación. **B confirma el rango**; se verifica con `git grep` en todas las ramas el día de construir (ADR-82). No usar 4780-4789 (verbo `tls`) ni 4771-4779 (`GPOS.Instalacion`, de B).
 - Ningún evento lleva el valor de la clave, cadenas de conexión ni el entorno de los servicios.
 
 ## 8. Dependencias y orden
