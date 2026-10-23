@@ -25,7 +25,7 @@ Fuente: `avisos/B-a-C/2026-10-23-respuestas-dudas-t4-02b-y-p170-07.md`. Incorpor
 | D-5 vista previa | Con copia manda la vista previa (`ModeloImpresion.cs:68`) | UO-04 |
 | D-6 M-d | Se registra «No aplica» | M-d |
 | Otras | P170-07 va en su propio PR, después de T4-02b; contrato versión 1; el pie de hoy sigue sin `!important` (`ServicioRender.cs:128-129`): cambio de una línea que hace B | UO-04 |
-| Pendiente | **P-1** (guarda C-1 también en la vista previa con comprobante real): decide el propietario; recomendación de B: sí. Trabajo con «sí» | TA-56, sección 7 |
+| Firmado | **P-1: sí. Firmado 2026-10-23 (PR #222)**: la guarda C-1 también en la vista previa con comprobante real. Ya no es supuesto de trabajo | TA-56, TA-VP-01 a TA-VP-05, sección 7 |
 
 ## 0. Resumen
 
@@ -124,7 +124,12 @@ TA-31 es un límite honesto: la plantilla puede **pintar una marca falsa** («CO
 | TA-53 | N | Documento de 200 páginas | Todas con marca y pie; el recorrido de `/MediaBox` es lineal (tiempo < 2 s) [I] | N | M-k |
 | TA-54 | N | `/MediaBox` apaisado: Chromium intercambia ancho y alto, **ningún PDF trae `/Rotate`** (hallazgo de B) | La guarda **rechaza** si aparece `/Rotate` (400 `FORMATO_INVALIDO`, A8). Caso con un PDF sintético que lo trae | N | M-i, M-w |
 | TA-55 | N | `/MediaBox` en número distinto del de páginas (PDF sintético, o un PDF con una página extra de caja) | La guarda **rechaza** (A8) | N | M-w |
-| TA-56 | N | Vista previa con comprobante real y tamaño hostil (P-1, **pendiente del propietario**; recomendación de B: la guarda también aplica en la vista previa) | Con P-1 = sí: 400 `FORMATO_INVALIDO`; con P-1 = no, la vista previa puede salir sin «SIN VALOR FISCAL». Se escribe con el supuesto de trabajo «sí» y se marca | N | M-i |
+| TA-56 | N | Vista previa con comprobante real y tamaño hostil (`@page{size:216mm 1mm;margin:0}`). **P-1 firmado «sí», 2026-10-23 (PR #222)** | **400 `FORMATO_INVALIDO`** (A8), sin PDF y sin registrar nada. Sin la guarda la vista previa saldría sin «SIN VALOR FISCAL» | N | M-i, M-x |
+| TA-VP-01 | N | Vista previa con comprobante real, página de 15 mm de alto (`@page{size:80mm 15mm}`) | 400 `FORMATO_INVALIDO` (A8); no se entrega PDF | N | M-x |
+| TA-VP-02 | N | Vista previa con comprobante real y **segunda página** diminuta (`06j`) | 400 `FORMATO_INVALIDO`: la guarda recorre todas las páginas también aquí | N | M-x, M-k |
+| TA-VP-03 | N | Vista previa con `/Rotate` o con número de `/MediaBox` distinto del de páginas (PDF sintético) | 400 `FORMATO_INVALIDO` | N | M-w, M-x |
+| TA-VP-04 | N | Vista previa con comprobante real, página de exactamente 25 mm de alto y 20 mm de ancho (límite) | Admitida; «SIN VALOR FISCAL» presente en **cada página** (texto) y banda visible (R); 0 píxeles de la capa del atacante en la banda | N+R | M-j, M-x |
+| TA-VP-05 | N | Vista previa con comprobante real y los vectores de CSS más duros (`04-capa-opaca-zindex`, `06-page-margin-0`, `08-caja-de-margen`) | Admitida; «SIN VALOR FISCAL» en cada página, banda visible, 0 verde en la banda; sin «Reimpreso el» como marca de copia (UO-04) | N+R | M-c, M-x |
 
 ### 2.4 Posiciones y tamaños no relacionados con `@page`
 
@@ -188,6 +193,7 @@ Adicionales de este plan:
 | M-u | El rechazo de C-1 devuelve 200 con el PDF sin marca, o responde 503/otro código, o registra la copia, en lugar de 400 `FORMATO_INVALIDO` | Aserción de A8 (código HTTP y 0 filas) | Mata |
 | M-v | La guarda rechaza por `Pages` pero no por `/MediaBox` (usa una propiedad de Chromium) | TA-46 (borde), TA-54 | Mata |
 | M-w | La guarda no rechaza `/Rotate` ni un número de `/MediaBox` distinto del de páginas | TA-54, TA-55 | Mata |
+| M-x | La guarda C-1 no se aplica en la vista previa con comprobante real | TA-56, TA-VP-01 a TA-VP-05 | Mata |
 
 ## 5. Regresión y huecos
 
@@ -224,7 +230,7 @@ La hoja estima 1 a 1,25 dp para construir (b); estas pruebas son aparte (la hoja
 
 | # | Duda | Quién |
 |---|---|---|
-| P-1 | ¿La guarda C-1 también en la vista previa con un comprobante real? Recomendación de B: sí (0 dp). Pendiente del propietario; TA-56 se escribe con «sí» como supuesto de trabajo | Propietario |
+| ~~P-1~~ | **Firmado 2026-10-23 (PR #222): sí.** Cerrada | — |
 
 
 ### Cierre
@@ -232,5 +238,5 @@ La hoja estima 1 a 1,25 dp para construir (b); estas pruebas son aparte (la hoja
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\C\2026-10-23-plan-tabla-adversaria-p170-07.md`
 - Supuestos: la espiga leída en `e112ae91` es la vigente; MargenMm = 10 mm es el valor definitivo
 - Decisiones candidatas a ADR: Ninguna
-- Entregas a otros agentes: Propietario → P-1; A → revisar TA-31 (imitación visual) como riesgo residual
-- Próximo paso recomendado: el propietario firma P-1; B construye P170-07 en su propio PR, después de T4-02b
+- Entregas a otros agentes: A → revisar TA-31 (imitación visual) como riesgo residual
+- Próximo paso recomendado: B construye P170-07 en su propio PR, después de T4-02b

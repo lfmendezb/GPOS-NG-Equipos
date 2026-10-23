@@ -26,7 +26,7 @@ Fuente: `avisos/B-a-C/2026-10-23-respuestas-dudas-t4-02b-y-p170-07.md`. Incorpor
 | Correcciones | R429-03 y R429-05: la primera reimpresión es «COPIA 2»; R429-07: quien pierde sale como reintento de clase `F`; S503-02: tabla `doc.Documento` | Sección 2 |
 | D-8, D-9 | P170-07 va en su propio PR, después de T4-02b; contrato versión 1; `ReglasReimpresionTests` se reescribe en ese PR | Fila 7 de la sección 3 |
 | D-1 | #156 asignado a C; si no está unido el 13-nov, lo adopta B | C-2 |
-| Pendientes | P-1 y P-T402-03 los firma el propietario; trabajo con (a) | Sección 8 |
+| Firmado | **Firmado 2026-10-23 (PR #222):** P-1 = sí (ver el plan de P170-07) y P-T402-03 = (a). Ya no hay supuesto de trabajo | Sección 8, C4-02 |
 
 ## 0. Resumen y lo que bloquea
 
@@ -37,7 +37,7 @@ Fuente: `avisos/B-a-C/2026-10-23-respuestas-dudas-t4-02b-y-p170-07.md`. Incorpor
 5. **Medición «después»** (sección 5): protocolo y qué no se puede concluir.
 6. **Mutaciones** (sección 6): 24, cada una con el caso que la mata o «no la mata nada hoy».
 7. **Orden de trabajo y esfuerzo** (sección 7): unos **3,5 dp** de pruebas [I], de los cuales ~1,5 ya están en las estimaciones de B (BP 13) y el resto es nuevo.
-8. **Pendientes** (sección 8): D-5 (recorte del cierre), P-1 y P-T402-03 (propietario; trabajo con (a)). La regla del conduce: P-T402-01 firmada en (a), así que su prueba es obligatoria. C-3 y el resto de dudas quedaron resueltas por B (ver «Respuestas de B»).
+8. **Pendientes** (sección 8): solo D-5 (recorte del cierre). P-1 y P-T402-03 quedaron **firmados el 2026-10-23 (PR #222)**. La regla del conduce: P-T402-01 firmada en (a), así que su prueba es obligatoria. C-3 y el resto de dudas quedaron resueltas por B (ver «Respuestas de B»).
 
 ## 1. Condiciones de unión C-2, C-3, C-4, C-6 y C-7
 
@@ -74,7 +74,7 @@ Guarda automática posible [I]: una prueba estática `Existe_la_linea_base_de_Me
 | Caso | Qué se comprueba | Cómo | Resultado esperado | Mutación |
 |---|---|---|---|---|
 | C4-01 | #170 está unido y T4-02b se apoya en él | `gh pr view 170 --json state` y ancestro | `MERGED`, ancestro verdadero | M-T09 |
-| C4-02 | Con el navegador no disponible (Release; carpeta que **no cumple ADR-77**, no «ausente»: si falta, se crea) los formatos **personalizados** (Razor) dan 503 y los **estándar** (QuestPDF) imprimen (BP 8.4 [V rama t4-03a `ConvertidorPdf.cs:28,39,82`]). Con P-T402-03 en (a) (supuesto de trabajo) no hay formato estándar de emergencia para el personalizado en T4-02 | Caso `A` del anfitrión con una carpeta de perfil que incumple ADR-77 y un formato `RAZOR`; luego un formato estándar | Personalizado: 503 **`NAVEGADOR_NO_DISPONIBLE`**; estándar: 200 PDF. `REPORTES_NO_DISPONIBLE` queda solo para la API de reportes apagada o sin respuesta | M-T10 |
+| C4-02 | Con el navegador no disponible (Release; carpeta que **no cumple ADR-77**, no «ausente»: si falta, se crea) los formatos **personalizados** (Razor) dan 503 y los **estándar** (QuestPDF) imprimen (BP 8.4 [V rama t4-03a `ConvertidorPdf.cs:28,39,82`]). **P-T402-03 (a), firmado 2026-10-23 (PR #222):** sin formato estándar de emergencia en T4-02; el 503 se muestra y el documento queda guardado; se decide con C-02-2 en T4-10 | Caso `A` del anfitrión con una carpeta de perfil que incumple ADR-77 y un formato `RAZOR`; luego un formato estándar; y verificar que **no** hay degradación a QuestPDF para el personalizado | Personalizado: 503 **`NAVEGADOR_NO_DISPONIBLE`**, documento guardado; estándar: 200 PDF. `REPORTES_NO_DISPONIBLE` queda solo para la API de reportes apagada o sin respuesta | M-T10 |
 | C4-03 | Ningún camino de T4-02b vuelve a poner Chromium en `GPOS.Api` | Prueba transitiva de la sección 4 | Verde | M-T09, M-T11 |
 | C4-04 | La suite A de T4-02b usa la carpeta del perfil del #170 con la ACL de ADR-77 | **No existe** la opción `GPOS:Reportes:Render:Perfil`: el accesorio prepara una carpeta `GPOS_TEST_*` que cumple ADR-77 y el anfitrión la usa por el mecanismo real de #170 (confirmar el nombre al leer el código) | El accesorio arranca en Windows sin abrir `%ProgramData%` real | — (revisión) |
 
@@ -301,8 +301,8 @@ Suite: `--filter "Transicion!=Ola5&Transicion!=Defecto"`, sola; el 11-16 y el 11
 | # | Duda | Quién |
 |---|---|---|
 | D-5 | El cierre viaja **completo** hoy por `SolicitudRenderCierre` (C-2′ y recorte solo en T4-11); AD-01 solo comprueba que el permiso precede (sin respuesta de B) | B / A |
-| P-1 | ¿La guarda C-1 también en la vista previa con un comprobante real? Recomendación de B: sí (0 dp). Pendiente del propietario; afecta a la tabla adversaria de P170-07 | Propietario |
-| P-T402-03 | Formato estándar de emergencia cuando falta el navegador. Pendiente del propietario; **trabajo con (a)** (no en T4-02; lo decide C-02-2 con T4-10), que fija C4-02 | Propietario |
+| ~~P-1~~ | **Firmado 2026-10-23 (PR #222): sí**, la guarda C-1 también en la vista previa con comprobante real (casos TA-56 y TA-VP-01 a TA-VP-05 del plan de P170-07) | — |
+| ~~P-T402-03~~ | **Firmado 2026-10-23 (PR #222): (a).** C4-02 queda fijo | — |
 
 
 ### Cierre
@@ -310,5 +310,5 @@ Suite: `--filter "Transicion!=Ola5&Transicion!=Defecto"`, sola; el 11-16 y el 11
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\C\2026-10-23-plan-pruebas-t4-02b.md`
 - Supuestos: el BP en `fc68c7f6` es la versión vigente; no leí los archivos de pruebas, solo su descripción en el BP y las respuestas de B
 - Decisiones candidatas a ADR: Ninguna
-- Entregas a otros agentes: Propietario → P-1 y P-T402-03; B → D-5
-- Próximo paso recomendado: el propietario firma P-1 y P-T402-03 y B confirma D-5 antes del 16-nov
+- Entregas a otros agentes: B → D-5
+- Próximo paso recomendado: B confirma D-5 antes del 16-nov
