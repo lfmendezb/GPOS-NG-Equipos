@@ -1,0 +1,221 @@
+// Copia de las pruebas hostiles de la revisión adversarial posterior del #120 (equipo C, 2026-10-23).
+// En el worktree de C (feature/modelo-ng @ b9efa9fb), sin seguimiento y sin commit:
+//   tests/GPOS.Tests/Acceso/LlaveFirmaRevisionCTests.cs        (RC-1 a RC-9; abajo, completo)
+//   tests/GPOS.Tests/Acceso/LlaveFirmaRevisionCSondaTests.cs   (sonda S0: Exists y Nombres por proveedor y almacén, ACL de las carpetas de CNG)
+//   tests/GPOS.Tests/Acceso/LlaveFirmaRevisionCSonda2Tests.cs  (sonda S1: PCP en el almacén del usuario: Security Descr, ExportPolicy y latencia)
+// Resultado en esta PC (no elevada, con TPM): fallan RC4, RC6, RC8 y RC9 (cada una demuestra un hallazgo); pasan RC1, RC2 (sin nada que
+// comprobar), RC3, RC5 y RC7.
+
+using System.Runtime.Versioning;
+using System.Security.AccessControl;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using GPOS.Comun.Firma;
+using GPOS.Comun.Introspeccion;
+using GPOS.Comun.Sobres;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
+
+namespace GPOS.Tests.Acceso;
+
+[Trait("Esquema", "Neutral")]
+[Trait("Categoria", "LlaveFirmaRevisionC")]
+public sealed class LlaveFirmaRevisionCTests(ITestOutputHelper salida) : IDisposable
+{
+    private static readonly DateOnly Hoy = new(2026, 11, 2);
+    private readonly string _prefijo = "GPOS.Api.Firma.PruebaC" + Guid.NewGuid().ToString("N")[..8] + ".";
+    private readonly RegistroMemoria _registro = new();
+
+    public void Dispose()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        foreach (var maquina in new[] { false, true })
+        {
+            var almacen = new AlmacenLlavesFirmaWindows(maquina, _prefijo);
+            try
+            {
+                foreach (var n in almacen.Nombres()) almacen.Eliminar(n);
+            }
+            catch (CryptographicException) { }
+        }
+    }
+
+    [Fact]
+    public void R0_Entorno()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        salida.WriteLine($"Administrador elevado: {RequisitosDeEntornoLlaves.EsAdministrador()}");
+        salida.WriteLine($"HayTpm (Platform Crypto Provider se abre): {RequisitosDeEntornoLlaves.HayTpm()}");
+        salida.WriteLine($"Usuario: {WindowsIdentity.GetCurrent().Name}");
+    }
+
+    /// RC-1: un usuario sin administrador no puede crear una llave con el prefijo en el almacén de la máquina (Software KSP).
+    [Fact]
+    [SupportedOSPlatform("windows")]
+    public void RC1_Sin_administrador_no_se_planta_una_llave_con_el_prefijo_en_la_maquina()
+    {
+        if (!OperatingSystem.IsWindows() || RequisitosDeEntornoLlaves.EsAdministrador()) return;
+        var nombre = _prefijo + "20261102";
+        Exception? error = null;
+        try
+        {
+            using var k = CngKey.Create(CngAlgorithm.ECDsaP256, nombre, new CngKeyCreationParameters
+            {
+                Provider = CngProvider.MicrosoftSoftwareKeyStorageProvider,
+                KeyCreationOptions = CngKeyCreationOptions.MachineKey,
+                ExportPolicy = CngExportPolicies.None,
+                KeyUsage = CngKeyUsages.Signing,
+            });
+        }
+        catch (Exception ex)
+        {
+            error = ex;
+        }
+        salida.WriteLine(error is null ? "Creada sin administrador." : $"{error.GetType().Name} 0x{error.HResult:X8}: {error.Message}");
+        Assert.NotNull(error);
+    }
+
+    /// RC-2: si se pudiera plantar, Abrir la marcaría por su dueño (línea 187) y la API no arrancaría con ella.
+    [Fact]
+    [SupportedOSPlatform("windows")]
+    public void RC2_La_llave_plantada_en_la_maquina_se_marca_por_su_dueno_y_la_API_no_la_usa()
+    {
+        if (!OperatingSystem.IsWindows() || RequisitosDeEntornoLlaves.EsAdministrador()) return;
+        var nombre = _prefijo + "20261102";
+        try
+        {
+            using var k = CngKey.Create(CngAlgorithm.ECDsaP256, nombre, new CngKeyCreationParameters
+            {
+                Provider = CngProvider.MicrosoftSoftwareKeyStorageProvider,
+                KeyCreationOptions = CngKeyCreationOptions.MachineKey,
+                KeyUsage = CngKeyUsages.Signing,
+            });
+        }
+        catch (CryptographicException ex)
+        {
+            salida.WriteLine($"No se pudo plantar (0x{ex.HResult:X8}): nada que comprobar.");
+            return;
+        }
+        var maquina = new AlmacenLlavesFirmaWindows(maquina: true, _prefijo, @"NT SERVICE\GPOS.Api");
+        string kid;
+        using (var abierta = maquina.Abrir(nombre))
+        {
+            salida.WriteLine($"ProblemaSeguridad: {abierta.ProblemaSeguridad}");
+            Assert.Contains("dueño", abierta.ProblemaSeguridad);
+            kid = abierta.Kid;
+        }
+        Assert.Contains("seguridad esperada", Assert.Throws<InvalidOperationException>(() =>
+            ProveedorLlavesFirma.Abrir(maquina, new OpcionesLlavesFirma(nombre, [kid]), _registro, Hoy)).Message);
+        Assert.Single(_registro.Entradas, e => e.Nivel == LogLevel.Critical && e.Evento.Id == 4740);
+    }
+
+    /// RC-3 (P120S-04): sin administrador, Crear en la máquina da UnauthorizedAccessException y no deja la llave.
+    [Fact]
+    [SupportedOSPlatform("windows")]
+    public void RC3_Crear_en_la_maquina_sin_administrador_lanza_UnauthorizedAccess_y_no_deja_llave()
+    {
+        if (!OperatingSystem.IsWindows() || RequisitosDeEntornoLlaves.EsAdministrador()) return;
+        var maquina = new AlmacenLlavesFirmaWindows(maquina: true, _prefijo, @"NT SERVICE\GPOS.Api");
+        var nombre = _prefijo + "20261102";
+        var ex = Record.Exception(() => maquina.Crear(nombre, ProveedorLlaveFirma.Software, @"NT SERVICE\GPOS.Api").Dispose());
+        salida.WriteLine(ex is null ? "Se creó" : $"{ex.GetType().Name} 0x{ex.HResult:X8} (interna 0x{ex.InnerException?.HResult:X8}): {ex.Message}");
+        Assert.IsType<UnauthorizedAccessException>(ex);
+        // Solo el Software KSP: en el Platform Crypto Provider, Exists en la máquina sin administrador lanza NTE_PERM en este equipo (RC-9)
+        Assert.False(CngKey.Exists(nombre, CngProvider.MicrosoftSoftwareKeyStorageProvider, CngKeyOpenOptions.MachineKey | CngKeyOpenOptions.Silent));
+    }
+
+    /// RC-4: con TPM, una llave activa de software debería impedir arrancar (hoy arranca con el 4735).
+    [Fact]
+    public void RC4_Con_TPM_una_llave_activa_de_software_impide_arrancar()
+    {
+        using var memoria = new AlmacenLlavesMemoria { HayTpm = true };
+        var activa = LlavesFirma.Prefijo + "20261102";
+        var kid = memoria.Agregar(activa, ProveedorLlaveFirma.Software);
+        var ex = Record.Exception(() => ProveedorLlavesFirma.Abrir(memoria, new OpcionesLlavesFirma(activa, [kid]), _registro, Hoy).Dispose());
+        foreach (var e in _registro.Entradas) salida.WriteLine($"{e.Nivel} {e.Evento.Id}: {e.Mensaje}");
+        Assert.IsType<InvalidOperationException>(ex);
+        Assert.Single(_registro.Entradas, e => e.Nivel == LogLevel.Critical && e.Evento.Id == 4740);
+    }
+
+    /// RC-5 (P120S-02): la condición 7 vale para la llave anterior de la rotación.
+    [Fact]
+    public void RC5_Una_llave_anterior_de_la_lista_con_seguridad_inesperada_impide_arrancar()
+    {
+        using var memoria = new AlmacenLlavesMemoria();
+        var activa = LlavesFirma.Prefijo + "20261102";
+        var anterior = LlavesFirma.Prefijo + "20261001";
+        var kid = memoria.Agregar(activa);
+        var kidAnterior = memoria.Agregar(anterior);
+        memoria.Inseguras[anterior] = "su ACL da acceso a S-1-1-0.";
+        Assert.Contains(anterior, Assert.Throws<InvalidOperationException>(() =>
+            ProveedorLlavesFirma.Abrir(memoria, new OpcionesLlavesFirma(activa, [kid, kidAnterior]), _registro, Hoy)).Message);
+        _registro.Entradas.Clear();
+        using var p = ProveedorLlavesFirma.Abrir(memoria, new OpcionesLlavesFirma(activa, [kid]), _registro, Hoy);
+        Assert.Empty(_registro.Entradas);
+    }
+
+    /// RC-6 (resto de P120-06): excepción que no es CryptographicException al abrir una llave retirada: sin 4740.
+    [Fact]
+    public void RC6_Una_excepcion_inesperada_al_abrir_una_llave_retirada_deja_el_4740()
+    {
+        using var memoria = new AlmacenLlavesMemoria();
+        var activa = LlavesFirma.Prefijo + "20261102";
+        var kid = memoria.Agregar(activa);
+        memoria.Agregar(LlavesFirma.Prefijo + "20260901");
+        var almacen = new AlmacenQueLanza(memoria, LlavesFirma.Prefijo + "20260901", new UnauthorizedAccessException("Acceso denegado."));
+        var ex = Record.Exception(() => ProveedorLlavesFirma.Abrir(almacen, new OpcionesLlavesFirma(activa, [kid]), _registro, Hoy).Dispose());
+        salida.WriteLine($"{ex?.GetType().Name}: {ex?.Message}");
+        Assert.Single(_registro.Entradas, e => e.Evento.Id == 4740);
+    }
+
+    /// RC-7: si la API corre como LocalSystem, la llave hecha para NT SERVICE\GPOS.Api no pasa (falla cerrada).
+    [Fact]
+    public void RC7_Si_la_API_corre_como_LocalSystem_la_llave_de_la_API_no_pasa()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var api = CuentaServicioVirtual.Sid("GPOS.Api");
+        var system = new SecurityIdentifier(WellKnownSidType.LocalSystemSid, null);
+        Assert.NotNull(AlmacenLlavesFirmaWindows.ProblemaSeguridad(LlaveSitio.Descriptor(api), system));
+    }
+
+    /// RC-8: una regla solo de herencia (InheritOnly) para el servicio no debería contar como «el uso».
+    [Fact]
+    public void RC8_Una_regla_solo_de_herencia_para_el_servicio_no_cuenta_como_uso()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var api = CuentaServicioVirtual.Sid("GPOS.Api");
+        var admins = new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid, null);
+        var dacl = new DiscretionaryAcl(isContainer: true, isDS: false, 2);
+        dacl.AddAccess(AccessControlType.Allow, admins, 0x10000000, InheritanceFlags.None, PropagationFlags.None);
+        dacl.AddAccess(AccessControlType.Allow, api, unchecked((int)0x80000000), InheritanceFlags.ObjectInherit, PropagationFlags.InheritOnly);
+        var sd = new CommonSecurityDescriptor(true, false, ControlFlags.DiscretionaryAclPresent, admins, null, null, dacl);
+        var b = new byte[sd.BinaryLength];
+        sd.GetBinaryForm(b, 0);
+        salida.WriteLine($"ProblemaSeguridad: {AlmacenLlavesFirmaWindows.ProblemaSeguridad(b, api) ?? "(null: aceptada)"}");
+        Assert.NotNull(AlmacenLlavesFirmaWindows.ProblemaSeguridad(b, api));
+    }
+
+    /// RC-9: con TPM y sin administrador, el almacén de la máquina se puede listar (lo que hace la API como NT SERVICE\GPOS.Api).
+    [Fact]
+    [SupportedOSPlatform("windows")]
+    public void RC9_Con_TPM_y_sin_administrador_el_almacen_de_la_maquina_se_lista()
+    {
+        if (!OperatingSystem.IsWindows() || RequisitosDeEntornoLlaves.EsAdministrador() || !RequisitosDeEntornoLlaves.HayTpm()) return;
+        var maquina = new AlmacenLlavesFirmaWindows(maquina: true, _prefijo, @"NT SERVICE\GPOS.Api");
+        var ex = Record.Exception(() => maquina.Nombres());
+        salida.WriteLine(ex is null ? "Se listó" : $"{ex.GetType().Name} 0x{ex.HResult:X8}: {ex.Message}");
+        Assert.Null(ex);
+    }
+
+    private sealed class AlmacenQueLanza(IAlmacenLlavesFirma interno, string nombre, Exception error) : IAlmacenLlavesFirma
+    {
+        public string Prefijo => interno.Prefijo;
+        public bool HayTpm => interno.HayTpm;
+        public IReadOnlyList<string> Nombres() => interno.Nombres();
+        public bool Existe(string n) => interno.Existe(n);
+        public string? ProblemaIdentidad(string i) => interno.ProblemaIdentidad(i);
+        public ILlaveFirmaTokens Abrir(string n) => n == nombre ? throw error : interno.Abrir(n);
+        public ILlaveFirmaTokens Crear(string n, ProveedorLlaveFirma p, string? i) => interno.Crear(n, p, i);
+        public void Eliminar(string n) => interno.Eliminar(n);
+    }
+}
