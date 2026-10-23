@@ -71,3 +71,4 @@
 - [traspaso-b-2026-10-23](traspaso-b-2026-10-23.md) — LEER PRIMERO (B): cierre de la noche 22-23 oct; master 116f7525, modelo-ng 67b4353a; uniones, abiertos, agentes en curso con rama, pendientes y qué hacer primero
 - [traspaso-b-2026-10-23-tarde](traspaso-b-2026-10-23-tarde.md) — LEER PRIMERO tras el del 23-oct (noche): #170 en 03bbceea, PR abiertos de B, VM-SRV lista salvo cierre y VM-LNX sin instalar, decisiones pendientes y qué hacer primero
 - [get-rnc-dgii-es-de-gpos-vb6](get-rnc-dgii-es-de-gpos-vb6.md) — GET-RNC-DGII es complemento de GPOS VB6 (no de GPOS NG): sin ADR ni convenciones de GPOS NG
+- [traspaso-b-2026-10-23-noche-2](traspaso-b-2026-10-23-noche-2.md) — LEER PRIMERO tras el de la tarde: cierre del 23-oct; modelo-ng b9efa9fb; firmas de hoy, PR abiertos, agente de F1 en curso, laboratorio de VM-SRV desde hoy, backlog de A y C y qué hacer primero
