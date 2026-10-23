@@ -29,3 +29,12 @@ Igual que la tabla de la nota de la tarde, con estas puntas: `a/spike-amplio-dem
 - Los archivos `.ps1` y `.cs` del árbol de trabajo traen CRLF (`core.autocrlf`): las pruebas que buscan `\n` fallan; normalizar con `Replace("\r\n", "\n")`. `grep -c $'\r'` en Git Bash no lo detecta bien; usar PowerShell.
 - En PowerShell `$pid` es la variable automática de solo lectura (`$PID`): no asignarla.
 - `sed -i` sobre un archivo que luego se edita con `Edit` obliga a `Read` otra vez.
+
+## 6. Añadido al cerrar la sesión (después de la primera versión de esta nota)
+- **Revisiones hechas y publicadas:** #170 `03bbceea..94f5df64` (R170-01 no quedaba cerrado → R170-03), **#204 aprobado** (cierra R170-01/03), **#197 aprobado con nota** (el doble del emisor no repite el orden completo; P175-02 (2) confirmada), **#198 aprobado**, **#202 (T4-07) aprobado con condiciones** (T4-07-01 tablero 503 sin reenvío; T4-07-02 cuentas restringidas sin `EmpresaDefault`). Informes en `traspasos/A/revision-*-2026-10-23.md`.
+- **SPV-03 cerrada** en la hoja y la matriz de PR-V (firmada (a) por el propietario).
+- **Pools:** recomendado quedarse con el #196 de C y retirar `a/limpieza-clearallpools`; pregunta a B abierta sobre rescatar el arreglo del 924 de `CompraVariableTablaTests`.
+- **`a/docs-operaciones-api-servicio-pr4`** (`00311f86`, solo documentación): textos de la escucha tras PR-4 (P-07). Preguntado a B dónde están G-PR4, T1-09 y el §7 de la guía.
+- **Antes de abrir `a/t4-04-emisor`** (cuando el propietario lo ordene): correr las dos pruebas de P175-02 con el emisor real.
+- **T4-06:** preparada, no empezada; debe rebasar sobre el #202 y reutilizar `ReenvioReportes.NoDisponible()`. Respuestas de B pendientes: P-1, P-2, P-3, P-4, Q-A4 (resumen en `revision-198-preparar-vm-y-preparacion-t4-06-2026-10-23.md`).
+- **Esperando a B:** `avisos/A-a-B/2026-10-23-pr-d2-empresa-y-cuentas-bloqueo.md` (opción (a) o (b) y dueño de la pieza del anillo), pools, G-PR4/T1-09/§7, T4-06.
