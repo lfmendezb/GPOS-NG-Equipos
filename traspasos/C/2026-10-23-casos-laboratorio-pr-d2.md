@@ -16,12 +16,12 @@ Estado: Abierto (casos redactados; nada ejecutado)
 
 ## 0. Resumen para decidir
 
-1. **Cuatro bloques, 31 casos** (más subcasos): `LAB-RS-01` a `-11` (fase `restaurar` llamada directamente), `LAB-RV-01` a `-07` (`Revertir-Actualizacion.ps1` con servicios), `LAB-EM-01` a `-07` (empresa creada por la interfaz como GSF con `dbcreator`) y `LAB-CU-01` a `-06` (cuentas iniciales con el anillo del servicio).
+1. **Cuatro bloques, 34 casos** (más subcasos): `LAB-RS-01` a `-12` (fase `restaurar` llamada directamente), `LAB-RV-01` a `-09` (`Revertir-Actualizacion.ps1` con servicios), `LAB-EM-01` a `-07` (empresa creada por la interfaz como GSF con `dbcreator`) y `LAB-CU-01` a `-06` (cuentas iniciales con el anillo del servicio).
 2. **Dos niveles de montaje, porque el instalador de servicios no está terminado.** `Instalar-Demo.ps1` en modo de servicios hoy **termina con un error a propósito** ("BORRADOR de PR-D2: faltan la base de la empresa y las cuentas iniciales…", `Instalar-Demo.ps1:167`) **antes** de escribir `instalacion.json`; sin ese archivo `Actualizar-Demo.ps1` y `Revertir-Actualizacion.ps1` no corren. Por eso: **Nivel V** (bloque RS): `implantar-servidor --fase carpetas` y `--fase servicios` a mano con dos paquetes; no necesita SQL, anillo ni instalador. **Nivel G** (bloque RV): instalador completo; depende de F1 (anillo, unión antes del 5-nov) y del paso de A del 5 al 9-nov. **Nivel A** (bloques EM y CU): además, el anillo funcionando y los servicios en `Running`.
-3. **Hallazgo previo a la VM (P-D2-01, Media, [V] por lectura):** el ciclo **actualizar → revertir → actualizar → revertir** deja la segunda actualización **sin `HuellaCopiaPrevia`** (la copia previa nueva es byte a byte la de antes, su huella no cambia, y `Actualizar-Demo.ps1` lo interpreta como "no cambió los binarios"). Esa reversión restaura las bases pero **no** los binarios: base en la versión anterior con programas nuevos. Es exactamente lo que hará el ensayo de la VM. Detalle y caso: sección 3 y `LAB-RV-06`. Lo conviene mirar A antes del 16-nov.
+3. **Hallazgo previo a la VM (P-D2-01, Media, [V] por lectura):** el ciclo **actualizar → revertir → actualizar → revertir** deja la segunda actualización **sin `HuellaCopiaPrevia`** (la copia previa nueva es byte a byte la de antes, su huella no cambia, y `Actualizar-Demo.ps1` lo interpreta como "no cambió los binarios"). Esa reversión restaura las bases pero **no** los binarios: base en la versión anterior con programas nuevos. Es exactamente lo que hará el ensayo de la VM. La segunda revisión adversarial (`2026-10-23-revision-adversarial-restaurar.md`) lo reproduce con una prueba que falla (RA-01, RC1) y añade el camino hermano RA-02 (falla de `--fase servicios` tras renovar `.anterior`, sin huella anotada) y RA-04 (PowerShell de 32 bits). Detalle y casos: sección 3, `LAB-RV-06`, `LAB-RV-08` y `LAB-RV-09`; la carrera RA-05 es `LAB-RS-12`. Lo conviene mirar A antes del 16-nov.
 4. **Otras dos observaciones [V]:** `Revertir-Actualizacion.ps1` **no** llama a `comprobar-servidor` (el blueprint de A, §5, lo pide; R-09 de la revisión de seguridad sigue abierto en `cd44043c`) y **nada impide `Start-Service` con la marca `.aplicando` presente** (R-04 (a) sigue abierto). Los casos `LAB-RS-06` y `LAB-RV-05` registran el estado real, no lo suponen cerrado.
-5. **Duración [I, ±50 %]:** S6 (Nivel V, `VM-SRV` sola) ≈ 6 h; S7 (Nivel G) ≈ 5 h; S8 (Nivel A: empresa y cuentas) ≈ 6 h. Total ≈ 17 h de operación en tres ventanas del 16 al 27-nov.
-6. **Si solo cabe una ventana:** `LAB-RS-01`, `-03`, `-05`, `-06`, `LAB-RV-01`, `-04`, `-06`, `LAB-CU-01`, `-02`, `LAB-EM-01`, `-07`, el resto.
+5. **Duración [I, ±50 %]:** S6 (Nivel V, `VM-SRV` sola) ≈ 6,5 h; S7 (Nivel G) ≈ 6 h; S8 (Nivel A: empresa y cuentas) ≈ 6 h. Total ≈ 18,5 h de operación en tres ventanas del 16 al 27-nov.
+6. **Si solo cabe una ventana:** `LAB-RS-01`, `-03`, `-05`, `-06`, `LAB-RV-01`, `-04`, `-06`, `-08`, `LAB-CU-01`, `-02`, `LAB-EM-01`, `-07`, el resto.
 
 ## 1. Fuentes y estado del código [V]
 
@@ -121,8 +121,8 @@ Plantilla de evidencia por caso (sin secretos), en `$E\<ID>.json`: `{ id, result
 
 | # | Sev. | Observación | Evidencia | Qué pido |
 |---|---|---|---|---|
-| **P-D2-01** | **Media** (reproducible por uso normal; sin datos de cliente) | **El ciclo revertir → actualizar de nuevo → revertir deja los binarios sin restaurar.** Tras `Revertir`, `.anterior` conserva la copia previa de la versión anterior (A) y `manifiesto.instalado.sha256` es el de A. Al volver a actualizar al mismo paquete (B), `CopiarBinarios` hace una copia previa de A: `.anterior\manifiesto.sha256` queda con **exactamente el mismo texto** que antes (`# estado=verificada` más las mismas huellas), así que su SHA-256 es el mismo. `Actualizar-Demo.ps1` solo anota `HuellaCopiaPrevia` si esa huella **cambió** (`$huellaDespues -ne $huellaAntes`), y concluye "no cambió los binarios de los servicios" aunque sí los cambió. La siguiente `Revertir` toma `$sinBinarios = $true` (`Revertir-Actualizacion.ps1:75-78`), restaura las **bases** a A y deja los **programas** en B; la API "solo trabaja con la versión exacta de esquema" (`:21`). La marca decía dos veces "no cambió", el técnico no tiene cómo saberlo | `Actualizar-Demo.ps1` (≈ `:149-163`), `Revertir-Actualizacion.ps1:73-78`, `FaseServicios.cs` `CopiarBinarios` (paso 2: la copia previa se rehace con `CrearCarpetaProtegida` y se escribe el mismo texto) | Confirmar y corregir antes del 16-nov. Remedio sugerido: no decidir por "la huella cambió", sino por si la fase dijo "Copia previa de N archivos" (o que la fase imprima un identificador único por copia y el guion lo anote). Caso: `LAB-RV-06` |
-| P-D2-02 | Media | `.aplicando` no impide arrancar los servicios (R-04 (a) de A, sin hacer): el usuario que instala puede iniciar `GPOS.Api` con el destino mezclado | Revisión de A R-04; `git grep .aplicando` solo encuentra la fase, `FaseServicios` y el guion | Decidir si se hace antes de la VM; si no, RS-06 lo registra como hallazgo conocido |
+| **P-D2-01** (= RA-01 y RA-02 de la segunda revisión adversarial; RA-04 como variante) | **Media** (reproducible por uso normal; sin datos de cliente) | **El ciclo revertir → actualizar de nuevo → revertir deja los binarios sin restaurar.** Tras `Revertir`, `.anterior` conserva la copia previa de la versión anterior (A) y `manifiesto.instalado.sha256` es el de A. Al volver a actualizar al mismo paquete (B), `CopiarBinarios` hace una copia previa de A: `.anterior\manifiesto.sha256` queda con **exactamente el mismo texto** que antes (`# estado=verificada` más las mismas huellas), así que su SHA-256 es el mismo. `Actualizar-Demo.ps1` solo anota `HuellaCopiaPrevia` si esa huella **cambió** (`$huellaDespues -ne $huellaAntes`), y concluye "no cambió los binarios de los servicios" aunque sí los cambió. La siguiente `Revertir` toma `$sinBinarios = $true` (`Revertir-Actualizacion.ps1:75-78`), restaura las **bases** a A y deja los **programas** en B; la API "solo trabaja con la versión exacta de esquema" (`:21`). La marca decía dos veces "no cambió", el técnico no tiene cómo saberlo | `Actualizar-Demo.ps1` (≈ `:149-163`), `Revertir-Actualizacion.ps1:73-78`, `FaseServicios.cs` `CopiarBinarios` (paso 2: la copia previa se rehace con `CrearCarpetaProtegida` y se escribe el mismo texto) | Confirmar y corregir antes del 16-nov. Remedio sugerido: no decidir por "la huella cambió", sino por si la fase dijo "Copia previa de N archivos" (o que la fase imprima un identificador único por copia y el guion lo anote). **Camino hermano RA-02** (RC2 pasa [V]; el guion es [I]): si `--fase servicios` renueva `.anterior` y falla después (salida 4 con `.aplicando` puesta) o se corta con Ctrl+C antes de `Set-Content`, `Actualizar-Demo.ps1:155` lanza `Detener-ConError` antes de anotar la huella; `Revertir` toma `$sinBinarios`, no mira `.aplicando` y anota `revertida` con el destino mezclado. **RA-04** (Baja, [I]): en una PowerShell de 32 bits `$env:ProgramFiles` apunta a `Program Files (x86)` y produce lo mismo. Remedio de RA (≈ 0,15 dp): la fase imprime `copia-previa-sha256=<huella>`, el guion la anota siempre y antes de mirar el código de salida, `Revertir` no toma `$sinBinarios` si existe `.aplicando`, y sin `$env:ProgramFiles`. Casos: `LAB-RV-06`, `-08`, `-09` |
+| P-D2-02 | Media | `.aplicando` no impide arrancar los servicios (R-04 (a) de A, sin hacer; RA-10: `Iniciar-Demo.ps1:70-73` arranca antes de `comprobar-servidor`): el usuario que instala puede iniciar `GPOS.Api` con el destino mezclado | Revisión de A R-04; `git grep .aplicando` solo encuentra la fase, `FaseServicios` y el guion | Decidir si se hace antes de la VM; si no, RS-06 lo registra como hallazgo conocido |
 | P-D2-03 | Baja | `Revertir-Actualizacion.ps1` no corre `comprobar-servidor` después de la fase (el blueprint §5 y R-09 lo piden), y no inicia los servicios ni dice que hay que correr `Iniciar-Demo.ps1` | `Revertir-Actualizacion.ps1:120-165` | Añadirlo; mientras tanto el caso RV-01 lo corre a mano |
 | P-D2-04 | Media | R-03 solo se cubrió para la carpeta raíz de cada servicio (`destino\api`, `destino\reportes`): un punto de reanálisis o un vínculo físico **dentro** del subárbol sigue sin detectarse, y la copia escribe con `FileMode.Create` a través de ellos | `FaseRestaurar.cs:50-52`; `SistemaServidorWindows.cs:223` | RS-05 lo mide; la corrección es de A (R-03 completa) |
 | P-D2-05 | Informativo | El instalador de servicios se detiene a propósito antes de `instalacion.json` (`Instalar-Demo.ps1:167`): hasta el 5 al 9-nov no hay Nivel G | `Instalar-Demo.ps1:167` | Confirmar fechas (D-9) |
@@ -132,8 +132,8 @@ Plantilla de evidencia por caso (sin secretos), en `$E\<ID>.json`: `{ id, result
 
 | Sesión | Contenido, en este orden | Tiempo [I] |
 |---|---|---|
-| **S6** (Nivel V, `VM-SRV` sola) | PRE-1 y PRE-3 (60 min) → `LAB-D2-A2B` → RS-01, RS-02 (35) → RS-08 (20) → RS-09 (25) → RS-03 (20) → RS-04 (45; cada subcaso desde `LAB-D2-A2B`) → RS-05 (50; cada subcaso desde su punto) → RS-06 (40) → RS-10 (15) → RS-11 (20) → **RS-07 al final** (30; deja la VM sucia) | ≈ 6 h |
-| **S7** (Nivel G) | PRE-4 (45) → `LAB-D2-G-A` → RV-02 (10) → RV-01 (60) → `LAB-D2-G-A2B` (después de actualizar) → RV-04a a d (60, cada una desde su punto) → RV-05 (35) → RV-06 (40) → RV-03 (40; necesita PQ-C) → RV-07 (10) | ≈ 5 h |
+| **S6** (Nivel V, `VM-SRV` sola) | PRE-1 y PRE-3 (60 min) → `LAB-D2-A2B` → RS-01, RS-02 (35) → RS-08 (20) → RS-09 (25) → RS-03 (20) → RS-04 (45; cada subcaso desde `LAB-D2-A2B`) → RS-05 (50; cada subcaso desde su punto) → RS-06 (40) → RS-10 (15) → RS-11 (20) → RS-12 (30) → **RS-07 al final** (30; deja la VM sucia) | ≈ 6,5 h |
+| **S7** (Nivel G) | PRE-4 (45) → `LAB-D2-G-A` → RV-02 (10) → RV-01 (60) → `LAB-D2-G-A2B` (después de actualizar) → RV-04a a d (60, cada una desde su punto) → RV-05 (35) → RV-06 (40) → RV-08 (40) → RV-09 (20) → RV-03 (40; necesita PQ-C) → RV-07 (10) | ≈ 6 h |
 | **S8** (Nivel A) | PRE-5 (40) → `LAB-D2-ANILLO` → CU-02, CU-03 (20) → CU-01 (40) → CU-04 (15) → CU-06 (15) → EM-01 (40) → EM-07 (20) → EM-02 (25) → EM-03 (25) → EM-04 (25) → EM-06 (25) → EM-05 (30) → CU-05 (45; deja auditoría activa, al final) | ≈ 6 h |
 
 ## 5. Bloque RS: la fase `restaurar` llamada directamente (Nivel V)
@@ -297,6 +297,20 @@ Cada subcaso desde su punto de control propio. En cada uno se planta **un archiv
 - **Control negativo:** una sola ejecución (RS-01).
 - **Evidencia:** códigos, salidas, `.snap` final, `CompararManifiesto` contra los manifiestos de PQ-A y de PQ-C. **Duración:** 20 min. **Marca:** [I] (el código no declara exclusión entre procesos).
 
+### LAB-RS-12. Un servicio se inicia entre la comprobación y la copia; `restaurar` contra otra fase (RA-05)
+
+- **Origen:** RA-05: la comprobación "no está en marcha" (`FaseRestaurar.cs:45-47`) ocurre antes de calcular las huellas de toda la copia previa y de copiar (`:95-120`); el usuario que instala puede iniciar los servicios sin elevar (`SddlServicios.cs:36`) y no hay exclusión entre fases (no hay `Mutex` en `src/GPOS.Migracion/Servidor`). Complementa RS-11.
+- **Precondición:** `LAB-D2-A2B` con el `relleno.bin` de 400 MB (alarga la ventana). Servicio real en Nivel A; sin anillo, el proceso suelto de RS-03 paso 1. Sesión del usuario que instala, sin elevar (`runas`), abierta.
+- **Pasos:**
+  - **a (carrera con el arranque):** en la consola elevada, `restaurar`; en cuanto imprima su primera línea y antes de que termine, desde la sesión sin elevar `sc.exe start GPOS.Reportes` (y `GPOS.Api` en Nivel A) o `Start-Process` del ejecutable. Anotar código y texto, archivos que fallaron por uso compartido, si el servicio queda corriendo, `.aplicando`, `CompararManifiesto` contra PQ-A y la versión del proceso en marcha. Detener lo que arrancó. Repetir 3 veces con otros tiempos.
+  - **b (fase contra fase):** consola 1: `--fase servicios --origen PQ-C`; a los 2 s, consola 2: `restaurar`. La segunda encuentra la `.aplicando` que la primera acaba de crear y la toma como retoma. Anotar los dos códigos, textos y el estado final (¿mezclado sin aviso?).
+  - **c (si existe la corrección):** durante la fase, `sc qc` (inicio `Disabled`) y `sc sdshow` (sin `RP` para el usuario); la segunda consola espera o se niega por el mutex `Global\GPOS.ImplantarServidor`; al acabar, inicio y SDDL de vuelta.
+- **Esperado (el correcto):** el servicio no puede iniciarse durante la fase, o la fase lo detecta y no declara "restaurado"; la segunda fase se niega mientras la primera no termina.
+- **Esperado según el código [I] (`cd44043c`):** el servicio arranca con un conjunto mezclado y la fase sale con 4 y "No inicie los servicios" cuando ya están iniciados; en (b) la segunda toma la marca ajena y copia encima.
+- **Rechazo:** **Media**: servicio en marcha atendiendo peticiones con binarios mezclados; destino mezclado **sin** marca tras (b). **Alta** si (b) termina con "ok" mientras el destino no coincide con un manifiesto completo.
+- **Control negativo:** sin lanzar el arranque ni la segunda consola, termina en 0 y sin marca (RS-01). Control del instrumento: si el arranque de (a) ocurre después de que la fase terminó, no hay carrera y esa repetición no cuenta.
+- **Evidencia:** códigos y salidas, `Get-Process` o `sc query` en cada instante (con hora), `.snap` final, `CompararManifiesto`, eventos 5135 y de guarda. **Duración:** 30 min (mejor esfuerzo: la ventana es corta). **Marca:** [I]; el diseño de la carrera es [V] por `FaseRestaurar.cs:45-47,95-120`.
+
 ## 6. Bloque RV: `Revertir-Actualizacion.ps1` con servicios (Nivel G)
 
 **Montaje común (PRE-4).** DEMO instalado con PQ-A en modo de servicios, `datos-demo` cargados. Antes de cada actualización, el técnico anota una **fila centinela** en la base de la empresa y otra en `GPOS_SYSDATA` (por ejemplo un registro con una descripción `LAB-RV-<n>-PRE`); después de actualizar, una segunda (`…-POST`). `Marca-Fila` es un `INSERT` mínimo que fija B con los campos obligatorios de la tabla elegida (una nota de configuración, por ejemplo): **D-1**. Las confirmaciones interactivas (`Read-Host 'Escriba RESTAURAR'`) las teclea el técnico.
@@ -373,11 +387,37 @@ Cada subcaso desde su punto. En los rechazos esperados: el guion termina con err
   3. **`Actualizar-Demo.ps1 -Paquete PQ-B` otra vez** (marca M2). Anotar si imprime el aviso "Esta actualización no cambió los binarios de los servicios" **aunque los binarios sí cambiaron** (compararlos con `CompararManifiesto` contra PQ-B). Mirar si `actualizacion.json` de M2 trae `HuellaCopiaPrevia`. Fila `LAB-RV-06-POST2`.
   4. `Revertir -Marca M2 -RestaurarBases`.
   5. Después: `CompararManifiesto "$D" <PQ-A>`, versión de `/api/salud` tras `Iniciar-Demo.ps1`, fila `…-POST2` ausente.
-- **Esperado (el correcto):** el paso 3 anota la huella y el paso 4 restaura **binarios y bases** a PQ-A; 0 distintos contra PQ-A.
-- **Esperado según el código leído [V]:** el paso 3 imprime el aviso y no anota `HuellaCopiaPrevia`; el paso 4 dice "no anotó una copia previa" y restaura solo bases; los binarios quedan en PQ-B con las bases de PQ-A. Es la confirmación de P-D2-01.
+- **Esperado (el correcto, también tras corregir RA-01):** el paso 3 **no** imprime el aviso "no cambió los binarios" y anota `HuellaCopiaPrevia` **aunque sea igual** a la de M1 (la copia es idéntica a la que hay que restaurar; que coincida es correcto); el paso 4 restaura **binarios y bases** a PQ-A; 0 distintos contra PQ-A. Se comparan, sin publicarlas, las huellas anotadas en `actualizacion.json` de M1 y M2: iguales.
+- **Esperado según el código leído [V] (RA-01: la prueba RC1 falla en `cd44043c`):** el paso 3 imprime el aviso y no anota `HuellaCopiaPrevia`; el paso 4 dice "no anotó una copia previa" y restaura solo bases; los binarios quedan en PQ-B con las bases de PQ-A. Es la confirmación de P-D2-01.
 - **Rechazo:** **Media** (propuesta; **Alta** si B y A consideran el ciclo uso normal del DEMO): binarios en una versión y bases en otra tras una reversión que el guion dio por buena; el aviso "no cambió" cuando sí cambió.
-- **Control negativo:** el primer ciclo (pasos 1 y 2) funciona (RV-01); el fallo aparece solo en el segundo.
+- **Control negativo:** el primer ciclo (pasos 1 y 2) funciona (RV-01); el fallo aparece solo en el segundo. Control del instrumento: `Get-FileHash` de `.anterior\manifiesto.sha256` tras el paso 1 y tras el paso 3; si difieren, el escenario no reproduce RA-01 y el caso no concluye.
 - **Evidencia:** la salida de `Actualizar` del paso 3 (el aviso literal), el contenido de `actualizacion.json` de M2 **sin valores** (¿está el campo?), `CompararManifiesto` antes y después del paso 4. **Duración:** 40 min. **Marca:** el defecto es [V] por lectura; el efecto, [I] hasta ejecutar.
+
+### LAB-RV-08. `--fase servicios` falla o se interrumpe después de renovar `.anterior` (RA-02)
+
+- **Origen:** RA-02 (RC2 [V] para la fase; el guion [I] con línea). Deja el destino mezclado con `.aplicando` y el guion lo declara "Reversión hecha".
+- **Precondición:** `LAB-D2-G-A`, servicios detenidos; `Bloquear-Archivo.ps1`; fila centinela `LAB-RV-08-PRE`. Cada subcaso desde su propio punto de control.
+- **Pasos:**
+  - **a (falla de la fase):** abrir con `FileShare.None` un archivo de `destino\api` que PQ-B cambia; `Actualizar-Demo.ps1 -Paquete PQ-B`. Anotar el mensaje del paso 4, `Test-Path "$D\.aplicando"`, si `HuellaPrevia` cambió y si `actualizacion.json` trae `HuellaCopiaPrevia` (presente o ausente). Soltar el archivo.
+  - **b (Ctrl+C):** repetir con PQ-B y pulsar Ctrl+C al terminar la fase y antes de que el guion escriba el registro (el relleno de 400 MB de RS-07 alarga la copia; si tras 3 intentos no se logra la ventana, `No se pudo`, nunca `Cumple`).
+  - **c (la reversión):** `Revertir -Marca <la de a o b> -RestaurarBases`; RESTAURAR. Anotar si dice "no anotó una copia previa", si toma el camino sin binarios, si restaura las bases, si anota `revertida`, y el estado final (`CompararManifiesto` contra PQ-A y PQ-B, `.aplicando`).
+  - **d (la salida existe):** `restaurar --huella-copia-previa <HuellaPrevia>` a mano: retoma y deja el destino en PQ-A.
+  - **e:** con `.aplicando` presente, `Iniciar-Demo.ps1` (RA-10): anotar si arranca los servicios.
+- **Esperado (el correcto):** la huella de `.anterior` se anota aunque la fase dé 4; `Revertir` con `.aplicando` presente **no** toma el camino sin binarios: pide la fase `restaurar` (retoma, termina 0) o se detiene con "reinstale" **sin tocar las bases**; nunca "Reversión hecha" con la marca puesta; `Iniciar-Demo` se niega con la marca.
+- **Esperado según el código [V/I] (`cd44043c`):** no se anota la huella; `Revertir` declara "no los cambió", restaura las bases, se salta la fase, anota `revertida` y no menciona la marca; `Iniciar-Demo` arranca los servicios sobre el destino mezclado.
+- **Rechazo:** **Media** (RA-02): "Reversión hecha" o `revertida` con `.aplicando` presente o con binarios de otra versión que las bases; arranque con la marca. **Alta** si el servicio arranca sobre archivos mezclados y atiende peticiones.
+- **Control negativo:** el mismo `Actualizar` sin bloqueo termina bien, anota la huella y `Revertir` restaura todo (RV-01); el paso d demuestra que la salida existía.
+- **Evidencia:** mensajes, códigos, `Snap` en cada punto, campos de `actualizacion.json` presentes o ausentes, estado del servicio tras el paso e. **Duración:** 40 min. **Marca:** fase [V] (RC2); guion [I] hasta ejecutar.
+
+### LAB-RV-09. Guiones desde una PowerShell de 32 bits (RA-04)
+
+- **Origen:** RA-04: la fase usa `Environment.GetFolderPath(ProgramFiles)`; `Actualizar-Demo.ps1:151` y `Revertir-Actualizacion.ps1:80` usan `$env:ProgramFiles`, que en "Windows PowerShell (x86)" vale `C:\Program Files (x86)` [I, WOW64; la revisión no pudo ejecutarlo].
+- **Precondición:** `LAB-D2-G-A`, servicios detenidos.
+- **Pasos:** (1) en una consola elevada de 32 bits (`%SystemRoot%\SysWOW64\WindowsPowerShell\v1.0\powershell.exe`): `[Environment]::Is64BitProcess` y `$env:ProgramFiles` a `RV09-entorno.txt`. (2) `Actualizar-Demo.ps1 -Paquete PQ-B` en esa consola: anotar el aviso, si se anotó la huella y qué `.anterior` se leyó. (3) `Revertir -Marca <última> -RestaurarBases` en la misma consola. (4) Repetir (2) y (3) en la consola de 64 bits desde `LAB-D2-G-A` (control).
+- **Esperado (el correcto):** los guiones no dependen de la variable: o se niegan en un proceso de 32 bits con mensaje claro, o toman la huella de la salida de la fase y funcionan igual. **Según el código [I]:** en 32 bits las dos huellas son `$null`, sale el aviso falso y la reversión deja bases y binarios de versiones distintas.
+- **Rechazo:** **Media**: la reversión desde 32 bits termina "bien" con estado mezclado. Negarse con mensaje claro, o funcionar, cumple.
+- **Control negativo:** la corrida de 64 bits (paso 4) funciona (RV-01) con `$env:ProgramFiles` = `C:\Program Files`; si en la de 32 bits el valor no difiere, el escenario no reproduce RA-04 y queda `No se pudo`.
+- **Evidencia:** `RV09-entorno.txt`, salidas, `actualizacion.json` (presente o ausente), `CompararManifiesto`. **Duración:** 20 min. **Marca:** [I].
 
 ### LAB-RV-07. Quién puede escribir lo que el guion elevado ejecuta (R-02, solo estado)
 
@@ -523,7 +563,7 @@ Cada subcaso desde su punto. En los rechazos esperados: el guion termina con err
 
 | Caso | Motivo |
 |---|---|
-| Todo el bloque RV | Instalador de servicios terminado (A, 5 al 9-nov) y F1 |
+| Todo el bloque RV (incluidos RV-08 y RV-09) | Instalador de servicios terminado (A, 5 al 9-nov) y F1 |
 | RS-03 paso 3, RS-06 paso 3b, RS-09 paso 4 | Servicios en `Running`: necesitan el anillo (Nivel A) |
 | EM-01 a EM-07 | Paso de empresa (A) y `dbcreator` concedido (D-5) |
 | CU-01 a CU-06 | F1 (`anillo --preparar`, guardas G-1/G-2) |
@@ -562,7 +602,7 @@ Se aplican **sin cambios** las secciones A a E de `tests/laboratorio-adr090/revi
 
 ### I. Horas y orden
 - [ ] Las horas de los `.json` y de los eventos 5135 caen dentro de la ventana y en el orden de la sección 4.
-- [ ] Los casos de severidad Crítica o Alta (RS-01, -03, -05e, -06, -07, -08, -09; RV-01, -04, -05, -06; EM-03, -07; CU-01, -05) se **recalculan a mano** desde lo observado.
+- [ ] Los casos de severidad Crítica o Alta (RS-01, -03, -05e, -06, -07, -08, -09, -12; RV-01, -04, -05, -06, -08; EM-03, -07; CU-01, -05) se **recalculan a mano** desde lo observado.
 - [ ] RS-07 está al final de S6 y CU-05 al final de S8 (dejan la VM sucia).
 
 ## 11. Dudas abiertas (D-x)
@@ -595,5 +635,5 @@ Se aplican **sin cambios** las secciones A a E de `tests/laboratorio-adr090/revi
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\C\2026-10-23-casos-laboratorio-pr-d2.md`
 - Supuestos: los de la sección 12; la sesión usa `VM-SRV` con `base`; los paquetes de PRE-2 los entrega B; el paso de empresa y cuentas se escribe como A y B lo describieron (creación por la interfaz como GSF con `dbcreator`; `sistema --cuentas-iniciales` con el anillo F1)
 - Decisiones candidatas a ADR: Ninguna
-- Entregas a otros agentes: A (desarrollador backend) → P-D2-01 (D-4), D-5, D-6, D-8, R-03 completa (P-D2-04); A (auditor-seguridad) → D-3, D-10, revisar RS-05 y CU-05 antes de dar `restaurar` por verificada; B → D-1, D-2, D-7, D-9, D-11 (paquetes, ventanas, herramientas)
+- Entregas a otros agentes: A (desarrollador backend) → P-D2-01 con RA-01, RA-02 y RA-04 (D-4), RA-05, D-5, D-6, D-8, R-03 completa (P-D2-04); A (auditor-seguridad) → D-3, D-10, revisar RS-05 y CU-05 antes de dar `restaurar` por verificada; B → D-1, D-2, D-7, D-9, D-11 (paquetes, ventanas, herramientas)
 - Próximo paso recomendado: A confirma o descarta P-D2-01 antes del 13-nov; B responde D-1 y D-9 para fijar las tres ventanas
