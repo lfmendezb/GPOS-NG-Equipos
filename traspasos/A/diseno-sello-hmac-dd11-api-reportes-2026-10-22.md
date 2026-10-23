@@ -48,7 +48,7 @@ B propone guardar la fila y pedir el sello «en la misma transacción». Lo corr
 1. Transacción corta: `INSERT/UPDATE` de la fila con `GuardadoPorSuper = 0` y `Huella = NULL` (inerte: el CHECK `CK_FormatoImpresion_HuellaRazor` lo permite). Se obtiene `Id` y una revisión de la fila (`rowversion`).
 2. Sin transacción: `POST …/sello` con el `Id`, `TipoDocumento`, `Modo` y la plantilla **exactos** que se guardaron.
 3. Transacción corta: `UPDATE … SET Huella = @h, GuardadoPorSuper = 1 WHERE Id = @id AND rowversion = @rv`. Si afecta 0 filas (alguien guardó mientras tanto) no se aplica el sello y el SUPER recibe «el formato cambió; vuelva a guardar».
-4. Si la API de reportes no responde: la fila queda sin marca (no imprime Razor), se avisa al SUPER y no se reintenta solo. **Recomiendo que el guardado falle visiblemente** (la fila no se actualiza) en vez de guardar un Razor inerte; B lo decide como arquitecto-software.
+4. Si la API de reportes no responde: la fila queda sin marca (no imprime Razor), se avisa al SUPER y no se reintenta solo. **Decidido: el guardado falla visiblemente** (la fila no se actualiza) en vez de guardar un Razor inerte.
 5. La principal valida que la respuesta tenga `huella` de 33 bytes y `kid` coherente; no interpreta el sello.
 6. Evento en `BitacoraSeguridad` (`FORMATO_RAZOR_SELLADO`, con `Id`, SHA-256 de la plantilla y el caso del ingreso del SUPER): **necesita estar en el catálogo cerrado de T1-1** (se construye desde el 2-nov). Hay que pedirlo ya al arquitecto-datos.
 
@@ -65,7 +65,7 @@ Para todo texto que compile y no salga de `GeneradorRazor` (S-02, sin importar `
 | Caso | Qué ocurre |
 |---|---|
 | A-1 (camino temporal de la principal) | No tiene `K_sello`: rechaza todo Razor leído de su base, hasta T4-11 (lo dice B en 3.2) |
-| Nodo con su propia API de reportes | Su llave es otra: el sello de la central **no verifica** y sale el formato estándar. Opciones para B: (1) aceptar que el Razor solo sirve en la central; (2) que el SUPER selle en cada nodo; (3) aprovisionar el mismo `K_sello` en los nodos (copia protegida al **aprovisionar**), que deshace el aislamiento por nodo. Recomiendo (1) mientras el modo Razor sea legado (ADR-110 cl. 3) |
+| Nodo con su propia API de reportes | **Decidido por el propietario (chat, 2026-10-22):** la API de reportes de un nodo **no acepta** el sello de la central (llave distinta); el Razor se rechaza y sale el formato estándar. Es la opción (1) de la versión anterior de este documento; no se aprovisiona la misma llave en los nodos |
 | Nodo sin API de reportes | Razor rechazado; estándar |
 | Formatos Razor existentes | La migración los deja sin marca; no imprimen hasta que un SUPER los vuelva a guardar (ya firmado) |
 | Reportes caída al guardar | No hay sello; ver 4.4 |
@@ -75,10 +75,8 @@ Para todo texto que compile y no salga de `GeneradorRazor` (S-02, sin importar `
 - **R-SELLO-3 (Media):** la principal comprometida en ejecución puede reenviar un token de SUPER robado y sellar. Igual que B (B3.2: «ninguna opción resiste a una principal comprometida»).
 - **R-SELLO-4 (Baja):** el anillo propio de la API de reportes es trabajo nuevo no planificado (carpeta, DACL, certificado de recuperación). Sin él no hay Razor sellado; no bloquea el resto de T4-10.
 
-## 7. EventId (pregunta 4 de B: «Ojo con los EventId»)
-Hoy el #170 usa **5117 y 5119** y reserva 5118 [V, `git grep` en todas las ramas: 5117 y 5119 aparecen en una sola rama; 5118 en ninguna; 5130 a 5133 están en 127 ramas y 5140 a 5143 en 88]. Propuesta: **el #170 conserva 5117 a 5119** (va adelantado y en revisión) y **T4-10 pasa a 5134 a 5139**:
-- 5134 `ImpresionLecturaInconsistente`; 5135 `ImpresionCopiaNoRegistrada`; 5136 rechazo del sello al renderizar (`SelloRazorRechazado`); 5137 sello concedido; 5138 sello denegado; 5139 reservado.
-Se verifican con `git grep` en todas las ramas el día que se construya (regla de ADR-82, precisión 2026-10-19).
+## 7. EventId (actualizado tras la respuesta de B del 2026-10-22)
+El #170 conserva 5117 a 5119 (5118 reservado a T4-03b). **T4-10 usa 5150 a 5152** (`ImpresionLecturaInconsistente` 5150, `ImpresionCopiaNoRegistrada` 5151, `FormatoSelloRechazado` 5152); 5130 a 5149 están reservados al instalador (N-8). Para el sellado concedido y denegado, B asigna dos más junto a esos (propongo 5153 y 5154) o los reúne en 5152 con un motivo; se verifica con `git grep` en todas las ramas el día que se construya (regla de ADR-82, precisión 2026-10-19). La primera propuesta de este documento (5134 a 5139) queda **descartada**.
 
 ## 8. Pruebas mínimas
 En `GPOS.Reportes.Tests`: `Sello_igual_para_el_mismo_mensaje`, `Cambiar_Id_TipoDocumento_Modo_o_Plantilla_cambia_el_sello`, `Plantilla_con_UTF8_invalido_se_rechaza`, `Plantilla_de_mas_de_256KB_se_rechaza`, `Sin_otp_no_sella`, `Un_ADMIN_no_sella`, `Autenticacion_antigua_no_sella`, `Un_token_programado_no_sella`, `Fuera_de_la_canalizacion_no_se_alcanza`, `Kid_desconocido_rechaza`, `Llave_no_disponible_rechaza_y_no_compila`, `Razor_sin_marca_o_con_sello_alterado_no_se_compila` (con una plantilla que dejaría un archivo si se compilara), `Visual_sin_Diseno_se_rechaza` (S-02), `El_registro_no_contiene_la_plantilla`, `Rotar_la_llave_invalida_los_sellos_anteriores_tras_la_ventana`. En `GPOS.Tests`: `Guardar_Razor_no_mantiene_transaccion_abierta_durante_la_llamada`, `Guardar_con_fila_cambiada_no_aplica_el_sello`, `A1_rechaza_todo_Razor`. Mutación obligatoria: quitar la comprobación de `otp` o de nivel debe hacer fallar una prueba.
