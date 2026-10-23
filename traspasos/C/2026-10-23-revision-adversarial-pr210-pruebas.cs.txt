@@ -1,0 +1,300 @@
+using System.Collections.Concurrent;
+using System.IO.Pipes;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.Versioning;
+using System.Security.Principal;
+using System.Text;
+using System.Text.Json;
+using GPOS.Api.Endpoints;
+using GPOS.Api.Impresion;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
+namespace GPOS.Tests.Impresion;
+
+/// <summary>Revisión adversarial de C del #210 (T4-02a). Temporal: no se une.</summary>
+[SupportedOSPlatform("windows")]
+[Trait("Esquema", "Neutral")]
+public class ClienteRenderRevisionCTests
+{
+    private const string Token = "Bearer token-de-prueba-revision-c";
+    private static readonly byte[] PdfMinimo = Encoding.ASCII.GetBytes("%PDF-1.4\n%prueba\n%%EOF\n");
+
+    private static string CanalUnico() => "GPOS.Reportes.RevC." + Guid.NewGuid().ToString("N")[..8];
+
+    private static (ClienteRender Cliente, ServiceProvider Sp, Registro Reg) Crear(string canal, TimeSpan? plazo = null)
+    {
+        var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["GPOS:Reportes:Reenvio:Direccion"] = "http://localhost:5073",
+            ["GPOS:Reportes:Reenvio:Canalizacion"] = canal,
+            ["GPOS:Reportes:Reenvio:CuentaServicio"] = WindowsIdentity.GetCurrent().User!.Value,
+        }).Build();
+        var s = new ServiceCollection();
+        s.AddLogging();
+        s.AgregarReenvioReportes(config);
+        var sp = s.BuildServiceProvider();
+        var reg = new Registro();
+        return (new ClienteRender(sp.GetRequiredService<IHttpClientFactory>(), sp.GetRequiredService<OpcionesReenvioReportes>(), reg)
+        {
+            Plazo = plazo ?? ClienteRender.PlazoPorOmision,
+        }, sp, reg);
+    }
+
+    private static SolicitudRenderDocumento Documento() =>
+        new(ContratoRender.Version, TiposFormato.TicketPos, null, "Ticket80", null, ModelosDorados.Documento(TiposFormato.TicketPos));
+
+    private static void Autorizar(HttpRequestMessage p) => p.Headers.TryAddWithoutValidation("Authorization", Token);
+
+    private static byte[] Problema(int estado, string codigo, string detalle) =>
+        // El orden de ASP.NET Core: las extensiones («codigo») van después de «detail» (ver la prueba R6)
+        JsonSerializer.SerializeToUtf8Bytes(new Dictionary<string, object?> { ["title"] = "Rechazo", ["status"] = estado, ["detail"] = detalle, ["codigo"] = codigo });
+
+    // R1: un 200 application/pdf sin cuerpo se devuelve como «PDF» de 0 bytes
+    [Fact]
+    public async Task R1_Un_200_pdf_vacio_no_es_un_PDF()
+    {
+        var canal = CanalUnico();
+        await using var srv = Servidor.Iniciar(canal, async (pipe, ct) => await Escribir(pipe, "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: application/pdf\r\nContent-Length: 0\r\n\r\n", ct));
+        var (cliente, sp, _) = Crear(canal);
+        await using (sp)
+        {
+            var ex = await Assert.ThrowsAsync<RenderRechazadoException>(() => cliente.DocumentoAsync(Documento(), Autorizar, default));
+            Assert.Equal(503, ex.EstadoRegla);
+        }
+    }
+
+    // R2: sin Content-Length (cierre de conexión) y con más de 32 MB: el tope del bucle
+    [Fact]
+    public async Task R2_Un_PDF_sin_largo_declarado_de_mas_de_32_MB_se_descarta()
+    {
+        var canal = CanalUnico();
+        await using var srv = Servidor.Iniciar(canal, async (pipe, ct) =>
+        {
+            await Escribir(pipe, "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: application/pdf\r\n\r\n", ct);
+            var bloque = new byte[1024 * 1024];
+            for (var i = 0; i < 40; i++) await pipe.WriteAsync(bloque, ct);
+        });
+        var (cliente, sp, reg) = Crear(canal, TimeSpan.FromSeconds(20));
+        await using (sp)
+        {
+            var ex = await Assert.ThrowsAsync<RenderRechazadoException>(() => cliente.DocumentoAsync(Documento(), Autorizar, default));
+            Assert.Equal(ReenvioReportes.CodigoNoDisponible, ex.CodigoRegla);
+            Assert.Contains(reg.Eventos, e => e.Id == 5121 && e.Texto.Contains("32 MB"));
+        }
+    }
+
+    // R3: encabezados a tiempo y cuerpo detenido: el plazo cubre también la lectura del cuerpo
+    [Fact]
+    public async Task R3_Un_cuerpo_detenido_tras_los_encabezados_se_abandona_en_el_plazo()
+    {
+        var canal = CanalUnico();
+        await using var srv = Servidor.Iniciar(canal, async (pipe, ct) =>
+        {
+            await Escribir(pipe, "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: application/pdf\r\nContent-Length: 1000\r\n\r\n%PDF-1.4\n", ct);
+            await Task.Delay(Timeout.Infinite, ct);
+        });
+        var (cliente, sp, _) = Crear(canal, TimeSpan.FromSeconds(1));
+        await using (sp)
+        {
+            var reloj = System.Diagnostics.Stopwatch.StartNew();
+            var tarea = cliente.DocumentoAsync(Documento(), Autorizar, default);
+            var gano = await Task.WhenAny(tarea, Task.Delay(TimeSpan.FromSeconds(20)));
+            Assert.True(gano == tarea, "El cliente siguió esperando el cuerpo más de 20 s con un plazo de 1 s");
+            var ex = await Assert.ThrowsAsync<RenderRechazadoException>(() => tarea);
+            Assert.Equal(ReenvioReportes.CodigoNoDisponible, ex.CodigoRegla);
+            Assert.InRange(reloj.Elapsed, TimeSpan.FromSeconds(0.9), TimeSpan.FromSeconds(15));
+        }
+    }
+
+    // R4: un 400 FORMATO_INVALIDO cuyo ProblemDetails pasa de 64 KB pierde el código (va detrás de «detail») y llega como 503
+    [Fact]
+    public async Task R4_Un_FORMATO_INVALIDO_con_detalle_largo_conserva_su_codigo()
+    {
+        var canal = CanalUnico();
+        var cuerpo = Problema(400, "FORMATO_INVALIDO", "La plantilla tiene errores: " + new string('x', 70_000));
+        await using var srv = Servidor.Iniciar(canal, async (pipe, ct) =>
+        {
+            await Escribir(pipe, $"HTTP/1.1 400 X\r\nConnection: close\r\nContent-Type: application/problem+json\r\nContent-Length: {cuerpo.Length}\r\n\r\n", ct);
+            await pipe.WriteAsync(cuerpo, ct);
+        });
+        var (cliente, sp, _) = Crear(canal);
+        await using (sp)
+        {
+            var ex = await Assert.ThrowsAsync<RenderRechazadoException>(() => cliente.DocumentoAsync(Documento(), Autorizar, default));
+            Assert.Equal(400, ex.EstadoRegla);
+            Assert.Equal("FORMATO_INVALIDO", ex.CodigoRegla);
+        }
+    }
+
+    // R5: el texto de FORMATO_INVALIDO (diagnósticos de Razor, varias líneas) llega «con el mismo texto» (tabla 5.3)
+    [Fact]
+    public async Task R5_El_texto_de_FORMATO_INVALIDO_llega_igual()
+    {
+        var canal = CanalUnico();
+        var detalle = "La plantilla tiene errores:" + Environment.NewLine + string.Join(Environment.NewLine,
+            Enumerable.Range(1, 10).Select(i => $"Línea {i * 3}: The name 'variableQueNoExiste{i}' does not exist in the current context"));
+        var cuerpo = Problema(400, "FORMATO_INVALIDO", detalle);
+        await using var srv = Servidor.Iniciar(canal, async (pipe, ct) =>
+        {
+            await Escribir(pipe, $"HTTP/1.1 400 X\r\nConnection: close\r\nContent-Type: application/problem+json\r\nContent-Length: {cuerpo.Length}\r\n\r\n", ct);
+            await pipe.WriteAsync(cuerpo, ct);
+        });
+        var (cliente, sp, _) = Crear(canal);
+        await using (sp)
+        {
+            var ex = await Assert.ThrowsAsync<RenderRechazadoException>(() => cliente.DocumentoAsync(Documento(), Autorizar, default));
+            Assert.Equal("FORMATO_INVALIDO", ex.CodigoRegla);
+            Assert.Equal(detalle, ex.Message);
+        }
+    }
+
+    // R6: el orden real de ASP.NET Core (Results.Problem, como ErroresReportes.ManejarAsync): «codigo» va después de «detail»
+    [Fact]
+    public async Task R6_En_el_ProblemDetails_de_ASP_NET_el_codigo_va_despues_del_detalle()
+    {
+        var s = new ServiceCollection();
+        s.AddLogging();
+        s.AddProblemDetails();
+        var ctx = new DefaultHttpContext { RequestServices = s.BuildServiceProvider() };
+        ctx.Response.Body = new MemoryStream();
+        await Results.Problem("DETALLE", statusCode: 400, title: "Reporte no disponible",
+            extensions: new Dictionary<string, object?> { ["codigo"] = "FORMATO_INVALIDO" }).ExecuteAsync(ctx);
+        var texto = Encoding.UTF8.GetString(((MemoryStream)ctx.Response.Body).ToArray());
+        Assert.True(texto.IndexOf("\"detail\"", StringComparison.Ordinal) < texto.IndexOf("\"codigo\"", StringComparison.Ordinal), texto);
+    }
+
+    // R7: si el cliente con nombre no está registrado (otro anfitrión, otro orden de registro), la fábrica da un cliente por omisión y el token
+    // sale por TCP a localhost:80, sin ConnectCallback ni 5122
+    [Fact]
+    public async Task R7_Sin_el_registro_del_canal_el_token_no_sale_por_TCP()
+    {
+        TcpListener escucha;
+        try
+        {
+            escucha = new TcpListener(IPAddress.Loopback, 80);
+            escucha.Start();
+        }
+        catch (SocketException)
+        {
+            throw new InvalidOperationException("El puerto 80 de loopback está ocupado en este equipo.");
+            return;
+        }
+        try
+        {
+            var recibido = new TaskCompletionSource<string>();
+            _ = Task.Run(async () =>
+            {
+                using var c = await escucha.AcceptTcpClientAsync();
+                var buf = new byte[4096];
+                var n = await c.GetStream().ReadAsync(buf);
+                recibido.TrySetResult(Encoding.ASCII.GetString(buf, 0, n));
+            });
+            var s = new ServiceCollection();
+            s.AddHttpClient();   // sin AgregarReenvioReportes: el cliente con nombre no tiene el manejador de la canalización
+            await using var sp = s.BuildServiceProvider();
+            var op = new OpcionesReenvioReportes { Direccion = "http://localhost:5073" };
+            var cliente = new ClienteRender(sp.GetRequiredService<IHttpClientFactory>(), op, NullLogger<ClienteRender>.Instance) { Plazo = TimeSpan.FromSeconds(3) };
+            await Assert.ThrowsAsync<RenderRechazadoException>(() => cliente.DocumentoAsync(Documento(), Autorizar, default));
+            var gano = await Task.WhenAny(recibido.Task, Task.Delay(1000));
+            Assert.False(gano == recibido.Task && recibido.Task.Result.Contains(Token, StringComparison.Ordinal),
+                "El token salió por TCP a localhost:80:\n" + (gano == recibido.Task ? recibido.Task.Result.Split("\r\n\r\n")[0] : ""));
+        }
+        finally
+        {
+            escucha.Stop();
+        }
+    }
+
+    // R8: Retry-After con fecha lejana: ReintentarEn sin tope
+    [Fact]
+    public async Task R8_Un_Retry_After_con_fecha_lejana_queda_acotado()
+    {
+        var canal = CanalUnico();
+        var cuerpo = Problema(429, "RENDER_OCUPADO", "Hay muchas impresiones en curso.");
+        await using var srv = Servidor.Iniciar(canal, async (pipe, ct) =>
+        {
+            await Escribir(pipe, $"HTTP/1.1 429 X\r\nConnection: close\r\nRetry-After: Fri, 31 Dec 9999 23:59:59 GMT\r\nContent-Type: application/problem+json\r\nContent-Length: {cuerpo.Length}\r\n\r\n", ct);
+            await pipe.WriteAsync(cuerpo, ct);
+        });
+        var (cliente, sp, _) = Crear(canal);
+        await using (sp)
+        {
+            var ex = await Assert.ThrowsAsync<RenderRechazadoException>(() => cliente.DocumentoAsync(Documento(), Autorizar, default));
+            Assert.Equal(429, ex.EstadoRegla);
+            Assert.True(ex.ReintentarEn <= TimeSpan.FromMinutes(5), $"ReintentarEn = {ex.ReintentarEn}");
+        }
+    }
+
+    private static Task Escribir(Stream s, string texto, CancellationToken ct) => s.WriteAsync(Encoding.ASCII.GetBytes(texto), ct).AsTask();
+
+    private sealed class Registro : ILogger<ClienteRender>
+    {
+        public ConcurrentQueue<(int Id, LogLevel Nivel, string Texto)> Eventos { get; } = new();
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => true;
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) =>
+            Eventos.Enqueue((eventId.Id, logLevel, formatter(state, exception)));
+    }
+
+    /// <summary>Canalización de esta cuenta que lee la petición (encabezados y cuerpo por Content-Length) y responde con el delegado.</summary>
+    private sealed class Servidor : IAsyncDisposable
+    {
+        private readonly CancellationTokenSource _fin = new();
+        private readonly Task _bucle;
+
+        private Servidor(string canal, Func<Stream, CancellationToken, Task> responder) => _bucle = Task.Run(async () =>
+        {
+            while (!_fin.IsCancellationRequested)
+            {
+                var pipe = new NamedPipeServerStream(canal, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
+                try { await pipe.WaitForConnectionAsync(_fin.Token); }
+                catch (OperationCanceledException) { await pipe.DisposeAsync(); return; }
+                _ = Task.Run(async () =>
+                {
+                    await using var _ = pipe;
+                    try
+                    {
+                        await LeerPeticion(pipe, _fin.Token);
+                        await responder(pipe, _fin.Token);
+                        await pipe.FlushAsync(_fin.Token);
+                    }
+                    catch (Exception e) when (e is OperationCanceledException or IOException or ObjectDisposedException) { }
+                });
+            }
+        });
+
+        public static Servidor Iniciar(string canal, Func<Stream, CancellationToken, Task> responder) => new(canal, responder);
+
+        private static async Task LeerPeticion(Stream s, CancellationToken ct)
+        {
+            var datos = new List<byte>();
+            var uno = new byte[1];
+            while (!(datos.Count >= 4 && datos[^4] == '\r' && datos[^3] == '\n' && datos[^2] == '\r' && datos[^1] == '\n'))
+            {
+                if (await s.ReadAsync(uno, ct) == 0) return;
+                datos.Add(uno[0]);
+            }
+            var cab = Encoding.ASCII.GetString(datos.ToArray());
+            var linea = cab.Split("\r\n").FirstOrDefault(l => l.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase));
+            var largo = linea is null ? 0 : int.Parse(linea.Split(':')[1].Trim());
+            var buf = new byte[81920];
+            while (largo > 0)
+            {
+                var n = await s.ReadAsync(buf.AsMemory(0, Math.Min(buf.Length, largo)), ct);
+                if (n == 0) return;
+                largo -= n;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await _fin.CancelAsync();
+            try { await _bucle; } catch (OperationCanceledException) { }
+        }
+    }
+}
