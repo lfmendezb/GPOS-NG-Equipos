@@ -333,3 +333,49 @@ Ninguna cambia lo firmado. Las dos son de implementación y bastaría anotarlas 
   - arquitecto-datos de B → signo de `caja.Movimiento.Monto`;
   - devops de A → DEMO, ensayo corto y laboratorio con la API de reportes (tarea 3, R-2).
 - Próximo paso recomendado: que B responda P-1 a P-3, y empezar TA-1 en cuanto la capacidad de A lo permita (no depende de PR-4).
+
+---
+
+## 17. Adenda del 2026-10-22: R-14 y Q-A4 (S-16 del ADR-93) y el contrato de Guardar
+
+Responde a la decisión 9 de `B-a-A/2026-10-22-tareas-nuevas-para-a-2` (la lista de rutas y las filas nuevas del contrato de Guardar para T4-06). Insumos: `rutas-inventario-sin-filtro-sucursal-2026-10-21.md` (R-14 y A.3), `B-a-A/2026-10-22-respuesta-q-a1-a-q-a5-s16` (Q-A4 **aprobada**: R-14 pasa a T4-06 con la condición de que `IDetectorColumnas` propague el 403), la firma de S168-02 (frontera real del ADMIN restringido, #185) y las rutas actuales de `ReportesEndpoints.cs` en `origin/feature/modelo-ng` [V, 2026-10-22].
+
+### 17.1 Lista de rutas de reportes de la principal que T4-06 toca (R-14)
+
+| Ruta | Método | Línea | Regla del alcance (restringido) | Dónde se aplica |
+|---|---|---|---|---|
+| `/api/reportes` | GET | `:24` | La lista no ejecuta nada; no cambia | — |
+| `/api/reportes/{id}` | GET | `:30` | Con reenvío (Release, siempre), la API de reportes aplica T2-03 y falla cerrado [V `IReporteRegistrado.cs:131`, `EjecutorDisenador.cs:285`] | API de reportes |
+| `/api/reportes/{id}/ejecutar` | POST | `:40` | Igual | API de reportes |
+| `/api/reportes/{id}/exportar/{formato}` | GET | `:52` | Igual; el armado local de la P-2 desaparece con T4-06 | API de reportes |
+| `/api/admin/reportes/detectar` y `/vista-previa` | POST | `:91`, `:101` | **403 `DISENO_NO_PERMITIDO`** para el ADMIN restringido (RS-06: `EsAdmin && !RestringirSucursal`) | API de reportes en Release; la principal solo en Debug |
+| `/api/admin/reportes` (Guardar) | POST | `:84` | **403 `DISENO_NO_PERMITIDO`** (Q-A3) | `IDetectorColumnas` en Release; la misma comprobación en Debug |
+| `/api/admin/reportes/{id}` (eliminar) | DELETE | `:85` | **403 `DISENO_NO_PERMITIDO`** (Q-A3: el ADMIN restringido tampoco elimina definiciones) | La principal (no ejecuta SQL; es una escritura en `GPOS_SYSDATA`): **la comprueba la política `AdminSinRestriccion` de S168-02 (B)**; mientras no exista, una guarda local en la ruta |
+
+Con eso **R-14 se cierra por construcción en Release**: la principal deja de ejecutar reportes (lista P-2 vacía), así que no queda ruta de ejecución sin filtro de sucursal. El camino local de Debug (sin reenvío) conserva la condición A.3: el restringido recibe **403 `SUCURSAL_NO_PERMITIDO`** o, si el propietario acepta que en Debug no se filtra, queda documentado como solo desarrollo (Q-A4, segunda pregunta; sigue sin responder).
+
+### 17.2 Filas nuevas del contrato de Guardar (sección 5)
+
+La fila actual de `/api/admin/reportes` (Guardar) pasa a:
+
+| Ruta | Método | Antes | Después | Permiso | Errores |
+|---|---|---|---|---|---|
+| `/api/admin/reportes` (Guardar) | POST | Valida el SQL en la principal con la fábrica de escritura (`ReportesService.cs:221`) | En Release, valida las columnas con la API de reportes por la canalización con el token del ADMIN (P-1 (a)); `IDetectorColumnas` **propaga** el 403 de la API de reportes | ADMIN sin restricción (Q-A3) | **403 `DISENO_NO_PERMITIDO`** (ADMIN restringido; **se propaga como 403, nunca como 503**); 503 `REPORTES_NO_DISPONIBLE` solo si la API de reportes cae; el 400 de regla «La consulta no devuelve: …» se mantiene |
+| `/api/admin/reportes/{id}` | DELETE | `RequiereAdmin` | Igual, y 403 `DISENO_NO_PERMITIDO` para el restringido | ADMIN sin restricción | **Nuevo:** 403 `DISENO_NO_PERMITIDO` |
+
+**`IDetectorColumnas` (sección 6), contrato adicional:**
+- La implementación Release (`DetectorColumnasReenvio`) no convierte un 403 de la API de reportes en `REPORTES_NO_DISPONIBLE`: lee el `codigo` del ProblemDetails y relanza una `ReglaNegocioException` con `EstadoRegla = 403` y el mismo `CodigoRegla` (`DISENO_NO_PERMITIDO`). Cualquier otro rechazo mantiene su estado.
+- La implementación Debug (`EsquemaAsync`) queda detrás de la misma comprobación (`!RestringirSucursal` del usuario de la sesión, leído del servidor, no del token).
+- Mientras la política de B no exista, la comprobación local está en `ReportesService.GuardarAsync` y en la ruta de eliminar, con el mismo código y texto que la API de reportes (paridad RS-06).
+
+### 17.3 Pruebas nuevas (sección 11.2)
+- `Guardar_con_ADMIN_restringido_devuelve_403_DISENO_NO_PERMITIDO_y_no_503` (Release simulado: API de reportes responde 403; Debug: comprobación local).
+- `Eliminar_una_definicion_con_ADMIN_restringido_devuelve_403`.
+- `Detectar_y_vista_previa_en_Debug_con_restringido_devuelven_403` (paridad con la API de reportes).
+- `Un_403_de_la_API_de_reportes_nunca_se_vuelve_503` (mutación: mapear todo error a 503 debe fallar).
+- `Ninguna_ruta_de_reportes_de_la_principal_ejecuta_en_Release` (la prueba textual de Q-6 ya prevista, ampliada a `/ejecutar` y `/exportar`).
+
+### 17.4 Dependencias y orden
+- **S168-02/#185 (B):** la política `AdminSinRestriccion` cubrirá `/api/admin`; la guarda local de 17.1 se retira cuando exista. T4-06 y esa política no tienen que unirse en un orden fijo.
+- **P-4 (B):** si T4-06 conserva el marcador `CompilacionDepuracion` que usa la guarda de PR-D1 (#171, ya unido). Sigue pendiente de respuesta.
+- **Esfuerzo:** +0,05 dp (la propagación del 403, ya contada en `rutas-inventario…` A.3) y +0,05 dp la ruta de eliminar y sus pruebas; el total de T4-06 no cambia de forma apreciable (4,9 dp ±40 %).
