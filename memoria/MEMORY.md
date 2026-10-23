@@ -58,4 +58,16 @@
 - [valores-terceros-configurables](valores-terceros-configurables.md) — 2026-10-11: ningún valor de tercero en el código; VT-01..12 firmadas; ADR-126 por registrar; T1…
 - [medicion-oficial-14oct](medicion-oficial-14oct.md) — T-28/T-57 del 14-oct en verde; topes para T1 (32,8 / 31,6 ms); banco con GPOST_B9_AFINIDAD=auto…
 - [marcas-migraciones-orden-de-union](marcas-migraciones-orden-de-union.md) — Marcas de migraciones EF = orden de unión; la rama posterior regenera (B, 2026-10-14); orden…
-- [traspaso-b-2026-10-18](traspaso-b-2026-10-18.md) — LEER PRIMERO (B): punta 322b21d6; D0 firmado; pendientes de la tarde
+- [gobernanza-adr-ga01-ga08](gobernanza-adr-ga01-ga08.md) — ADR-89: estado de ADR solo en docs/adr/estado.json + guarda; guía de PR obligatoria; carga de 111 ADR pendiente
+- [traspaso-b-2026-10-21](traspaso-b-2026-10-21.md) — (reemplazado por el del 22-oct) cierre del 21-oct: cierre del 2026-10-21; master fb136fff, modelo-ng fc7f07f2; N-1/#128/#131 unidos; ADR-93 firmado; lab con VirtualBox; 16 PR esperan orden de unión
+- [documentacion-estricta-estado-de-firmas](documentacion-estricta-estado-de-firmas.md) — 2026-10-20: sin texto que dé por pendiente lo firmado; verificar contra la fuente viva y barrer referencias al firmar
+- [tecnologia-solo-con-consulta](tecnologia-solo-con-consulta.md) — 2026-10-20: ninguna tecnología se elige sin consultar al propietario; .NET 10 categórico; no inferir lo que él sabe
+- [laboratorio-adr90-virtualbox-en-lfmb](laboratorio-adr90-virtualbox-en-lfmb.md) — 2026-10-21: laboratorio ADR-90 con VirtualBox en LFMB (equipo de B), VM por bloques; OSHIN-LEGION es de C
+- [tarjetas-articulos-decisiones](tarjetas-articulos-decisiones.md) — 2026-10-21: tarjetas de Artículos (boceto v2.2 aprobado), foto por ruta al banco de imágenes, alerta por almacén
+- [adr92-decisiones-2026-10-22](adr92-decisiones-2026-10-22.md) — 2026-10-22: F-1 a F-9 decididas (F-5: la supresión abarca el historial; F-9: saldar deuda, saldo a favor no bloquea); TT lo construye B; maestro de tipo de identificador: conviven, solo SUPER
+- [campo-sku-articulos](campo-sku-articulos.md) — 2026-10-22: pide campo SKU en artículos y servicios, principal de búsqueda en todas las ventanas; sin ADR ni diseño
+- [traspaso-b-2026-10-22](traspaso-b-2026-10-22.md) — (reemplazado por el del 23-oct): cierre de la noche del 22-oct; master ffdc3fd6, modelo-ng dedc62ec; pila ADR-90 unida; #168/#170/#175/#178 abiertos; firmas, pendientes y qué hacer primero
+- [t4-10-firmas-2026-10-22](t4-10-firmas-2026-10-22.md) — DD-11′ HMAC en API reportes, C-1′ cédula solo receptor fiscal, C-2′ X completo solo con vercuadrecaja; sin registrar en repo
+- [traspaso-b-2026-10-23](traspaso-b-2026-10-23.md) — LEER PRIMERO (B): cierre de la noche 22-23 oct; master 116f7525, modelo-ng 67b4353a; uniones, abiertos, agentes en curso con rama, pendientes y qué hacer primero
+- [traspaso-b-2026-10-23-tarde](traspaso-b-2026-10-23-tarde.md) — LEER PRIMERO tras el del 23-oct (noche): #170 en 03bbceea, PR abiertos de B, VM-SRV lista salvo cierre y VM-LNX sin instalar, decisiones pendientes y qué hacer primero
+- [get-rnc-dgii-es-de-gpos-vb6](get-rnc-dgii-es-de-gpos-vb6.md) — GET-RNC-DGII es complemento de GPOS VB6 (no de GPOS NG): sin ADR ni convenciones de GPOS NG

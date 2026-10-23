@@ -12,7 +12,7 @@ metadata:
 
 | Modelo | Agentes |
 |---|---|
-| Opus 5.5 (`opus`) | arquitecto-maestro, arquitecto-datos, arquitecto-software, auditor-seguridad, especialista-contable, desarrollador-backend (por omisión) |
+| Opus 5.5 (`opus`) | arquitecto-maestro, arquitecto-datos, arquitecto-software, auditor-seguridad, especialista-contable, asesor-legal (alta el 2026-10-20), desarrollador-backend (por omisión) |
 | Sonnet 5.5 (`sonnet`) | arquitecto-integraciones, especialista-pos, desarrollador-frontend, disenador-ux-ui, documentador-tecnico, qa-automatizado, devops |
 | Haiku 5.5 (`haiku`) | orquestador; agentes Explore y búsquedas de solo lectura |
 

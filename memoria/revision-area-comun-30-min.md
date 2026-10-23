@@ -28,3 +28,5 @@ Precisa [[dos-equipos-a-coordina]] («el propietario decide cuándo cada equipo 
 
 **Corrección (2026-10-10, 11:15):** NO usar `tail -F` (bloquea el archivo y la tarea de Windows no puede escribir). Comando correcto del Monitor: `f="$LOCALAPPDATA/GPOS-NG-Equipos/novedades-B.md"; touch "$f"; n=$(wc -l < "$f"); while true; do m=$(wc -l < "$f" 2>/dev/null || echo "$n"); if [ "$m" -gt "$n" ]; then sed -n "$((n+1)),${m}p" "$f" | grep -E "^## |^- "; n=$m; fi; sleep 20; done`. Vigilar-AreaComun.ps1 reintenta la escritura.
 **Ojo (11:46):** un Monitor vencido puede dejar procesos hijos huérfanos (tail.exe, sleep) que siguen corriendo; si la vigilancia registra «está siendo utilizado en otro proceso», buscar y detener esos procesos propios.
+
+**2026-10-19 (propietario):** vigilante desarmado hasta el miércoles 2026-10-21: la tarea de Windows «GPOS-NG Vigilar área común (B)» quedó **Disabled** (reactivar con `Enable-ScheduledTask`); sin CronCreate ni Monitor. Solo trabaja B; A y C esperan.
