@@ -48,7 +48,7 @@ B propone guardar la fila y pedir el sello «en la misma transacción». Lo corr
 1. Transacción corta: `INSERT/UPDATE` de la fila con `GuardadoPorSuper = 0` y `Huella = NULL` (inerte: el CHECK `CK_FormatoImpresion_HuellaRazor` lo permite). Se obtiene `Id` y una revisión de la fila (`rowversion`).
 2. Sin transacción: `POST …/sello` con el `Id`, `TipoDocumento`, `Modo` y la plantilla **exactos** que se guardaron.
 3. Transacción corta: `UPDATE … SET Huella = @h, GuardadoPorSuper = 1 WHERE Id = @id AND rowversion = @rv`. Si afecta 0 filas (alguien guardó mientras tanto) no se aplica el sello y el SUPER recibe «el formato cambió; vuelva a guardar».
-4. Si la API de reportes no responde: la fila queda sin marca (no imprime Razor), se avisa al SUPER y no se reintenta solo. **Decidido: el guardado falla visiblemente** (la fila no se actualiza) en vez de guardar un Razor inerte.
+4. Si la API de reportes no responde: **el guardado falla visiblemente** (decidido por B, falla cerrada firmada): la fila Razor no queda guardada (se retira la fila inerte del paso 1 si era nueva, o se conserva la versión anterior sellada si era una edición) y se avisa al SUPER; no se reintenta solo.
 5. La principal valida que la respuesta tenga `huella` de 33 bytes y `kid` coherente; no interpreta el sello.
 6. Evento en `BitacoraSeguridad` (`FORMATO_RAZOR_SELLADO`, con `Id`, SHA-256 de la plantilla y el caso del ingreso del SUPER): **necesita estar en el catálogo cerrado de T1-1** (se construye desde el 2-nov). Hay que pedirlo ya al arquitecto-datos.
 
