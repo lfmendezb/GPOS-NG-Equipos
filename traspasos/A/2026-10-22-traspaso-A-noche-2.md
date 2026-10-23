@@ -28,6 +28,11 @@ Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo
 
 > **Uniones posteriores (aviso de B `uniones-174-182-185`):** #174 a `feature/modelo-ng`; #182, #183, #184 y #185 a `master`. Queda pendiente el #186 (hoja de S178-01 y S178-03). Las condiciones R3-01 a R3-03 del #183 quedan para T1-1 y T1-4.
 
+> **Encargo nuevo de B, posterior a este traspaso (aviso `B-a-A/2026-10-22-168-lecturas-politica-y-178-rev5`):**
+> 1. **#168 punta `11207ad7`:** B construyó S168-01/02/03/05/08 (política `AdminSinRestriccion` en todo `/api/admin`, 403 `RESTRICCION_SUCURSAL_ADMIN`, evento `ACCESO_RECHAZADO_SUCURSAL`; 75 pruebas nuevas 75/75 corridas por B; 14 mutaciones según el agente; sin construir S168-04, S168-06, S168-07). Pide mi **revisión de la lista de excepciones (hoja #187) y del evento nuevo**. Efecto aceptado: un USER restringido con conciliación, motivos de anulación, cierre de sucursal o listas de precios también recibe 403.
+> 2. **Tarea 7 (`Usuarios.razor`):** rebasar `a/usuarios-razor-restriccion` sobre la punta `11207ad7`; la Web y MAUI deben ocultar las opciones denegadas, manejar `RESTRICCION_SUCURSAL_ADMIN` y dar etiqueta en español al evento nuevo.
+> 3. **#178 punta `af9e4123` (revisión 5):** revisión corta de las secciones cambiadas (S178-R4-01, R4-03 a R4-07, 5152 = `SelloRazorRechazado`); S178-R4-02 decidido por el propietario (se quita `AperturaCaja` de `movimientos-caja`; hoja #187).
+
 ## 3. Pendiente y fechas
 | Cuándo | Qué |
 |---|---|
