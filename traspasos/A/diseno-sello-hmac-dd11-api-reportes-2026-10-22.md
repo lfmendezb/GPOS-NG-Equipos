@@ -24,7 +24,7 @@ Sin cambios: `ASCII("GPOS.Imp.Sello.v1") ‖ 0x00 ‖ int32 BE (Id) ‖ uint16 B
 - Sin normalización Unicode ni cambio de saltos de línea: la plantilla se sella y se verifica **tal cual está en la base**.
 - Tope de `Plantilla`: 256 KB en el sello y en la verificación (más de eso → rechazo; no se calcula HMAC sobre entrada sin tope).
 - `TipoDocumento` y `Modo` solo ASCII; cualquier otro carácter rechaza.
-- `Papel` y `Orientacion` quedan fuera, como dice B (no se compilan). **Condición:** que `ServicioRender` no use `Papel` para nada que se compile; si lo hace, entra al mensaje (verificarlo al construir) [I].
+- **`Papel` entra al mensaje** (lo adoptó B en la revisión 4 del #178; antes lo dejé condicionado a que el render no lo compile). `Orientacion` queda fuera: no se compila. Verificar al construir si el render usa algún otro campo de la fila para armar lo que compila, y entonces también entra.
 
 ## 3. Contrato de la ruta que sella
 `POST /api/impresion/formatos/sello` en `GPOS.Reportes.Api`, solo por la canalización de la principal.
