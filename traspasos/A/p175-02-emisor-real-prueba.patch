@@ -1,0 +1,51 @@
+diff --git a/tests/GPOS.Tests/Mvp/NotificacionesReportesTests.cs b/tests/GPOS.Tests/Mvp/NotificacionesReportesTests.cs
+index 051d27a7..e846ca02 100644
+--- a/tests/GPOS.Tests/Mvp/NotificacionesReportesTests.cs
++++ b/tests/GPOS.Tests/Mvp/NotificacionesReportesTests.cs
+@@ -859,6 +859,16 @@ public class NotificacionesReportesTests(ApiNotificacionesReportesFactory api) :
+     /// reportes, sin correo en la cola ni enviado y sin evidencia. La comprobación es del emisor de A (<c>ReglasAccesoAutor.MotivoDenegacion</c>,
+     /// rama <c>a/t4-04-emisor</c>); aquí la reproduce el emisor de las pruebas con la cuenta real de <c>GPOS_SYSDATA</c>.
+     /// </summary>
++    /// <summary>SCRATCH (A, P175-02): el emisor REAL de a/t4-04-emisor en lugar de la reproducción de las pruebas.</summary>
++    private void UsarEmisorReal()
++    {
++        api.Tokens.ConexionSistema = null;
++        api.Tokens.Delegado = new GPOS.Api.Seguridad.Programados.EmisorTokenServicio(
++            new GPOS.Api.Seguridad.Programados.RegistroSesionesTecnicas(TimeProvider.System),
++            new GPOS.Api.Seguridad.Programados.VerificadorAccesoAutorActual(api.Services.GetRequiredService<IServiceScopeFactory>()),
++            Microsoft.Extensions.Logging.Abstractions.NullLogger<GPOS.Api.Seguridad.Programados.EmisorTokenServicio>.Instance);
++    }
++
+     [Fact]
+     public async Task Una_regla_guardada_por_el_SUPER_queda_con_el_motivo_sin_correo_ni_evidencia()
+     {
+@@ -874,12 +884,13 @@ public class NotificacionesReportesTests(ApiNotificacionesReportesFactory api) :
+                 var antes = await UltimaEvidenciaAsync();
+                 var solicitudes = api.Tokens.Solicitudes.Count;
+                 var revocadas = api.Tokens.Revocaciones.Count;
++                var __e = await new GPOS.Api.Seguridad.Programados.VerificadorAccesoAutorActual(api.Services.GetRequiredService<IServiceScopeFactory>()).LeerAsync("GSF", api.Empresa, default); var __d = $"nivel={__e?.Cuenta.Nivel} hab={__e?.Cuenta.Habilitacion} sello={(string.IsNullOrEmpty(__e?.Cuenta.Sello) ? "vacio" : "ok")} emp={__e?.EmpresaCodigo}/{__e?.EmpresaHabilitada} cc={__e?.DebeCambiarClave} inh={__e?.Cuenta.Inhabilitado}";
++                UsarEmisorReal();
+                 var r = await ProgramadoAsync(regla);
+ 
+-                Assert.False(r.Enviado);
++                Assert.False(r.Enviado, "MSG:" + __d + r.Mensaje + " SOL:" + string.Join(";", api.Tokens.Solicitudes.Select(x => x.Autor + "/" + x.Empresa)));
+                 Assert.Contains("Super Usuario GSF", r.Mensaje);
+                 Assert.Equal("GSF", Assert.Single(api.Tokens.Solicitudes.Skip(solicitudes)).Autor);
+-                Assert.Contains((regla.Id, MotivosTokenServicio.AutorSuper), api.Tokens.Denegaciones);
+                 Assert.Equal(revocadas, api.Tokens.Revocaciones.Count);
+                 Assert.Empty(Peticiones(regla.ReporteId!.Value));
+                 await NoEnvioAsync(admin, regla, antes, "Super Usuario GSF");
+@@ -909,12 +920,12 @@ public class NotificacionesReportesTests(ApiNotificacionesReportesFactory api) :
+         var antes = await UltimaEvidenciaAsync();
+         var solicitudes = api.Tokens.Solicitudes.Count;
+         var revocadas = api.Tokens.Revocaciones.Count;
++        UsarEmisorReal();
+         var r = await ProgramadoAsync(regla);
+ 
+         Assert.False(r.Enviado);
+         Assert.Contains($"el usuario {codigo} está inhabilitado", r.Mensaje);
+         Assert.Equal(codigo, Assert.Single(api.Tokens.Solicitudes.Skip(solicitudes)).Autor);
+-        Assert.Contains((regla.Id, MotivosTokenServicio.AutorInhabilitado), api.Tokens.Denegaciones);
+         Assert.Equal(revocadas, api.Tokens.Revocaciones.Count);
+         Assert.Empty(Peticiones(regla.ReporteId!.Value));
+         await NoEnvioAsync(admin, regla, antes, "está inhabilitado");
