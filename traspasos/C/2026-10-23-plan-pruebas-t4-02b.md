@@ -12,16 +12,32 @@ Alcance de T4-02b según P-T402-02 (a, firmada el 2026-10-23): los llamadores, e
 
 Niveles: **U** = unitaria o estática, sin base; **D** = con el doble de `IClienteRender` y base `GPOS_TEST_*`; **A** = con el anfitrión de la API de reportes en el proceso (`AnfitrionReportesEnProceso`, BP 10.2) y Chromium/QuestPDF reales; **M** = medición.
 
+## Respuestas de B (2026-10-23)
+
+Fuente: `avisos/B-a-C/2026-10-23-respuestas-dudas-t4-02b-y-p170-07.md`. Incorporadas in situ en las secciones indicadas.
+
+| Antes | Respuesta | Dónde quedó |
+|---|---|---|
+| D-2 línea base | `docs/calidad/AAAA-MM-DD-linea-base-medicion-render.md` en `master`; `GPOST_B9=medir` (con `=1` falla por la meta); 4 escenarios de `MedicionRender.cs:105-106`; 5 de calentamiento, 50 pasadas, 3 corridas; la mide B cuando C actualice el #156 | C3-01, C3-03, C3-05, sección 5 |
+| D-3 código del 503 | `NAVEGADOR_NO_DISPONIBLE`; `REPORTES_NO_DISPONIBLE` solo para la API de reportes apagada. Corrección: no es «carpeta ausente» (si falta, se crea) sino carpeta que no cumple ADR-77; **no existe** la opción `GPOS:Reportes:Render:Perfil` | C4-02, C4-04 |
+| D-4 10 o 13 archivos | 9 con motores (`SeguridadPc3Tests` no cambia) y una lista aparte de los que pasan por las rutas; `NumeracionPc3EjemploTests` no genera PDF | Sección 3 |
+| D-7 reintento libre | `ReglasReimpresion.cs:34-55`: 2 reintentos en 600 s, mismo usuario, fila `F` sin «COPIA»; un 429 no gasta reintento | R429-06 |
+| D-6 prueba transitiva | En `GPOS.Tests`; `deps.json` con filtro `type: package`; lista negra = seis paquetes reales más los de `AuditoriaAdr109Tests`; el método por ensamblados cargados se descarta; `estado.json` cambia dos nombres | Sección 4, TR-08 |
+| Correcciones | R429-03 y R429-05: la primera reimpresión es «COPIA 2»; R429-07: quien pierde sale como reintento de clase `F`; S503-02: tabla `doc.Documento` | Sección 2 |
+| D-8, D-9 | P170-07 va en su propio PR, después de T4-02b; contrato versión 1; `ReglasReimpresionTests` se reescribe en ese PR | Fila 7 de la sección 3 |
+| D-1 | #156 asignado a C; si no está unido el 13-nov, lo adopta B | C-2 |
+| Pendientes | P-1 y P-T402-03 los firma el propietario; trabajo con (a) | Sección 8 |
+
 ## 0. Resumen y lo que bloquea
 
 1. **Cinco condiciones de unión** (C-2, C-3, C-4, C-6, C-7) = cinco comprobaciones de **hecho verificable**, no pruebas de comportamiento. Las escribo como lista de verificación con evidencia exigida (sección 1) y, donde se puede, como prueba que falla si la condición se rompe (guardas de la sección 1.6).
 2. **Dos pruebas nombradas por el BP** (sección 2). Hallazgo sobre la segunda: se cumple **sin cambiar el orden** en la impresión fiscal (H-T402-02), así que la prueba **no puede ser roja antes y verde después** por un cambio de orden; hay que demostrar que no es vacua con una mutación (M-T01 a M-T04).
-3. **Adaptación de los 10 archivos** (sección 3): tabla por archivo con qué tipos borrados usa, a qué pasa, nivel y riesgo.
+3. **Adaptación de los 9 archivos con motores y la lista aparte** (sección 3): tabla por archivo con qué tipos borrados usa, a qué pasa, nivel y riesgo.
 4. **Prueba transitiva** (sección 4): tres métodos posibles; recomiendo el `deps.json` más el grafo de proyectos, con una mutación que la mata.
 5. **Medición «después»** (sección 5): protocolo y qué no se puede concluir.
 6. **Mutaciones** (sección 6): 24, cada una con el caso que la mata o «no la mata nada hoy».
 7. **Orden de trabajo y esfuerzo** (sección 7): unos **3,5 dp** de pruebas [I], de los cuales ~1,5 ya están en las estimaciones de B (BP 13) y el resto es nuevo.
-8. **Bloquean o necesitan decisión** (sección 8): C-3 no es verificable sin definir qué se archiva y dónde; quién captura la línea base tras el #156; la regla del conduce (P-T402-01 firmada en (a), así que la prueba del conduce **es obligatoria**, no condicional como dice el BP 10.1).
+8. **Pendientes** (sección 8): D-5 (recorte del cierre), P-1 y P-T402-03 (propietario; trabajo con (a)). La regla del conduce: P-T402-01 firmada en (a), así que su prueba es obligatoria. C-3 y el resto de dudas quedaron resueltas por B (ver «Respuestas de B»).
 
 ## 1. Condiciones de unión C-2, C-3, C-4, C-6 y C-7
 
@@ -37,7 +53,7 @@ El BP 8.1 las llama «condiciones para unir». Una condición no se prueba con x
 | C2-04 | Quien regenera ya no puede hacerlo desde la principal | `RenderTrasladoTests` llama al `ServicioRender` de `GPOS.Reportes.Api` (BP 10.2) y no hay ya ningún tipo de `GPOS.Api.Impresion` que genere PDF | Compila sin `using` a los tipos borrados; la regeneración existe una sola vez | M-T07 |
 | C2-05 | La guarda sigue siendo la del #156 tras el rebase (H-T402-06: «nadie impide regenerar para que pase») | Prueba de la guarda del #156 corre en la suite de T4-02b | Verde. Si el rebase la rompe o la elimina, rojo | M-T05 |
 
-Duda abierta D-1: el #156 pasa a ser mío (encargo, tarea 1) y su revisión humana de dorados la hace el propietario o A. **C-2 depende de que yo termine el #156**; el plan lo da por unido.
+C-2 depende del #156 (asignado a C; si no está unido el 13-nov, lo adopta B). El plan lo da por unido.
 
 ### 1.2 C-3 · Línea base de `MedicionRender` de la principal capturada y archivada (B9, suite sola)
 
@@ -45,11 +61,11 @@ Es una condición de **proceso**: la línea base se captura **antes** de borrar 
 
 | Caso | Qué se comprueba | Evidencia exigida | Resultado esperado |
 |---|---|---|---|
-| C3-01 | Existe el archivo de la línea base | `docs/calidad/` o `traspasos/B/` (propuesta, ver D-2): `AAAA-MM-DD-linea-base-medicion-render.md` con commit, fecha, máquina, `GPOST_B9`, versiones (.NET, Chromium, QuestPDF, Razor 10.0.13), **n y percentiles** | Archivo en la rama de T4-02b o en `master` |
+| C3-01 | Existe el archivo de la línea base | `docs/calidad/AAAA-MM-DD-linea-base-medicion-render.md` **en `master`** (precedente: la línea base de la ola 0), con commit, fecha, máquina, `GPOST_B9=medir`, versiones (.NET, Chromium, QuestPDF, Razor 10.0.13), **n y percentiles** | Archivo en `master` |
 | C3-02 | Se capturó **con los motores de la principal**, no con la API de reportes | El commit de la captura es ancestro de T4-02b y **anterior** al primer commit de borrado de los motores; el archivo cita ese commit | `git merge-base --is-ancestor` verdadero y el commit contiene `src/GPOS.Api/Impresion/ConvertidorPdf.cs` (`git cat-file -e <commit>:src/GPOS.Api/Impresion/ConvertidorPdf.cs`) |
-| C3-03 | Suite sola y base de condiciones limpias | El archivo declara «sin otra suite al mismo tiempo» (CLAUDE.md) y los resultados de **al menos 3 corridas** con su dispersión | n ≥ 3 corridas y el coeficiente de variación declarado. Sin eso, el «+50 ms en el p95» (BP R-T402-08, A-7) no es comparable [I] |
+| C3-03 | Suite sola y base de condiciones limpias | El archivo declara «sin otra suite al mismo tiempo» (CLAUDE.md) y los resultados de **3 corridas** (5 de calentamiento y 50 pasadas cada una) con su dispersión | 3 corridas y el coeficiente de variación declarado. Sin eso, el «+50 ms en el p95» (BP R-T402-08, A-7) no es comparable [I] |
 | C3-04 | Mismos escenarios que el «después» | El archivo lista los escenarios (tipo de documento, papel, filas, motor: Razor/Chromium y QuestPDF) y la sección 5 de este plan los usa sin cambios | Lista idéntica en el «antes» y el «después» |
-| C3-05 | La línea base no se descarta por omisión | `MedicionRender` hoy está **omitida** detrás de `GPOST_B9` (BP H-T402-05) | La captura se hizo con `GPOST_B9` activo; en el archivo consta |
+| C3-05 | La línea base no se descarta por omisión | `MedicionRender` hoy está **omitida** detrás de `GPOST_B9`. Se mide con `GPOST_B9=medir`: con `=1` la prueba falla por la meta de +50 ms | La captura se hizo con `GPOST_B9=medir`; en el archivo consta. La medición la hace B en su PC cuando C actualice el #156 |
 
 Guarda automática posible [I]: una prueba estática `Existe_la_linea_base_de_MedicionRender` que lee el archivo y comprueba que declara commit y n. Sirve para que el archivo no desaparezca al borrar; no sustituye a C3-02. Mutación: M-T08.
 
@@ -58,9 +74,9 @@ Guarda automática posible [I]: una prueba estática `Existe_la_linea_base_de_Me
 | Caso | Qué se comprueba | Cómo | Resultado esperado | Mutación |
 |---|---|---|---|---|
 | C4-01 | #170 está unido y T4-02b se apoya en él | `gh pr view 170 --json state` y ancestro | `MERGED`, ancestro verdadero | M-T09 |
-| C4-02 | Se conserva el mensaje 503 con la carpeta ausente (Release): los formatos **personalizados** dan 503 y los **estándar** imprimen (BP 8.4 [V rama t4-03a `ConvertidorPdf.cs:28,39,82`]) | Caso `A` del anfitrión con un perfil que no existe y un formato `RAZOR`; luego un formato estándar | Personalizado: 503 `REPORTES_NO_DISPONIBLE` o `NAVEGADOR_NO_DISPONIBLE` (**decidir cuál**, D-3); estándar: 200 PDF | M-T10 |
+| C4-02 | Con el navegador no disponible (Release; carpeta que **no cumple ADR-77**, no «ausente»: si falta, se crea) los formatos **personalizados** (Razor) dan 503 y los **estándar** (QuestPDF) imprimen (BP 8.4 [V rama t4-03a `ConvertidorPdf.cs:28,39,82`]). Con P-T402-03 en (a) (supuesto de trabajo) no hay formato estándar de emergencia para el personalizado en T4-02 | Caso `A` del anfitrión con una carpeta de perfil que incumple ADR-77 y un formato `RAZOR`; luego un formato estándar | Personalizado: 503 **`NAVEGADOR_NO_DISPONIBLE`**; estándar: 200 PDF. `REPORTES_NO_DISPONIBLE` queda solo para la API de reportes apagada o sin respuesta | M-T10 |
 | C4-03 | Ningún camino de T4-02b vuelve a poner Chromium en `GPOS.Api` | Prueba transitiva de la sección 4 | Verde | M-T09, M-T11 |
-| C4-04 | La suite A de T4-02b usa el perfil del #170 (no el temporal viejo) | El accesorio fija `GPOS:Reportes:Render:Perfil` (nombre exacto por confirmar con B, D-3) en una carpeta `GPOS_TEST_*` con la ACL que el #170 exige | El accesorio arranca en Windows sin abrir `%ProgramData%` real | — (revisión) |
+| C4-04 | La suite A de T4-02b usa la carpeta del perfil del #170 con la ACL de ADR-77 | **No existe** la opción `GPOS:Reportes:Render:Perfil`: el accesorio prepara una carpeta `GPOS_TEST_*` que cumple ADR-77 y el anfitrión la usa por el mecanismo real de #170 (confirmar el nombre al leer el código) | El accesorio arranca en Windows sin abrir `%ProgramData%` real | — (revisión) |
 
 C4-02 y C4-04 son los únicos que tocan comportamiento. Los pongo aquí porque son la razón por la que D-T403-1 hizo de #170 una condición.
 
@@ -105,7 +121,7 @@ BP: «Guarda una venta, apaga el anfitrión, imprime: 503 `REPORTES_NO_DISPONIBL
 | Caso | Escenario | Esperado | Por qué importa |
 |---|---|---|---|
 | S503-01 | Venta fiscal con NCF (con tipo de comprobante) guardada; anfitrión apagado; `POST /api/impresion/documento/FC/{numero}` | HTTP 503; cuerpo `codigo = REPORTES_NO_DISPONIBLE`; texto de impresión del BP 5.3 («el documento quedó guardado») | Contrato de error |
-| S503-02 | Mismo escenario | La venta existe: `ventas.Venta` (o el nombre real de la tabla; **confirmar**) con el número y estado «emitida»; el **NCF consumido** no se libera ni se repite | «Queda guardado» significa documento **y** NCF: si el rechazo del render revirtiera el NCF, se rompe la regla del NCF |
+| S503-02 | Mismo escenario | La venta existe en **`doc.Documento`** con el número y estado «emitida»; el **NCF consumido** no se libera ni se repite | «Queda guardado» significa documento **y** NCF: si el rechazo del render revirtiera el NCF, se rompe la regla del NCF |
 | S503-03 | Mismo escenario | **0 filas** en `doc.Impresion` para ese documento (el registro de la copia va después del PDF, H-T402-02) | Enlaza con 2.2 |
 | S503-04 | Mismo escenario | Evento 5121 emitido una vez (logger de pruebas), con la causa; **no** 5122 | Distingue «caído» de «suplantado» |
 | S503-05 | Mismo escenario, `Retry-After` | No hay `Retry-After` (solo 429/503 de `NAVEGADOR_NO_DISPONIBLE` lo traen) | Evita que un 503 de «caído» sugiera reintentar en N s [I] |
@@ -130,11 +146,11 @@ Doble: `IClienteRender` falso que lanza `RenderRechazadoException` 429 con `Rein
 |---|---|---|---|
 | R429-01 | Fiscal: primera impresión (original) con render 429 | HTTP 429, `codigo = RENDER_OCUPADO`, `Retry-After` presente; **0 filas** en `doc.Impresion` | Núcleo de la prueba |
 | R429-02 | Luego render OK, mismo documento, **sin** `reintento` | 200; **1 fila**, número de copia = original (no «Reimpresión 2»); la marca que recibe el doble en `ModeloImpresion.Copia` es 0 o nula | «El intento siguiente es el original» |
-| R429-03 | Luego otra impresión OK | Ahora 2 filas; `Copia = 1` en el modelo («COPIA 1») | Control: la cuenta sigue funcionando |
+| R429-03 | Luego otra impresión OK (la primera reimpresión) | Ahora 2 filas; **«COPIA 2»** (`Copia = 2` en el modelo; `ReglasReimpresion.cs:41`, `ReglasReimpresionTests.cs:28-34`) | Control: la cuenta sigue funcionando |
 | R429-04 | Render que falla **tres veces** seguidas (429, 503, 422) y luego OK | 0 filas tras los fallos; 1 fila tras el éxito | No cuenta por intento |
-| R429-05 | Reimpresión de un documento ya impreso (1 fila) con render 429 | Sigue 1 fila; el siguiente éxito es «COPIA 1» (copia 2 del conjunto), no «COPIA 2» | La falla en una **reimpresión** tampoco cuenta |
-| R429-06 | `reintento` explícito (libre) con render 429 y luego OK | 0 filas tras la falla; el éxito no cuenta cuenta de más según la regla de reintento libre (**confirmar** la regla exacta en `ReimpresionService.cs:54-113` antes de fijar el esperado) | La mitigación 3 de A-7 es «reimpresión libre que no cuenta otra copia» |
-| R429-07 | Choque de doble clic: dos peticiones simultáneas, ambas deciden «original»; el render de ambas OK | Una gana el registro; la otra **vuelve a decidir y vuelve a pedir el PDF** (`ImpresionEndpoints.cs:200-208`): 1 fila de original y 1 de copia; el doble recibió **3** peticiones de PDF (2 + 1 re-decisión), no 2 | Fija el comportamiento descrito en D-T402-3 |
+| R429-05 | Reimpresión de un documento ya impreso (1 fila) con render 429 | Sigue 1 fila; el siguiente éxito es **«COPIA 2»** (la primera reimpresión), no «COPIA 3» | La falla en una **reimpresión** tampoco cuenta |
+| R429-06 | `reintento` libre con render 429 y luego OK | Regla (`ReglasReimpresion.cs:34-55`): hasta **2 reintentos en 600 s, del mismo usuario**, dejan una fila de clase `F` **sin «COPIA»**; **un 429 no gasta reintento**. Esperado: tras el 429, 0 filas y el contador de reintentos intacto; tras el éxito, una fila `F` sin marca; un tercer reintento dentro de 600 s o de otro usuario cuenta como copia | La mitigación 3 de A-7 es «reimpresión libre que no cuenta otra copia» |
+| R429-07 | Choque de doble clic: dos peticiones simultáneas, ambas deciden «original»; el render de ambas OK | Una gana el registro; la que pierde **vuelve a decidir y vuelve a pedir el PDF** (`ImpresionEndpoints.cs:200-208`) y sale como **reintento de clase `F`, no como copia** (`ImpresionEndpoints.cs:202`): 1 fila de original y 1 fila `F` sin «COPIA»; el doble recibió **3** peticiones de PDF (2 + 1 re-decisión) | Fija el comportamiento descrito en D-T402-3 |
 | R429-08 | Render que falla **después** de entregar la cabecera (se corta el cuerpo) | 503; 0 filas | El fallo parcial no cuenta |
 | R429-09 | Conduce de transferencia (P-T402-01 a): render 429 | 0 filas / sin `CONDUCE_IMPRESO` en la bitácora y sin avanzar la cuenta; el siguiente éxito registra `CONDUCE_IMPRESO` (no `CONDUCE_REINTENTO`) | H-T402-01, R-T402-03 |
 | R429-10 | Conduce: doble clic simultáneo, con relectura | Una sola cuenta de «original»; la otra relee y cuenta la reimpresión; ninguna pierde el PDF | Bloqueo y relectura de P-T402-01 (a) |
@@ -143,9 +159,9 @@ Doble: `IClienteRender` falso que lanza `RenderRechazadoException` 429 con `Rein
 
 Control negativo: la misma prueba con el doble que **devuelve OK** debe dar 1 fila; así se demuestra que «0 filas» viene del fallo y no de que el registro esté roto.
 
-## 3. Adaptación de los 10 archivos de `tests/GPOS.Tests`
+## 3. Adaptación de los 9 archivos de `tests/GPOS.Tests` que usan los motores, y la lista aparte
 
-Todos [V BP 10.2] usan tipos que se borran. Para cada uno: qué usa (según BP; **no leí cada archivo** salvo donde lo indico, D-4), a qué pasa y cómo verificar que no perdió cobertura.
+Los 9 usan los motores directamente (respuesta de B, por búsqueda de nombres, sin compilar). `SeguridadPc3Tests` **no cambia** (fila 10: solo se verifica). Aparte hay una **lista de archivos que pasan por las rutas de impresión**, y `NumeracionPc3EjemploTests` **no** genera PDF. El PR de T4-02b trae las dos listas con su conteo de pruebas. Para cada archivo: qué usa (según BP), a qué pasa y cómo verificar que no perdió cobertura.
 
 Regla común: antes de tocar, registrar **n° de pruebas y de aserciones** del archivo (`dotnet test --list-tests` cuenta nombres; las aserciones con `git grep -c "Assert\."`); después, el mismo n° o una justificación escrita. Una adaptación que baja el n° sin explicación es el riesgo principal («pasa porque no prueba»).
 
@@ -162,7 +178,7 @@ Regla común: antes de tocar, registrar **n° de pruebas y de aserciones** del a
 | 9 | `ReportesTests.cs` | El PDF de `ExportadorReporte` (`:152`) | `ExportadorReporte.ExportarAsync` con `pdf` por `ResultadoAsync` (D con el doble que devuelve un PDF mínimo); los demás formatos (CSV, XLSX, DOCX, JSON, XML) por el `Exportar` síncrono | D | Dos cosas: el `Exportar` síncrono **lanza** si le piden `pdf` (BP 6.3) → prueba N; y que `ResultadoAsync` respeta el tope de 10.000 filas (BP 5.1) |
 | 10 | `SeguridadPc3Tests.cs` | PDF de `ExportadorReporte` | El BP dice que `SeguridadPc3Tests` (CSV y XLSX) **no cambia** [V BP 6.3] | U/D | Verificar que realmente no necesita cambiar; si usa `GeneratePdf`, cambiarlo |
 
-Las 6 clases que ya nombra el BP 10.1 (`ImpresionDocumentosTests`, `ModeloNg/ReimpresionTests`, `ModeloNg/ReglasReimpresionTests`, `NumeracionPc3EjemploTests`, `SeguridadPc3Tests`, `Mvp/FlujosMvpTests`) se solapan con los 10 en tres (5, 7, 10); las otras tres (`ReimpresionTests`, `NumeracionPc3EjemploTests`, `FlujosMvpTests`) **no están en la lista de diez** y también generan PDF por las rutas: **dudas D-4**: hay 13 archivos, no 10, a adaptar si la lectura es literal.
+Las dos listas (archivos con motores y archivos que pasan por las rutas) las trae el PR de T4-02b con su conteo de pruebas (respuesta de B). Las 6 clases que nombra el BP 10.1 se reparten entre ambas; `NumeracionPc3EjemploTests` no genera PDF y `SeguridadPc3Tests` no cambia.
 
 ### 3.1 Casos nuevos por la adaptación
 
@@ -183,13 +199,13 @@ BP 10.1: `ArquitecturaReportesTests.GPOS_Api_no_referencia_motores_de_render`, c
 
 | Método | Qué lee | Pros | Contras |
 |---|---|---|---|
-| (1) `GPOS.Api.deps.json` (en la salida de compilación de pruebas) | Lista de `libraries` y `targets` con todas las dependencias NuGet resueltas, directas y transitivas | Es **lo que realmente se despliega**; atrapa un motor que llega por un paquete nuevo | Depende de que `GPOS.Api.deps.json` esté en la carpeta de salida de las pruebas (lo está si `GPOS.Tests` referencia `GPOS.Api`; **confirmar**, D-6); las rutas pueden variar por RID |
+| (1) `GPOS.Api.deps.json` (salida de compilación de `GPOS.Tests`), **filtrando `type: package`** | Dependencias NuGet resueltas, directas y transitivas | Es **lo que realmente se despliega**. Sin el filtro, los ensamblados de Razor del marco dan falsos positivos | Depende de que el archivo esté en la salida de las pruebas |
 | (2) Grafo de `ProjectReference` + `PackageReference` leyendo los `.csproj` y `obj/project.assets.json` | Transitividad completa también para proyectos de la solución | Independiente de la salida | `obj/project.assets.json` puede faltar o estar obsoleto |
-| (3) `AppDomain`/`Assembly` cargado: `Assembly.Load("GPOS.Api").GetReferencedAssemblies()` recursivo | Referencias reales de ensamblados | Atrapa referencias vía código | Solo ve lo que el código **usa**; un paquete sin uso no aparece. Insuficiente solo |
+| (3) Ensamblados cargados / `GetReferencedAssemblies()` | Referencias reales de ensamblados | — | **Descartado por B:** `GPOS.Tests` también carga `GPOS.Reportes.Api`, así que daría falsos positivos |
 
-**Recomendación:** (1) como prueba principal y (3) como segunda, para atrapar el caso «paquete restaurado pero sin uso» y el «uso de tipo sin paquete directo». (2) no.
+**Decisión de B:** la prueba va en **`GPOS.Tests`** (`GPOS.Reportes.Tests` no referencia `GPOS.Api`) y usa solo el método (1). El (3) queda descartado y el (2) no se usa.
 
-Lista negra [V BP]: `PuppeteerSharp`, `QuestPDF`, `Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation`. Ampliar [I]: `Microsoft.AspNetCore.Razor.Language`, `Microsoft.CodeAnalysis.Razor`, `Microsoft.CodeAnalysis.CSharp` (viene con RuntimeCompilation), `SkiaSharp` (lo trae QuestPDF), `HarfBuzzSharp`. **Cuidado con los falsos positivos:** `Microsoft.CodeAnalysis.CSharp` y `Microsoft.AspNetCore.Razor.Language` pueden llegar por otros paquetes legítimos (por ejemplo, un analizador). Decidir con B la lista exacta tras ver el `deps.json` real **antes** de escribir la prueba (D-6).
+Lista negra: los **seis paquetes reales** del archivo más los sospechosos que ya vigila `AuditoriaAdr109Tests` (no aparecen SkiaSharp ni HarfBuzz, así que no se agregan). `GPOS.Web` y `GPOS.UI.MAUI` quedan fuera de esta prueba salvo que B decida otra cosa. Si la prueba pasa a `GPOS.Tests`, `estado.json` cambia en **dos** nombres de prueba, no uno.
 
 | Caso | Qué | Esperado | Mutación |
 |---|---|---|---|
@@ -200,7 +216,7 @@ Lista negra [V BP]: `PuppeteerSharp`, `QuestPDF`, `Microsoft.AspNetCore.Mvc.Razo
 | TR-05 | `GPOS.Reportes.Api` **sí** los trae (control positivo) | Verde: la prueba no es vacua | M-T23 |
 | TR-06 | Control de la propia prueba: el método de lectura funciona con un `deps.json` sintético que contiene `QuestPDF` | La función devuelve «contiene» | M-T24 |
 | TR-07 | `GPOS.Web` y `GPOS.UI.MAUI` no referencian motores (A-3) | Informativa; **no** mover el alcance de la hoja: confirmar con B si queda fuera | — |
-| TR-08 | `estado.json` (lista de pruebas de ADR-109 cl. 1) apunta al nombre nuevo de la prueba | Archivo actualizado (BP 10.1) | — (revisión) |
+| TR-08 | `estado.json` (lista de pruebas de ADR-109 cl. 1) apunta a los **dos** nombres de prueba nuevos | Archivo actualizado | — (revisión) |
 
 Quitar `motoresPendientesDeMover` (`AuditoriaAdr109Tests.cs:110`): caso TR-09, prueba estática: `git grep motoresPendientesDeMover` = 0 resultados. Mutación: reintroducir el nombre.
 
@@ -210,9 +226,9 @@ BP 10.2: «mide por la principal con `ClienteRender` (el “después”) contra 
 
 | Elemento | Definición |
 |---|---|
-| Escenarios | Exactamente los de C3-04: por tipo de documento (ticket 80 mm, factura carta con Razor/Chromium, factura con QuestPDF, cierre, conduce, resultado de 1.000 y 10.000 filas) |
+| Escenarios | Los **4 escenarios de `MedicionRender.cs:105-106`**, idénticos a los de la línea base (C3-04) |
 | Condiciones | Suite sola, `GPOST_B9` activo, misma máquina, mismo servidor SQL; **caliente y frío por separado** (Chromium precalentado `Precalentar = true` y sin precalentar) |
-| Muestras | n ≥ 30 por escenario después de 5 de calentamiento [I]; tres corridas; se archivan las tres |
+| Muestras | 5 de calentamiento y 50 pasadas por escenario; tres corridas; se archivan las tres (como la línea base). Se mide con `GPOST_B9=medir` |
 | Qué se mide | Latencia de extremo a extremo de la **petición a la principal** (no del render solo); además, por separado, el tiempo de `ClienteRender` (serializar + canalización + introspección + render + lectura) |
 | Qué se compara | p50, p95 y p99 «después» menos «antes», por escenario |
 | Criterio | p95 «después» ≤ p95 «antes» + 50 ms por escenario. Si no se cumple, **no bloquea sola**: A-7 pide una explicación; se informa como observación con la causa (introspección con caché de 15 s en frío, Chromium en frío) |
@@ -244,7 +260,7 @@ Las que dicen «no la mata nada hoy» son los huecos a cerrar.
 | M-T07 | Reponer `ConvertidorPdf.cs` en `GPOS.Api` | TR-01, `Los_archivos_borrados_no_existen` | Mata |
 | M-T08 | Borrar el archivo de línea base | `Existe_la_linea_base_de_MedicionRender` | Mata solo si se escribe la guarda automática |
 | M-T09 | Agregar `PuppeteerSharp` a `GPOS.Api.csproj` | TR-01, TR-03 | Mata |
-| M-T10 | Perfil de Chromium ausente: la API de reportes responde 200 con PDF de QuestPDF para un formato Razor (degradación silenciosa) | C4-02 (personalizado debe dar 503) | Mata |
+| M-T10 | Navegador no disponible (carpeta del perfil que incumple ADR-77): la API de reportes responde 200 con PDF de QuestPDF para un formato Razor (degradación silenciosa) | C4-02 (personalizado debe dar 503) | Mata |
 | M-T11 | Agregar un paquete que arrastre Razor RuntimeCompilation transitivamente | TR-02 | Mata (según la lista) |
 | M-T12 | Unir T4-02b sin T4-06: el camino local P-2 sigue generando PDF en Release | C6-02 | Mata (si C6-02 se escribe) |
 | M-T13 | `ReportesEndpoints.cs:67` conserva `GeneratePdf` | C6-02, `GPOS_Api_no_referencia…` | Mata |
@@ -272,7 +288,7 @@ Las que dicen «no la mata nada hoy» son los huecos a cerrar.
 |---|---|---|
 | T0 | Lista de verificación de condiciones (sección 1), guardas U (1.6) y prueba transitiva (sección 4). No requiere Chromium | 0,75 |
 | T1 | Las dos pruebas nombradas (sección 2) con doble y, para S503, anfitrión apagado | 1,0 |
-| T2 | Adaptación de los 10 (o 13) archivos y AD-01 a AD-06 | 1,25 |
+| T2 | Adaptación de los 9 archivos, la lista aparte y AD-01 a AD-06 | 1,25 |
 | T3 | Medición «después» (protocolo y escenarios; la ejecución es de B con LFMB) | 0,5 |
 | Total | | **3,5** (±50 %) |
 
@@ -280,24 +296,19 @@ Orden de escritura: T0 antes de que B borre nada, porque la prueba transitiva es
 
 Suite: `--filter "Transicion!=Ola5&Transicion!=Defecto"`, sola; el 11-16 y el 11-17 sin suites. Máximo 3 compilaciones a la vez.
 
-## 8. Dudas abiertas
+## 8. Dudas abiertas (las resueltas están en «Respuestas de B»)
 
 | # | Duda | Quién |
 |---|---|---|
-| D-1 | C-2 depende del #156, que ahora es mío y espera revisión humana de dorados; el plan lo da por unido | Propietario / A |
-| D-2 | C-3: ¿dónde se archiva la línea base y con qué formato? Propongo `docs/calidad/AAAA-MM-DD-linea-base-medicion-render.md` en la rama | B |
-| D-3 | C4-02: ¿503 `REPORTES_NO_DISPONIBLE` o `NAVEGADOR_NO_DISPONIBLE` cuando falta la carpeta del perfil? Y el nombre exacto de la opción del perfil del #170 | B |
-| D-4 | La lista de «10 archivos» del BP omite `ReimpresionTests`, `NumeracionPc3EjemploTests` y `FlujosMvpTests`, que el BP 10.1 también dice que generan PDF. ¿Son 13? | B |
-| D-5 | El cierre viaja **completo** hoy por `SolicitudRenderCierre` (C-2′ y recorte solo en T4-11); AD-01 solo comprueba que el permiso precede | B / A |
-| D-6 | Lista exacta de la prueba transitiva: ver el `deps.json` real antes de fijar los transitivos; ¿se incluye `GPOS.Web` y `GPOS.UI.MAUI`? | B |
-| D-7 | R429-06: la regla exacta del reintento libre en `ReimpresionService` (no la leí) | B |
-| D-8 | P170-07 cambia `MarcarCopia`: `ReglasReimpresionTests` (#7) se reescribe o se adapta; ver el plan de la tabla adversaria. ¿Qué entra primero en T4-02? | B |
-| D-9 | Si P170-07 (b) se construye en T4-02, el modelo (`ModeloImpresion.Copia`) sigue viajando; la marca la pone el `ConvertidorPdf` de la API de reportes: no cambia el contrato (versión 1). Confirmar | B |
+| D-5 | El cierre viaja **completo** hoy por `SolicitudRenderCierre` (C-2′ y recorte solo en T4-11); AD-01 solo comprueba que el permiso precede (sin respuesta de B) | B / A |
+| P-1 | ¿La guarda C-1 también en la vista previa con un comprobante real? Recomendación de B: sí (0 dp). Pendiente del propietario; afecta a la tabla adversaria de P170-07 | Propietario |
+| P-T402-03 | Formato estándar de emergencia cuando falta el navegador. Pendiente del propietario; **trabajo con (a)** (no en T4-02; lo decide C-02-2 con T4-10), que fija C4-02 | Propietario |
+
 
 ### Cierre
 - Estado: Completado (plan; sin ejecutar)
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\C\2026-10-23-plan-pruebas-t4-02b.md`
-- Supuestos: el BP en `fc68c7f6` es la versión vigente; no leí los 10 archivos de pruebas, solo su descripción en el BP
+- Supuestos: el BP en `fc68c7f6` es la versión vigente; no leí los archivos de pruebas, solo su descripción en el BP y las respuestas de B
 - Decisiones candidatas a ADR: Ninguna
-- Entregas a otros agentes: B → responder D-1 a D-9; devops → ninguna
-- Próximo paso recomendado: B decide D-2, D-3 y D-4 antes del 16-nov
+- Entregas a otros agentes: Propietario → P-1 y P-T402-03; B → D-5
+- Próximo paso recomendado: el propietario firma P-1 y P-T402-03 y B confirma D-5 antes del 16-nov

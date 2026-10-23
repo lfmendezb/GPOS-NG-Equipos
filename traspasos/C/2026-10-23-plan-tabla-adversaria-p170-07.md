@@ -10,12 +10,29 @@ Plan, no construcción: no compilé ni corrí la espiga. Leí la hoja `docs/deci
 
 Firmado además [encargo]: **C-1** = guarda del `/MediaBox` de cada página: alto ≥ 2 × margen + 5 mm y ancho ≥ 20 mm (la espiga ya la tiene como `GuardaTamano`, con margen de 10 mm, o sea alto ≥ 25 mm [V línea 409]); **C-2** aceptado = la banda puede tapar la parte de arriba de una plantilla con `@page{margin:0}`.
 
+## Respuestas de B (2026-10-23)
+
+Fuente: `avisos/B-a-C/2026-10-23-respuestas-dudas-t4-02b-y-p170-07.md`. Incorporadas in situ.
+
+| Antes | Respuesta | Dónde quedó |
+|---|---|---|
+| D-3 código de rechazo | **400 `FORMATO_INVALIDO` con texto propio** (un código nuevo saldría como 503 «el servicio no está»); el rechazo no registra ninguna copia | A8, M-u |
+| D-4 doble banda | No puede ocurrir: cada documento pasa por un solo motor (`ServicioRender.cs:29,33`) | RG-04 |
+| D-7 margen | Fijo de 10 mm en una sola constante; las pruebas escriben 25 mm y 20 mm a mano para que un cambio del margen se note | TA-46, TA-50, TA-51 |
+| D-8 espiga | B revisó los PDF y PNG de `%TEMP%\GPOS_TEST_ESPIGA_P17007` (no hay registro de qué pruebas pasaron). TA-27: cajas de margen alrededor de la banda, marca y pie encima y completos. TA-43: marca y pie en su sitio. TA-54: ningún PDF trae `/Rotate`; **la guarda debe rechazar `/Rotate` o un número de `/MediaBox` distinto del de páginas**. Ninguno rompe (b): no se pasa a (c) | TA-27, TA-43, TA-54, TA-55 |
+| D-1 técnica de lectura | Se adopta la técnica de la espiga (solo la biblioteca base de .NET; no necesita consulta) | Resumen 2 |
+| D-2 espiga | Se porta, pero las pruebas van contra el código de producción | Sección 6 |
+| D-5 vista previa | Con copia manda la vista previa (`ModeloImpresion.cs:68`) | UO-04 |
+| D-6 M-d | Se registra «No aplica» | M-d |
+| Otras | P170-07 va en su propio PR, después de T4-02b; contrato versión 1; el pie de hoy sigue sin `!important` (`ServicioRender.cs:128-129`): cambio de una línea que hace B | UO-04 |
+| Pendiente | **P-1** (guarda C-1 también en la vista previa con comprobante real): decide el propietario; recomendación de B: sí. Trabajo con «sí» | TA-56, sección 7 |
+
 ## 0. Resumen
 
 1. **La espiga ya contiene 23 casos adversarios** (`Adversarios()`, líneas 342-364 [V]) más tres teorías de tamaño. La tabla adversaria de producción **parte de ella** y le agrega lo que la espiga no tiene: la **unidad de las opciones del PDF** (sin Chromium), el **rechazo con la guarda C-1**, el **rollo continuo**, la **paginación original frente a copia** y la **vista previa**.
 2. **Hay un desfase entre la hoja y la espiga que hay que resolver:** la hoja (sección 4, punto 1) lista 14 casos; la espiga tiene 23 y usa la lectura de texto con `ZLibStream`/`ToUnicode` y el rasterizado con el visor de Chrome. La hoja (punto 3) dice que **no hay librería de lectura de PDF** y que agregarla exige consulta al propietario; la espiga ya resuelve la lectura **sin librería nueva**. Recomiendo que la prueba de producción adopte esa técnica, pero hay que decidirlo (D-1).
-3. **Hallazgo de la espiga que cambia la mitigación [V línea 497]:** `PreferCSSPageSize = false` **no** neutraliza el `@page size` hostil (con alto de 1 mm la hoja sale apaisada, en 21 páginas y sin pie). Por eso la guarda C-1 es la mitigación real y **falla cerrada** (rechaza), no corrige. La prueba tiene que fijar ese rechazo y su código de error (D-3).
-4. **Cinco mutaciones M-a a M-e** de la hoja (4.4); cada una con el caso que la mata. M-d se refiere a (c) y **no aplica** con (b) firmada, salvo que la espiga falle y se pase al respaldo; la dejo condicional. Agrego M-f a M-n propias.
+3. **Hallazgo de la espiga que cambia la mitigación [V línea 497]:** `PreferCSSPageSize = false` **no** neutraliza el `@page size` hostil (con alto de 1 mm la hoja sale apaisada, en 21 páginas y sin pie). Por eso la guarda C-1 es la mitigación real y **falla cerrada** (rechaza), no corrige. La prueba tiene que fijar ese rechazo y su código de error .
+4. **Cinco mutaciones M-a a M-e** de la hoja (4.4); cada una con el caso que la mata. M-d se refiere a (c) y se registra **«No aplica»** (decisión de B; no se pasa a (c)). Agrego M-f a M-n propias.
 5. **Dos huecos que no cubre nada de la hoja ni de la espiga** (sección 5): la marca cuando el texto del encabezado lleva caracteres especiales (codificación del HTML del `HeaderTemplate`) y la copia de la principal (`ServicioImpresion.cs:86-102`) mientras viva.
 
 Niveles: **U** = unitaria sobre las opciones del PDF (`PdfOptions`), sin navegador; **N** = con navegador `[FactConNavegador]` y lectura del PDF; **R** = además rasterizado del visor de Chrome (para visibilidad real, no solo texto).
@@ -35,7 +52,7 @@ Para la copia `Copia = 3` en carta (215,9 × 279,4 mm) salvo que la fila diga ot
 | A5 | **0 píxeles de la capa del atacante** (verde) dentro de las filas de las bandas | `verdeEnBanda == 0` | R |
 | A6 | Contenido fiscal de la plantilla presente (no se perdió «FACTURA DE CONSUMO», NCF y total) | `Contiene(pdf, "FACTURA…")` | N |
 | A7 | **El título azul de la plantilla no cae dentro del margen reservado** (la plantilla no invade la banda) | `azulEnMargen == 0`; en los casos de C-2 (`@page{margin:0}`) la espiga mide esto; ver la sección 3 | R |
-| A8 | Para la guarda C-1: si la página no cumple alto ≥ 25 mm y ancho ≥ 20 mm, **la copia se rechaza** y A1 a A5 no se evalúan | Código de error por decidir (D-3) | N |
+| A8 | Para la guarda C-1: si la página no cumple alto ≥ 25 mm y ancho ≥ 20 mm, o aparece `/Rotate`, o el número de `/MediaBox` no coincide con el de páginas, **la copia se rechaza**: **400 `FORMATO_INVALIDO` con un texto propio**, y **no se registra ninguna copia** (0 filas en `doc.Impresion`). A1 a A5 no se evalúan | Un código nuevo caería en el caso por omisión de `ClienteRender` y saldría como 503 «el servicio no está», que es falso; la prueba exige 400 | N |
 
 Un caso puede pasar de dos maneras: cumple A1 a A6 (la marca sobrevive), o la guarda lo rechaza (A8). **Ninguna tercera:** una copia sin marca visible que se entrega es el defecto crítico.
 
@@ -79,7 +96,7 @@ Las filas TA-03 a TA-11 y TA-13 a TA-16 no están en la espiga (solo `01`, `01b`
 | TA-24 | E (`10-html-display-none`) | `html{display:none !important}` | La marca (encabezado) **se ve**; el contenido de la plantilla desaparece. A1, A2, A3, A4; **A6 no aplica**; documentar | R | M-e |
 | TA-25 | H (`07-fixed-top-negativo`) | `position:fixed;top:-20mm;height:40mm` verde | A5 (el verde no entra en la banda) | R | M-c |
 | TA-26 | E (`07b-margen-negativo`) | `margin-top:-60mm;height:30mm` verde | A5 | R | M-c |
-| TA-27 | E (`08-caja-de-margen`) | `@page{@top-center{content:'TAPA';background:#00ff00} @bottom-center{…}}` (cajas de margen CSS) | A5: **las cajas de margen CSS del `@page` de la plantilla no tapan el encabezado de Chromium**. Es el vector que puede romper (b); la espiga lo incluye y no sé su resultado | R | M-c, M-f |
+| TA-27 | E (`08-caja-de-margen`) | `@page{@top-center{content:'TAPA';background:#00ff00} @bottom-center{…}}` (cajas de margen CSS) | A5. **Resuelto por B** (revisó los PDF y PNG de la corrida de la espiga): las cajas de margen se pintan alrededor de la banda y la marca y el pie quedan encima y completos. No rompe (b) | R | M-c, M-f |
 | TA-28 | E (`09-transform-escala`) | `body{transform:scale(3)}` + bloque verde | A5 | R | M-c |
 | TA-29 | N | `@media print{*{visibility:hidden}}` y `@media print{body{display:none}}` | A3, A4 (la marca no está en el DOM) | R | M-a |
 | TA-30 | N | `html{filter:opacity(0)}` o `mix-blend-mode` a pantalla completa | A3, A4, A5 | R | M-c |
@@ -94,7 +111,7 @@ TA-31 es un límite honesto: la plantilla puede **pintar una marca falsa** («CO
 | TA-40 | H (`06-page-margin-0`) | `@page{margin:0}` | **C-2 aceptado:** A1 a A5 se cumplen y la banda **puede tapar la parte de arriba** del contenido. A7 **no es exigible** (es lo aceptado). La prueba mide cuánto tapa (`azulEnMargen`) y lo registra; el esperado fijo: A1, A2, A3, A4, A5 | R | M-c, M-g |
 | TA-41 | E (`06b-…-important`) | `@page{margin:0 !important} @page :first{margin:0 !important}` | Igual que TA-40 | R | M-c, M-g |
 | TA-42 | E (`06f-pagina-con-nombre`) | `@page tapa:first{margin:0 !important} body{page:tapa}` | Igual que TA-40 | R | M-g |
-| TA-43 | E (`06e-page-margen-enorme`) | `@page{margin-top:150mm}` | A1, A2; la marca no se desplaza fuera de la hoja (el encabezado va en el margen real de Chromium). Si la plantilla puede **sacar** la marca de la página, es un hallazgo; la espiga lo mide | R | M-g |
+| TA-43 | E (`06e-page-margen-enorme`) | `@page{margin-top:150mm}` | A1, A2. **Resuelto por B:** la marca y el pie salen en su sitio y la plantilla solo baja su contenido | R | M-g |
 | TA-44 | E (`06c-page-size-y-margen`) | `@page{size:100mm 60mm;margin:0}` | La página mide 100 × 60 mm: **cumple C-1** (60 ≥ 25 y 100 ≥ 20): A1 a A5 deben cumplirse | N+R | M-i |
 | TA-45 | H (`06d-page-size-diminuto`) | `@page{size:80mm 15mm;margin:0}` | 15 mm < 25 mm: **la guarda C-1 la RECHAZA** (A8). Sin guarda pierde la marca o el pie (la espiga lo documenta) | N | M-i |
 | TA-46 | H (`06h-page-alto-25mm`) | `@page{size:216mm 25mm;margin:0}` | **Límite exacto**: 25 mm = 2 × 10 + 5 → la guarda **admite** (≥) y A1 a A5 se cumplen. Si el `/MediaBox` redondea (24,99 mm), la guarda rechaza: la prueba fija cuál; [I] riesgo de un valor al borde | N+R | M-j |
@@ -105,7 +122,9 @@ TA-31 es un límite honesto: la plantilla puede **pintar una marca falsa** («CO
 | TA-51 | N | Umbral de alto: `24mm`, `25mm`, `26mm` | 24: rechaza; 25: admite; 26: admite | N | M-j |
 | TA-52 | N | Documento de muchas páginas donde **solo la 20.ª** tiene tamaño hostil (`@page :nth(20)` no existe; usar varios `page:` con nombre) | Rechazada: la guarda recorre todos los `/MediaBox` | N | M-k |
 | TA-53 | N | Documento de 200 páginas | Todas con marca y pie; el recorrido de `/MediaBox` es lineal (tiempo < 2 s) [I] | N | M-k |
-| TA-54 | N | `/MediaBox` con `/Rotate 90` (si Chromium lo emite para apaisado) | La guarda usa la caja **rotada** o rechaza; documentar [I] | N | M-i |
+| TA-54 | N | `/MediaBox` apaisado: Chromium intercambia ancho y alto, **ningún PDF trae `/Rotate`** (hallazgo de B) | La guarda **rechaza** si aparece `/Rotate` (400 `FORMATO_INVALIDO`, A8). Caso con un PDF sintético que lo trae | N | M-i, M-w |
+| TA-55 | N | `/MediaBox` en número distinto del de páginas (PDF sintético, o un PDF con una página extra de caja) | La guarda **rechaza** (A8) | N | M-w |
+| TA-56 | N | Vista previa con comprobante real y tamaño hostil (P-1, **pendiente del propietario**; recomendación de B: la guarda también aplica en la vista previa) | Con P-1 = sí: 400 `FORMATO_INVALIDO`; con P-1 = no, la vista previa puede salir sin «SIN VALOR FISCAL». Se escribe con el supuesto de trabajo «sí» y se marca | N | M-i |
 
 ### 2.4 Posiciones y tamaños no relacionados con `@page`
 
@@ -125,7 +144,7 @@ La hoja (4.2) exige pruebas **unitarias de las opciones del PDF**. Son baratas, 
 | UO-01 | `Copia = 3`, papel carta | `DisplayHeaderFooter = true`; `HeaderTemplate` contiene «COPIA 3»; `FooterTemplate` contiene «Reimpreso el»; `MarginOptions.Top` y `.Bottom` > 0 | M-a, M-b, M-c |
 | UO-02 | `Copia = 0` y sin vista previa | `DisplayHeaderFooter = false` (o plantillas vacías); márgenes **iguales a los del original** (la hoja 5: «los originales no cambian si el margen se reserva solo en las copias») | M-l |
 | UO-03 | Vista previa (`VistaPreviaSinValor`) | Encabezado «VISTA PREVIA – SIN VALOR FISCAL»; **no** «Reimpreso el» | M-m |
-| UO-04 | Vista previa con `Copia > 0` | Qué manda: decidir (D-5). El código actual de `MarcarCopia` [V `ServicioRender.cs:115-134`] define el orden; replicar | M-m |
+| UO-04 | Vista previa con `Copia > 0` | **Manda la vista previa** (`ModeloImpresion.cs:68`): encabezado «SIN VALOR FISCAL», sin «Reimpreso el» como marca de copia. Replicar el orden de `MarcarCopia` [V `ServicioRender.cs:115-134`]. El pie de hoy **no lleva `!important`** (`ServicioRender.cs:128-129`): B lo cambia en una línea de la hoja y la prueba lo fija | M-m
 | UO-05 | Copia en rollo continuo (`papel.Continuo`) | Alto del PDF = alto del contenido **+ margen superior + margen inferior** (`ConvertidorPdf.cs:196-201`, pregunta 3 de la espiga) | M-n |
 | UO-06 | `PreferCSSPageSize` | Documentar el valor para copia y original (la espiga halló que `false` **no** mitiga); la prueba fija el valor elegido | M-o |
 | UO-07 | El texto «Copia n» con `n` de 1 a 999 | Sale el número exacto; no hay «COPIA 3» para `Copia = 4` | M-p |
@@ -144,7 +163,7 @@ Cada mutación se aplica sobre el código de producción en una rama temporal, s
 | **M-a** | `DisplayHeaderFooter = false` | La marca no se dibuja | UO-01, y toda la tabla 2 por A1/A3 (la marca falta en **todos** los casos) | Sí: UO-01 (U) y TA-01 a TA-63 (N). Mutación **fuerte**: si no mata a casi todo, la tabla está vacía |
 | **M-b** | quitar el `FooterTemplate` | El pie «Reimpreso el» no sale | UO-01 (pie), A2 y A4 en toda la tabla 2 | Sí |
 | **M-c** | márgenes a cero | La marca cae sobre el contenido o no se dibuja | UO-01 (márgenes > 0), A5 y A7 en TA-21, 22, 25, 26, 27, 28, 30, 60 | Sí |
-| **M-d** | con (c): «exactamente una» → «al menos una» | Solo aplica al respaldo (c) | **Condicional.** Con (b) firmada no hay conteo de `<body>`. Si la espiga fallara y se pasara a (c)+CDP, los casos TA-14 y TA-13 la matan (dos `<body>`) | Aplicable solo bajo (c); marcar «No aplica» en el informe si se construye (b) |
+| **M-d** | con (c): «exactamente una» → «al menos una» | Solo aplica al respaldo (c) | **No aplica** (decisión de B): con (b) no hay conteo de `<body>`; se registra «No aplica» en el informe |
 | **M-e** | volver a insertar la banda en el HTML sin el encabezado | Regresa el vector original | TA-01 a TA-16 (los de comentario y `<script>`), TA-12 en particular, TA-20 (`display:none !important`) | Sí: la hoja pide que mate «los casos de comentario y de `<script>`» |
 
 Adicionales de este plan:
@@ -166,8 +185,9 @@ Adicionales de este plan:
 | M-r | La fecha pierde el formato | UO-09 | Mata |
 | M-s | El `HeaderTemplate` incluye `<span class="title">` | UO-10 | Mata |
 | M-t | La copia de la principal (`ServicioImpresion.cs:86-102`) se queda con el `Regex` y la API de reportes usa (b) | `ReglasReimpresionTests` adaptado y TA-01 a TA-12 contra la principal mientras viva | **No la mata nada hoy** si la principal ya no renderiza (T4-02b); mutación a aplicar solo si T4-02 se retrasa |
-| M-u | El rechazo de C-1 devuelve 200 con el PDF sin marca en lugar del error | Aserción de A8 (código HTTP) | Mata si A8 fija el código (D-3) |
+| M-u | El rechazo de C-1 devuelve 200 con el PDF sin marca, o responde 503/otro código, o registra la copia, en lugar de 400 `FORMATO_INVALIDO` | Aserción de A8 (código HTTP y 0 filas) | Mata |
 | M-v | La guarda rechaza por `Pages` pero no por `/MediaBox` (usa una propiedad de Chromium) | TA-46 (borde), TA-54 | Mata |
+| M-w | La guarda no rechaza `/Rotate` ni un número de `/MediaBox` distinto del de páginas | TA-54, TA-55 | Mata |
 
 ## 5. Regresión y huecos
 
@@ -176,7 +196,7 @@ Adicionales de este plan:
 | RG-01 | Dorados de las plantillas base en **original** (`PlantillasRazor`, `GeneradorRazor`) | Idénticos a los de hoy (hoja 4.5); cualquier cambio es hallazgo |
 | RG-02 | Dorados en **copia** | Cambian solo el encabezado, el pie y los márgenes (hoja 4.5). La prueba compara el contenido de la hoja (texto del cuerpo) y excluye las bandas |
 | RG-03 | Paginación original frente a copia en una tabla en carta con `@page{margin:0}`, `@page{margin:15mm}` y sin `@page` (pregunta 4 de la espiga: primera cantidad de filas que pasa a 2 páginas con 10, 15 y 20 mm) | La copia puede paginar **distinto** (aceptado por la hoja, sección 6): la prueba **fija** la diferencia de filas con el margen de 10 mm, para que un cambio de margen se note |
-| RG-04 | Los formatos estándar de QuestPDF siguen dibujando la marca en su propio código (`FormatoTicket.cs:46`, `FormatoDocumento.cs:54` [V hoja]) | Sin marca doble: **una sola banda** si un formato estándar pasa por (b) (D-4) |
+| RG-04 | Cada documento pasa por **un solo motor** (`ServicioRender.cs:29,33`): no puede haber doble banda con QuestPDF (respuesta de B). Prueba: un formato estándar de QuestPDF con `Copia > 0` tiene una sola banda | Una sola banda |
 | RG-05 | `ReglasReimpresionTests.cs:79-101` y `ChromiumAisladoTests.cs:1934-1966` (las dos pruebas existentes de la marca, solo con plantillas bien formadas [V hoja]) | Se **reemplazan** por las de este plan; no se dejan en paralelo comprobando el mecanismo viejo |
 | RG-06 | Control negativo (espiga: `Control_sin_copia_no_hay_marca`) | Original sin copia: sin texto de marca y sin banda magenta, con el contenido presente |
 | RG-07 | `[FactConNavegador]` en CI sin Chromium | Se omiten con motivo; las **U** (UO-01 a UO-10) siguen corriendo: la marca nunca queda sin ninguna prueba |
@@ -200,23 +220,17 @@ Adicionales de este plan:
 
 La hoja estima 1 a 1,25 dp para construir (b); estas pruebas son aparte (la hoja dice «todas de B»). La espiga (576 líneas) ya cubre ~40 % de la tabla 2 y puede **portarse** en lugar de reescribirse.
 
-## 7. Dudas abiertas
+## 7. Dudas abiertas (las resueltas están en «Respuestas de B»)
 
 | # | Duda | Quién |
 |---|---|---|
-| D-1 | La hoja dice que no hay librería de lectura de PDF (4.3, consulta al propietario); la espiga lo hace sin ella. ¿Se adopta la técnica de la espiga en producción (U) o se consulta una librería? | B / propietario |
-| D-2 | La espiga no se une (rama `b/p170-07-espiga`, `e112ae91`). ¿Se porta tal cual a `GPOS.Reportes.Tests` o se reescribe? Su código usa `ConvertidorPdf.GenerarAsync` interno | B |
-| D-3 | Código HTTP y de error cuando C-1 rechaza (¿422 `FORMATO_INVALIDO`? ¿400?). Sin él no se puede escribir A8 ni M-u | B |
-| D-4 | ¿Un formato **estándar** de QuestPDF debe seguir dibujando su propia marca o pasar por (b)? Riesgo de doble banda | B |
-| D-5 | Prioridad entre vista previa y copia cuando coinciden (UO-04) | B |
-| D-6 | M-d no aplica con (b); ¿se registra «No aplica» o se difiere hasta que la espiga confirme? Hoy firmada (b), no (c) | B |
-| D-7 | Alto de la guarda: ¿margen de 10 mm fijo o el real de cada papel? La fórmula del encargo (2 × margen + 5) depende del margen elegido | B |
-| D-8 | Resultados reales de la espiga: yo **no la ejecuté**. TA-27 (cajas de margen CSS), TA-43 (margen enorme) y TA-54 (rotación) dependen de ellos; si la espiga muestra que alguno rompe (b), la hoja manda pasar a (c)+CDP | B (que informe a A) |
+| P-1 | ¿La guarda C-1 también en la vista previa con un comprobante real? Recomendación de B: sí (0 dp). Pendiente del propietario; TA-56 se escribe con «sí» como supuesto de trabajo | Propietario |
+
 
 ### Cierre
 - Estado: Completado (plan; sin ejecutar)
 - Artefactos: `C:\Users\lfmen\source\repos\GPOS-NG-Equipos\traspasos\C\2026-10-23-plan-tabla-adversaria-p170-07.md`
 - Supuestos: la espiga leída en `e112ae91` es la vigente; MargenMm = 10 mm es el valor definitivo
 - Decisiones candidatas a ADR: Ninguna
-- Entregas a otros agentes: B → D-1 a D-8; A → revisar TA-31 (imitación visual) como riesgo residual
-- Próximo paso recomendado: B corre la espiga y entrega sus resultados antes de construir, para confirmar TA-27, TA-43 y TA-54
+- Entregas a otros agentes: Propietario → P-1; A → revisar TA-31 (imitación visual) como riesgo residual
+- Próximo paso recomendado: el propietario firma P-1; B construye P170-07 en su propio PR, después de T4-02b
