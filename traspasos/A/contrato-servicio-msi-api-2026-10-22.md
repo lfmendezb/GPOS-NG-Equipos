@@ -8,7 +8,7 @@
 | `ServiceInstall/@Name` | `GPOS.Api` | `ServiciosWindows.Api` |
 | `@Account` | `NT SERVICE\GPOS.Api`, sin `Password` | ADR-76; ADR-82, punto 2 |
 | **`@Arguments`** | **exactamente** `--servicio`: un solo elemento, sin `--urls`, `--environment` ni otros | `ModoServicioApi.ArgumentoServicio` |
-| `@Start` | `auto` (Q-8 abierta: `delayed-auto` si L-15 lo pide) | OPS-API 7.2 |
+| `@Start` | `auto` (Q-8 respondida por B el 22-oct: `auto` hasta medir L-15; `delayed-auto` solo si la medición lo pide) | OPS-API 7.2 |
 | `@Type`, `@ErrorControl`, `@Vital` | `ownProcess`, `normal`, `yes` | patrón del agente |
 | `ServiceConfig` | `OnInstall="yes" OnReinstall="yes"`; `RequiredPrivilege` = la lista exacta | `ModoServicioApi.PrivilegiosDeclarados` |
 | `util:ServiceConfig` | reinicio, reinicio, reinicio, 60 s, contador a 1 día; sin acción de comando | patrón del agente |
@@ -27,7 +27,16 @@
 - **Arrancar el servicio al instalar** (sin `Start` en `ServiceControl`).
 - **Declarar** el anillo, `Licencia\Entrada`, `temp`, `registros` ni carpetas de otro componente (ADR-77, puntos 4 y 5).
 - **Llevar secretos** (`.pfx`, contraseñas, PIN) en el repositorio, parámetros o salida.
-- **Fijar un SDDL del servicio** hasta que se responda Q-5.
+
+## SDDL del objeto de servicio (Q-5, firmada por el propietario el 2026-10-22)
+Solo Administradores y SYSTEM inician, detienen o reconfiguran; los usuarios solo consultan. Es distinto del SDDL del DEMO (DM-09). Valor propuesto por A, **a comprobar en la VM con `sc.exe sdshow GPOS.Api`**:
+
+```
+D:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLORC;;;BU)
+```
+- `SY` y `BA`: consulta, inicio (`RP`), parada (`WP`), reconfiguración (`DC`) y control del descriptor (`WD`, `WO`). `BU` (usuarios): solo consultar la configuración y el estado, enumerar dependientes, interrogar y leer el descriptor (`CC`, `LC`, `SW`, `LO`, `RC`).
+- En el MSI va con `util:PermissionEx` dentro de `ServiceInstall` [I: WiX 5 lo admite; B lo confirma al construir T1-b]. **La constante vive en un solo lugar:** una prueba de arquitectura la compara con el texto del `Package.wxs` y PR-V (`implantar-servidor` y `comprobar-servidor`) la comparte.
+- Prueba nueva para T1-b: `ContratoServicioApiTests.El_SDDL_del_servicio_del_MSI_es_el_de_Q5` (el texto del `.wxs` es idéntico a la constante) y, en el laboratorio, L-2f (`sdshow` coincide; un usuario estándar no puede detener el servicio y sí consultarlo).
 
 ## Condiciones de publicación
 - **G-PR4:** `GPOS.Api.msi` no se firma mientras `src/GPOS.Api/Servicio/ModoServicioApi.cs` contenga `FijarEscuchaPorOmision` (hasta que se una PR-4, #139). El MSI sin firma se nombra `GPOS.Api-SINFIRMA.msi`.
@@ -37,5 +46,5 @@
 ## Cómo se comprueba en el laboratorio (VM de `LFMB`, lo ejecuta el técnico)
 L-1 bis (`ImagePath` termina exactamente en ` --servicio`), L-2 bis (los dos orígenes registrados), L-2c a L-2e (4767 con el argumento fuera del SCM, sin origen y con privilegio de más). Detalle en la sección 3.1 del blueprint; A los pasa a `docs/operaciones/` en T1-c.
 
-## Pendiente de B
-Q-2 (G-PR4), Q-5 (SDDL), Q-6 (ventana de la VM) y Q-8 (`auto` o `delayed-auto`) antes del 3-nov; Q-3, Q-4 y Q-7 son del propietario.
+## Respuestas de B del 2026-10-22
+Q-2 (G-PR4): sí, B lo acepta. Q-5 (SDDL): firmada, +0,25 dp en T1-b. Q-6 (VM): primera ventana después del 13-nov en `VM-SRV` de LFMB, con el guion de A reutilizando `Recoger-Evidencia.ps1`. Q-8: `auto`. **Pendiente del propietario:** Q-3, Q-4 y Q-7.

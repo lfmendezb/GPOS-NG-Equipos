@@ -150,7 +150,7 @@ Las pruebas de T1-05 a T1-08 dependen de que existan `Package.wxs` y `.wixproj` 
 
 - La firma real de `GPOS.Api.msi`: la hace el custodio con el certificado de ADR-33; depende de Q-3 y Q-4 del propietario. Mientras, `GPOS.Api-SINFIRMA.msi`.
 - El *bundle*, `GPOS.Reportes.msi`, `GPOS.Web.msi` y los verbos `implantar-servidor` / `comprobar-servidor` (PR-V).
-- Q-5 (SDDL explícito del objeto de servicio): no se fija en este PR; queda el valor por omisión.
+- Q-5 (SDDL explícito del objeto de servicio): **firmada el 22-oct**; entra en T1-b (+0,25 dp), con el texto de `contrato-servicio-msi-api-2026-10-22.md` y la prueba `El_SDDL_del_servicio_del_MSI_es_el_de_Q5`.
 - Mientras `FijarEscuchaPorOmision` siga en `ModoServicioApi.cs`, el MSI **no se firma** (G-PR4) y el servicio **no debe instalarse fuera del laboratorio** (S-01/S-02 de #127).
 - **DEMO y MSI son excluyentes** en un equipo: PR-V crea un servicio `GPOS.Api` con el mismo nombre; si ya existe uno que no es del MSI, `ServiceInstall` falla [I].
 
