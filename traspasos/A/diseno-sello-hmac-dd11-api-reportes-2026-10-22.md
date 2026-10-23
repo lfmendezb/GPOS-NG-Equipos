@@ -83,7 +83,7 @@ En `GPOS.Reportes.Tests`: `Sello_igual_para_el_mismo_mensaje`, `Cambiar_Id_TipoD
 
 ## 9. Esfuerzo y dependencias
 - Anillo propio, `K_sello` y HKDF: 0,5 dp. Ruta, controles y evento: 0,5 dp. Verificación en el render y rechazos: 0,4 dp. Guardado en la principal (dos pasos, guarda de concurrencia): 0,3 dp. Pruebas: 0,5 dp. **Total 2,2 dp ±30 %**, por encima de los 1 a 1,5 dp de la hoja (la diferencia es el anillo propio, que la hoja no cuenta). El auditor-seguridad revisa el PR.
-- Antes de construir: `Huella binary(33)` en el DDL del #178; confirmar `auth_time`; pedir `FORMATO_RAZOR_SELLADO` a T1-1; decidir 4.4; instalador de la API de reportes crea la carpeta y la DACL del anillo.
+- Antes de construir: `Huella binary(33)` en el DDL del #178; **agregar la lectura de `auth_time`** (hoy `GPOS.Reportes.Api` no lo lee en ningún sitio [V, 22-oct]: sin él la ruta de sellado falla cerrada; costo mío, no contado en la hoja); pedir `FORMATO_RAZOR_SELLADO` a T1-1; decidir 4.4; instalador de la API de reportes crea la carpeta y la DACL del anillo.
 
 ## Cierre
 - Estado: Completado (diseño, sin compilar). Entrega a: arquitecto-software de B (4.4, nodos, EventId), arquitecto-datos de B (`binary(33)`, `Revision`, catálogo de T1-1), devops (anillo propio), auditor-seguridad (revisión del PR).
