@@ -36,7 +36,7 @@ Sin cambios: `ASCII("GPOS.Imp.Sello.v1") ‖ 0x00 ‖ int32 BE (Id) ‖ uint16 B
 1. Autenticación por introspección (el esquema `GPOS.Introspeccion` de siempre); el token lo reenvía la principal tal como lo recibió del SUPER.
 2. **Nivel SUPER** estricto: no ADMIN, no el menor de dos niveles. 
 3. **`amr` contiene `otp`**, exigido por la propia ruta con la misma regla que `ExigeOtpSuper` [V `AutenticacionIntrospeccion.cs:110-115`], **sin** una vía más débil: si en Debug `ExigeOtpSuper` está apagado, la ruta sigue pidiendo `otp` salvo que la configuración de desarrollo diga explícitamente lo contrario y registre el evento al arrancar.
-4. **Autenticación reciente:** el claim `auth_time` no más viejo que 5 minutos [I: confirmar que la introspección v1 lo devuelve para el token interactivo; si no, el claim se agrega]. Evita sellar con una sesión desatendida.
+4. **Autenticación reciente:** el claim `auth_time` no más viejo que 5 minutos [V, 22-oct: la introspección v1 ya devuelve todos los claims del token (`ValidadorTokenPrincipal.cs:49`, `ResultadoIntrospeccion.Claims`) y el JWT interactivo lleva `auth_time` (`Seguridad.cs:136`, `ClaimsSesion.MomentoAutenticacion` en `GPOS.Comun`). La API de reportes solo debe **leer** ese claim de `Claims`, sin cambiar el protocolo ni la principal; sin el claim, 403 `SELLO_AUTENTICACION_ANTIGUA` (falla cerrada)]. Evita sellar con una sesión desatendida.
 5. **No es un token de servicio:** la ruta no lleva `PermiteTokenProgramado` (cerrado por omisión) [V, A-4], y un `prg` en la solicitud da 401.
 6. **Origen:** solo por la canalización (la ruta no se publica en el puerto de la Web ni en el reenvío del navegador). La principal es la única que la llama.
 7. **Tope de frecuencia:** 20 por minuto y por usuario; sellar no es una operación de volumen.
@@ -83,8 +83,8 @@ En `GPOS.Reportes.Tests`: `Sello_igual_para_el_mismo_mensaje`, `Cambiar_Id_TipoD
 
 ## 9. Esfuerzo y dependencias
 - Anillo propio, `K_sello` y HKDF: 0,5 dp. Ruta, controles y evento: 0,5 dp. Verificación en el render y rechazos: 0,4 dp. Guardado en la principal (dos pasos, guarda de concurrencia): 0,3 dp. Pruebas: 0,5 dp. **Total 2,2 dp ±30 %**, por encima de los 1 a 1,5 dp de la hoja (la diferencia es el anillo propio, que la hoja no cuenta). El auditor-seguridad revisa el PR.
-- Antes de construir: `Huella binary(33)` en el DDL del #178; **agregar la lectura de `auth_time`** (hoy `GPOS.Reportes.Api` no lo lee en ningún sitio [V, 22-oct]: sin él la ruta de sellado falla cerrada; costo mío, no contado en la hoja); pedir `FORMATO_RAZOR_SELLADO` a T1-1; decidir 4.4; instalador de la API de reportes crea la carpeta y la DACL del anillo.
+- Antes de construir: `Huella binary(33)` en el DDL del #178; **leer `auth_time` de `ResultadoIntrospeccion.Claims` en la ruta de sellado** (R20; hoy `GPOS.Reportes.Api` no lo lee [V, 22-oct], pero el claim ya llega: sin protocolo nuevo ni cambio en la principal, unas 0,1 dp dentro de «Ruta, controles y evento»; sin la lectura la ruta falla cerrada); pedir `FORMATO_RAZOR_SELLADO` a T1-1; decidir 4.4; instalador de la API de reportes crea la carpeta y la DACL del anillo.
 
 ## Cierre
 - Estado: Completado (diseño, sin compilar). Entrega a: arquitecto-software de B (4.4, nodos, EventId), arquitecto-datos de B (`binary(33)`, `Revision`, catálogo de T1-1), devops (anillo propio), auditor-seguridad (revisión del PR).
-- No verificado: que `ServicioRender` no compile nada que dependa de `Papel`; que la introspección v1 devuelva `auth_time`; la integración de Data Protection en `GPOS.Reportes.Api` sin referenciar `GPOS.Core`.
+- No verificado: que `ServicioRender` no compile nada que dependa de `Papel`; la integración de Data Protection en `GPOS.Reportes.Api` sin referenciar `GPOS.Core`.
