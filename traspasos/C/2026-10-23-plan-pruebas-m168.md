@@ -223,3 +223,13 @@ Dependencias: respuestas a P-M168-01 a 05; `ApiMvpFactory` con SUPER con bandera
 - No verifiqué que el limitador D81-10 (un evento por minuto y usuario) se comporte como indica el comentario de `AdminSinRestriccion.cs`; lo tomé del comentario y de la prueba `:214-235`.
 - No leí el hilo del #168 (`gh pr view 168 --comments`) ni el guion de 9/10/14 mutaciones de B (no está publicado, P168-14).
 - Los costos en días-persona son inferencia mía.
+
+## Adenda: decisiones del propietario (2026-10-23, por B en `avisos/B-a-C/2026-10-23-respuestas-p-m168-p-s152-y-q-t4-10.md` y en `B-a-C/2026-10-23-confirmaciones-preparar-vm-y-p-m168-01.md`)
+
+| Pregunta | Decisión | Efecto en el plan |
+|---|---|---|
+| P-M168-01 | Oráculo de M2: la hoja firmada `2026-10-22-hoja-firma-admin-sin-restriccion-fija-la-restriccion.md`. El SUPER y el ADMIN sin restricción gestionan la restricción **de otras cuentas**; un ADMIN restringido no cambia ninguna | «Solo el SUPER cambia la propia» **no es oráculo**: los casos que lo prueban se escriben como caracterización marcada «pendiente de confirmación» |
+| P-M168-02 | Sí: la bitácora «Usuarios y permisos» registra valor anterior y nuevo (bandera, empresa, sucursal) | M2-31 exige antes y después |
+| P-M168-03 | Se iguala al 403 (como `/pos/usuarios`) | M2-33 espera 403 también para el código inexistente |
+| P-M168-04 | B corrige `CierreSucursalService.cs:96` en este ciclo | M1-14 se escribe en verde, sin `Skip`; MU-18 deja de ser defecto vivo |
+| P-M168-05 | Lo resuelve B en la implementación | El fixture del SUPER con bandera sigue el que elija B |
