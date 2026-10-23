@@ -1,0 +1,108 @@
+using System.Runtime.Versioning;
+using GPOS.Migracion.Servidor;
+using GPOS.Migracion.Servidor.FasesImplantacion;
+
+namespace GPOS.Tests.Servidor;
+
+/// <summary>
+/// Revisión adversarial de C (2026-10-23) de la fase restaurar de PR-D2 en cd44043c. Archivo temporal, sin commit.
+/// RC1 y RC3 fallan contra el código del PR (cada falla demuestra un hallazgo); RC2 pasa y fija la precondición de RA-02.
+/// </summary>
+[Trait("Esquema", "Neutral")]
+[Trait("Categoria", "Servidor")]
+[SupportedOSPlatform("windows")]
+public class RestaurarRevisionCTests
+{
+    private const string Origen = @"C:\Users\demo\Descargas\GPOS-DEMO";
+    private const string Destino = @"D:\Programas\GPOS NG\Demo";
+    private const string Previa = Destino + @"\.anterior";
+    private const string Aplicando = Destino + @"\.aplicando";
+    private static readonly string ManifiestoPrevia = Previa + @"\" + FaseServicios.ManifiestoCopiaPrevia;
+    private static readonly DatosSistema Datos = new(@".\SQLEXPRESS", "GPOS_SYSDATA", true);
+
+    private static async Task<(int Codigo, string Salida)> Implantar(SistemaServidorFalso s, OpcionesImplantar o)
+    {
+        using var salida = new StringWriter();
+        var codigo = await ComandoImplantarServidor.EjecutarAsync(o, s, () => Datos, salida, CancellationToken.None);
+        return (codigo, salida.ToString());
+    }
+
+    private static Task<(int Codigo, string Salida)> Servicios(SistemaServidorFalso s) =>
+        Implantar(s, new OpcionesImplantar(PerfilServidor.Demo, FaseImplantacion.Servicios, Origen));
+
+    private static Task<(int Codigo, string Salida)> Restaurar(SistemaServidorFalso s, string? huella = null) =>
+        Implantar(s, new OpcionesImplantar(PerfilServidor.Demo, FaseImplantacion.Restaurar, HuellaCopiaPrevia: huella));
+
+    /// <summary>
+    /// RA-01. Actualizar-Demo.ps1 anota HuellaCopiaPrevia solo si la huella del manifiesto de .anterior cambió durante --fase servicios. Tras
+    /// actualizar v1→v2, revertir y volver a actualizar v1→v2, la copia previa SÍ se renovó (con v1), pero su manifiesto es byte a byte el mismo:
+    /// el guion concluye «no cambió los binarios», no anota la huella, y Revertir restauraría las bases sin los binarios.
+    /// </summary>
+    [Fact]
+    public async Task RC1_Actualizar_otra_vez_tras_revertir_deja_una_copia_previa_con_huella_distinta()
+    {
+        var s = await ImplantarServidorTests.Implantado();
+        s.Paquete(Origen, version: "2");
+        Assert.Equal(0, (await Servicios(s)).Codigo);
+        var primera = s.HuellaSha256(ManifiestoPrevia);
+        var (cr, sr) = await Restaurar(s, primera);
+        Assert.True(cr == 0, sr);
+        Assert.Equal("api 1"u8.ToArray(), s.Archivos[Destino + @"\api\GPOS.Api.exe"]);
+
+        var antes = s.HuellaSha256(ManifiestoPrevia);            // $huellaAntes de Actualizar-Demo.ps1
+        var (cs, ss) = await Servicios(s);                       // segunda actualización v1 → v2: copia de verdad
+        Assert.True(cs == 0, ss);
+        Assert.Contains("Copia previa de", ss, StringComparison.Ordinal);   // la fase renovó .anterior
+        Assert.Equal("api 2"u8.ToArray(), s.Archivos[Destino + @"\api\GPOS.Api.exe"]);
+        var despues = s.HuellaSha256(ManifiestoPrevia);          // $huellaDespues
+        Assert.NotEqual(antes, despues);                         // FALLA: son iguales, el guion no anota la huella
+    }
+
+    /// <summary>
+    /// RA-02 (precondición). --fase servicios puede terminar distinto de 0 DESPUÉS de renovar .anterior y con .aplicando puesta. Actualizar-Demo.ps1
+    /// se detiene con Detener-ConError antes de anotar la huella; Revertir trata la falta de huella como «no cambió los binarios» y no llama a
+    /// restaurar, aunque restaurar con esa huella sí arreglaría el destino.
+    /// </summary>
+    [Fact]
+    public async Task RC2_Servicios_fallido_renueva_la_copia_previa_y_deja_la_marca_y_solo_restaurar_lo_arregla()
+    {
+        var s = await ImplantarServidorTests.Implantado();
+        var antes = s.HuellaSha256(ManifiestoPrevia);            // null: primera actualización
+        s.Paquete(Origen, version: "2");
+        s.AlCopiar = (destino, datos) => destino.Equals(Destino + @"\api\GPOS.Api.dll", StringComparison.OrdinalIgnoreCase) ? throw new IOException("en uso") : datos;
+        var (cs, ss) = await Servicios(s);
+        Assert.Equal(4, cs);                                     // Actualizar-Demo: Detener-ConError, sin anotar HuellaCopiaPrevia
+        var despues = s.HuellaSha256(ManifiestoPrevia);
+        Assert.NotNull(despues);
+        Assert.NotEqual(antes, despues);                         // .anterior SÍ se renovó en esta actualización
+        Assert.True(s.Carpetas.ContainsKey(Aplicando), ss);      // y el destino quedó marcado a medias
+        s.AlCopiar = null;
+        var (cr, sr) = await Restaurar(s, despues);
+        Assert.True(cr == 0, sr);                                // la reversión correcta existía, pero el guion no la intenta
+        Assert.False(s.Carpetas.ContainsKey(Aplicando));
+    }
+
+    /// <summary>
+    /// RA-03. El arreglo de R-03 solo mira destino\api y destino\reportes. Una subcarpeta del destino que es una unión no detiene la fase:
+    /// CopiarSinReanalisis abre el destino con FileMode.Create (sigue la unión) y HuellaSha256 con File.OpenRead (también), así que la escritura sale
+    /// del destino y la verificación pasa.
+    /// </summary>
+    [Fact]
+    public async Task RC3_Una_subcarpeta_del_destino_que_es_union_detiene_la_fase()
+    {
+        var s = await ImplantarServidorTests.Implantado();
+        s.Paquete(Origen, version: "2");
+        Assert.Equal(0, (await Servicios(s)).Codigo);
+        // La copia previa incluye un archivo en una subcarpeta (como runtimes\win\lib\... de una publicación real)
+        var texto = s.LeerTexto(ManifiestoPrevia)!;
+        var huellas = FaseServicios.InterpretarManifiesto(texto.Split('\n', 2)[1], "x", out _)!;
+        s.Archivos[Previa + @"\api\runtimes\win\x.dll"] = "x 1"u8.ToArray();
+        s.Archivos[Destino + @"\api\runtimes\win\x.dll"] = "x 2"u8.ToArray();
+        huellas[@"api\runtimes\win\x.dll"] = s.HuellaSha256(Previa + @"\api\runtimes\win\x.dll")!;
+        s.Archivos[ManifiestoPrevia] = System.Text.Encoding.UTF8.GetBytes(FaseServicios.EncabezadoEstado + FaseServicios.EstadoVerificada + "\n" + FaseServicios.TextoManifiesto(huellas));
+        s.Carpetas[Destino + @"\api"] = new LecturaCarpeta(true);
+        s.Carpetas[Destino + @"\api\runtimes"] = new LecturaCarpeta(true, EsPuntoReanalisis: true);   // unión dentro del subárbol
+        var (codigo, salida) = await Restaurar(s, s.HuellaSha256(ManifiestoPrevia));
+        Assert.True(codigo == 4, salida);                        // FALLA: 0, restaura y «verifica» a través de la unión
+    }
+}
