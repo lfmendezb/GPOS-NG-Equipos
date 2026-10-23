@@ -4,7 +4,7 @@ Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo
 
 ## 0. Antes de nada
 - `git pull` del área común (`GPOS-NG-Equipos`) y leer los avisos `B-a-A` posteriores a este traspaso; armar `Monitor` sobre `%LOCALAPPDATA%\GPOS-NG-Equipos\novedades-A.md` (vence a los 30 min).
-- **Dos agentes auditores estaban corriendo al cerrar** (resultados a archivos, sin commit): revisión de cierre del #178 → `traspasos/A/revision-cierre-pr178-t4-10-rev4-2026-10-22.md` y revisión del #170 → `traspasos/A/revision-seguridad-pr170-t4-03a-2026-10-22.md`. Si los archivos existen, **verifiqué nada de ellos todavía**: leer, comprobar los hallazgos principales en el código o el documento, publicar (commit y push al área común) y mandar el aviso `A-a-B`. Si no existen, repetir la revisión con un agente `auditor-seguridad` (ver el patrón en los informes del #168 y #178 de `traspasos/A/`).
+- **Las dos auditorías del cierre ya terminaron y están publicadas con su aviso:** cierre del #178 revisión 4 (`revision-cierre-pr178-t4-10-rev4-2026-10-22.md`: Aprobar con condiciones; S178-R4-01 y S178-R4-02) y #170 (`revision-seguridad-pr170-t4-03a-2026-10-22.md`: Aprobar con condiciones; S170-01 y S170-02 antes de unir). Falta solo que B responda.
 - **Nada se une sin orden del propietario.** Las uniones las hace B. Empujar ramas `a/` sí está autorizado; abrir PR nuevo, no sin orden.
 - Trampas de la herramienta: un mensaje de commit que empieza con `A:` lo bloquea el filtro (escribirlo sin los dos puntos); en Python dentro de Bash, `\\` llega como `\` (usar `chr(92)`); en `Edit`, hay que `Read` el archivo antes; `( … ) &` en Bash termina de inmediato (usar `run_in_background` y un `until grep` sobre el log).
 
@@ -29,9 +29,9 @@ Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo
 ## 3. Pendiente y fechas
 | Cuándo | Qué |
 |---|---|
-| Hoy/mañana | Cerrar los dos agentes (sección 0); publicar sus informes |
+| Hecho | Informes de cierre del #178 y del #170 publicados |
 | 28-oct | B responde los puntos del emisor (tipo de error SUPER, línea en `EndpointsReportes.cs`) |
-| 29-oct | Revisión del #168 (entregada); #170 y revisión de cierre del #178 (en curso) |
+| 29-oct | Revisión del #168, #170 y cierre del #178: entregadas; esperar las correcciones de B (S170-01, S170-02, S178-R4-01, R4-02) y revisar el rango |
 | 2-nov | `Usuarios.razor` (hecho, falta PR/rebase), `ClearAllPools` (hecho, falta PR), #174 unido (B) |
 | Antes del 3-nov | Blueprint de PR-V (hecho), R-14/Q-A4 (hecho); **abrir el PR del emisor** al confirmar B |
 | 3-nov en adelante | **T4-06** (blueprint con sección 17); espera P-4 (`CompilacionDepuracion`) y la segunda pregunta de Q-A4 (Debug sin reenvío) de B |
