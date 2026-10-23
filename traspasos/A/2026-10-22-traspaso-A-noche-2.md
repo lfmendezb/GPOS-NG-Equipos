@@ -17,7 +17,7 @@ Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo
 | Rama | PR | Qué es | Notas |
 |---|---|---|---|
 | `a/t4-04-emisor` | sin PR | Emisor del token de servicio T4-04 (commits `771357a8`, `1927608d`), apilado sobre `a/t4-04-contrato-token` | 48 pruebas del token y 24 de la API de reportes pasan en mi PC. Orden de unión: #169, emisor, #175. **Falta de B:** confirmar el tipo de error del SUPER (`TokenServicioDenegadoException` `autor-super`) y la línea `.PermiteTokenProgramado(...)` en `EndpointsReportes.cs`. EventId 4791-4793 ya cedidos |
-| `a/api-jwt-entorno` | #174 | K3-DEMO cerrojo 2 y DM-04, con JWT-01 (`Jwt:Clave`) | Unir antes del 2-nov (DB-7) |
+| `a/api-jwt-entorno` | #174 | K3-DEMO cerrojo 2 y DM-04, con JWT-01 (`Jwt:Clave`) | **UNIDO a `feature/modelo-ng` (`d3b12c27`, aviso de B del 22-oct)**; el worktree `GPOS-NG-t1a` puede retirarse |
 | `a/t1c-lab-instalador` | #165 | T1-c, con el caso L-2f (SDDL, Q-5) | Guion sin ejecutar (VM) |
 | `a/limpieza-clearallpools` | sin PR | 29 `ClearAllPools()` quitadas, sobre #153 (`c/pruebas-inestables-4`) | Clases tocadas 189/189 y 61/61; suite completa en LFMB (B). Quedan 13 que piden criterio |
 | `a/usuarios-razor-restriccion` | sin PR | Tarea 7: `Usuarios.razor` (Web y MAUI idénticos), sobre la punta `30ad5c4e` del #168 | Rebasar si B cambia rutas (S168-01/02). Entrega pedida: 2-nov |
@@ -25,6 +25,8 @@ Para la sesión nueva de la PC A (`DEVLAB00`, mini PC de 8 GB y 4 hilos: máximo
 | (sin cambios) | #103 + emisor #1 (DV-07), #164 (T1-a), #169 (contrato), #171 **unido**, #173 (spike Amplio) | Ver el traspaso anterior | |
 
 Árboles de trabajo nuevos: `GPOS-NG-t404` (emisor), `GPOS-NG-pools`, `GPOS-NG-usr`, `GPOS-NG-t1c`, `GPOS-NG-tmp`; `GPOS-NG-t1a` (rama `a/api-jwt-entorno`). `-pr2` y `-pr4` pueden retirarse (ramas unidas); comprobar antes que no tengan cambios sin subir.
+
+> **Uniones posteriores (aviso de B `uniones-174-182-185`):** #174 a `feature/modelo-ng`; #182, #183, #184 y #185 a `master`. Queda pendiente el #186 (hoja de S178-01 y S178-03). Las condiciones R3-01 a R3-03 del #183 quedan para T1-1 y T1-4.
 
 ## 3. Pendiente y fechas
 | Cuándo | Qué |
