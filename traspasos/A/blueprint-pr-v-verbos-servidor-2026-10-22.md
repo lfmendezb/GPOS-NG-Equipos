@@ -11,7 +11,7 @@ Responde a la tarea 10 de `avisos/B-a-A/2026-10-22-tareas-nuevas-para-a-2.md`. *
 ## 1. Contrato de los verbos
 
 ### 1.1 `implantar-servidor`
-`GPOS.Migracion implantar-servidor --perfil demo|produccion --fase carpetas|servicios|esquema|lectura [--origen <carpeta del paquete>] [--destino <carpeta>] [--usuario-instala <SID|cuenta>] [--rotar-jwt] [--confirmar]`
+`GPOS.Migracion implantar-servidor --perfil demo|produccion --fase carpetas|servicios|esquema|lectura [--origen <carpeta del paquete>] [--destino <carpeta>] [--usuario-instala <SID|cuenta>] [--rotar-jwt] [--acta <ref> --motivo <texto>]` (`--acta` y `--motivo` solo con `esquema`; **`--confirmar` se elimina**, 22-oct: las fases son idempotentes y se detienen solas ante una guarda, y `--rotar-jwt` ya cubre lo único que cambia algo existente)
 
 - **Elevación:** `carpetas`, `servicios` y `lectura` la exigen (código 1 y mensaje si no hay); `esquema` usa la cuenta de Windows con `sysadmin` o `dbcreator`, como hoy [V plan 2.3].
 - **Una fase por llamada, idempotente.** Repetirla no cambia nada si ya está hecha; si el estado no coincide con lo esperado (carpeta de un tercero, servicio con otra cuenta), **se detiene y dice qué**, no «arregla» (criterio de ADR-77 punto 3).
@@ -60,9 +60,9 @@ tests/GPOS.Tests/Servidor/         dobles en memoria y pruebas de arquitectura
 7. SDDL de cada servicio para el usuario que instala (DM-09, sección 5).
 8. `--rotar-jwt`: genera otra clave y reescribe el valor (mismo orden y comprobación); invalida los tokens vigentes. Sin la opción, la actualización normal **no** rota.
 
-**`esquema`:** `sistema --login-api "NT SERVICE\GPOS.Api"` con la escalera de 2.2.2 (empezar por la preferida; **el nivel exacto lo fija el spike**), `actualizar` de la empresa (`crear` si es nueva), vistas `rpt`, y `anillo --anclar` del certificado del anillo (DM-07). Prohibido `sysadmin`, `CONTROL SERVER`, `securityadmin`, `serveradmin`, `ALTER ANY LOGIN`, `IMPERSONATE`.
+**`esquema`:** `sistema --login-api "NT SERVICE\GPOS.Api"` con la escalera de 2.2.2 (empezar por la preferida; **el nivel exacto lo fija el spike**), `actualizar` de la empresa (`crear` si es nueva), vistas `rpt`, y `anillo --anclar` del certificado del anillo (DM-07), **decididos el 22-oct:** `--acta` y `--motivo` se exigen solo si el ancla no está fijada (se lee en `anillo --comprobar`, «Situación del ancla: Anclada»); sin ellos, 4, sin valores por omisión; **no se crea ninguna empresa** (`crear` es de Administración → Empresas): solo `actualizar --todas` sobre las registradas. Prohibido `sysadmin`, `CONTROL SERVER`, `securityadmin`, `serveradmin`, `ALTER ANY LOGIN`, `IMPERSONATE`.
 
-**`lectura`:** `crear-lectura-sistema --cuenta "NT SERVICE\GPOS.Reportes"`, `llave-sitio` (almacén de máquina, ACL a la cuenta), `crear-lectura --todas`, `red` (modo un equipo). Componen los verbos que ya existen [V `Program.cs:13-20`].
+**`lectura`:** `crear-lectura-sistema --cuenta "NT SERVICE\GPOS.Reportes"`, `llave-sitio --salida <raíz>\config\llave-sitio.pub` (almacén de máquina, ACL a la cuenta; **decidido el 22-oct:** la llave es pública, el riesgo es la sustitución, que la DACL de `config` impide, y la fase recalcula su huella y la compara con la que imprimió `llave-sitio`; si no coincide, 4), `crear-lectura --todas --llave <ese archivo>`, `red` (modo un equipo; **el verbo no existe, es de B:** la fase termina con 1 hasta que exista). Componen los verbos que ya existen [V `Program.cs:13-20`].
 
 **Orden entre fases:** `carpetas` → `servicios` → `esquema` → `lectura`. El *script* del DEMO las llama en ese orden; el verbo no impone la secuencia, pero cada fase comprueba su precondición (por ejemplo, `servicios` exige las carpetas).
 
