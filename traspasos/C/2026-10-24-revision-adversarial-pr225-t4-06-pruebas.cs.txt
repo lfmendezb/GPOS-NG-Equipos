@@ -1,0 +1,192 @@
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using GPOS.Contracts;
+using GPOS.Core.Data.Sistema;
+using GPOS.Core.Infraestructura;
+using GPOS.Core.Servicios;
+using GPOS.Core.Servicios.Modulos.Inventario;
+using GPOS.Core.Sistema;
+using GPOS.Tests.ModeloNg;
+using Microsoft.EntityFrameworkCore;
+
+namespace GPOS.Tests.Mvp;
+
+/// <summary>Revisión adversarial de C del PR #225 (T4-06). Archivo temporal, sin commit.</summary>
+[Trait("Esquema", "Neutral")]
+public class RevisionCPr225UnidadTests
+{
+    private sealed class CuentaFija(EstadoSesionUsuario cuenta) : IEstadoCuentaSesion
+    {
+        public Task<EstadoSesionUsuario?> LeerAsync(string usuario, CancellationToken ct) => Task.FromResult<EstadoSesionUsuario?>(cuenta);
+    }
+
+    private static ReportesService Servicio(string nivel, bool restringir, params string[] permisos)
+    {
+        var sistema = new SistemaDbContext(new DbContextOptionsBuilder<SistemaDbContext>()
+            .UseSqlServer("Server=127.0.0.1,1;Database=GPOS_TEST_NO_EXISTE;Integrated Security=true;Connect Timeout=1").Options);
+        var sesion = new SesionPrueba { Usuario = "R1", EsAdmin = NivelesUsuario.EsAdministrador(nivel), EsSuper = nivel == NivelesUsuario.Super };
+        foreach (var p in permisos) sesion.Permisos.Add(p);
+        var alcance = new AlcanceAlmacenes(sesion, new CuentaFija(new EstadoSesionUsuario(null, "S", nivel, false, RestringirSucursal: restringir,
+            SucursalDefault: "SUC1")));
+        return new ReportesService(sistema, new FactoryPrueba(null!), sesion, alcance);
+    }
+
+#if DEBUG
+    /// <summary>T6-51: el USER restringido (no solo el ADMIN) recibe el 403 SUCURSAL_NO_PERMITIDA en ejecutar y exportar, con la cuenta real.</summary>
+    [Fact]
+    public async Task C_T6_51_el_USER_restringido_recibe_403_en_ejecutar_y_exportar()
+    {
+        var s = Servicio(NivelesUsuario.Usuario, true, Permisos.ReportesCompras, Permisos.ReportesExportar);
+        var ex = await Assert.ThrowsAsync<AccesoDenegadoException>(() => s.EjecutarAsync(1, []));
+        Assert.Equal("SUCURSAL_NO_PERMITIDA", ex.CodigoRegla);
+        var ex2 = await Assert.ThrowsAsync<AccesoDenegadoException>(() => s.ExportarAsync(1, []));
+        Assert.Equal("SUCURSAL_NO_PERMITIDA", ex2.CodigoRegla);
+    }
+
+    /// <summary>T6-55: el SUPER con la bandera y el ADMIN sin bandera no reciben el 403 (el error que reciben es el de la base inexistente).</summary>
+    [Theory]
+    [InlineData(NivelesUsuario.Super, true)]
+    [InlineData(NivelesUsuario.Admin, false)]
+    public async Task C_T6_55_el_SUPER_con_bandera_y_el_ADMIN_sin_bandera_pasan_la_puerta(string nivel, bool restringir)
+    {
+        var ex = await Record.ExceptionAsync(() => Servicio(nivel, restringir).EjecutarAsync(1, []));
+        Assert.NotNull(ex);
+        Assert.False(ex is AccesoDenegadoException { CodigoRegla: "SUCURSAL_NO_PERMITIDA" }, ex.GetType().Name + ": " + ex.Message);
+    }
+
+    /// <summary>T6-56: el código local es el de la API de reportes (constante pública de GPOS.Reportes, no un literal).</summary>
+    [Fact]
+    public void C_T6_56_codigo_igual_al_de_la_API_de_reportes()
+    {
+        var api = new GPOS.Reportes.Ejecucion.SucursalNoPermitidaException();
+        Assert.Equal(api.Codigo, ReportesService.CodigoSucursalNoPermitida);
+        Assert.Equal(403, api.Estado);
+    }
+#endif
+}
+
+/// <summary>Detector por la canalización con respuestas hostiles de la API de reportes (simulada).</summary>
+[Trait("Categoria", "Mvp")]
+[Trait("Esquema", "NG")]
+public class RevisionCPr225DetectorTests(ApiNotificacionesReportesFactory api) : IClassFixture<ApiNotificacionesReportesFactory>
+{
+    private static ReporteDto Definicion(string descripcion) => new()
+    {
+        Descripcion = descripcion, Area = "ventas", Tipo = "REPORTE", Consulta = "SELECT 1 AS Cualquiera FROM rpt.NoExisteT406",
+        Columnas = [new ReporteColumnaDto { Orden = 1, Campo = "Cualquiera", Etiqueta = "Cualquiera", Tipo = TiposColumna.Texto, Visible = true }],
+    };
+
+    private async Task<HttpClient> PrepararAsync()
+    {
+        var admin = await api.AdminAsync();
+        api.ApiReportes.Caida = false;
+        api.ApiReportes.Peticiones.Clear();
+        api.ApiReportes.Rechazos.Clear();
+        return admin;
+    }
+
+    /// <summary>T6-22: un 500 de la API de reportes no es un rechazo de regla: 503 sin el detalle interno.</summary>
+    [Fact]
+    public async Task C_T6_22_un_500_de_la_API_de_reportes_es_503_sin_detalle_interno()
+    {
+        var admin = await PrepararAsync();
+        api.ApiReportes.Rechazos.Enqueue(() => ApiReportesSimulada.Problema(HttpStatusCode.InternalServerError, null,
+            "Microsoft.Data.SqlClient.SqlException en GPOS.Reportes.Ejecucion: Server=SRV-INTERNO;Database=GPOS_E01"));
+        var (estado, cuerpo) = await Http.RechazoAsync(admin, HttpMethod.Post, "/api/admin/reportes", Definicion("C225 500"));
+        Assert.True(estado == HttpStatusCode.ServiceUnavailable && !cuerpo.Contains("SRV-INTERNO"), $"{(int)estado} {cuerpo}");
+    }
+
+    /// <summary>T6-23: un 200 con JSON mal formado es un 400 de regla, no un 500.</summary>
+    [Fact]
+    public async Task C_T6_23_un_200_con_JSON_mal_formado_no_es_500()
+    {
+        var admin = await PrepararAsync();
+        api.ApiReportes.Rechazos.Enqueue(() => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("<html>no es json</html>", Encoding.UTF8, "application/json"),
+        });
+        var (estado, cuerpo) = await Http.RechazoAsync(admin, HttpMethod.Post, "/api/admin/reportes", Definicion("C225 json"));
+        Assert.True(estado != HttpStatusCode.InternalServerError, $"{(int)estado} {cuerpo}");
+        Assert.Equal(0, await BasesNgPrueba.EscalarAsync<int>(api.ConexionSistema, "SELECT COUNT(*) FROM dbo.Reportes WHERE Descripcion = 'C225 json'"));
+    }
+
+    /// <summary>Observación: un 429 de la API de reportes (ritmo de detectar) en Guardar.</summary>
+    [Fact]
+    public async Task C_observa_un_429_en_Guardar()
+    {
+        var admin = await PrepararAsync();
+        api.ApiReportes.Rechazos.Enqueue(() => ApiReportesSimulada.Problema(HttpStatusCode.TooManyRequests, "LIMITE_PETICIONES", "Demasiadas peticiones.", 30));
+        var (estado, cuerpo) = await Http.RechazoAsync(admin, HttpMethod.Post, "/api/admin/reportes", Definicion("C225 429"));
+        Assert.True(estado == HttpStatusCode.TooManyRequests, $"{(int)estado} {cuerpo}");
+    }
+}
+
+/// <summary>Guardar contra la API de reportes REAL del fixture de F9 (gpos_rpt sobre rpt).</summary>
+[Trait("Categoria", "Mvp")]
+[Trait("Esquema", "NG")]
+public class RevisionCPr225F9Tests(ReportesF9Fixture f) : IClassFixture<ReportesF9Fixture>
+{
+    /// <summary>T6-26/T6-28 positivo: una copia intacta (SQL sobre rpt) se guarda con la detección real de la API de reportes.</summary>
+    [Fact]
+    public async Task C_T6_26_Guardar_una_definicion_sobre_rpt_con_la_API_real_responde_200()
+    {
+        var admin = await f.Principal.AdminAsync();
+        var lista = await Http.GetAsync<List<ReporteResumen>>(admin, "/api/reportes");
+        var id = lista.Single(r => r.Codigo == "EF-DOCS-BANCARIOS").Id;
+        var def = await Http.GetAsync<ReporteDto>(admin, $"/api/reportes/{id}");
+        def.Id = 0;
+        def.Codigo = null;
+        def.DelSistema = false;
+        def.Descripcion = "C225 copia sobre rpt";
+        using var r = await Http.CrudoAsync(admin, HttpMethod.Post, "/api/admin/reportes", def);
+        var cuerpo = await r.Content.ReadAsStringAsync();
+        Assert.True(r.StatusCode == HttpStatusCode.OK, $"{(int)r.StatusCode} {cuerpo}");
+    }
+
+    /// <summary>T6-26/T6-28 negativo: SQL sobre tablas no se guarda, con un 4xx de regla (no 503 ni 500).</summary>
+    [Fact]
+    public async Task C_T6_28_Guardar_SQL_sobre_tablas_con_la_API_real_es_4xx()
+    {
+        var admin = await f.Principal.AdminAsync();
+        var lista = await Http.GetAsync<List<ReporteResumen>>(admin, "/api/reportes");
+        var id = lista.Single(r => r.Codigo == "EF-DOCS-BANCARIOS").Id;
+        var def = await Http.GetAsync<ReporteDto>(admin, $"/api/reportes/{id}");
+        def.Id = 0;
+        def.Codigo = null;
+        def.DelSistema = false;
+        def.Descripcion = "C225 copia sobre tablas";
+        def.Consulta = def.Consulta.Replace("rpt.DocBanco", "banco.DocBanco");
+        using var r = await Http.CrudoAsync(admin, HttpMethod.Post, "/api/admin/reportes", def);
+        var cuerpo = await r.Content.ReadAsStringAsync();
+        Assert.True((int)r.StatusCode is >= 400 and < 500, $"{(int)r.StatusCode} {cuerpo}");
+    }
+}
+
+    /// <summary>Revisión C del #225 (temporal): T6-46b con el emisor REAL del #217, sobre CXP-FACTURAS.</summary>
+    [Fact]
+    public async Task C225_T6_46b_con_el_emisor_real_un_antes_P2_del_SUPER_o_inhabilitado_no_se_envia()
+    {
+        var admin = await api.AdminAsync();
+        ReglaNotificacionDto deSuper, deInhabilitado;
+        var (super, _) = await api.EntrarAsync("GSF", ApiMvpFactory.ClaveSuper);
+        using (super)
+        {
+            try { (_, deSuper) = await ReglaAsync("C225-P2-SUPER", reporte: "CXP-FACTURAS", autor: super); }
+            finally { await Http.EnviarAsync(super, HttpMethod.Post, "/api/auth/salir", null); }
+        }
+        var (codigo, cuenta) = await CuentaAdminAsync(admin);
+        using (cuenta) (_, deInhabilitado) = await ReglaAsync("C225-P2-INHABILITADO", reporte: "CXP-FACTURAS", autor: cuenta);
+        await InhabilitarAsync(admin, codigo);
+        foreach (var (regla, texto) in new[] { (deSuper, "Super Usuario GSF"), (deInhabilitado, "está inhabilitado") })
+        {
+            var antes = await UltimaEvidenciaAsync();
+            var registro = UsarEmisorReal();
+            var r = await ProgramadoAsync(regla);
+            Assert.False(r.Enviado, $"{regla.UsuarioModificacion}: {r.Mensaje}");
+            Assert.Contains(texto, r.Mensaje);
+            Assert.Empty(Peticiones(regla.ReporteId!.Value));
+            Assert.Equal(0, registro.Vivas);
+            await NoEnvioAsync(admin, regla, antes, texto);
+        }
+    }
