@@ -1,11 +1,11 @@
 ---
 name: dos-equipos-a-coordina
-description: "B coordina e integra y A apoya; el equipo C fue disuelto el 2026-10-14 y sus funciones se repartieron entre A y B. ADR en master, un archivo por ADR, rangos A 68-99 y B 100-129 (130-159 congelado)"
+description: "B coordina e integra y A apoya; C disuelto el 14-oct, reactivado el 16-oct y FUERA DE SERVICIO desde el 24-oct (todo lo de C pasó a A; A no revisa sus propios PR). ADR en master, rangos A 68-99, B 100-129 y 160-189"
 metadata:
   node_type: memory
   type: project
   originSessionId: f2c0a692-b405-4953-8a6f-70fec2b01360
-  modified: 2026-10-09T22:32:46.844Z
+  modified: 2026-10-24T11:59:26.299Z
 ---
 
 **Cambio del 2026-10-09:** como la luz se va de repente y la PC A no tiene UPS, el propietario decidió que **la actividad principal y la coordinación pasan al equipo nuevo, donde restaura al Equipo B**. **La PC A pasa a ser el equipo de soporte.** Desde entonces, el coordinador (B en el equipo nuevo) es quien une ramas a `feature/modelo-ng` y `master`, edita `CLAUDE.md` y el manifiesto de pruebas y publica `memoria/` y `agentes/` en el área común. A, como soporte, trabaja en ramas propias, sube y abre PR, nunca une (salvo que el propietario indique otra cosa). **Aprobado por el propietario el 2026-10-09:** A trabaja en ramas `a/...` y conserva su rango de ADR 68-99 (libres entonces 79, 80 y 82 en adelante).
@@ -30,4 +30,6 @@ metadata:
 
 **Historia, equipo C (2026-10-09, decisión del propietario):** la antigua PC B (LAPTOP-DUMQQ5QK, 8 núcleos, 7,8 GB; también corre el DEMO) pasa a ser el **equipo C**, de apoyo a B como A: ramas `c/`, PR sin unir, avisos en `avisos/C-a-B/` (B le escribe en `avisos/B-a-C/`), `traspasos/C/`, commits `[C]`. Límite de agentes de la antigua PC B. Encargarle diseño, revisión, documentos o construcción mediana, no suites completas ni cargas. Los scripts del área común admiten `-Equipo C`. Rango de ADR de C: 130-159 (propietario, 2026-10-09; master `fd05bdc`). Pendiente del propietario: si C hace el ensayo del DEMO.
 
-**Equipo C REACTIVADO el 2026-10-16 (OSHIN-LEGION)**, según `estado.md` del área común. Desde entonces vuelve a entregar PR (`c/...`), avisos `C-a-B` y firmas del propietario tomadas en su sesión. Sus avisos se leen igual que los de A. El 2026-10-17 avisó que su equipo está inestable: no corre suites largas ni mediciones.
+**Equipo C FUERA DE SERVICIO desde el 2026-10-24** (propietario: «El equipo C quedó fuera de servicio y no responderá. Asume las tareas pendientes y asígnalas a A»). Todo lo pendiente de C (PR `c/…` abiertos, guiones de laboratorio, runbook, planes) pasa a A, que empuja en las mismas ramas `c/…`; aviso `avisos/B-a-A/2026-10-24-c-fuera-de-servicio-traspaso-de-c-a-a.md`. **Regla mientras C no esté:** A no revisa sus propios PR; esas revisiones adversariales las hace B con un agente independiente. No escribir avisos a C.
+
+**Historia: equipo C REACTIVADO el 2026-10-16 (OSHIN-LEGION)**, según `estado.md` del área común. Desde entonces vuelve a entregar PR (`c/...`), avisos `C-a-B` y firmas del propietario tomadas en su sesión. Sus avisos se leen igual que los de A. El 2026-10-17 avisó que su equipo está inestable: no corre suites largas ni mediciones.

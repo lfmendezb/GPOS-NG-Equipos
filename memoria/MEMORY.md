@@ -25,7 +25,7 @@
 - [avisar-cambio-de-sesion](avisar-cambio-de-sesion.md) — Avisar al propietario cuándo abrir sesión nueva, en un punto sin agentes activos y con nota de…
 - [adjuntos-en-documentos](adjuntos-en-documentos.md) — Adjuntar archivos en mermas y en todos los documentos (salvo POS); nube del cliente en fase tardía
 - [responder-en-espanol](responder-en-espanol.md) — Responder siempre en español, también los avisos de avance
-- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — B coordina e integra, A apoya (ramas a/, no une); C disuelto el 14-oct y REACTIVADO el 16-oct…
+- [dos-equipos-a-coordina](dos-equipos-a-coordina.md) — B coordina e integra, A apoya (ramas a/, no une); C FUERA DE SERVICIO desde el 24-oct: todo lo de C pasó a A; A no revisa sus propios PR
 - [sucursal-en-linea-sqlite-y-licencia](sucursal-en-linea-sqlite-y-licencia.md) — ADR-53: nodo elegible; SQLite local en sucursal en línea tras las olas; licencia por empresa por…
 - [fable-revision-general-tras-olas](fable-revision-general-tras-olas.md) — Fable 5.1 solo para la revisión general al completar las olas; agentes con Opus
 - [ecf-conectores-enchufables](ecf-conectores-enchufables.md) — e-CF y ERP (AdmCloud, Alegra, IQ) como complementos que NUNCA tocan el núcleo de GPOS NG
@@ -71,4 +71,5 @@
 - [traspaso-b-2026-10-23](traspaso-b-2026-10-23.md) — LEER PRIMERO (B): cierre de la noche 22-23 oct; master 116f7525, modelo-ng 67b4353a; uniones, abiertos, agentes en curso con rama, pendientes y qué hacer primero
 - [traspaso-b-2026-10-23-tarde](traspaso-b-2026-10-23-tarde.md) — LEER PRIMERO tras el del 23-oct (noche): #170 en 03bbceea, PR abiertos de B, VM-SRV lista salvo cierre y VM-LNX sin instalar, decisiones pendientes y qué hacer primero
 - [get-rnc-dgii-es-de-gpos-vb6](get-rnc-dgii-es-de-gpos-vb6.md) — GET-RNC-DGII es complemento de GPOS VB6 (no de GPOS NG): sin ADR ni convenciones de GPOS NG
-- [traspaso-b-2026-10-23-noche-2](traspaso-b-2026-10-23-noche-2.md) — LEER PRIMERO tras el de la tarde: cierre del 23-oct; modelo-ng b9efa9fb; firmas de hoy, PR abiertos, agente de F1 en curso, laboratorio de VM-SRV desde hoy, backlog de A y C y qué hacer primero
+- [traspaso-b-2026-10-23-noche-2](traspaso-b-2026-10-23-noche-2.md) — (reemplazado por el del 24-oct): cierre del 23-oct; modelo-ng b9efa9fb; firmas de hoy, PR abiertos, agente de F1 en curso, laboratorio de VM-SRV desde hoy, backlog de A y C y qué hacer primero
+- [traspaso-b-2026-10-24](traspaso-b-2026-10-24.md) — LEER PRIMERO (B): 24-oct; C fuera de servicio (todo a A); firmas D-5 (c), C-T01 (a), 4704, SA-01 ampliada; F1 26f54eaa; laboratorio V1: I1/I2 cumplen, resto bloqueado por el guion; VM apagada
