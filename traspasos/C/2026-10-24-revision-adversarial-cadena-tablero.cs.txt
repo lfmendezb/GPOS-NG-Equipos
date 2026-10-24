@@ -1,0 +1,243 @@
+using System.Text.RegularExpressions;
+using GPOS.Core.Data.Sistema;
+using GPOS.Core.Infraestructura;
+using GPOS.Core.Servicios;
+using GPOS.Core.Servicios.Modulos.Inventario;
+using GPOS.Core.Sistema;
+using GPOS.Reportes.Consultas;
+using GPOS.Reportes.Consultas.Catalogos;
+using GPOS.Reportes.Contexto;
+using GPOS.Reportes.Definiciones.Tablero;
+using GPOS.Reportes.Ejecucion;
+using GPOS.Reportes.Lectura;
+using GPOS.Tests.Escenarios;
+using GPOS.Tests.ModeloNg;
+using GPOS.Tests.Mvp;
+using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
+
+namespace GPOS.Tests.RevisionC;
+
+/// <summary>
+/// Revisión adversarial de C (2026-10-24) de la cadena del tablero (#202, #205, #206, #212; #220 abierto): pruebas que demuestran o descartan
+/// hallazgos contra una base de prueba real. No forman parte de ningún PR; son evidencia del informe
+/// <c>traspasos/C/2026-10-24-revision-adversarial-cadena-tablero.md</c>.
+/// Escenario: una sucursal nueva S2 con su almacén y su punto de emisión, una factura a crédito en S2 (2 × 100 + ITBIS = 236) y otra en la sucursal
+/// de siempre (1 × 100 + ITBIS = 118).
+/// </summary>
+[Trait("Esquema", "NG")]
+[Trait("Categoria", "RevisionC")]
+public class CadenaTableroAdversarialTests(BaseDatosFixture bd, ITestOutputHelper salida) : IClassFixture<BaseDatosFixture>
+{
+    private sealed record Mapa(string S2, string FacturaS2, string FacturaOtra, string Cliente);
+
+    private static readonly Dictionary<string, Task<Mapa>> Escenarios = [];
+
+    private Task<Mapa> MapaAsync()
+    {
+        lock (Escenarios)
+        {
+            if (!Escenarios.TryGetValue(bd.ConnectionString, out var t)) Escenarios[bd.ConnectionString] = t = PrepararAsync();
+            return t;
+        }
+    }
+
+    private async Task<Mapa> PrepararAsync()
+    {
+        var (s2, almacen2, punto2) = await CierreSucursalGuardasTests.SucursalConAlmacenAsync(bd);
+        await Escenario.SecuenciaNcfAsync(bd, TiposComprobante.CreditoFiscal);
+        await Escenario.SecuenciaNcfAsync(bd, TiposComprobante.CreditoFiscal, punto: punto2);
+        var cliente = await Escenario.ClienteAsync(bd, "B");
+        var art = await Escenario.ArticuloAsync(bd, existenciaInicial: 10);
+        var sesion2 = new SesionPrueba { Sucursal = s2 };
+        await new InventarioService(new FactoryPrueba(bd), sesion2).GuardarAsync(new DocumentoInventario
+        {
+            Tipo = TipoDocInventario.Ajuste, IdMotivoAjuste = "CORRECCION", AlmacenId = almacen2, Notas = "Existencia de S2 (revisión C)",
+            Lineas = [new LineaInventarioDto { IdArticulo = art, Cantidad = 5, Costo = 50 }],
+        });
+        var otra = await FacturaAsync(new SesionPrueba(), null, cliente, art, 1);
+        var deS2 = await FacturaAsync(sesion2, almacen2, cliente, art, 2);
+        return new Mapa(s2, deS2, otra, cliente);
+    }
+
+    private async Task<string> FacturaAsync(SesionPrueba sesion, string? almacen, string cliente, string articulo, decimal cantidad)
+    {
+        var s = new DocumentosComercialesService(new FactoryPrueba(bd), sesion);
+        var d = await s.NuevoAsync(TipoDocComercial.FacturaCxc);
+        (d.TerceroId, d.MonedaId, d.Tasa) = (cliente, "RD$", 1m);
+        if (almacen is not null) d.AlmacenId = almacen;
+        d.Lineas.Add(Datos.Linea(articulo, cantidad, 100));
+        return (await s.GuardarAsync(d)).Numero!;
+    }
+
+    private sealed class CuentaFija(EstadoSesionUsuario cuenta) : IEstadoCuentaSesion
+    {
+        public Task<EstadoSesionUsuario?> LeerAsync(string usuario, CancellationToken ct) => Task.FromResult<EstadoSesionUsuario?>(cuenta);
+    }
+
+    /// <summary>Un USER restringido a <paramref name="sucursal"/> (cuenta guardada) con los permisos de la tarjeta de CxC y de la consulta.</summary>
+    private static (SesionPrueba Sesion, AlcanceAlmacenes Alcance) Restringido(string sucursal)
+    {
+        var sesion = new SesionPrueba { Usuario = "R1", EsAdmin = false, Sucursal = sucursal }
+            .Con(Permisos.ReportesVentas, NivelAcceso.Consultar).Con(Permisos.Cobros, NivelAcceso.Consultar);
+        var alcance = new AlcanceAlmacenes(sesion, new CuentaFija(new EstadoSesionUsuario(null, "S", NivelesUsuario.Usuario, false,
+            RestringirSucursal: true, SucursalDefault: sucursal, EmpresaDefault: "TEST")));
+        return (sesion, alcance);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+    // C-T01: la tarjeta «Cuentas por cobrar» del restringido (TBS-01) enlaza con la consulta de facturas, que no aplica la restricción
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Hallazgo C-T01. La tarjeta del restringido a S2 dice 236 (solo S2, TBS-01). Su enlace («Ver facturas vencidas», y «Consultar las facturas del
+    /// período» en Ventas; <c>Tablero.razor:218-220</c>) abre <c>POST /api/ventas/facturas/consulta</c>, cuyo servicio no recibe el alcance
+    /// (<c>ConsultaFacturasService</c> solo depende de la fábrica y la sesión) y devuelve también la factura de la otra sucursal, con cliente, total y
+    /// saldo; el detalle por número (IDOR por parámetro) también la entrega.
+    /// </summary>
+    [Fact]
+    public async Task CT01_la_consulta_de_facturas_del_enlace_de_la_tarjeta_entrega_a_un_restringido_las_facturas_de_otra_sucursal()
+    {
+        var m = await MapaAsync();
+
+        // La tarjeta, con el alcance de D-03: solo S2
+        var tarjetas = await TableroPrueba.IndicadoresAsync(bd.ConnectionString, TableroPrueba.Restringido(m.S2));
+        Assert.Equal(236m, tarjetas.Single(k => k.Titulo == "Cuentas por cobrar").Valor);
+
+        // El servicio de la consulta no tiene por dónde recibir el alcance: ningún parámetro del constructor es IAlcanceAlmacenes
+        Assert.All(typeof(ConsultaFacturasService).GetConstructors(), c =>
+            Assert.DoesNotContain(c.GetParameters(), p => p.ParameterType == typeof(IAlcanceAlmacenes)));
+
+        var (sesion, _) = Restringido(m.S2);
+        var consulta = new ConsultaFacturasService(new FactoryPrueba(bd), sesion);
+        var r = await consulta.BuscarAsync(new FiltroConsultaFacturas { Desde = null, Hasta = null, Cliente = m.Cliente, TamanoPagina = 500 });
+        salida.WriteLine($"Consulta del restringido a {m.S2}: {string.Join(", ", r.Filas.Select(f => $"{f.Numero} saldo {f.Balance}"))}; suma de saldos {r.SumaBalance}");
+        Assert.Contains(r.Filas, f => f.Numero == m.FacturaS2);
+        Assert.Contains(r.Filas, f => f.Numero == m.FacturaOtra);   // FUGA: factura de otra sucursal
+        Assert.Equal(354m, r.SumaBalance);                           // la pantalla del enlace no cuadra con la tarjeta (236)
+
+        // Detalle por número de la factura ajena: se entrega (IDOR por el parámetro {numero})
+        var detalle = await consulta.DetalleAsync(m.FacturaOtra);
+        Assert.NotNull(detalle);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+    // C-T02: el gráfico DASH-CXC-ANTIGUEDAD del propio tablero lo ejecuta la principal (lista P-2) sin la restricción
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Hallazgo C-T02 (manifestación en el tablero de R-14, que cierra T4-06). <c>Tablero.razor</c> pide todos los reportes de tipo DASHBOARD y los
+    /// ejecuta; <c>DASH-CXC-ANTIGUEDAD</c> está en <c>ReportesSemilla.EnLaPrincipal</c>, así que aun con el reenvío lo ejecuta la principal, cuyo
+    /// <c>EjecutarAsync</c> no usa el alcance. Esta prueba mide qué devuelve hoy a un restringido sobre una base del modelo nuevo.
+    /// </summary>
+    [Fact]
+    public async Task CT02_el_grafico_de_antiguedad_de_CxC_del_tablero_lo_ejecuta_la_principal_sin_el_alcance()
+    {
+        var m = await MapaAsync();
+        Assert.Contains("DASH-CXC-ANTIGUEDAD", ReportesSemilla.EnLaPrincipal);
+        var vista = await AdminNumeracion.EscalarAsync(bd, "SELECT OBJECT_ID(N'dbo.vw_GPost_DocumentosCxC')");
+        salida.WriteLine($"OBJECT_ID(dbo.vw_GPost_DocumentosCxC) = {vista}");
+        var balanceVista = await AdminNumeracion.EscalarAsync(bd, "SELECT ISNULL(SUM(Balance), 0) FROM dbo.vw_GPost_DocumentosCxC WHERE Balance > 0");
+        salida.WriteLine($"SUM(Balance) de la vista heredada = {balanceVista}");
+
+        // EjecutarAsync(id) carga la definición de GPOS_SYSDATA y llama al EjecutarAsync(ReporteDto, ...) privado sin el alcance
+        // (ReportesService.cs:276-285 y :318). Aquí no hay base del sistema: se invoca ese mismo método con la definición de la semilla y un
+        // servicio restringido a S2.
+        var def = ReportesSemilla.Definiciones().Single(d => d.Codigo == "DASH-CXC-ANTIGUEDAD");
+        var (sesion, alcance) = Restringido(m.S2);
+        await using var sistema = new SistemaDbContext(new DbContextOptionsBuilder<SistemaDbContext>().UseSqlServer(bd.ConnectionString).Options);
+        var servicio = new ReportesService(sistema, new FactoryPrueba(bd), sesion, alcance);
+        Assert.False(await alcance.SinRestriccionAsync());   // la cuenta está restringida a S2
+        var metodo = typeof(ReportesService).GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            .Single(x => x.Name == "EjecutarAsync" && x.GetParameters()[0].ParameterType == typeof(ReporteDto));
+        var r = await (Task<ResultadoReporte>)metodo.Invoke(servicio, [def, Array.Empty<FiltroReporte>(), CancellationToken.None, null])!;
+        var total = r.Filas.Sum(f => ValoresReporte.Numero(f[r.Columnas.FindIndex(c => c.Campo == "Balance")]));
+        salida.WriteLine($"Restringido a {m.S2}: {r.Filas.Count} fila(s), Balance total {total}; {string.Join(" | ", r.Filas.Select(f => string.Join(";", f)))}");
+        // El restringido a S2 (tarjeta: 236) recibe el saldo de toda la vista: la ejecución no depende de su alcance
+        Assert.Equal(Convert.ToDecimal(balanceVista), total);
+        // Caracterización (2026-10-24): en el modelo nuevo la vista heredada no trae las facturas nuevas: el gráfico sale vacío para todos (sin fuga
+        // de datos NG hoy; la ruta de ejecución sigue sin alcance). Si este número deja de ser 0 antes de T4-06, el gráfico filtra toda la empresa.
+        Assert.Equal(0m, total);
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+    // C-T03: caché compartida entre alcances, contra la base y en paralelo (descarta cache poisoning)
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// Descarta el envenenamiento de la caché: una sola <see cref="CacheTablero"/> y un solo <see cref="ResolutorCatalogos"/> (como los singleton de la
+    /// API de reportes) atienden 60 peticiones en paralelo, intercaladas, de un ADMIN sin restricción, del restringido a S2 y del restringido a la
+    /// sucursal de siempre (un usuario distinto por petición: el turno es por usuario). Cada una recibe exactamente la cifra de su alcance calculada
+    /// directamente sobre <c>rpt</c>.
+    /// </summary>
+    [Fact]
+    public async Task CT03_la_cache_compartida_no_mezcla_alcances_ni_en_paralelo()
+    {
+        var m = await MapaAsync();
+        await TableroPrueba.IndicadoresAsync(bd.ConnectionString);   // crea el usuario de lectura de la prueba
+        var principal = (string)(await AdminNumeracion.EscalarAsync(bd, "SELECT TOP 1 Codigo FROM org.Sucursal WHERE Codigo <> @s ORDER BY Id", ("@s", m.S2)))!;
+        var opciones = new OpcionesEjecutor();
+        var lector = new LectorRegistradas(new FuenteEmpresaPrueba(bd.ConnectionString), new TurnosConsultas(opciones), opciones, ContratoVistas.Incrustado);
+        var catalogo = CatalogoConsultas.Crear();
+        var tablero = new TableroReportes(lector, catalogo, new CacheTablero(), new ResolutorCatalogos(catalogo));
+
+        async Task<decimal> EsperadoAsync(string? sucursal) => Convert.ToDecimal(await AdminNumeracion.EscalarAsync(bd,
+            "SELECT ISNULL(SUM(c.BalanceBase), 0) FROM rpt.CxcDocumento c JOIN rpt.CatSucursal s ON s.Id = c.SucursalId " +
+            "WHERE c.Estado = 1 AND c.Balance > 0 AND (@s IS NULL OR s.Codigo = @s)", ("@s", (object?)sucursal ?? DBNull.Value)));
+        var esperado = new Dictionary<string, decimal>
+        {
+            ["*"] = Convert.ToDecimal(await AdminNumeracion.EscalarAsync(bd, "SELECT ISNULL(SUM(BalanceBase), 0) FROM rpt.CxcDocumento WHERE Estado = 1 AND Balance > 0")),
+            [m.S2] = await EsperadoAsync(m.S2),
+            [principal] = await EsperadoAsync(principal),
+        };
+        salida.WriteLine(string.Join(", ", esperado.Select(e => $"{e.Key}={e.Value}")));
+        Assert.Equal(236m, esperado[m.S2]);
+
+        var quienes = Enumerable.Range(0, 60).Select(i => (i, (i % 3) switch { 0 => "*", 1 => m.S2, _ => principal })).ToList();
+        var resultados = await Task.WhenAll(quienes.Select(async x =>
+        {
+            var (i, q) = x;
+            var ctx = (q == "*" ? TableroPrueba.Contexto(admin: true) : TableroPrueba.Restringido(q)) with { Usuario = $"U{i:00}" };
+            var t = await tablero.IndicadoresAsync(ctx, PeriodosTablero.Mes, CancellationToken.None);
+            var k = t.Single(y => y.Titulo == "Cuentas por cobrar");
+            return (Quien: q, k.Valor, k.AlcanceSucursal);
+        }));
+        Assert.All(resultados, x =>
+        {
+            Assert.Equal(esperado[x.Quien], x.Valor);
+            Assert.Equal(x.Quien == "*" ? null : x.Quien, x.AlcanceSucursal);
+        });
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+    // C-T04: guarda de fuente: toda ruta de /api/reportes y /api/admin/reportes de la API de reportes arma el contexto (TBS-04 en todas)
+    // ------------------------------------------------------------------------------------------------------------------------------------------
+
+    /// <summary>
+    /// TBS-04 se aplica en <c>ProveedorContexto.ObtenerAsync</c>; la prueba de la ruta (<c>EndpointsReportesTests.TBS_04_…</c>) cubre 3 de las 7
+    /// rutas. Esta guarda de fuente comprueba que las 7 rutas de <c>MapReportes</c> llaman a <c>contexto.ObtenerAsync</c> antes de usar el servicio,
+    /// y deja constancia de que las 4 rutas de <c>/interno/render</c> no lo hacen (no leen datos de la empresa: los recibe de la principal).
+    /// </summary>
+    [Fact]
+    public void CT04_toda_ruta_de_datos_de_la_API_de_reportes_pasa_por_el_contexto_de_rptsis()
+    {
+        var raiz = Raiz();
+        var reportes = File.ReadAllText(Path.Combine(raiz, "src", "GPOS.Reportes.Api", "Endpoints", "EndpointsReportes.cs"));
+        var cuerpo = reportes[reportes.IndexOf("MapReportes(this", StringComparison.Ordinal)..reportes.IndexOf("AgregarRitmoReportes", StringComparison.Ordinal)];
+        var rutas = Regex.Split(cuerpo, @"(?=\b[gd]\.Map(?:Get|Post|Put|Delete|Patch)\()").Where(t => Regex.IsMatch(t, @"^[gd]\.Map")).ToList();
+        salida.WriteLine(string.Join(Environment.NewLine, rutas.Select(r => r.Split('\n')[0].Trim())));
+        Assert.Equal(7, rutas.Count);
+        Assert.All(rutas, r => Assert.Contains("contexto.ObtenerAsync(http.User, ct)", r));
+
+        var render = File.ReadAllText(Path.Combine(raiz, "src", "GPOS.Reportes.Api", "Endpoints", "EndpointsRender.cs"));
+        Assert.DoesNotContain("ObtenerAsync", render);
+        Assert.Equal(4, Regex.Matches(render, @"g\.MapPost\(").Count);
+    }
+
+    private static string Raiz()
+    {
+        var d = new DirectoryInfo(AppContext.BaseDirectory);
+        while (d is not null && !File.Exists(Path.Combine(d.FullName, "GPOS-NG.slnx"))) d = d.Parent;
+        return d?.FullName ?? throw new InvalidOperationException("No se encontró GPOS-NG.slnx.");
+    }
+}
