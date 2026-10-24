@@ -1,0 +1,107 @@
+using GPOS.Core.Infraestructura;
+using GPOS.Core.Infraestructura.Anillo;
+using GPOS.Migracion.Anillo;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace GPOS.Tests.Criptografia.Anillo;
+
+// Segunda pasada de C sobre el PR #228 (b/f1-anillo @ 26f54eaa). Pruebas de evidencia: cada una AFIRMA el comportamiento actual que el informe
+// traspasos/C/2026-10-25-revision-adversarial-f1-26f54eaa.md señala (hallazgo o control). No es para unir.
+
+public sealed partial class MantenimientoAnilloTests
+{
+    private Task<bool> SistemaC2Async(ServiceProvider p, List<string> mensajes) =>
+        GPOS.Migracion.ComandoSistema.AplicarAsync(_conexion, null, null, mensajes.Add, CancellationToken.None, GPOS.Migracion.EmpresasSistema.ProveedorDe(p), null,
+            null, instalacionPendiente: ct => GuardasAnillo.InstalacionPendienteAsync(p, GuardasAnillo.FilasSistema(_conexion), ct: ct));
+
+    /// <summary>
+    /// TF-01 (decisión 1 de B): con el ancla ya fijada y una recuperación configurada distinta (RecuperacionCambiada) o la fila del ancla alterada
+    /// (NoVerifica), el primer «sistema» sale con el mismo 2 «pendiente» que la instalación nueva sin ancla. Quien trate el 2 como normal (FaseEsquema)
+    /// no distingue un ancla manipulada de un paso que todavía no se hizo.
+    /// </summary>
+    [Fact]
+    public async Task C2_TF01_sistema_sale_con_el_mismo_2_con_el_ancla_cambiada_o_alterada()
+    {
+        using (var p = _i.Proceso())
+            await Verbos(p).AnclarAsync("ACTA-IMPL-1", "implantación de prueba", _i.HuellaRecuperacion);
+        var legitima = _i.Origen.RecuperacionActual;
+        using var ajeno = CertificadosPrueba.Crear("GPOS prueba recuperacion AJENA TF-01");
+        _i.Origen.RecuperacionActual = CertificadosPrueba.SoloPublica(ajeno);
+        var mensajes = new List<string>();
+        using (var p = _i.Proceso())
+            Assert.False(await SistemaC2Async(p, mensajes));   // false = CodigosSalida.Pendientes (2)
+        Assert.Contains(mensajes, m => m.StartsWith("Pendiente:", StringComparison.Ordinal) && m.Contains("RecuperacionCambiada"));
+
+        _i.Origen.RecuperacionActual = legitima;
+        await FijarFilaAsync(AnclaRecuperacionAnillo.Clave, "fila-alterada");
+        mensajes.Clear();
+        using (var p = _i.Proceso())
+            Assert.False(await SistemaC2Async(p, mensajes));
+        Assert.Contains(mensajes, m => m.StartsWith("Pendiente:", StringComparison.Ordinal) && m.Contains("NoVerifica"));
+    }
+
+    /// <summary>
+    /// TF-02 (decisión 2 de B): el 4060 no distingue «la base no existe» de «el login de la API no tiene acceso a una base que sí existe». Con
+    /// GPOS_SYSDATA existente y CON el ancla, sin el archivo del anillo, sin llaves en Api\anillo y con DpapiDemo, un login sin usuario en la base
+    /// (lo típico tras restaurar en otro servidor: usuario huérfano) hace que la API arranque con DPAPI en lugar de fallar con el 4704.
+    /// </summary>
+    [Fact]
+    public async Task C2_TF02_login_sin_acceso_a_GPOS_SYSDATA_con_ancla_cuenta_como_sin_ancla_y_la_API_arranca()
+    {
+        using (var p = _i.Proceso())
+            await Verbos(p).AnclarAsync("ACTA-IMPL-1", "implantación de prueba", _i.HuellaRecuperacion);
+        await using (var db = Db())
+            Assert.NotNull(await HeredadasAnillo.LeerValorAsync(db, AnclaRecuperacionAnillo.Clave, CancellationToken.None));
+        var login = "GPOS_TEST_C4060_" + Guid.NewGuid().ToString("N")[..8];
+        var clave = Guid.NewGuid().ToString("N") + "aA1!";   // efímera, solo en memoria
+        await using (var cn = new SqlConnection(_conexion))
+        {
+            await cn.OpenAsync();
+            await using var cmd = new SqlCommand($"CREATE LOGIN [{login}] WITH PASSWORD = N'{clave}', CHECK_POLICY = OFF", cn);
+            await cmd.ExecuteNonQueryAsync();
+        }
+        try
+        {
+            var b = new SqlConnectionStringBuilder(_conexion) { IntegratedSecurity = false, UserID = login, Password = clave, Pooling = false };
+            // El 4060 de este caso (la base existe)
+            await using (var cn = new SqlConnection(b.ConnectionString))
+            {
+                var sql = await Assert.ThrowsAsync<SqlException>(() => cn.OpenAsync());
+                Assert.Contains(sql.Errors.Cast<SqlError>(), e => e.Number == 4060);
+            }
+            var ruta = Path.Combine(_i.Carpeta + "-tf02", "config", "GPOS.Api.anillo.json");
+            await using var api = RevisionAdversarialF1Tests.ApiDemoSinArchivo(ruta, b.ConnectionString, null);
+            var r = await ComprobacionAnillo.EjecutarAlArrancarAsync(api);   // no lanza: el ancla existe, pero «no hay base»
+            Assert.False(r.Activo);
+        }
+        finally
+        {
+            SqlConnection.ClearAllPools();
+            await using var cn = new SqlConnection(_conexion);
+            await cn.OpenAsync();
+            await using var cmd = new SqlCommand($"DROP LOGIN [{login}]", cn);
+            await cmd.ExecuteNonQueryAsync();
+        }
+    }
+
+    /// <summary>
+    /// TF-03 (decisión 3 de B): con el ancla ya fijada, «anillo --migrar» exige la huella aunque el ancla ya verifique la recuperación configurada.
+    /// Qué rompe: toda llamada a «--migrar» sin la huella (guiones, guías) sale con error, también en una instalación ya anclada.
+    /// </summary>
+    [Fact]
+    public async Task C2_TF03_migrar_con_ancla_tambien_exige_la_huella()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        await InstalacionDpapiAsync();
+        ProtegerCarpeta();
+        using (var p = _i.Proceso())
+            await Verbos(p).AnclarAsync("ACTA-IMPL-1", "implantación de prueba", _i.HuellaRecuperacion);
+        using (var p = _i.Proceso())
+            Assert.Contains("--huella-recuperacion",
+                (await Assert.ThrowsAsync<ReglaNegocioException>(() => Verbos(p).MigrarDesdeDpapiAsync(null, "ACTA-MIG-1", "corte", ""))).Message);
+        using (var p = _i.Proceso())
+            await Verbos(p).MigrarDesdeDpapiAsync(null, "ACTA-MIG-1", "corte", _i.HuellaRecuperacion);
+    }
+}
