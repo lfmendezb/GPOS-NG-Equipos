@@ -178,6 +178,18 @@ Marca cada punto con la hora y el resultado en el acta (2.8). Si un punto "Parar
 
 Nada de `reg query` ni `reg export` de `HKLM\SYSTEM\CurrentControlSet\Services\GPOS.Api`; no imprimir `Get-Item` de esa clave sin `.GetValueNames()`; ninguna captura de la pestaña *Environment* de un visor de procesos; ninguna clave, PFX ni cadena de conexión en consola, historial o evidencia; no arrancar una segunda VM salvo que la ventana lo pida; no instalar nada de Internet (la VM no tiene salida).
 
+### 2.7b Lecciones de la primera corrida (B, 2026-10-24, V1 parte B)
+
+Medidas por B en VM-SRV; pasan a la lista de verificación de **cada** ventana:
+
+1. **Sacar la evidencia antes de restaurar.** Restaurar un punto de control borra lo generado después (se perdieron `I2.json` e `I6.json`). Antes de cada restauración: `Recoger-Evidencia.ps1 -CarpetaInvitado` sobre `C:\GPOS-LAB\evidencia`, y comprobar que llegó al anfitrión.
+2. **`guestcontrol` con `Administrador`, no con `gposlab`:** con `gposlab` el token queda filtrado. La contraseña es la misma por diseño de `Crear-VmLaboratorio.ps1` (`--admin-password-file`).
+3. **Puntos de control siempre con la VM apagada.** Los `-EnVivo` se cuelgan con vTPM y EFI. Apagar con `Stop-Computer`: `shutdown.exe` con argumentos y `acpipowerbutton` no apagan una sesión sin usuario.
+4. **Los guiones no aceptan parámetros posicionales desde `-File`:** pasar todo con nombre.
+5. **`Get-Acl` sobre `HKLM:\SYSTEM\CurrentControlSet\Services\…` falla en el invitado** aunque `Test-Path` dé True; el guion del MSI ya lee la DACL con `Registry.OpenSubKey` (#226 @ `1a8cc3e0`). Cualquier guion nuevo debe hacer lo mismo.
+6. **Si un caso se cuelga**, la última línea `PASO hh:mm:ss` del guion del MSI dice dónde; cada `sc.exe` tiene tope de 120 s. Anotarla en el acta antes de detenerlo a mano.
+7. **Resultados de V1 parte B hasta ahora:** Lista y Guardas cumplidas; I1 e I2 **Cumple**; I6 **No cumple por falso positivo del guion** (corregido en `1a8cc3e0`, a repetir); I3 **No se pudo medir** (se colgaba antes de arrancar el servicio; a repetir con trazas). Esto no cambia los criterios de parada de la sección 6.
+
 ### 2.8 Acta de la ventana (plantilla)
 
 Fecha y hora de inicio y fin · técnico · VM y punto de partida · RAM libre en `LFMB` al arrancar · `Id` del marcador · versión de Windows con la UBR, FIPS sí o no, edición de SQL · SHA-256 de cada archivo copiado (2.6) y comprobación después de restaurar · commit de cada guion y del código bajo prueba (MSI: `1232d0af`; anillo: sha de F1; `restaurar`: sha de A) · nombres de los puntos de control con el alias y el nombre del documento · incidentes (qué se restauró y por qué) · lista de casos con `resultado` · quién recogió la evidencia y dónde quedó.
