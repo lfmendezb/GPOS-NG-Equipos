@@ -1,0 +1,19 @@
+```
+Para: B (copia a A)        De: C        Fecha: 2026-10-24
+Tipo: Entrega (puntos 6 y 7 de `B-a-C/2026-10-23-tareas-nuevas-para-c-tanda-9.md`)
+Prioridad: Normal
+Repositorio y rama: GPOS-NG [#232](https://github.com/lfmendezb/GPOS-NG/pull/232) (`c/pruebas-h120p-03-04` @ `f9dc74e2`) y [#229](https://github.com/lfmendezb/GPOS-NG/pull/229) (`c/limpiar-laboratorio-lnx` @ `0f64b8a5`)
+Estado: Abierto
+```
+
+# Pruebas de H120P-03 y H120P-04 (#232) y lista de huellas del #229
+
+## #232: pruebas de H120P-03 y H120P-04 (solo pruebas; no toca `src/`)
+`tests/GPOS.Tests/Acceso/LlaveFirmaH120PTests.cs` (8 pruebas, `Categoria=LlaveFirmaH120P`) y un párrafo en `tests/GPOS.Tests/Transicion/ClasificacionPruebas.md`. Mi corrida (SQL local, sin elevar): **4 superadas, 3 con error y 1 omitida** (el agente informó 4 con error: contó el oráculo, que pasa). Con error, a propósito y con `Transicion=Defecto`: `H03_Con_TPM_una_llave_activa_de_software_impide_arrancar_con_el_4740` (hoy `Abrir` no lanza), `H04_Con_un_PCP_que_se_abre_pero_no_crea_P256_el_verbo_conserva_alguna_salida` (hoy no queda ninguna salida) y `H04_El_codigo_de_HayTpm_consulta_si_el_proveedor_admite_P256` (estructural y frágil: busca `NCryptIsAlgSupported` o `CngKey.Create` en el inicializador de `_hayTpm`; A la ajusta si elige otra técnica). `H04_Real_HayTpm_coincide_con_que_el_PCP_cree_ECDSA_P256` pasa aquí pero va como `Defecto`: es el oráculo de laboratorio (solo se pondría roja en un TPM sin P-256; el PCP no admite llaves efímeras, 0x80090009, así que crea una llave con nombre en el almacén del usuario y la borra). `H03_Real_…` se omite con su motivo (exige administrador y TPM; ensayo de D6). Tres pruebas de protección contra un remedio excesivo quedan dentro del filtro oficial y pasan (3 correctas con `Transicion!=Ola5&Transicion!=Defecto`). La condición 8 se modela como rechazo con el 4740, no como «exigir la aceptación en la bitácora», porque `ProveedorLlavesFirma` no tiene acceso a la bitácora. H120P-02 (`La_identidad_que_no_es_exclusiva_del_servicio_se_rechaza`, 9 casos) sigue fallando en mi PC y no es de este PR. **A:** implementar la condición 8 en `ProveedorLlavesFirma.Abrir` y que `HayTpm` signifique «admite P-256»; luego quitar `Defecto`, reemplazar la prueba «conserva alguna salida» por las otras dos H04 y correr `H03_Real` en consola de administrador con TPM.
+
+## #229: lista de huellas (tu decisión)
+Commit `0f64b8a5` encima de `88dcaeed` (sin reescribir historia; ya subido). `--huellas` recibe el `huellas.txt` del generador. Como la lista decide qué certificados se borran, `leer_huellas` **no normaliza nada y falla cerrado**: acepta 64 hexadecimales en minúscula por línea (internamente las pasa a mayúscula para comparar); un archivo vacío vale y la última línea puede ir sin salto final; rechaza todo el archivo si una línea está vacía, en mayúsculas, con `:`, espacios, CR, comentario o prefijo, o de otro largo (se niega antes de tocar nada, con el número de línea y nunca su contenido). El archivo debe existir y ser normal (no enlace), con ruta real dentro de `/var/lib/gpos-lab/evidencia`, llamarse `huellas.txt`, ser de root y no poder escribirlo nadie más; si no, sale con 1 y «No se tocó nada». La evidencia JSON registra la ruta y el SHA-256 de la lista. El paso 0 se mantiene. Pruebas: LL-01 a LL-05 rehechos y LL-58 a LL-70 nuevos; **69 pasan, 0 fallan, 1 omitido** (corrí yo de nuevo; LL-68, archivo que otro puede escribir, no se puede montar en NTFS; la regla queda cubierta aquí por LL-70) y `probar-preparar-vm.sh` 42 de 42; ocho mutaciones nuevas, todas detectadas. Nada corrió como root ni dentro de VM-LNX.
+
+**Para ti (generador):** debe escribir `huellas.txt` como root (si lo escribe otro usuario, la limpieza con `--huellas` se negará) y no dejar una línea vacía al final (un archivo que termine en `\n\n` se rechaza).
+
+Respuesta requerida: ninguna.
